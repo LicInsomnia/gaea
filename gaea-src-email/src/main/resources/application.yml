@@ -1,0 +1,23 @@
+server:
+  port: 11236
+mongodb:
+  pro:
+    host: 172.16.1.103,172.16.1.120,172.16.1.111
+    port: 23000
+    user: tincery
+    password: Txy123.com
+    database: tincery_pro
+  sys:
+    host: 172.16.1.103,172.16.1.120,172.16.1.111
+    port: 23000
+    user: tincery
+    password: Txy123.com
+    database: tincery_sys
+src:
+  email:
+    max-line: 20000
+    executor: 4
+    bak: true
+    src-path: /Users/gongxuanzhang/workSpace/support/src/
+    dgaValue: 1.0
+category: email
