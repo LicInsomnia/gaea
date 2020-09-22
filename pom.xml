@@ -14,6 +14,7 @@
         <module>gaea-src-ssl</module>
         <module>gaea-src-email</module>
         <module>gaea-src-impsession</module>
+        <module>gaea-reorganization-important</module>
     </modules>
 
 

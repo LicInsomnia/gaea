@@ -2,7 +2,7 @@ package com.tincery.gaea.source.impsession.config.property;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tincery.gaea.core.base.component.AbstractSrcCommonProperties;
+import com.tincery.gaea.core.src.AbstractSrcProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
 @Component
 @Getter
 @Setter
-public class ImpSessionProperties extends AbstractSrcCommonProperties {
+public class ImpSessionProperties extends AbstractSrcProperties {
 
     /**
      * Prefix of {@link ImpSessionProperties}.

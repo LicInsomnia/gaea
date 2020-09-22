@@ -1,9 +1,6 @@
 package com.tincery.gaea.core.base.tool;
 
-import com.csvreader.CsvReader;
-import com.tincery.starter.base.util.JsonUtils;
 import javafx.util.Pair;
-import org.bson.Document;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -596,25 +593,6 @@ public class ToolUtils {
         return prRet && coRet && exRet;
     }
 
-    public static Map<String, Object> csv2AlertDocument(CsvReader csvReader) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            String[] headers = csvReader.getHeaders();
-            for (String header : headers) {
-                String value = csvReader.get(header);
-                if (value == null || value.isEmpty()) {
-                    continue;
-                }
-                result.put(header, csvReader.get(header));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        List<String> eventdata = new ArrayList<>();
-        eventdata.add(ToolUtils.getMD5(JsonUtils.document2JsonStr(new Document(result))));
-        result.put("eventdata", eventdata);
-        return result;
-    }
 
     public static Map<String, Double> resortMapByDouble(Map<String, Double> map) {
         ArrayList<Map.Entry<String, Double>> list = new ArrayList<>(map.entrySet());

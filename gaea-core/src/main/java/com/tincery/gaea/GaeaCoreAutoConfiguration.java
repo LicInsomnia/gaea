@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScans(
         {@ComponentScan("com.tincery.gaea.core.*")
         })
-public class GaeaCommonAutoConfiguration {
+public class GaeaCoreAutoConfiguration {
 
 
 }

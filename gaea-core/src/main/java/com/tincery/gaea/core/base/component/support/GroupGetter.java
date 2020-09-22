@@ -1,4 +1,4 @@
-package com.tincery.gaea.core.base.component;
+package com.tincery.gaea.core.base.component.support;
 
 import com.tincery.gaea.api.base.ImpTargetSetupDO;
 import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;

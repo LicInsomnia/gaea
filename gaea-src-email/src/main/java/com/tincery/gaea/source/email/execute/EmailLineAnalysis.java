@@ -6,7 +6,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.ImpTargetSetupDO;
 import com.tincery.gaea.api.src.EmailData;
-import com.tincery.gaea.core.base.component.*;
+import com.tincery.gaea.core.base.component.LineAnalysis;
+import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
+import com.tincery.gaea.core.base.component.support.GroupGetter;
+import com.tincery.gaea.core.base.component.support.IpChecker;
+import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
@@ -17,10 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author gxz
@@ -101,5 +104,45 @@ public class EmailLineAnalysis implements LineAnalysis<EmailData>, Initializatio
                 .filter(impTargetSetupDO -> StringUtils.notAllowNull(impTargetSetupDO.getTargetname(), impTargetSetupDO.getGroupname()))
                 .forEach((impTargetSetupDO) -> this.target2Group.put(impTargetSetupDO.getTargetname(), impTargetSetupDO.getGroupname()));
         log.info("加载了{}组  目标配置", this.target2Group.size());
+    }
+
+    public static void main(String[] args) {
+        Queue<EmailData> queue1 = new ArrayDeque<>();
+        ArrayBlockingQueue<EmailData> queue = new ArrayBlockingQueue<>(1024);
+
+        long l1 = System.nanoTime();
+        for (int i = 0; i < 1000000; i++) {
+            try {
+                queue.offer((EmailData)new EmailData().setSource("asdfasdf"),1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        long l5 = System.nanoTime();
+        long arrayPutLong = l5 - l1;
+
+       /* long l = System.nanoTime();
+        for (int i = 0; i < 100000; i++) {
+            queue.offer((EmailData)new EmailData().setSource("asdfasdf"));
+        }
+        long l3 = System.nanoTime();
+        long putLong = l3-l;*/
+        long l2 = System.nanoTime();
+        for (int i = 0; i < 1000000; i++) {
+            //System.out.println(queue.poll());
+            queue.poll();
+        }
+        long getLong = System.nanoTime()-l2;
+
+
+
+       /* for (int i = 0; i < 100000; i++) {
+            System.out.println(queue1.poll());
+        }
+        long arrayGetLong = System.nanoTime()-l5;*/
+      //  System.out.println("LinkedList add"+putLong/1000+"毫秒");
+       System.out.println("LinkedList get"+getLong/1000+"毫秒");
+        System.out.println("ArrayQueue add"+arrayPutLong/1000+"毫秒");
+       // System.out.println("ArrayQueue get"+arrayGetLong/1000+"毫秒");
     }
 }

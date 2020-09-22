@@ -4,7 +4,7 @@ package com.tincery.gaea.api.src;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.Location;
-import com.tincery.gaea.core.base.component.ApplicationCheck;
+import com.tincery.gaea.core.base.component.support.ApplicationCheck;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

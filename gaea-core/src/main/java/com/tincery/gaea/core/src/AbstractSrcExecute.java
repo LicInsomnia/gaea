@@ -1,6 +1,7 @@
-package com.tincery.gaea.core.base.component;
+package com.tincery.gaea.core.src;
 
 
+import com.tincery.gaea.core.base.component.Execute;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.starter.base.mgt.NodeInfo;
 import com.tincery.starter.mgt.ConstManager;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  **/
 @Getter
 @Slf4j
-public abstract class AbstractSrcExecute<P extends AbstractSrcCommonProperties> implements Execute {
+public abstract class AbstractSrcExecute<P extends AbstractSrcProperties> implements Execute {
 
 
     protected P properties;

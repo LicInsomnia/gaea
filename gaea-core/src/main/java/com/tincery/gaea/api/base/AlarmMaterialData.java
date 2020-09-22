@@ -2,8 +2,8 @@ package com.tincery.gaea.api.base;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
-import com.tincery.gaea.core.base.component.AssetDetector;
-import com.tincery.gaea.core.base.component.IpSelector;
+import com.tincery.gaea.core.base.component.support.AssetDetector;
+import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import lombok.Getter;
 import lombok.Setter;

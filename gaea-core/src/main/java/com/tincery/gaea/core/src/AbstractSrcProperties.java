@@ -1,4 +1,4 @@
-package com.tincery.gaea.core.base.component;
+package com.tincery.gaea.core.src;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import lombok.Setter;
  **/
 @Setter
 @Getter
-public abstract class AbstractSrcCommonProperties {
+public abstract class AbstractSrcProperties {
 
     private String category;
 

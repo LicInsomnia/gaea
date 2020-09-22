@@ -1,4 +1,4 @@
-package com.tincery.gaea.core.base.component;
+package com.tincery.gaea.core.base.component.support;
 
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;

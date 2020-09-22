@@ -1,7 +1,9 @@
-package com.tincery.gaea.core.base.component;
+package com.tincery.gaea.core.src;
 
 
 import com.tincery.gaea.api.src.AbstractSrcData;
+import com.tincery.gaea.core.base.component.support.CerChain;
+import com.tincery.gaea.core.base.component.LineAnalysis;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
@@ -45,7 +47,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Slf4j
-public abstract class AbstractCollectExecute<P extends AbstractSrcCommonProperties, M extends AbstractSrcData> extends AbstractSrcExecute<P> {
+public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M extends AbstractSrcData> extends AbstractSrcExecute<P> {
 
 
     /***此map存放 用fileName 信息做key  行内容作为value的map*/

@@ -2,9 +2,9 @@ package com.tincery.gaea.source.ssl.execute;
 
 
 import com.tincery.gaea.api.src.SslData;
-import com.tincery.gaea.core.base.component.GroupGetter;
+import com.tincery.gaea.core.base.component.support.GroupGetter;
 import com.tincery.gaea.core.base.component.LineAnalysis;
-import com.tincery.gaea.core.base.component.PayloadDetector;
+import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;

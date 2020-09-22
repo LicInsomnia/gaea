@@ -2,9 +2,9 @@ package com.tincery.gaea.source.email.execute;
 
 
 import com.tincery.gaea.api.base.ApplicationInformationBO;
-import com.tincery.gaea.core.base.component.ApplicationProtocol;
+import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.LineAnalysis;
-import com.tincery.gaea.core.base.component.PayloadDetector;
+import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.NumberUtils;
 import com.tincery.gaea.api.src.SessionData;

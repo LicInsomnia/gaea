@@ -1,12 +1,10 @@
 package com.tincery.gaea.core.base.rule;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.SrcRuleDO;
 import com.tincery.gaea.api.src.AbstractSrcData;
-import com.tincery.gaea.core.base.component.AssetDetector;
-import com.tincery.gaea.core.base.component.IpSelector;
+import com.tincery.gaea.core.base.component.support.AssetDetector;
+import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.dao.SrcRuleDao;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.ObjectUtils;
