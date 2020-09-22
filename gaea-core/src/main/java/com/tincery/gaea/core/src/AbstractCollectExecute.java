@@ -3,7 +3,6 @@ package com.tincery.gaea.core.src;
 
 import com.tincery.gaea.api.src.AbstractSrcData;
 import com.tincery.gaea.core.base.component.support.CerChain;
-import com.tincery.gaea.core.base.component.LineAnalysis;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
@@ -59,7 +58,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
 
     protected long maxTime;
 
-    protected LineAnalysis<M> analysis;
+    protected SrcLineAnalysis<M> analysis;
 
     private static final Object[] EMPTY = new Object[]{};
 

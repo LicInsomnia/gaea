@@ -3,11 +3,11 @@ package com.tincery.gaea.source.ssl.execute;
 
 import com.tincery.gaea.api.src.SslData;
 import com.tincery.gaea.core.base.component.support.GroupGetter;
-import com.tincery.gaea.core.base.component.LineAnalysis;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
+import com.tincery.gaea.core.src.SrcLineAnalysis;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class SslLineAnalysis implements LineAnalysis<SslData> {
+public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
 
 
     protected Map<String, String> target2Group = new HashMap<>();
@@ -52,7 +52,7 @@ public class SslLineAnalysis implements LineAnalysis<SslData> {
     @Override
     public SslData pack(String line) {
         SslData sslData = new SslData();
-        String[] elements = line.split(SRC_SEPARATOR, -1);
+        String[] elements = StringUtils.FileLineSplit(line);
         sslData.set5TupleAndFlow(elements[9], elements[10], elements[11],
                 elements[12], elements[13], elements[14],
                 elements[15], "SSL", elements[4],

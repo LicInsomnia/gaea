@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,6 +113,14 @@ public class DateUtils {
             throw new AnalysisException();
         }
         return time;
+    }
+
+    public static LocalDateTime Date2LocalDateTime(Date date){
+        Instant instant = date.toInstant();
+        return LocalDateTime.ofInstant(instant,ZoneId.systemDefault());
+    }
+    public static long LocalDateTime2Long(LocalDateTime localDateTime){
+        return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
 }

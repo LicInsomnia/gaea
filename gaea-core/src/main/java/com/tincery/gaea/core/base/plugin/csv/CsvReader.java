@@ -1,6 +1,7 @@
 package com.tincery.gaea.core.base.plugin.csv;
 
 
+import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -57,7 +58,7 @@ public class CsvReader {
                 // 这个句柄不关闭
                 csvBufferedReader = new BufferedReader(new FileReader(this.csv));
                 String first = csvBufferedReader.readLine();
-                head = SplitUtils.split(first);
+                head = StringUtils.FileLineSplit(first);
             } catch (IOException e) {
                 throw new IllegalAccessException("初始化失败,表头信息获取不到");
             }

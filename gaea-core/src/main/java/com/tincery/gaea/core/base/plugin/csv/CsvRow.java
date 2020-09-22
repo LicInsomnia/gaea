@@ -1,6 +1,8 @@
 package com.tincery.gaea.core.base.plugin.csv;
 
 
+import com.tincery.gaea.core.base.tool.util.StringUtils;
+
 import java.util.Map;
 
 /**
@@ -15,7 +17,7 @@ public class CsvRow {
 
     public CsvRow(Map<String, Integer> headerMap, String line) {
         this.headerMap = headerMap;
-        this.fields = SplitUtils.split(line);
+        this.fields = StringUtils.FileLineSplit(line);
     }
 
     public String get(String name) {

@@ -2,12 +2,13 @@ package com.tincery.gaea.source.email.execute;
 
 
 import com.tincery.gaea.api.base.ApplicationInformationBO;
+import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
-import com.tincery.gaea.core.base.component.LineAnalysis;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.NumberUtils;
-import com.tincery.gaea.api.src.SessionData;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
+import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class SessionLineAnalysis implements LineAnalysis<SessionData> {
+public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
 
 
     private final ApplicationProtocol applicationProtocol;
@@ -51,7 +52,7 @@ public class SessionLineAnalysis implements LineAnalysis<SessionData> {
     @Override
     public SessionData pack(String line) {
         SessionData sessionMetaData = new SessionData();
-        String[] elements = line.split(SRC_SEPARATOR, -1);
+        String[] elements = StringUtils.FileLineSplit(line);
         setFixProperties(elements, sessionMetaData);
         // proName 赋默认值  如果匹配到了相关application 会替换掉proName
         sessionMetaData.setProName("other");

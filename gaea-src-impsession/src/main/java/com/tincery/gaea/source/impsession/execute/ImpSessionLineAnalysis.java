@@ -1,10 +1,11 @@
 package com.tincery.gaea.source.impsession.execute;
 
-import com.tincery.common.base.LineAnalysis;
-import com.tincery.common.component.GroupGetter;
-import com.tincery.common.component.IpChecker;
-import com.tincery.common.tool.util.DateUtils;
 import com.tincery.gaea.api.src.ImpSessionData;
+import com.tincery.gaea.core.base.component.support.GroupGetter;
+import com.tincery.gaea.core.base.component.support.IpChecker;
+import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
+import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ import java.util.Map;
  * @author gongxuanzhang
  */
 @Component
-public class ImpSessionLineAnalysis implements LineAnalysis<ImpSessionData> {
+public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
 
     @Autowired
     private IpChecker ipChecker;
@@ -41,7 +42,7 @@ public class ImpSessionLineAnalysis implements LineAnalysis<ImpSessionData> {
     @Override
     public ImpSessionData pack(String line) {
         ImpSessionData impSessionData = new ImpSessionData();
-        String[] element = line.split(SRC_SEPARATOR, -1);
+        String[] element = StringUtils.FileLineSplit(line);
         setImpSessionDataFix(impSessionData, element);
         if (needCorrect(element)) {
             modifyImpSessionData(impSessionData, element);

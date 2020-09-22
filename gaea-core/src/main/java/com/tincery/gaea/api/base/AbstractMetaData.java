@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 /**
  * 基础元数据类
  *
@@ -18,7 +16,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public abstract class AbstractMetaData implements Serializable {
+public abstract class AbstractMetaData extends GaeaData {
     /**
      * 探针标识 记录是哪个探针生成的txt
      */

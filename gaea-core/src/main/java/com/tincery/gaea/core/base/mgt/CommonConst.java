@@ -15,6 +15,7 @@ public class CommonConst {
     }
 
 
+
     public final static int KB = 1024;
     public final static int MB = 1024 * KB;
     public final static long GB = 1024 * MB;

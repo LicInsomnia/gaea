@@ -5,6 +5,8 @@ package com.tincery.gaea.core.base.tool.util;
  **/
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
+    public static final String DEFAULT_SEP = new String(new char[]{0x07});
+
     private StringUtils() {
         throw new RuntimeException("禁止创建实体");
     }
@@ -49,6 +51,10 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      **/
     public static boolean checkStr(String str,String prefix, String extension){
         return checkStr(str,prefix,"",extension);
+    }
+
+    public static String[] FileLineSplit(String line){
+            return line.split(DEFAULT_SEP,-1);
     }
 
 

@@ -1,8 +1,8 @@
 package com.tincery.gaea.source.impsession.execute;
 
-import com.tincery.common.base.AbstractCollectExecute;
-import com.tincery.common.mgt.HeadConst;
 import com.tincery.gaea.api.src.ImpSessionData;
+import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.src.AbstractCollectExecute;
 import com.tincery.gaea.source.impsession.config.property.ImpSessionProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

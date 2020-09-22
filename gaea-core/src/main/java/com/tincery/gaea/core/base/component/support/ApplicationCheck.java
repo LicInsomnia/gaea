@@ -3,7 +3,6 @@ package com.tincery.gaea.core.base.component.support;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.mongodb.client.MongoCollection;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.core.base.dao.AppRuleDao;
 import com.tincery.gaea.core.base.tool.ToolUtils;
@@ -11,7 +10,6 @@ import com.tincery.gaea.core.base.tool.util.LevelDomainUtils;
 import com.tincery.starter.base.InitializationRequired;
 import com.tincery.starter.base.mgt.NodeInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -74,13 +72,6 @@ public class ApplicationCheck implements InitializationRequired {
         return appInfo;
     }
 
-    public Map<String, Object> getApplication(Object obj) {
-        ApplicationInformationBO applicationInformation = this.getApplicationInformation(obj);
-        if (null == applicationInformation) {
-            return null;
-        }
-        return (JSONObject) JSONObject.toJSON(applicationInformation);
-    }
 
     private void loadConfiguration(JSONObject json) {
         if (!json.containsKey("title")) {
@@ -88,17 +79,14 @@ public class ApplicationCheck implements InitializationRequired {
         }
         Boolean exact = json.getBoolean("exact");
         ApplicationInformationBO applicationInformation = json.toJavaObject(ApplicationInformationBO.class);
-        if (exact) {
+        if (exact!=null && exact) {
             this.exactDomain2Category.put(json.getString("_id").toLowerCase(), applicationInformation);
         } else {
             this.domain2Category.put(json.getString("_id").toLowerCase(), applicationInformation);
         }
     }
 
-    public boolean initialize(String encFilePath, MongoCollection<Document> appRuleCollection) {
-        this.hasExact = !this.exactDomain2Category.isEmpty();
-        return !this.domain2Category.isEmpty() || this.hasExact;
-    }
+
 
     @Override
     public void init() {
