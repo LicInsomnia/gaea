@@ -1,13 +1,12 @@
 package com.tincery.gaea.core.reorganization;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.tincery.gaea.core.base.component.Execute;
+import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
+import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.starter.base.mgt.NodeInfo;
 import com.tincery.starter.mgt.ConstManager;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -21,32 +20,45 @@ import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
+ * 此模块内容形式：
+ * 默认执行 将一行CSV传递给子类 子类需要对CSV进行处理
  **/
-public abstract class AbstractReorganizationExecute<ANALYSIS extends ReorganizationLineMultiAnalysis> implements Execute {
+public abstract class AbstractReorganizationExecute implements Execute {
 
-    private final ANALYSIS analysis;
 
-    public AbstractReorganizationExecute(ANALYSIS analysis) {
-        this.analysis = analysis;
-    }
+    private List<CsvFilter> csvFilterList;
 
     @Override
-    public void execute() {
-        Map<String,Object> reorganization = (Map<String,Object>)ConstManager.getCommonConfig("reorganization");
-        LocalDateTime starttime = DateUtils.Date2LocalDateTime((Date)reorganization.get("starttime"));
-        Integer recolltime = (Integer)reorganization.get("recolltime");
-        LocalDateTime endtime = starttime.plusMinutes(recolltime);
-        long endTimeLong = DateUtils.LocalDateTime2Long(endtime);
-        long startTimeLong = DateUtils.LocalDateTime2Long(starttime);
-        List<String> csvDataSet = getCsvDataSet(startTimeLong, endTimeLong);
+    public void execute() throws IllegalAccessException {
+        Map<String, Object> reorganization = (Map<String, Object>) ConstManager.getCommonConfig("reorganization");
+        LocalDateTime startTime = DateUtils.Date2LocalDateTime((Date) reorganization.get("starttime"));
+        Integer recolltime = (Integer) reorganization.get("recolltime");
+        LocalDateTime endTime = startTime.plusMinutes(recolltime);
 
+        long endTimeLong = DateUtils.LocalDateTime2Long(endTime);
+        long startTimeLong = DateUtils.LocalDateTime2Long(startTime);
+        List<String> csvPaths = getCsvDataSet(startTimeLong, endTimeLong);
+        for (String csvPath : csvPaths) {
+            CsvReader csvReader = CsvReader.builder().file(csvPath).registerFilter(csvFilterList).build();
+            analysis(csvReader);
+        }
+        free();
+    }
+
+
+    public void free() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void analysis(CsvReader csvReader) {
+        throw new UnsupportedOperationException();
     }
 
     public static List<String> getCsvDataSet(long startTime, long endTime) {
-        String rootPath = NodeInfo.getTinceryDataPath() +"/data/"+NodeInfo.getCategory();
+        String rootPath = NodeInfo.getTinceryDataPath() + "/data/" + NodeInfo.getCategory();
         List<String> list = new ArrayList<>();
         long timeStamp = startTime = startTime / MINUTE * MINUTE;
-        endTime = endTime /MINUTE * MINUTE + MINUTE;
+        endTime = endTime / MINUTE * MINUTE + MINUTE;
         while (timeStamp <= endTime) {
             File path = new File(rootPath + "/" + ToolUtils.stamp2Date(timeStamp, "yyyyMMdd"));
             if (path.exists() && path.isDirectory()) {
@@ -69,16 +81,6 @@ public abstract class AbstractReorganizationExecute<ANALYSIS extends Reorganizat
         }
         return list;
     }
-
-    @Setter@Getter
-    public static class DurationInfo{
-        @JSONField(format = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime starttime;
-        /***分钟数*/
-        private int recolltime;
-    }
-
-
 
 
 }

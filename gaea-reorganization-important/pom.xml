@@ -8,8 +8,11 @@
         <version>5.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>gaea-reorganization-important</artifactId>
+
+    <properties>
+        <jmh.version>1.0</jmh.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -17,5 +20,18 @@
             <groupId>com.tincery</groupId>
             <version>5.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 </project>

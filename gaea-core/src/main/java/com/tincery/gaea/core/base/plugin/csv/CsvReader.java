@@ -3,6 +3,7 @@ package com.tincery.gaea.core.base.plugin.csv;
 
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -106,6 +107,9 @@ public class CsvReader {
     }
 
     private void registerSimpleFilter(List<CsvFilter> csvFilters) {
+        if(CollectionUtils.isEmpty(csvFilters)){
+            return;
+        }
         if (this.filterRows == null) {
             this.filterRows = new HashMap<>(16);
         }
@@ -177,7 +181,7 @@ public class CsvReader {
     }
 
 
-    private static class CsvReaderBuilder {
+    public static class CsvReaderBuilder {
         private File csv;
         private String[] head;
         private List<CsvFilter> csvFilterList;
@@ -190,6 +194,9 @@ public class CsvReader {
         }
 
         public CsvReaderBuilder registerFilter(List<CsvFilter> csvFilters) {
+            if(CollectionUtils.isEmpty(csvFilters)){
+                return this;
+            }
             if (this.csvFilterList == null) {
                 this.csvFilterList = new ArrayList<>();
             }
@@ -223,53 +230,4 @@ public class CsvReader {
             return new CsvReader(this.csv, this.head, this.timeUnit, this.blockTime, this.capacity, this.csvFilterList);
         }
     }
-
-    public static void main(String[] args) throws IllegalAccessException {
-        CsvReader csvReader = CsvReader.builder().registerFilter(new Filter1(),new Filter2(),new Filter3())
-                .block(TimeUnit.SECONDS,1,1024).file("aaa.csv").build();
-
-        CsvRow f30 = csvReader.nextRow(Filter3.class);
-        CsvRow f31 = csvReader.nextRow(Filter3.class);
-        CsvRow f10 = csvReader.nextRow(Filter1.class);
-        CsvRow f11 = csvReader.nextRow(Filter1.class);
-        CsvRow f20 = csvReader.nextRow(Filter2.class);
-        CsvRow f21 = csvReader.nextRow(Filter2.class);
-        CsvRow f32 = csvReader.nextRow(Filter3.class);
-        CsvRow f33 = csvReader.nextRow(Filter3.class);
-        System.out.println("f30" + f30);
-        System.out.println("f31" + f31);
-        System.out.println("f10" + f10);
-        System.out.println("f11" + f11);
-        System.out.println("f20" + f20);
-        System.out.println("f21" + f21);
-
-
-        System.out.println("f32" + f32);
-        System.out.println("f33" + f33);
-
-
-    }
-
-    public static class Filter1 implements CsvFilter {
-        @Override
-        public boolean filter(CsvRow csvRow) {
-            return csvRow.get("serverip").equals("13.250.94.254");
-        }
-    }
-
-    public static class Filter2 implements CsvFilter {
-        @Override
-        public boolean filter(CsvRow csvRow) {
-            return csvRow.get("serverip").equals("13.250.94.254");
-        }
-    }
-
-    public static class Filter3 implements CsvFilter {
-        @Override
-        public boolean filter(CsvRow csvRow) {
-            return true;
-        }
-    }
-
-
 }
