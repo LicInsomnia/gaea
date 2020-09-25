@@ -1,12 +1,12 @@
 package com.tincery.gaea.core.reorganization;
 
 import com.tincery.gaea.core.base.component.Execute;
+import com.tincery.gaea.core.base.component.config.CommonConfig;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
-import com.tincery.starter.base.mgt.NodeInfo;
-import com.tincery.starter.mgt.ConstManager;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public abstract class AbstractReorganizationExecute implements Execute {
 
     @Override
     public void execute() throws IllegalAccessException {
-        Map<String, Object> reorganization = (Map<String, Object>) ConstManager.getCommonConfig("reorganization");
+        Map<String, Object> reorganization = (Map<String, Object>) CommonConfig.get("reorganization");
         LocalDateTime startTime = DateUtils.Date2LocalDateTime((Date) reorganization.get("starttime"));
         Integer recolltime = (Integer) reorganization.get("recolltime");
         LocalDateTime endTime = startTime.plusMinutes(recolltime);
@@ -55,7 +55,7 @@ public abstract class AbstractReorganizationExecute implements Execute {
     }
 
     public static List<String> getCsvDataSet(long startTime, long endTime) {
-        String rootPath = NodeInfo.getTinceryDataPath() + "/data/" + NodeInfo.getCategory();
+        String rootPath = NodeInfo.getCommonData() + "/data/" + NodeInfo.getCategory();
         List<String> list = new ArrayList<>();
         long timeStamp = startTime = startTime / MINUTE * MINUTE;
         endTime = endTime / MINUTE * MINUTE + MINUTE;

@@ -34,4 +34,8 @@ public class ImpSessionExecute extends AbstractCollectExecute<ImpSessionProperti
     }
 
 
+    @Override
+    public void init() {
+
+    }
 }

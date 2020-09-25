@@ -1,11 +1,11 @@
 package com.tincery.gaea.core.base.component.support;
 
+import com.tincery.gaea.core.base.component.config.NodeInfo;
+import com.tincery.gaea.core.base.exception.InitException;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.NetUtil;
 import com.tincery.starter.base.InitializationRequired;
-import com.tincery.starter.base.mgt.NodeInfo;
-import com.tincery.starter.exception.InitException;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -100,7 +100,7 @@ public class IpChecker implements InitializationRequired {
 
     @Override
     public void init() {
-        List<String> domesticIp =  FileUtils.readLine(NodeInfo.getTinceryHome()+"/conf/geo2ip/ChinaIPList.db");
+        List<String> domesticIp =  FileUtils.readLine(NodeInfo.getNodeHome()+"/conf/geo2ip/ChinaIPList.db");
         for (String ip : domesticIp) {
             this.ChinaIps.add(NetUtil.getRange(ip));
         }

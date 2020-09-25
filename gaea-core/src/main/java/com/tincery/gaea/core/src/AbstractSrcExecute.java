@@ -2,9 +2,9 @@ package com.tincery.gaea.core.src;
 
 
 import com.tincery.gaea.core.base.component.Execute;
+import com.tincery.gaea.core.base.component.config.CommonConfig;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
-import com.tincery.starter.base.mgt.NodeInfo;
-import com.tincery.starter.mgt.ConstManager;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,57 +24,13 @@ public abstract class AbstractSrcExecute<P extends AbstractSrcProperties> implem
 
     protected P properties;
 
-    protected String category;
-
-    protected String srcPath;
-
-    protected String tmpPath;
-
-    protected String dataPath;
-
-    protected String errPath;
-
-    protected String bakPath;
-
-    protected String eventPath;
-
-    protected String alarmPath;
-
-
-
-
-    /****
-     * 此方法是Src层执行器通用初始化内容 如果子类有特殊需求
-     * 请重写此方法并一定调用"super.init()"
-     * @author gxz
-     **/
-    @Override
-    public void init() {
-        String category = properties.getCategory();
-        String tinceryDataPath = NodeInfo.getTinceryDataPath();
-        this.tmpPath = tinceryDataPath + "tmp/";
-        this.eventPath = tinceryDataPath + "tmp/alarm_eventData/";
-        this.alarmPath = tinceryDataPath + "tmp/alarmmaterial/";
-        this.dataPath = tinceryDataPath + "data/"+category+"/";
-        this.errPath = tinceryDataPath + "err/" + category+"/";
-        this.bakPath = tinceryDataPath + "bak/"+category+"/";
-        this.category = category;
-        this.srcPath = properties.getSrcPath();
-        FileUtils.checkPath(this.srcPath,this.tmpPath,this.dataPath,this.errPath,this.bakPath,this.alarmPath,this.eventPath);
-        log.info("初始化srcPath[{}]",this.srcPath);
-        log.info("初始化tmpPath[{}]",this.tmpPath);
-        log.info("初始化dataPath[{}]",this.dataPath);
-        log.info("初始化errPath[{}]",this.errPath);
-        log.info("初始化bakPath[{}]",this.bakPath);
-    }
-
 
 
     public abstract void setProperties(P properties);
 
 
     protected List<File> getTxtFiles() {
-        return getFiles(this.srcPath+"/"+this.category+"/",null,".txt");
+        return getFiles(NodeInfo.getSrcData()+"/"+NodeInfo.getCategory()+"/",null,".txt");
     }
 
 
@@ -88,10 +44,10 @@ public abstract class AbstractSrcExecute<P extends AbstractSrcProperties> implem
      */
     public List<File> getFiles(String path, String contain, String extension){
         List<File> fileList = FileUtils.searchFiles(path,
-                category,
+                NodeInfo.getCategory(),
                 contain,
                 extension,
-                (int) ConstManager.getCommonConfig("srcdelaytime"));
+                (int) CommonConfig.get("srcdelaytime"));
         int maxFile = maxFile();
         if (fileList.size() > maxFile) {
             log.warn("从{}中得到文件[{}],超出了最大值[{}]，将有文件被忽略", path, fileList.size(), maxFile);

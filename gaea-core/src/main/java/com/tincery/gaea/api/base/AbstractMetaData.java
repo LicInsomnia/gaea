@@ -2,8 +2,8 @@ package com.tincery.gaea.api.base;
 
 
 import com.google.common.base.Joiner;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
-import com.tincery.starter.base.mgt.NodeInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

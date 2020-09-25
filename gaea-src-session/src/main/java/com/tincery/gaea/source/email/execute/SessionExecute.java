@@ -82,7 +82,6 @@ public class SessionExecute extends AbstractCollectExecute<SessionProperties, Se
 
     @Override
     public void init() {
-        super.init();
         // loadGroup();
         offLineIfNecessary();
         registryRules(passrule);

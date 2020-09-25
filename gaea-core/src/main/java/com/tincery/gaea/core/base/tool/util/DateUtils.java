@@ -1,7 +1,7 @@
 package com.tincery.gaea.core.base.tool.util;
 
 
-import com.tincery.starter.exception.AnalysisException;
+import com.tincery.gaea.core.base.exception.AnalysisException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

@@ -2,9 +2,9 @@ package com.tincery.gaea.core.base.component.support;
 
 
 import com.tincery.gaea.api.base.ApplicationInformationBO;
+import com.tincery.gaea.core.base.exception.InitException;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.starter.base.InitializationRequired;
-import com.tincery.starter.exception.InitException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;

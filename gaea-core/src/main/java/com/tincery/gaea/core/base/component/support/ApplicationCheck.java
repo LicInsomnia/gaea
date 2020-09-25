@@ -4,11 +4,11 @@ package com.tincery.gaea.core.base.component.support;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.AppRuleDao;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.LevelDomainUtils;
 import com.tincery.starter.base.InitializationRequired;
-import com.tincery.starter.base.mgt.NodeInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -90,7 +90,7 @@ public class ApplicationCheck implements InitializationRequired {
 
     @Override
     public void init() {
-        String encFilePath = NodeInfo.getTinceryHome() + "/conf/systemRule/apprule.enc";
+        String encFilePath = NodeInfo.getNodeHome() + "/conf/systemRule/apprule.enc";
         File file = new File(encFilePath);
         if (file.exists()) {
             try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(encFilePath))) {

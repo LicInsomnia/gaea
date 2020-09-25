@@ -2,6 +2,7 @@ package com.tincery.gaea.core.src;
 
 
 import com.tincery.gaea.api.src.AbstractSrcData;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.CerChain;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
@@ -9,7 +10,6 @@ import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
-import com.tincery.starter.base.mgt.NodeInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -109,11 +109,11 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
 
 
     protected void outputMetaData(String line) {
-        try (FileWriter fileWriter = new FileWriter(this.alarmPath + this.category + "_" + System.currentTimeMillis() + ".json")) {
+        try (FileWriter fileWriter = new FileWriter(NodeInfo.getAlarmData() + NodeInfo.getCategory() + "_" + System.currentTimeMillis() + ".json")) {
             fileWriter.write(line);
             this.metaCount++;
             if (this.metaCount >= this.maxLine()) {
-                fileWriter.set(this.tmpPath + this.category + "_" + System.currentTimeMillis() + ".json");
+                fileWriter.set(NodeInfo.getTempData() + NodeInfo.getCategory() + "_" + System.currentTimeMillis() + ".json");
                 this.metaCount = 0;
             }
         }
@@ -145,8 +145,8 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
      *  如果需要告警 请在相应模块中重写此方法
      **/
     protected void outputAlarm() {
-        AlarmRule.writeAlarm(this.alarmPath, "", this.maxLine());
-        AlarmRule.writeEvent(this.eventPath, "", this.maxLine());
+        AlarmRule.writeAlarm(NodeInfo.getAlarmData(), "", this.maxLine());
+        AlarmRule.writeEvent(NodeInfo.getEventData(), "", this.maxLine());
     }
 
     protected void outputCerChain() {
@@ -154,7 +154,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
             return;
         }
         StringBuilder path = new StringBuilder();
-        path.append(NodeInfo.getTinceryDataPath()).append("cerchain/").append(this.cerChain.getSubPath());
+        path.append(NodeInfo.getCommonData()).append("cerchain/").append(this.cerChain.getSubPath());
         FileUtils.checkPath(path.toString());
         this.cerChain.output(path.toString());
         this.cerChain.clear();
@@ -197,7 +197,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
             // 过滤过滤
             return;
         }
-        String category = this.category;
+        String category = NodeInfo.getCategory();
         if (data.getDownByte() == 0) {
             category += "_down_payload_zero";
         }
@@ -225,7 +225,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
      **/
     protected void bakFile(File file) {
         if (isBak()) {
-            String bakPathDir = this.bakPath;
+            String bakPathDir = NodeInfo.getBackData();
             FileUtils.checkPath(bakPathDir);
             String srcPath = file.getAbsolutePath();
             bakPathDir += file.getName();
@@ -259,7 +259,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
             return;
         }
         long st = System.currentTimeMillis();
-        String dataPath = NodeInfo.getTinceryDataPath() + category + "/";
+        String dataPath = NodeInfo.getCommonData() + NodeInfo.getCategory() + "/";
         this.checkFiles(dataPath, this.minTime, this.maxTime);
         for (Map.Entry<String, List<String>> entry : this.csvMap.entrySet()) {
             String filePath = dataPath + entry.getKey();

@@ -9,13 +9,13 @@ import com.maxmind.geoip2.model.ConnectionTypeResponse;
 import com.maxmind.geoip2.model.DomainResponse;
 import com.maxmind.geoip2.model.IspResponse;
 import com.tincery.gaea.api.base.Location;
+import com.tincery.gaea.core.base.component.config.CommonConfig;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
+import com.tincery.gaea.core.base.exception.InitException;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.NetUtil;
 import com.tincery.starter.base.InitializationRequired;
-import com.tincery.starter.base.mgt.NodeInfo;
-import com.tincery.starter.exception.InitException;
-import com.tincery.starter.mgt.ConstManager;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +48,8 @@ public class IpSelector implements InitializationRequired {
 
     @Override
     public void init() {
-        String path = NodeInfo.getTinceryHome() + "/conf/geo2ip/";
-        this.dfLocation =  new JSONObject((Map)ConstManager.getCommonConfig("dflocation")).toJavaObject(Location.class);
+        String path = NodeInfo.getNodeHome() + "/conf/geo2ip/";
+        this.dfLocation =  new JSONObject((Map) CommonConfig.get("dflocation")).toJavaObject(Location.class);
         File regionDb = new File(path + "/GeoIP2-City.mmdb");
         File connectionDb = new File(path + "/GeoIP2-Connection-Type.mmdb");
         File domainDb = new File(path + "/GeoIP2-Domain.mmdb");

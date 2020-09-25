@@ -15,6 +15,7 @@
         <module>gaea-src-email</module>
         <module>gaea-src-impsession</module>
         <module>gaea-reorganization-important</module>
+        <module>gaea-src-controller</module>
     </modules>
 
 

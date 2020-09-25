@@ -3,7 +3,8 @@ package com.tincery.gaea.source.email.execute;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.src.EmailData;
-import com.tincery.gaea.core.src.AbstractCollectExecute;
+import com.tincery.gaea.core.base.component.config.CommonConfig;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.CerChain;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
@@ -12,9 +13,8 @@ import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
+import com.tincery.gaea.core.src.AbstractCollectExecute;
 import com.tincery.gaea.source.email.config.property.EmailProperties;
-import com.tincery.starter.base.mgt.NodeInfo;
-import com.tincery.starter.mgt.ConstManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -124,13 +124,12 @@ public class EmailExecute extends AbstractCollectExecute<EmailProperties, EmailD
 
     @Override
     public void init() {
-        super.init();
         // TODO: 2020/9/2  初始化有一个IP内容
         offLineIfNecessary();
         RuleRegistry ruleRegistry = RuleRegistry.getInstance();
         ruleRegistry.putRule(passRule);
         // 如果这里需要告警 才加入  ruleRegistry.putRule(alarmRule);
-        JSONObject emailInfo = (JSONObject) JSONObject.toJSON(ConstManager.getCommonConfig("email"));
+        JSONObject emailInfo = (JSONObject) JSONObject.toJSON(CommonConfig.get("email"));
         this.emailSuffixAlarm = emailInfo.getBoolean("activity");
         // TODO: 2020/9/11 如果emailSuffixAlarm这个为true 还需要加载一个信息
     }
