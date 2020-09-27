@@ -2,13 +2,13 @@ server:
   port: 11234
 mongodb:
   pro:
-    host: 172.16.1.103,172.16.1.120,172.16.1.111
+    host: 172.16.1.103,172.16.1.111
     port: 23000
     user: tincery
     password: Txy123.com
     database: tincery_pro
   sys:
-    host: 172.16.1.103,172.16.1.120,172.16.1.111
+    host: 172.16.1.103,172.16.1.111
     port: 23000
     user: tincery
     password: Txy123.com
@@ -28,4 +28,6 @@ node:
 spring:
   application:
     name: gaea-src-session
-
+logging:
+  level:
+    root: info
