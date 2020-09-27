@@ -87,6 +87,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
     @Override
     public void execute() {
         List<File> fileList = this.getTxtFiles();
+        System.out.println("拿到了"+fileList.size()+"个文件");
         for (File file : fileList) {
             long startTime = Instant.now().toEpochMilli();
             List<String> lines = FileUtils.readLine(file);

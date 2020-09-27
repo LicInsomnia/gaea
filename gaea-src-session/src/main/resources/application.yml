@@ -24,10 +24,8 @@ category: session
 node:
   home: /Users/gongxuanzhang/workSpace/support
   category: session
-  name: 我来康康我叫什么sr
-spring:
-  application:
-    name: gaea-src-session
+  name: test
 logging:
   level:
     root: info
+

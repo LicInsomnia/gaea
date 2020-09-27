@@ -11,7 +11,7 @@
     <springProperty scope="context" name="server_port" source="server.port"/>
     <springProperty scope="context" name="nodeName" source="node.name"/>
     <springProperty scope="context" name="logLevel" source="logging.level.root"/>
-    <springProperty scope="context" name="logFilePath" source="logging.file.path"/>
+    <springProperty scope="context" name="nodeHome" source="node.home"/>
     <springProperty scope="context" name="category" source="node.category"/>
 
     <!--龙湖标准 pattern layout-->
@@ -23,7 +23,7 @@
               value="${nodeName}|%d{ISO8601}|%p|%t|%.40logger{39}.%method:%L|%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
 
     <!-- 输出文件路径 -->
-    <property name="FILE_PATH" value="${logFilePath}"/>
+    <property name="FILE_PATH" value="${nodeHome}"/>
     <property name="OPEN_FILE_PATH" value="${FILE_PATH}/${category}"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
