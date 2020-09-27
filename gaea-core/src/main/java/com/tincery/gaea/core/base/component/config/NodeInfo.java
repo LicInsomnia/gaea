@@ -50,8 +50,6 @@ public class NodeInfo {
     private static volatile boolean lock = false;
 
 
-    private static final String USER_HOME = System.getProperty("user.home");
-
     /**
      * AES加密解密密码
      */
@@ -63,7 +61,8 @@ public class NodeInfo {
             throw new InitException("加载category失败  请检查[node.category]配置");
         }
         if (StringUtils.isEmpty(nodeHome)) {
-            log.warn("加载nodeHome失败,将用用户目录替代[{}]", USER_HOME);
+            log.error("加载nodeHome失败");
+            throw new InitException("加载nodeHome失败,请检查[node.home]配置");
         }
         if (StringUtils.isEmpty(nodeName)) {
             nodeName = UUID.randomUUID().toString();
