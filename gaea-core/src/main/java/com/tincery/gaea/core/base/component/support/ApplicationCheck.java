@@ -88,7 +88,7 @@ public class ApplicationCheck implements InitializationRequired {
 
     @Override
     public void init() {
-        String encFilePath = NodeInfo.getNodeHome() + "/conf/systemRule/apprule.enc";
+        String encFilePath = NodeInfo.getConfig() + "/systemRule/apprule.enc";
         File file = new File(encFilePath);
         if (file.exists()) {
             try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(encFilePath))) {

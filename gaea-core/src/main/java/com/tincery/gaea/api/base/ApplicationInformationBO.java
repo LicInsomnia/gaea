@@ -31,32 +31,13 @@ public class ApplicationInformationBO extends SimpleBaseDO {
 
     private List<String> specialTag;
 
-    private Integer enc;
+    @Field (name = "isenc")
+    private Boolean enc;
 
     private String proName;
 
     private Boolean ignore;
 
-    /***这是一个属性的参照物 最终会归到enc这个属性上面  注解内容详情看spring-data-mongodb官网*/
-    @Field("isenc")
-    @AccessType(AccessType.Type.PROPERTY)
-    private Boolean encConsult;
-
-    /****
-     * 这个方法是给spring data 提供的
-     * @author gxz
-     **/
-    public ApplicationInformationBO setEncConsult(Boolean encConsult) {
-        this.encConsult = encConsult;
-        if (encConsult == null) {
-            this.enc = -1;
-            this.encConsult = false;
-        } else {
-            this.enc = encConsult ? 1 : 0;
-        }
-
-        return this;
-    }
 
 
 }

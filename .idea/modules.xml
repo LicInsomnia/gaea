@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gaea.iml" filepath="$PROJECT_DIR$/gaea.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-core/gaea-core.iml" filepath="$PROJECT_DIR$/gaea-core/gaea-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-dw-reorganization/gaea-dw-reorganization.iml" filepath="$PROJECT_DIR$/gaea-dw-reorganization/gaea-dw-reorganization.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-session/gaea-src.iml" filepath="$PROJECT_DIR$/gaea-src-session/gaea-src.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-controller/gaea-src-controller.iml" filepath="$PROJECT_DIR$/gaea-src-controller/gaea-src-controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-email/gaea-src-email.iml" filepath="$PROJECT_DIR$/gaea-src-email/gaea-src-email.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-flow/gaea-src-flow.iml" filepath="$PROJECT_DIR$/gaea-src-flow/gaea-src-flow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-impsession/gaea-src-impsession.iml" filepath="$PROJECT_DIR$/gaea-src-impsession/gaea-src-impsession.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-isakmp/gaea-src-isakmp.iml" filepath="$PROJECT_DIR$/gaea-src-isakmp/gaea-src-isakmp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-openvpn/gaea-src-openvpn.iml" filepath="$PROJECT_DIR$/gaea-src-openvpn/gaea-src-openvpn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-qq/gaea-src-qq.iml" filepath="$PROJECT_DIR$/gaea-src-qq/gaea-src-qq.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-ssh/gaea-src-ssh.iml" filepath="$PROJECT_DIR$/gaea-src-ssh/gaea-src-ssh.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-ssl/gaea-src-ssl.iml" filepath="$PROJECT_DIR$/gaea-src-ssl/gaea-src-ssl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gaea-src-wechat/gaea-src-wechat.iml" filepath="$PROJECT_DIR$/gaea-src-wechat/gaea-src-wechat.iml" />
+    </modules>
+  </component>
+</project>

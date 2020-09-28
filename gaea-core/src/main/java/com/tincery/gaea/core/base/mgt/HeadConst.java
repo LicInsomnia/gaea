@@ -142,7 +142,6 @@ public class HeadConst {
 
 
     public static class CSV {
-
         /* COMMON */
         public static String GROUP_NAME = "groupname";
         public static String TARGET_NAME = "targetname";
@@ -172,6 +171,8 @@ public class HeadConst {
         public static String DOWN_BYTE = "downbyte";
         public static String DATA_TYPE = "datatype";
         public static String IMSI = "imsi";
+        public static String IMEI = "imei";
+        public static String MSISDN = "msisdn";
         public static String CASE_TAGS = "casetags";
         /* TCP */
         public static String DURATION = "duration";
@@ -212,6 +213,77 @@ public class HeadConst {
         public static String HAND_SHAKE = "handshake";
         public static String MALFORMED_UP_PAYLOAD = "malformed_uppayload";
         public static String MALFORMED_DOWN_PAYLOAD = "malformed_downpayload";
+
+    }
+
+    public static class PRONAME {
+        public static String SESSION = "session";
+        public static String SSL = "ssl";
+        public static String DNS = "dns";
+        public static String HTTP = "http";
+        public static String EMAIL = "email";
+        public static String SSH = "ssh";
+        public static String ISAKMP = "isakmp";
+        public static String FTP_TELNET = "ftp_telnet";
+        public static String OTHER = "other";
+    }
+
+    public static class MONGO {
+
+        /* ABSTRUCT_DATAWAREHOUSE_SESSION_EXTENSION */
+        public static String UP_PAYLOAD_STRING = "upPayload";
+        public static String DOWN_PAYLOAD_STRING = "downPayload";
+        public static String MALFORMED_UPPAYLOAD = "malformedUpPayload";
+        public static String MALFORMED_DOWNPAYLOAD = "malformedDownPayload";
+        public static String VERSION_STRING = "version";
+        public static String CIPHER_SUITES_STRING = "cipherSuites";
+        public static String HAND_SHAKE_STRING = "handShake";
+        public static String CERCHAIN_STRING = "cerChain";
+        public static String CLIENT_CERCHAIN_STRING = "clientCerChain";
+        public static String IS_DOUBLE_STRING = "isDouble";
+        public static String CLIENT_CIPHER_SUITE_STRING = "clientCipherSuite";
+        public static String SERVER_NAME_STRING = "serverName";
+        public static String RANDOM_STRING = "random";
+        /* DNS */
+        public static String DOMAIN_STRING = "domain";
+        public static String IPS = "ips";
+        /* HTTP */
+        public static String HOST_STRING = "host";
+        public static String PARAMETER_STRING = "parameter";
+        public static String TLD_STRING = "tld";
+        public static String HEADERS_LIST = "headers";
+        public static String URL_ROOT_STRING = "urlRoot";
+        public static String USER_AGENT_STRING = "userAgent";
+        /* EMAIL */
+        public static String EMAIL_KEY_STRING = "key";
+        public static String MESSAGE_ID_STRING = "messageId";
+        public static String RCPT_STRING = "rcpt";
+        public static String SUBJECT_STRING = "subject";
+        public static String RECEIVED_STRING = "received";
+        public static String CHARSET_STRING = "charset";
+        public static String CHARSET_OUT_STRING = "charsetOut";
+        public static String CONTENT_STRING = "content";
+        public static String CONTENT_TXT_STRING = "contentTxt";
+        public static String CONTENT_LENGTH_STRING = "contentLength";
+        public static String DATE_STRING = "date";
+        public static String FROM_STRING = "from";
+        public static String TO_STRING = "to";
+        public static String CC_STRING = "cc";
+        public static String BCC_STRING = "bcc";
+        public static String MAIL_ADDRESS_STRING = "mailAddress";
+        public static String ATTACH_LIST = "attach";
+        public static String ATTACH_NUM_STRING = "attachNum";
+        public static String PRIORITY_STRING = "priority";
+        public static String DOMAIN_TAG_STRING = "domainTag";
+        public static String FILENAME_STRING = "fileName";
+        public static String MAIL_LENGTH_STRING = "mailLength";
+        public static String TRANSMITTER_STRING = "transmitter";
+        public static String LANGUAGE_LIST = "language";
+        public static String IS_READ_BOOLEAN = "isread";
+        /* CER */
+        public static String CER_DOCUMENT = "cer";
+        public static String SUBJECT_CN_STRING = "subject_cn";
+        public static String SPI_STRING = "spi";
 
     }
 

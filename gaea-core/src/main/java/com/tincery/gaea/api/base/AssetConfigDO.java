@@ -22,8 +22,6 @@ public class AssetConfigDO extends SimpleBaseDO {
     private static final String RANGE_TYPE = "range";
     private static final String UNIQUE_TYPE = "unique";
 
-
-
     private AlertConfig alertConfig;
     @Id
     private String id;

@@ -163,13 +163,13 @@ public class CsvReader {
         return csvRow;
     }
 
-    public CsvRow nextRow(Class<? extends CsvFilter> clazz) throws IllegalAccessException {
+    public CsvRow nextRow(Class<? extends CsvFilter> clazz)  {
         if (this.csvFilterList == null) {
-            throw new IllegalAccessException(clazz + "此过滤器没注册");
+            throw new NullPointerException(clazz + "此过滤器没注册");
         }
         Queue<CsvRow> queue = isBlock() ? blockFilterRows.get(clazz) : filterRows.get(clazz);
         if (queue == null) {
-            throw new IllegalAccessException(clazz + "此过滤器没注册");
+            throw new NullPointerException(clazz + "此过滤器没注册");
         }
         while (queue.isEmpty()) {
             CsvRow csvRow = this.nextRow();

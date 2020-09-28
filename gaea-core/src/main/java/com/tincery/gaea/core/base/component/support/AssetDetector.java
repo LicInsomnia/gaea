@@ -49,6 +49,15 @@ public class AssetDetector implements InitializationRequired {
         return false;
     }
 
+    public boolean isAsset(String... ips) {
+        for (String ip : ips) {
+            if (checkAssetIp(ip)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public AssetConfigDO getAsset(String ip){
         if (this.uniqueAssetMap.containsKey(ip)) {
             return this.uniqueAssetMap.get(ip);

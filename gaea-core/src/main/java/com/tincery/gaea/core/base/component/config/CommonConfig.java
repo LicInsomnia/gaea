@@ -21,8 +21,6 @@ public class CommonConfig {
     public static Object get(String key) {
         return COMMON_CONFIG.get(key);
     }
-
-
     /*****
      * 把CommonConfig 和RunConfig 合并内容
      * 在已经加载完commonConfig后使用

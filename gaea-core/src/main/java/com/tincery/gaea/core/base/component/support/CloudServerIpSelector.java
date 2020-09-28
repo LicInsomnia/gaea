@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CloudServerIpSelector implements InitializationRequired {
 
+    static int a = 0;
     private CloudServerIp[] services;
 
     @Autowired
@@ -82,6 +83,7 @@ public class CloudServerIpSelector implements InitializationRequired {
         @Override
         public int compareTo(CloudServerIp o) {
             return compare(o.ip);
+
         }
         public int compare(long ipN){
             return Long.compareUnsigned(this.ip, ipN >> this.mask << this.mask);

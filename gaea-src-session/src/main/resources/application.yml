@@ -2,17 +2,17 @@ server:
   port: 11234
 mongodb:
   pro:
-    host: 172.16.1.103,172.16.1.111
-    port: 23000
+    host: 172.16.1.102
+    port: 27017
     user: tincery
     password: Txy123.com
-    database: tincery_pro
+    database: simulation_pro
   sys:
-    host: 172.16.1.103,172.16.1.111
-    port: 23000
+    host: 172.16.1.102
+    port: 27017
     user: tincery
     password: Txy123.com
-    database: tincery_sys
+    database: simulation_sys
 src:
   ssl:
     max-line: 20000
@@ -22,7 +22,9 @@ src:
 category: session
 
 node:
-  home: /Users/gongxuanzhang/workSpace/support
+  home: D:/gaea-bin
+  src-path: D:/data/src
+  data-path: D:/data
   category: session
   name: test
 logging:

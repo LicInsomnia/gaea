@@ -8,6 +8,7 @@ import com.tincery.starter.base.InitializationRequired;
 
 public interface Execute extends InitializationRequired {
 
+    int CPU = Runtime.getRuntime().availableProcessors();
     /*****
      * 执行器核心方法 具体执行内容
      * @author gxz

@@ -19,6 +19,10 @@ public class EnvInit implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final String HOME = "node.home";
 
+    private static final String SRC_PATH = "node.src-path";
+
+    private static final String DATA_PATH = "node.data-path";
+
     private static final String CATEGORY = "node.category";
 
 
@@ -30,7 +34,9 @@ public class EnvInit implements ApplicationListener<ContextRefreshedEvent> {
         String category = environment.getProperty(CATEGORY);
         String home = environment.getProperty(HOME);
         String name = environment.getProperty(NAME);
-        NodeInfo.init(name,category,home);
+        String srcPath = environment.getProperty(SRC_PATH);
+        String dataPath = environment.getProperty(DATA_PATH);
+        NodeInfo.init(name,category,home,srcPath,dataPath);
     }
 
 }

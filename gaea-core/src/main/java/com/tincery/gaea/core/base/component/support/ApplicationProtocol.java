@@ -35,12 +35,8 @@ public class ApplicationProtocol implements InitializationRequired {
         return this.key2App;
     }
 
-    public final int isEnc(String key) {
-        if (this.app2IsEnc.containsKey(key)) {
-            return this.app2IsEnc.get(key) ? 1 : 0;
-        } else {
-            return -1;
-        }
+    public final Boolean isEnc(String key) {
+        return this.app2IsEnc.getOrDefault(key, null);
     }
 
     public ApplicationInformationBO getApplication(String key) {
@@ -67,11 +63,11 @@ public class ApplicationProtocol implements InitializationRequired {
     public void init() {
         log.info("开始加载application protocol ...");
         List<ApplicationInformationBO> all = sysMongoTemplate.findAll(ApplicationInformationBO.class,"application_protocol");
-        for (ApplicationInformationBO applicationProtocolDO : all) {
-            this.key2App.put(applicationProtocolDO.getId(), applicationProtocolDO);
-            String proName = applicationProtocolDO.getTitle();
+        for (ApplicationInformationBO applicationInformationBO : all) {
+            this.key2App.put(applicationInformationBO.getId(), applicationInformationBO);
+            String proName = applicationInformationBO.getTitle();
             if (StringUtils.isNotEmpty(proName)) {
-                this.app2IsEnc.put(proName, applicationProtocolDO.getEncConsult());
+                this.app2IsEnc.put(proName, applicationInformationBO.getEnc());
             }
         }
         if (key2App.isEmpty()) {

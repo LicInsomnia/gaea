@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Set;
+
 /**
  * 基础元数据类
  *
@@ -85,6 +87,8 @@ public abstract class AbstractMetaData extends GaeaData {
     protected Boolean foreign;
 
     protected String eventData;
+
+    protected Set<String> caseTags;
 
     public String getDateSetFileName(String category) {
         return FileUtils.getCsvDataFile(category, this.capTime, NodeInfo.getNodeName());

@@ -100,7 +100,7 @@ public class IpChecker implements InitializationRequired {
 
     @Override
     public void init() {
-        List<String> domesticIp =  FileUtils.readLine(NodeInfo.getNodeHome()+"/conf/geo2ip/ChinaIPList.db");
+        List<String> domesticIp =  FileUtils.readLine(NodeInfo.getConfig() + "/geo2ip/ChinaIPList.db");
         for (String ip : domesticIp) {
             this.ChinaIps.add(NetUtil.getRange(ip));
         }

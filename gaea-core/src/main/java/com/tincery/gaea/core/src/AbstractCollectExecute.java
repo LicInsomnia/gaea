@@ -72,7 +72,6 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
 
 
     protected CerChain cerChain;
-
     /****
      * 每个执行器都有自己的csv表头
      * @author gxz
@@ -109,16 +108,16 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
     }
 
 
-    protected void outputMetaData(String line) {
-        try (FileWriter fileWriter = new FileWriter(NodeInfo.getAlarmData() + NodeInfo.getCategory() + "_" + System.currentTimeMillis() + ".json")) {
-            fileWriter.write(line);
-            this.metaCount++;
-            if (this.metaCount >= this.maxLine()) {
-                fileWriter.set(NodeInfo.getTempData() + NodeInfo.getCategory() + "_" + System.currentTimeMillis() + ".json");
-                this.metaCount = 0;
-            }
-        }
-    }
+//    protected void outputMetaData(String line) {
+//        try (FileWriter fileWriter = new FileWriter(NodeInfo.getAlarmData() + NodeInfo.getCategory() + "_" + System.currentTimeMillis() + ".json")) {
+//            fileWriter.write(line);
+//            this.metaCount++;
+//            if (this.metaCount >= this.maxLine()) {
+//                fileWriter.set(NodeInfo.getCache() + NodeInfo.getCategory() + "_" + System.currentTimeMillis() + ".json");
+//                this.metaCount = 0;
+//            }
+//        }
+//    }
 
 
     /*****
@@ -146,7 +145,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
      *  如果需要告警 请在相应模块中重写此方法
      **/
     protected void outputAlarm() {
-        AlarmRule.writeAlarm(NodeInfo.getAlarmData(), "", this.maxLine());
+        AlarmRule.writeAlarm(NodeInfo.getAlarmMaterial(), "", this.maxLine());
         AlarmRule.writeEvent(NodeInfo.getEventData(), "", this.maxLine());
     }
 
@@ -154,10 +153,8 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
         if (this.cerChain == null || this.cerChain.isEmpty()) {
             return;
         }
-        StringBuilder path = new StringBuilder();
-        path.append(NodeInfo.getCommonData()).append("cerchain/").append(this.cerChain.getSubPath());
-        FileUtils.checkPath(path.toString());
-        this.cerChain.output(path.toString());
+        String path = NodeInfo.getDataWarehouseCustomPathByCategory("cerChain/") + this.cerChain.getSubPath();
+        this.cerChain.output(path);
         this.cerChain.clear();
     }
 
@@ -226,7 +223,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
      **/
     protected void bakFile(File file) {
         if (isBak()) {
-            String bakPathDir = NodeInfo.getBackData();
+            String bakPathDir = NodeInfo.getBak();
             FileUtils.checkPath(bakPathDir);
             String srcPath = file.getAbsolutePath();
             bakPathDir += file.getName();
@@ -260,7 +257,7 @@ public abstract class AbstractCollectExecute<P extends AbstractSrcProperties, M 
             return;
         }
         long st = System.currentTimeMillis();
-        String dataPath = NodeInfo.getCommonData() + NodeInfo.getCategory() + "/";
+        String dataPath = NodeInfo.getDataWarehouseCsvPathByCategory();
         this.checkFiles(dataPath, this.minTime, this.maxTime);
         for (Map.Entry<String, List<String>> entry : this.csvMap.entrySet()) {
             String filePath = dataPath + entry.getKey();
