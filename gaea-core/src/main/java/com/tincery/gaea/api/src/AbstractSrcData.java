@@ -99,15 +99,6 @@ public abstract class AbstractSrcData extends AbstractMetaData {
         return this;
     }
 
-
-    @Override
-    public AbstractMetaData setGroupName(String groupName) {
-        if (this.imp && null == this.groupName) {
-            this.groupName = groupName;
-        }
-        return this;
-    }
-
     @Override
     public String toCsv(char splitChar) {
         Set<String> caseTags = this.caseTags;

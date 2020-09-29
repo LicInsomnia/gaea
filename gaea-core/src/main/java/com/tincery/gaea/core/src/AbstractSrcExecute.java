@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author gxz gongxuanzhang@foxmail.com
- * src层执行器 抽象类
+ * @author gxz gongxuanzhang@foxmail.com src层执行器 抽象类
  **/
 @Getter
 @Slf4j
@@ -25,12 +24,11 @@ public abstract class AbstractSrcExecute<P extends AbstractSrcProperties> implem
     protected P properties;
 
 
-
     public abstract void setProperties(P properties);
 
 
     protected List<File> getTxtFiles() {
-        return getFiles(NodeInfo.getSrcData()+"/"+NodeInfo.getCategory()+"/",null,".txt");
+        return getFiles(NodeInfo.getSrcData() + "/" + NodeInfo.getCategory() + "/", null, ".txt");
     }
 
 
@@ -39,10 +37,9 @@ public abstract class AbstractSrcExecute<P extends AbstractSrcProperties> implem
      * @param contain   检索文件包含字段
      * @param extension 检索文件后缀
      * @return 文件列表(最大数量为this.maxFile, 默认按时间升序)
-     * @author Insomnia
-     * 获取目录下指定元数类型的文件
+     * @author Insomnia 获取目录下指定元数类型的文件
      */
-    public List<File> getFiles(String path, String contain, String extension){
+    public List<File> getFiles(String path, String contain, String extension) {
         List<File> fileList = FileUtils.searchFiles(path,
                 NodeInfo.getCategory(),
                 contain,
@@ -67,7 +64,7 @@ public abstract class AbstractSrcExecute<P extends AbstractSrcProperties> implem
         return properties.getMaxLine();
     }
 
-    public int maxFile(){
+    public int maxFile() {
         return properties.getMaxFile();
     }
 

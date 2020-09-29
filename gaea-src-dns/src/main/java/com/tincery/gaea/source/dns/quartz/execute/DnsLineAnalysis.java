@@ -1,14 +1,11 @@
 package com.tincery.gaea.source.dns.quartz.execute;
 
 
-import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.src.DnsData;
-import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.GroupGetter;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
-import com.tincery.gaea.core.base.tool.util.NumberUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.starter.base.util.NetworkUtil;
@@ -62,10 +59,10 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         dnsData.setProtocol(Integer.parseInt(elements[6]));
         dnsData.setClientMac(elements[0]);
         dnsData.setServerMac(elements[1]);
-        dnsData.setClientPort(Integer.parseInt(elements[2]));
-        dnsData.setServerPort(Integer.parseInt(elements[3]));
-        dnsData.setClientIp(NetworkUtil.arrangeIp(elements[4]));
-        dnsData.setServerIp(NetworkUtil.arrangeIp(elements[5]));
+        dnsData.setClientIp(NetworkUtil.arrangeIp(elements[2]));
+        dnsData.setServerIp(NetworkUtil.arrangeIp(elements[3]));
+        dnsData.setClientPort(Integer.parseInt(elements[4]));
+        dnsData.setServerPort(Integer.parseInt(elements[5]));
         dnsData.setProName("DNS");
         dnsData.setUpPkt(Long.parseLong(elements[7]));
         dnsData.setUpByte(Long.parseLong(elements[9]));
