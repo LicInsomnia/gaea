@@ -10,6 +10,7 @@ import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class IpChecker implements InitializationRequired {
         }
         if(this.ChinaIps.isEmpty()){
             log.error("ip加载失败");
-            throw new InitException("IP加载失败");
+           // throw new InitException("IP加载失败");
         }else{
             log.info("加载了{}IP",ChinaIps.size());
         }
