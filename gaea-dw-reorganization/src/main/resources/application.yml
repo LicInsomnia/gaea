@@ -24,7 +24,7 @@ node:
   name: insomnia
   src-path: D:/data/src
   data-path: D:/data
-  category: wocao
+  category: reorganization
 logging:
   level:
     root: info
