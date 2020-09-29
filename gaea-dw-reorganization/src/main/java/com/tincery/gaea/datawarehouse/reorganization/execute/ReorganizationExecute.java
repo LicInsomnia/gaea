@@ -10,7 +10,6 @@ import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.dw.AbstractDataWarehouseExecute;
-import com.tincery.gaea.core.dw.SessionFactory;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static com.tincery.gaea.core.base.tool.util.DateUtils.DAY;
 import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
@@ -31,7 +33,7 @@ import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
 public class ReorganizationExecute extends AbstractDataWarehouseExecute {
 
     private final AssetCsvFilter assetCsvFilter;
-    private final SessionFactory sessionFactory;
+    private final ReorganizationFactory reorganizationFactory;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private FileWriter impSessionFileWriter;
@@ -51,9 +53,9 @@ public class ReorganizationExecute extends AbstractDataWarehouseExecute {
     private static int impsessionCount = 0;
     private static int assetCount = 0;
 
-    public ReorganizationExecute(AssetCsvFilter assetCsvFilter, SessionFactory sessionFactory) {
+    public ReorganizationExecute(AssetCsvFilter assetCsvFilter, ReorganizationFactory reorganizationFactory) {
         this.assetCsvFilter = assetCsvFilter;
-        this.sessionFactory = sessionFactory;
+        this.reorganizationFactory = reorganizationFactory;
     }
 
     @Override
@@ -69,6 +71,7 @@ public class ReorganizationExecute extends AbstractDataWarehouseExecute {
         );
         impSessionFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("impsession") + "/impsession_" + System.currentTimeMillis() + ".json");
         assetFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
+        this.reorganizationFactory.sessionFactoryInit();
     }
 
     @Override
@@ -162,7 +165,7 @@ public class ReorganizationExecute extends AbstractDataWarehouseExecute {
             CsvRow csvRow;
             while ((csvRow = csvReader.nextRow(ImpSessionCsvFilter.class)) != null) {
                 try {
-                    AbstractDataWarehouseData abstractDataWarehouseData = sessionFactory.create(sessionCategory, csvRow);
+                    AbstractDataWarehouseData abstractDataWarehouseData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
                     impSessionFileWriter.write(JSONObject.toJSONString(abstractDataWarehouseData));
                     impsessionCount++;
                 } catch (Exception e) {
@@ -188,7 +191,7 @@ public class ReorganizationExecute extends AbstractDataWarehouseExecute {
             CsvRow csvRow;
             while ((csvRow = csvReader.nextRow(AssetCsvFilter.class)) != null) {
                 try {
-                    AbstractDataWarehouseData abstractDataWarehouseData = sessionFactory.create(sessionCategory, csvRow);
+                    AbstractDataWarehouseData abstractDataWarehouseData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
                     assetFileWriter.write(JSONObject.toJSONString(abstractDataWarehouseData));
                     assetCount++;
                 } catch (Exception e) {

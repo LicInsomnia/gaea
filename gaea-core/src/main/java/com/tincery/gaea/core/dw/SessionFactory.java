@@ -11,26 +11,26 @@ import com.tincery.gaea.core.base.component.support.DnsRequest;
 import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
-import com.tincery.starter.base.InitializationRequired;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
-public class SessionFactory implements InitializationRequired {
+public class SessionFactory {
 
     private final IpSelector ipSelector;
     private final CerSelector cerSelector;
     private final ApplicationProtocol applicationProtocol;
     private final DnsRequest dnsRequest;
-    private Map<String, List<String>> extensionKeyMap;
+    private final Map<String, List<String>> extensionKeyMap;
 
+    @SuppressWarnings("unchecked")
     public SessionFactory(IpSelector ipSelector, CerSelector cerSelector, ApplicationProtocol applicationProtocol, DnsRequest dnsRequest) {
         this.ipSelector = ipSelector;
         this.cerSelector = cerSelector;
         this.applicationProtocol = applicationProtocol;
         this.dnsRequest = dnsRequest;
+        Map<String, Object> configs = (Map<String, Object>) CommonConfig.get(NodeInfo.getCategory());
+        this.extensionKeyMap = (Map<String, List<String>>) configs.get("extensionkeys");
     }
 
     /**
@@ -347,13 +347,5 @@ public class SessionFactory implements InitializationRequired {
 //        this.extension.putAll(sessionUtils.extension);
 //        return 1;
 //    }
-
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void init() {
-        Map<String, Object> configs = (Map<String, Object>) CommonConfig.get(NodeInfo.getCategory());
-        this.extensionKeyMap = (Map<String, List<String>>) configs.get("extensionkeys");
-    }
 
 }

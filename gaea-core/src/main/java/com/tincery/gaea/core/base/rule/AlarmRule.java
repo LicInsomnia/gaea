@@ -157,7 +157,7 @@ public class AlarmRule extends BaseSimpleRule {
 
         /****
          * 你并不能阻止构造方法创建对象 所以我们在此处判断一下  如果不符合标准 就将activity置为false 在上层过滤掉
-         * @see AlarmRule#init()
+         * @see AlarmRule #init()
          **/
         public AlarmRuleChecker(SrcRuleDO srcRuleDO) {
             super(srcRuleDO);

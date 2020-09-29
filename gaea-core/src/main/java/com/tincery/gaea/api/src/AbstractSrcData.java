@@ -28,7 +28,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
     /** 是否将特殊会话的MAC地址字段转为外层五元组 */
     protected Boolean macOuter;
     /** 特殊不可控字段，含预留信息 */
-    protected Map<String, Set<Object>> specialElement;
+    protected Map<String, Set<Object>> extension;
 
 
     public void set5TupleAndFlow(String protocol, String serverMac, String clientMac,
