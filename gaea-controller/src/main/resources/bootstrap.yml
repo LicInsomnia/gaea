@@ -8,24 +8,6 @@ spring:
   application:
     name: gaea_controller
 
-  controller:
-    src:
-      model:
-        session:
-          execute: true
-          corn: 0/10 * * * * ?
-        ssl:
-          execute: true
-          corn: 0/10 * * * * ?
-        dns:
-          execute: true
-          corn: 0/10 * * * * ?
-        http:
-          execute: true
-          corn: 0/10 * * * * ?
-        impsession:
-          execute: true
-          corn: 0/10 * * * * ?
 
 
 
