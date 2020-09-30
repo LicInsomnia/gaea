@@ -3,7 +3,7 @@ package com.tincery.gaea.source.impsession.execute;
 import com.tincery.gaea.api.src.ImpSessionData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
-import com.tincery.gaea.source.impsession.config.property.ImpSessionProperties;
+import com.tincery.gaea.core.src.SrcProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +12,13 @@ import org.springframework.stereotype.Component;
  * @author gongxuanzhang
  */
 @Component
-public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionProperties, ImpSessionData> {
+public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
 
+
+    @Override
+    public void setProperties(SrcProperties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public String getHead() {
@@ -25,14 +30,6 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionProperties
     public void setAnalysis(ImpSessionLineAnalysis analysis) {
         this.analysis = analysis;
     }
-
-
-    @Override
-    @Autowired
-    public void setProperties(ImpSessionProperties properties) {
-        this.properties = properties;
-    }
-
 
     @Override
     public void init() {

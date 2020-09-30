@@ -20,7 +20,7 @@ public class Test {
 
     @org.junit.jupiter.api.Test
     public void aa() {
-        reorganizationExecute.receive();
+//        reorganizationExecute.receive();
     }
 
 

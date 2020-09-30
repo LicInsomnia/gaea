@@ -1,5 +1,5 @@
 
-package com.tincery.gaea.source.session.execute;
+package com.tincery.gaea.source.email.execute;
 
 
 import com.alibaba.fastjson.JSON;

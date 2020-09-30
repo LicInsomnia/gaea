@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.session.execute;
+package com.tincery.gaea.source.email.execute;
 
 
 import com.tincery.gaea.api.base.ApplicationInformationBO;

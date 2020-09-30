@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.session.execute;
+package com.tincery.gaea.source.dns.quartz.execute;
 
 import com.tincery.gaea.core.base.component.Receiver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener (destination = "src_session")
+    @JmsListener (destination = "src_dns")
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println("接收到了内容");
         receiver.receive(textMessage);

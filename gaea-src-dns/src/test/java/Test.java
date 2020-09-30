@@ -12,7 +12,7 @@ public class Test {
 
     @org.junit.jupiter.api.Test
     public void aa() {
-        dnsExecute.receive();
+//        dnsExecute.receive();
     }
 
 

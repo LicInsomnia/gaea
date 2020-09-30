@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.session.config.property;
+package com.tincery.gaea.source.email.config.property;
 
 import com.tincery.gaea.core.src.SrcProperties;
 import lombok.Getter;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-@ConfigurationProperties (SessionProperties.PREFIX)
+@ConfigurationProperties (EmailProperties.PREFIX)
 @Component
 @Getter
 @Setter
-public class SessionProperties extends SrcProperties {
+public class EmailProperties extends SrcProperties {
 
     /**
-     * Prefix of {@link SessionProperties}.
+     * Prefix of {@link EmailProperties}.
      */
-    public static final String PREFIX = "src.session";
+    public static final String PREFIX = "src.email";
 
 }

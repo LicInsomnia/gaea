@@ -163,9 +163,6 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             return;
         }
         String category = ApplicationInfo.getCategory();
-        if (data.getDownByte() == 0) {
-            category += "_down_payload_zero";
-        }
         String fileName = data.getDateSetFileName(category);
         this.appendCsvData(fileName,
                 data.toCsv(HeadConst.CSV_SEPARATOR),
