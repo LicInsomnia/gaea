@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.email;
+package com.tincery.gaea.source.session;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

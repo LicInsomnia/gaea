@@ -4,9 +4,11 @@ import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
+import com.tincery.gaea.core.base.tool.util.DateUtils;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -38,21 +40,26 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
 
     @Override
     public void receive(TextMessage textMessage) {
-        List<Pair<String, String>> csvPaths = getCsvDataSet();
-        long startTime = Instant.now().toEpochMilli();
-        log.info("开始解析CSV数据...");
-        for (Pair<String, String> csvPath : csvPaths) {
-            CsvReader csvReader;
-            try {
-                csvReader = CsvReader.builder().file(csvPath.getValue()).registerFilter(csvFilterList).build();
-            } catch (IllegalAccessException e) {
-                log.error("CSV读取失败");
-                continue;
+        try {
+            log.info("消息传递时间：{}；执行时间：{}", DateUtils.format(textMessage.getJMSTimestamp()), DateUtils.now());
+            List<Pair<String, String>> csvPaths = getCsvDataSet();
+            long startTime = Instant.now().toEpochMilli();
+            log.info("开始解析CSV数据...");
+            for (Pair<String, String> csvPath : csvPaths) {
+                CsvReader csvReader;
+                try {
+                    csvReader = CsvReader.builder().file(csvPath.getValue()).registerFilter(csvFilterList).build();
+                } catch (IllegalAccessException e) {
+                    log.error("CSV读取失败");
+                    continue;
+                }
+                analysis(csvPath.getKey(), csvReader);
             }
-            analysis(csvPath.getKey(), csvReader);
+            free();
+            log.info("共用时{}毫秒", (Instant.now().toEpochMilli() - startTime));
+        } catch (JMSException e) {
+            e.printStackTrace();
         }
-        free();
-        log.info("共用时{}毫秒", (Instant.now().toEpochMilli() - startTime));
     }
 
 

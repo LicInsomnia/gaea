@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.email.execute;
+package com.tincery.gaea.source.session.execute;
 
 import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
@@ -32,7 +32,7 @@ public class SessionReceiver extends AbstractSrcReceiver<SessionData> {
         this.analysis = analysis;
     }
 
-    @Autowired
+
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;

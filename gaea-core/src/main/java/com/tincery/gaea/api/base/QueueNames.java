@@ -1,6 +1,7 @@
-package com.tincer.gaea.producer.config;
+package com.tincery.gaea.api.base;
 
 public class QueueNames {
+
 
     public final static String SRC_SESSION = "src_session";
     public final static String SRC_IMPSESSION = "src_impsession";

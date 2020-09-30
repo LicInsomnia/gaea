@@ -1,13 +1,12 @@
 package com.tincer.gaea.producer.config;
 
+import com.tincery.gaea.api.base.QueueNames;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.jms.Queue;
 
-import static com.tincer.gaea.producer.config.QueueNames.SRC_IMPSESSION;
-import static com.tincer.gaea.producer.config.QueueNames.SRC_SESSION;
 
 
 /**
@@ -17,14 +16,14 @@ import static com.tincer.gaea.producer.config.QueueNames.SRC_SESSION;
 public class ActiveMqConfig {
 
 
-    @Bean (name = SRC_SESSION)
+    @Bean (name = QueueNames.SRC_SESSION)
     public Queue getSrcSessionQueue() {
-        return new ActiveMQQueue(SRC_SESSION);
+        return new ActiveMQQueue(QueueNames.SRC_SESSION);
     }
 
-    @Bean (name = SRC_IMPSESSION)
+    @Bean (name = QueueNames.SRC_IMPSESSION)
     public Queue getSrcImpSession() {
-        return new ActiveMQQueue(SRC_IMPSESSION);
+        return new ActiveMQQueue(QueueNames.SRC_IMPSESSION);
     }
 
 }

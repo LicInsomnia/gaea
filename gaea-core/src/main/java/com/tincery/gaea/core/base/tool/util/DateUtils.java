@@ -89,12 +89,17 @@ public class DateUtils {
         return swap(time1, time2, true);
     }
 
-    public static String format(long timeStamp, String formatRex){
+    public static String format(long timeStamp, String formatRex) {
         DateTimeFormatter dateTimeFormatter = FORMATTER_MAP.getOrDefault(formatRex, DateTimeFormatter.ofPattern(formatRex));
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStamp),DEFAULT_ZONE).format(dateTimeFormatter);
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStamp), DEFAULT_ZONE).format(dateTimeFormatter);
     }
 
-    public static long duration(long startTime){
+    public static String format(long timeStamp) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStamp), DEFAULT_ZONE).format(DEFAULT_DATE_PATTERN);
+    }
+
+
+    public static long duration(long startTime) {
         return Instant.now().toEpochMilli() - startTime;
     }
 

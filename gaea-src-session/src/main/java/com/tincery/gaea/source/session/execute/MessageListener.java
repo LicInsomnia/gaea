@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.email.execute;
+package com.tincery.gaea.source.session.execute;
 
 import com.tincery.gaea.api.base.QueueNames;
 import com.tincery.gaea.core.base.component.Receiver;
@@ -15,7 +15,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener (destination = QueueNames.SRC_EMAIL)
+    @JmsListener (destination = QueueNames.SRC_SESSION)
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println("接收到了内容");
         receiver.receive(textMessage);

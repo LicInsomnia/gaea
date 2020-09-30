@@ -1,6 +1,6 @@
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.component.config.CommonConfig;
-import com.tincery.gaea.source.email.GaeaSourceSessionApplication;
+import com.tincery.gaea.source.session.GaeaSourceSessionApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Instant;

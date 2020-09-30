@@ -65,6 +65,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
+        log.info("消息传递时间：{}；执行时间：{}", DateUtils.format(textMessage.getJMSTimestamp()), DateUtils.now());
         String text = textMessage.getText();
         File file = new File(text);
         analysisFile(file);
