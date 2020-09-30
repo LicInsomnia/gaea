@@ -7,7 +7,7 @@ import org.springframework.jms.annotation.EnableJms;
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-@SpringBootApplication()
+@SpringBootApplication
 @EnableJms
 public class ProductApplication {
     public static void main(String[] args) {

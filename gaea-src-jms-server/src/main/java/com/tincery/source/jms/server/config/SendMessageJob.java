@@ -21,6 +21,8 @@ public class SendMessageJob extends QuartzJobBean {
     @Autowired
     private Queue queue;
 
+
+
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         jmsMessagingTemplate.convertAndSend(queue, JSON.toJSON(new AssetConfigDO()).toString());

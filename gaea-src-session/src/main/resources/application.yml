@@ -9,9 +9,9 @@ spring:
     name: src_session
 
 node:
-  home: D:/gaea-bin
-  src-path: D:/data/src
-  data-path: D:/data
+  home: /Users/gongxuanzhang/workSpace/support
+  src-path: /Users/gongxuanzhang/workSpace/support/src
+  data-path: /Users/gongxuanzhang/workSpace/support
   name: test
 
 mongodb:
