@@ -1,6 +1,9 @@
 package com.tincery.gaea.producer.config;
 
+import com.tincery.gaea.producer.job.datawarehouse.ReorganizationJob;
 import org.quartz.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,12 +14,15 @@ import org.springframework.context.annotation.Configuration;
 public class DwQuartzConfig {
 
 
-    private final String cron = "0/10 * * * * ?";
+   @Autowired
+   private ControllerConfigProperties controllerConfigProperties;
 
+    private static final String PREFIX = "controller.model.datawarehouse";
 
     @Bean
-    public JobDetail dataWarehouseJob() {
-        return JobBuilder.newJob(DataWarehouseJob.class)
+    @ConditionalOnProperty(prefix = PREFIX,name = "reorganization")
+    public JobDetail reorganizationJob() {
+        return JobBuilder.newJob(ReorganizationJob.class)
                 .withIdentity("reorganizationJob")
                 .storeDurably()
                 .build();
@@ -24,10 +30,12 @@ public class DwQuartzConfig {
 
 
     @Bean
+    @ConditionalOnProperty(prefix = PREFIX,name = "reorganization")
     public Trigger dataWarehouseJobTrigger() {
+        String cron = controllerConfigProperties.getDatawarehouse().getReorganization();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
-                .forJob(dataWarehouseJob())
+                .forJob(reorganizationJob())
                 .withIdentity("reorganizationJob")
                 .withSchedule(cronScheduleBuilder)
                 .build();
