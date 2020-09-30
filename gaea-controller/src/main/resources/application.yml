@@ -25,10 +25,10 @@ src:
     bak: true
 
 node:
-  home: D:/gaea-bin
+  home: /Users/gongxuanzhang/workSpace/support
   name: insomnia
-  src-path: D:/data/src
-  data-path: D:/data
+  src-path: /Users/gongxuanzhang/workSpace/support/src
+  data-path: /Users/gongxuanzhang/workSpace/support
   category: producer
 logging:
   level:

@@ -1,6 +1,5 @@
 package com.tincer.gaea.producer.config;
 
-import com.tincery.gaea.api.base.QueueNames;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;

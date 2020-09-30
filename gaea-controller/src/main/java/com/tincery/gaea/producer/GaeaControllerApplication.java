@@ -1,4 +1,4 @@
-package com.tincer.gaea.producer;
+package com.tincery.gaea.producer;
 
 import com.tincery.gaea.GaeaCoreAutoConfiguration;
 import org.springframework.boot.SpringApplication;

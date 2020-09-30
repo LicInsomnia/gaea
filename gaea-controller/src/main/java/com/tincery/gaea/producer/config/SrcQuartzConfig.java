@@ -1,4 +1,4 @@
-package com.tincer.gaea.producer.config;
+package com.tincery.gaea.producer.config;
 
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;

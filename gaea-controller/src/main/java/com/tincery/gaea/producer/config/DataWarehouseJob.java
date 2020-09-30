@@ -1,4 +1,4 @@
-package com.tincer.gaea.producer.config;
+package com.tincery.gaea.producer.config;
 
 import com.tincery.gaea.api.base.QueueNames;
 import lombok.extern.slf4j.Slf4j;

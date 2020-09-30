@@ -1,4 +1,4 @@
-package com.tincer.gaea.producer.config;
+package com.tincery.gaea.producer.config;
 
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import lombok.Setter;

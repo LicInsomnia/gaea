@@ -1,4 +1,4 @@
-package com.tincer.gaea.producer.config;
+package com.tincery.gaea.producer.config;
 
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.annotation.Autowired;
