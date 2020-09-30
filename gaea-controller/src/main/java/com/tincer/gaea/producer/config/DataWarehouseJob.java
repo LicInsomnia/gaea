@@ -1,4 +1,4 @@
-package com.tincery.source.jms.server.config;
+package com.tincer.gaea.producer.config;
 
 import com.alibaba.fastjson.JSON;
 import com.tincery.gaea.api.base.AssetConfigDO;
@@ -15,7 +15,7 @@ import javax.jms.Queue;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Slf4j
-public class SendMessageJob extends QuartzJobBean {
+public class DataWarehouseJob extends QuartzJobBean {
     @Autowired
     private JmsMessagingTemplate jmsMessagingTemplate;
     @Autowired

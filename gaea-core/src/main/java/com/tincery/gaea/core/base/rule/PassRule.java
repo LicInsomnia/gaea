@@ -4,7 +4,7 @@ package com.tincery.gaea.core.base.rule;
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.api.base.SrcRuleDO;
 import com.tincery.gaea.api.src.AbstractSrcData;
-import com.tincery.gaea.core.base.component.config.NodeInfo;
+import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.dao.SrcRuleDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class PassRule extends BaseSimpleRule {
      */
     @Override
     public void init() {
-        List<SrcRuleDO> passData = srcRuleDao.getPassData(NodeInfo.getCategory());
+        List<SrcRuleDO> passData = srcRuleDao.getPassData(ApplicationInfo.getCategory());
         passData.forEach((passRule) -> {
             if (isSession()) {
                 setSessionRule(passRule);
@@ -61,7 +61,7 @@ public class PassRule extends BaseSimpleRule {
     }
 
     private boolean isSession() {
-        return "session".equals(NodeInfo.getCategory());
+        return "session".equals(ApplicationInfo.getCategory());
     }
 
     private void setOtherRule(SrcRuleDO srcRuleDO) {

@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
  **/
 @Component
 public class Client {
-    @JmsListener(destination = "aaa")
+    @JmsListener (destination = "src_session")
     public void receive(TextMessage textMessage) throws JMSException {
-        System.out.println(LocalDateTime.now()+"处理消息");
+        String text = textMessage.getText();
+        System.out.println("接收到的消息是[" + text + "]");
+        System.out.println(LocalDateTime.now() + "处理消息");
     }
 }

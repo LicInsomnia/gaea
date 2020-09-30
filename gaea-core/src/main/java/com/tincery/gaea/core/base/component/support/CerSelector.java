@@ -1,13 +1,10 @@
 package com.tincery.gaea.core.base.component.support;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCollection;
+import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.CommonConfig;
-import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.CertDao;
 import com.tincery.starter.base.InitializationRequired;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +22,7 @@ public class CerSelector implements InitializationRequired {
     @Autowired
     private CertDao certDao;
 
-    private Map<String, JSONObject> cache = new HashMap<>();
+    private final Map<String, JSONObject> cache = new HashMap<>();
     private String[] cerKeys;
 
     public Map<String, Object> selector(String sha1) {
@@ -44,7 +41,7 @@ public class CerSelector implements InitializationRequired {
 
     @Override
     public void init() {
-        Object object = CommonConfig.get(NodeInfo.getCategory());
+        Object object = CommonConfig.get(ApplicationInfo.getCategory());
         if (null == object) {
             return;
         }

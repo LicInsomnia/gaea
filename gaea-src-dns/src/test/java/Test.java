@@ -1,5 +1,5 @@
 import com.tincery.gaea.source.dns.quartz.GaeaSourceDnsApplication;
-import com.tincery.gaea.source.dns.quartz.execute.DnsExecute;
+import com.tincery.gaea.source.dns.quartz.execute.DnsReceiver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -7,12 +7,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class Test {
 
     @Autowired
-    private DnsExecute dnsExecute;
+    private DnsReceiver dnsExecute;
 
 
     @org.junit.jupiter.api.Test
     public void aa() {
-        dnsExecute.execute();
+        dnsExecute.receive();
     }
 
 

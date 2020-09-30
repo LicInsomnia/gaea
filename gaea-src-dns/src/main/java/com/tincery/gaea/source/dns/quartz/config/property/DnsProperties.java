@@ -1,7 +1,7 @@
 package com.tincery.gaea.source.dns.quartz.config.property;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tincery.gaea.core.src.AbstractSrcProperties;
+import com.tincery.gaea.core.src.SrcProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ import javax.annotation.PostConstruct;
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-@ConfigurationProperties(DnsProperties.PREFIX)
+@ConfigurationProperties (DnsProperties.PREFIX)
 @Component
 @Getter
 @Setter
-public class DnsProperties extends AbstractSrcProperties {
+public class DnsProperties extends SrcProperties {
 
     /**
      * Prefix of {@link DnsProperties}.

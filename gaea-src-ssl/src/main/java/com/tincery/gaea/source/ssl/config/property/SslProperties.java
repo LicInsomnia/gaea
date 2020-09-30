@@ -1,7 +1,7 @@
 package com.tincery.gaea.source.ssl.config.property;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tincery.gaea.core.src.AbstractSrcProperties;
+import com.tincery.gaea.core.src.SrcProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ import javax.annotation.PostConstruct;
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-@ConfigurationProperties(SslProperties.PREFIX)
+@ConfigurationProperties (SslProperties.PREFIX)
 @Component
 @Getter
 @Setter
-public class SslProperties extends AbstractSrcProperties {
+public class SslProperties extends SrcProperties {
 
     /**
      * Prefix of {@link SslProperties}.

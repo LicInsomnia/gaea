@@ -14,7 +14,6 @@
         <module>gaea-src-ssl</module>
         <module>gaea-src-email</module>
         <module>gaea-src-impsession</module>
-        <module>gaea-src-controller</module>
         <module>gaea-src-qq</module>
         <module>gaea-src-wechat</module>
         <module>gaea-src-ssh</module>
@@ -25,7 +24,7 @@
         <module>gaea-src-dns</module>
         <module>gaea-src-jms-server</module>
         <module>gaea-src-jms-client</module>
-        <module>gaea-send</module>
+        <module>gaea-controller</module>
     </modules>
 
 

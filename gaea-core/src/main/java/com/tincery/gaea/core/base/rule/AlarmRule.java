@@ -3,7 +3,7 @@ package com.tincery.gaea.core.base.rule;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.SrcRuleDO;
 import com.tincery.gaea.api.src.AbstractSrcData;
-import com.tincery.gaea.core.base.component.config.NodeInfo;
+import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.dao.SrcRuleDao;
@@ -136,7 +136,7 @@ public class AlarmRule extends BaseSimpleRule {
 
     @Override
     public void init() {
-        List<SrcRuleDO> alarmData = srcRuleDao.getAlarmData(NodeInfo.getCategory());
+        List<SrcRuleDO> alarmData = srcRuleDao.getAlarmData(ApplicationInfo.getCategory());
         alarmData.stream().map(AlarmRuleChecker::new).filter(AlarmRuleChecker::isActivity).forEach((rule) -> this.ruleCheckers.add(rule));
         if (this.ruleCheckers.isEmpty()) {
             log.warn("没有加载到alarm规则");
@@ -152,7 +152,7 @@ public class AlarmRule extends BaseSimpleRule {
 
         private boolean activity = true;
 
-        private SrcRuleDO source;
+        private final SrcRuleDO source;
 
 
         /****

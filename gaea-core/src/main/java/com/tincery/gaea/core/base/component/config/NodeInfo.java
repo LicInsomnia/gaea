@@ -4,13 +4,10 @@ import com.tincery.gaea.core.base.exception.InitException;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.constraintvalidators.bv.time.past.PastValidatorForReadableInstant;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author: gxz gongxuanzhang@foxmail.comHOME
@@ -56,20 +53,11 @@ public class NodeInfo {
         throw new RuntimeException();
     }
 
-
-    // 数据目录
-    private static String SRC_PATH;
-    private static String DATAWAREHOUSE_PATH;
-    private static String DATAWAREHOUSE_CSV_PATH;
-    private static String DATAWAREHOUSE_JSON_PATH;
-
-
     private static Map<String, String> NODE_MAP;
 
     private static final Map<String, String> GLOBAL_MAP = new HashMap<>();
 
     private static final String NODE_NAME = "nodeName";
-    private static final String CATEGORY = "category";
     private static final String HOME = "nodeHome";
     private static final String CONFIG = "configPath";
     private static final String DATA = "data";
@@ -89,11 +77,7 @@ public class NodeInfo {
      */
     public final static String AES_PASSWORD = "Insomnia!@23";
 
-    public static void init(String nodeName, String category, String home, String srcPath, String dataPath) {
-        if (StringUtils.isEmpty(category)) {
-            log.error("加载category失败");
-            throw new InitException("加载category失败  请检查[node.category]配置");
-        }
+    public static void init(String nodeName, String home, String srcPath, String dataPath) {
         if (StringUtils.isEmpty(home)) {
             log.error("加载home失败");
             throw new InitException("加载home失败,请检查[node.home]配置");
@@ -119,17 +103,7 @@ public class NodeInfo {
         String cachePath = dataPath + "/cache";
         FileUtils.checkPath(dataWarehouseCsvPath, dataWarehouseJsonPath, dataWarehouseCustomPath, bakPath, cachePath);
 
-//        String tmpPath = commonDataPath + "/tmp",
-//                dataWarehousePath = commonDataPath + "/data",
-//                eventPath = tmpPath + "/alarm_eventData",
-//                alarmPath = tmpPath + "/alarmmaterial",
-//                dataPath = dataWarehousePath + category,
-//                errorPath = commonDataPath + "/err/" + category,
-//                bakPath = commonDataPath + "/bak/" + category;
-//        FileUtils.checkPath(srcPath, tmpPath, eventPath, alarmPath, dataPath, errorPath, bakPath, dataWarehousePath);
-
         GLOBAL_MAP.put(NODE_NAME, nodeName);
-        GLOBAL_MAP.put(CATEGORY, category);
         GLOBAL_MAP.put(HOME, home);
         GLOBAL_MAP.put(CONFIG, configPath);
         GLOBAL_MAP.put(SRC_DATA, srcPath);
@@ -168,10 +142,6 @@ public class NodeInfo {
         return NODE_MAP.get(CONFIG);
     }
 
-    public static String getCategory() {
-        return NODE_MAP.get(CATEGORY);
-    }
-
     public static String getNodeName() {
         return NODE_MAP.get(NODE_NAME);
     }
@@ -198,10 +168,6 @@ public class NodeInfo {
         return path;
     }
 
-    public static String getDataWarehouseCsvPathByCategory() {
-        return getDataWarehouseCsvPathByCategory(getCategory());
-    }
-
     public static String getDataWarehouseJsonPath() {
         return NODE_MAP.get(DATA_WAREHOUSE_JSON);
     }
@@ -210,10 +176,6 @@ public class NodeInfo {
         String path = getDataWarehouseJsonPath() + "/" + category + "/";
         FileUtils.checkPath(path);
         return path;
-    }
-
-    public static String getDataWarehouseJsonPathByCategory() {
-        return getDataWarehouseJsonPathByCategory(getCategory());
     }
 
     public static String getDataWarehousePathCustom() {
@@ -226,10 +188,6 @@ public class NodeInfo {
         return path;
     }
 
-    public static String getDataWarehouseCustomPathByCategory() {
-        return getDataWarehouseCustomPathByCategory(getCategory());
-    }
-
     public static String getCache() {
         return NODE_MAP.get(CACHE);
     }
@@ -240,10 +198,6 @@ public class NodeInfo {
         return path;
     }
 
-    public static String getCacheByCategory() {
-        return getCacheByCategory(getCategory());
-    }
-
     public static String getBak() {
         return NODE_MAP.get(BAK);
     }
@@ -252,10 +206,6 @@ public class NodeInfo {
         String path = getBak() + "/" + category + "/";
         FileUtils.checkPath(path);
         return path;
-    }
-
-    public static String getBakByCategory() {
-        return getBakByCategory(getCategory());
     }
 
     public static String getAlarmMaterial() {

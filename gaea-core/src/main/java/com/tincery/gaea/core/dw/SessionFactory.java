@@ -3,8 +3,8 @@ package com.tincery.gaea.core.dw;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
+import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.CommonConfig;
-import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.CerSelector;
 import com.tincery.gaea.core.base.component.support.DnsRequest;
@@ -29,7 +29,7 @@ public class SessionFactory {
         this.cerSelector = cerSelector;
         this.applicationProtocol = applicationProtocol;
         this.dnsRequest = dnsRequest;
-        Map<String, Object> configs = (Map<String, Object>) CommonConfig.get(NodeInfo.getCategory());
+        Map<String, Object> configs = (Map<String, Object>) CommonConfig.get(ApplicationInfo.getCategory());
         this.extensionKeyMap = (Map<String, List<String>>) configs.get("extensionkeys");
     }
 

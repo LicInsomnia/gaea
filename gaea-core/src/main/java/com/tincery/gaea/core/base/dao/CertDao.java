@@ -1,10 +1,8 @@
 package com.tincery.gaea.core.base.dao;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tincery.gaea.api.base.AssetConfigDO;
 import com.tincery.gaea.api.base.CertDo;
 import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -13,7 +11,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
