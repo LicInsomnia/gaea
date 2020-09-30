@@ -6,4 +6,4 @@ spring:
         file-extension: yml
         name: gaea
   application:
-    name: src_asdf
+    name: dw_reorganization

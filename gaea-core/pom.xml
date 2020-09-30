@@ -15,6 +15,7 @@
     <artifactId>gaea-core</artifactId>
     <groupId>com.tincery</groupId>
     <version>5.0.0</version>
+    <packaging>jar</packaging>
     <description>gaea 核心库 包含API和 核心功能库</description>
 
 
@@ -96,5 +97,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
 </project>

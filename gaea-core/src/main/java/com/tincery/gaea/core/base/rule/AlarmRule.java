@@ -1,5 +1,6 @@
 package com.tincery.gaea.core.base.rule;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.SrcRuleDO;
 import com.tincery.gaea.api.src.AbstractSrcData;
@@ -10,7 +11,6 @@ import com.tincery.gaea.core.base.dao.SrcRuleDao;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.ObjectUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
-import com.tincery.starter.base.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,16 +60,31 @@ public class AlarmRule extends BaseSimpleRule {
         return alarmList.size();
     }
 
-    /*public synchronized void put(AlarmMaterialData alarmMaterialData, String keyStr) {
-        alarmMaterialData.setClientIpLocation(this.ipSelector);
-        alarmMaterialData.setServerIpLocation(this.ipSelector);
-        alarmMaterialData.setClientIpLocationOuter(this.ipSelector);
-        alarmMaterialData.setServerIpLocationOuter(this.ipSelector);
-        pushAlarm(alarmMaterialData, keyStr);
-    }*/
+    public static void writeAlarm(String path, String prefix, int maxLine) {
+        if (alarmList.size() == 0) {
+            System.out.println("No alarm information was detected...");
+            return;
+        }
+        String file = path + prefix + "alarm_" + System.currentTimeMillis() + ".json";
+        try (FileWriter alarmWriter = new FileWriter()) {
+            alarmWriter.set(file);
+            int count = 0;
+            for (AlarmMaterialData alarmMaterialData : alarmList.values()) {
+                alarmWriter.write(JSONObject.toJSONString(alarmMaterialData));
+                if (count++ >= maxLine) {
+                    alarmWriter.close();
+                    file = path + "alarm_" + System.currentTimeMillis() + ".json";
+                    alarmWriter.set(file);
+                    count = 0;
+                }
+            }
+            log.info("Out put " + alarmList.size() + " alarm materials...");
+            alarmList.clear();
+        }
+    }
 
     protected void pushAlarm(AlarmMaterialData alarmMaterialData, String keyStr) {
-        alarmMaterialData.setKey(keyStr, 0);
+        alarmMaterialData.setKey(keyStr);
         alarmMaterialData.setAsset(this.assetDetector);
         //根据自定义键值获取该条告警信息key
         String md5Key = alarmMaterialData.getKey();
@@ -83,31 +98,6 @@ public class AlarmRule extends BaseSimpleRule {
         } else {
             alarmList.put(md5Key, alarmMaterialData);
             eventDataList.add(alarmMaterialData.getEventData());
-        }
-    }
-
-
-    public static void writeAlarm(String path, String prefix, int maxLine) {
-        if (alarmList.size() == 0) {
-            System.out.println("No alarm information was detected...");
-            return;
-        }
-        String file = path + prefix + "alarm_" + System.currentTimeMillis() + ".json";
-        try (FileWriter alarmWriter = new FileWriter()) {
-            alarmWriter.set(file);
-            int count = 0;
-            for (AlarmMaterialData alarmMaterialData : alarmList.values()) {
-                Map<String, Object> alarm = alarmMaterialData.toDocument();
-                alarmWriter.write(JsonUtils.document2JsonStr(alarm));
-                if (count++ >= maxLine) {
-                    alarmWriter.close();
-                    file = path + "alarm_" + System.currentTimeMillis() + ".json";
-                    alarmWriter.set(file);
-                    count = 0;
-                }
-            }
-            log.info("Out put " + alarmList.size() + " alarm materials...");
-            alarmList.clear();
         }
     }
 

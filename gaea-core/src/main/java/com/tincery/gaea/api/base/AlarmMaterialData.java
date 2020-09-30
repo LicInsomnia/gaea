@@ -10,7 +10,10 @@ import lombok.Setter;
 import org.bson.Document;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 告警素材元数据类
@@ -252,30 +255,12 @@ public final class AlarmMaterialData {
         this.key = ToolUtils.getMD5(joinString);
     }
 
-    public void setKey(String keyStr, int mode) {
+    public final void setKey(String keyStr) {
         if (keyStr == null) {
             setKey();
-            return;
-        }
-
-        if (mode == 0) {
-            this.key = keyStr;
-        } else if (keyStr.contains(";")) {
-            Map<String, Object> map = this.toDocument();
-            StringBuilder key = new StringBuilder();
-            String[] keys = keyStr.split(";");
-            for (String buffer : keys) {
-                assert map != null;
-                key.append(map.getOrDefault(buffer, ";"));
-            }
-            this.key = ToolUtils.getMD5(key.toString());
         } else {
-            setKey();
+            this.key = keyStr;
         }
-    }
-
-    public final void setKey(String keyStr) {
-        this.setKey(keyStr, 0);
     }
 
 
@@ -303,11 +288,5 @@ public final class AlarmMaterialData {
         this.assetIp = singleAssetIp;
         this.assetInfo = new Document((JSONObject) JSONObject.toJSON(asset.getInfo()));
     }
-
-    public final Map<String, Object> toDocument() {
-        return (JSONObject) JSONObject.toJSON(this);
-    }
-
-
 
 }

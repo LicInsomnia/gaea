@@ -2,31 +2,22 @@ package com.tincery.gaea.datawarehouse.reorganization.execute;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
-import com.tincery.gaea.core.base.component.config.CommonConfig;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
-import com.tincery.gaea.core.base.tool.ToolUtils;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.dw.AbstractDataWarehouseReceiver;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import static com.tincery.gaea.core.base.tool.util.DateUtils.DAY;
-import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
 
 @Component
 @Slf4j
@@ -34,8 +25,6 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
 
     private final AssetCsvFilter assetCsvFilter;
     private final ReorganizationFactory reorganizationFactory;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
     private FileWriter impSessionFileWriter;
     private FileWriter assetFileWriter;
     private static final String[] sesssionCategorys = {
@@ -59,12 +48,7 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     }
 
     @Override
-    @SuppressWarnings ("unchecked")
     public void init() {
-        Map<String, Object> reorganization = (Map<String, Object>) CommonConfig.get("reorganization");
-        this.startTime = DateUtils.Date2LocalDateTime((Date) reorganization.get("starttime"));
-        Integer recolltime = (Integer) reorganization.get("recolltime");
-        this.endTime = startTime.plusMinutes(recolltime);
         this.registryFilter(
                 new ImpSessionCsvFilter(),
                 this.assetCsvFilter
@@ -75,10 +59,10 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     }
 
     @Override
-    public List<Pair<String, String>> getCsvDataSet() {
+    public List<Pair<String, String>> getCsvDataSet(LocalDateTime startTime, LocalDateTime endTime) {
         List<Pair<String, String>> result = new ArrayList<>();
         for (String sessionCategory : sesssionCategorys) {
-            List<String> fileNames = getCsvDataSetBySessionCategory(sessionCategory);
+            List<String> fileNames = getCsvDataSetBySessionCategory(sessionCategory, startTime, endTime);
             log.info("获取{}的csv文件{}个", sessionCategory, fileNames.size());
             for (String fileName : fileNames) {
                 result.add(new Pair<>(sessionCategory, fileName));
@@ -116,37 +100,6 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
         } finally {
             executorService.shutdownNow();
         }
-    }
-
-
-    private List<String> getCsvDataSetBySessionCategory(String sesionCategory) {
-        long endTimeLong = DateUtils.LocalDateTime2Long(this.endTime);
-        long startTimeLong = DateUtils.LocalDateTime2Long(this.startTime);
-        String rootPath = NodeInfo.getDataWarehouseCsvPathByCategory(sesionCategory);
-        List<String> list = new ArrayList<>();
-        long timeStamp = startTimeLong = startTimeLong / MINUTE * MINUTE;
-        endTimeLong = endTimeLong / MINUTE * MINUTE + MINUTE;
-        while (timeStamp <= endTimeLong) {
-            File path = new File(rootPath + "/" + ToolUtils.stamp2Date(timeStamp, "yyyyMMdd"));
-            if (path.exists() && path.isDirectory()) {
-                String[] files = path.list();
-                if (null != files) {
-                    for (String fileName : files) {
-                        if (!fileName.startsWith(sesionCategory)) {
-                            continue;
-                        }
-                        String[] elements = fileName.split("\\.")[0].split("_");
-                        String timeStampStr = elements[elements.length - 1];
-                        long ts = ToolUtils.date2Stamp(timeStampStr, "yyyyMMddHHmm");
-                        if (startTimeLong <= ts && endTimeLong > ts) {
-                            list.add(path + "/" + fileName);
-                        }
-                    }
-                }
-            }
-            timeStamp += DAY;
-        }
-        return list;
     }
 
 

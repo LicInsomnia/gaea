@@ -1,6 +1,7 @@
 package com.tincery.gaea.producer.config;
 
 import org.quartz.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +14,8 @@ public class SrcQuartzConfig {
 
     private final String cron = "0/3 * * * * ?";
 
+    @Value ("${aa}")
+    private String aa;
 
     @Bean
     public JobDetail sourceJob() {
@@ -23,7 +26,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    public Trigger databaseMonitorJobTrigger() {
+    public Trigger sourceJobTrigger() {
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sourceJob())

@@ -1,26 +1,35 @@
 package com.tincery.gaea.core.dw;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.component.Receiver;
+import com.tincery.gaea.core.base.component.config.ApplicationInfo;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
+import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import java.io.File;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.tincery.gaea.core.base.tool.util.DateUtils.DAY;
+import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com 此模块内容形式： 默认执行 将一行CSV传递给子类 子类需要对CSV进行处理
  **/
 @Slf4j
 public abstract class AbstractDataWarehouseReceiver implements Receiver {
-
 
     private List<CsvFilter> csvFilterList;
 
@@ -41,27 +50,76 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
     @Override
     public void receive(TextMessage textMessage) {
         try {
-            log.info("消息传递时间：{}；执行时间：{}", DateUtils.format(textMessage.getJMSTimestamp()), DateUtils.now());
-            List<Pair<String, String>> csvPaths = getCsvDataSet();
-            long startTime = Instant.now().toEpochMilli();
-            log.info("开始解析CSV数据...");
-            for (Pair<String, String> csvPath : csvPaths) {
-                CsvReader csvReader;
-                try {
-                    csvReader = CsvReader.builder().file(csvPath.getValue()).registerFilter(csvFilterList).build();
-                } catch (IllegalAccessException e) {
-                    log.error("CSV读取失败");
-                    continue;
-                }
-                analysis(csvPath.getKey(), csvReader);
+            LocalDateTime now = LocalDateTime.now();
+            log.info("消息传递时间：{}；执行时间：{}", DateUtils.format(textMessage.getJMSTimestamp()), now.format(DateUtils.DEFAULT_DATE_PATTERN));
+            // 加载当前程序模块对应的run_config表配置
+            JSONObject runConfig = DataWarehouseRunController.getRunConfig(ApplicationInfo.getCategory());
+            // 获取run_config中的startTime（读CSV的开始时间）
+            LocalDateTime startTime = DateUtils.Date2LocalDateTime(runConfig.getDate("starttime"));
+            Duration between = Duration.between(startTime, now);
+            long l = between.toHours();
+            if (l < 1L) {
+                log.info("执行时间临近当前时间1小时，本次执行跳出");
+                return;
             }
-            free();
-            log.info("共用时{}毫秒", (Instant.now().toEpochMilli() - startTime));
+            int recollTime = runConfig.getInteger("recolltime");
+            LocalDateTime endTime = startTime.plusMinutes(recollTime);
+            dataWarehouseAnalysis(startTime, endTime);
+            runConfig.replace("starttime", endTime);
+            DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
         } catch (JMSException e) {
             e.printStackTrace();
         }
     }
 
+    private void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
+        List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
+        long st = Instant.now().toEpochMilli();
+        log.info("开始解析CSV数据...");
+        for (Pair<String, String> csvPath : csvPaths) {
+            CsvReader csvReader;
+            try {
+                csvReader = CsvReader.builder().file(csvPath.getValue()).registerFilter(csvFilterList).build();
+            } catch (IllegalAccessException e) {
+                log.error("CSV读取失败");
+                continue;
+            }
+            analysis(csvPath.getKey(), csvReader);
+        }
+        free();
+        log.info("共用时{}毫秒", (Instant.now().toEpochMilli() - st));
+    }
+
+
+    protected List<String> getCsvDataSetBySessionCategory(String sesionCategory, LocalDateTime startTime, LocalDateTime endTime) {
+        long endTimeLong = DateUtils.LocalDateTime2Long(endTime);
+        long startTimeLong = DateUtils.LocalDateTime2Long(startTime);
+        String rootPath = NodeInfo.getDataWarehouseCsvPathByCategory(sesionCategory);
+        List<String> list = new ArrayList<>();
+        long timeStamp = startTimeLong = startTimeLong / MINUTE * MINUTE;
+        endTimeLong = endTimeLong / MINUTE * MINUTE + MINUTE;
+        while (timeStamp <= endTimeLong) {
+            File path = new File(rootPath + "/" + ToolUtils.stamp2Date(timeStamp, "yyyyMMdd"));
+            if (path.exists() && path.isDirectory()) {
+                String[] files = path.list();
+                if (null != files) {
+                    for (String fileName : files) {
+                        if (!fileName.startsWith(sesionCategory)) {
+                            continue;
+                        }
+                        String[] elements = fileName.split("\\.")[0].split("_");
+                        String timeStampStr = elements[elements.length - 1];
+                        long ts = ToolUtils.date2Stamp(timeStampStr, "yyyyMMddHHmm");
+                        if (startTimeLong <= ts && endTimeLong > ts) {
+                            list.add(path + "/" + fileName);
+                        }
+                    }
+                }
+            }
+            timeStamp += DAY;
+        }
+        return list;
+    }
 
     public void free() {
         throw new UnsupportedOperationException();
@@ -75,7 +133,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
      * 获取csv文件名的集合 集合中一组pair中key：sessionCategory;value：文件名 同一个sessionCategory可能对应多组文件 例: [ {key1:value1} {key1:value2}
      * {key2:value3} ]
      */
-    public abstract List<Pair<String, String>> getCsvDataSet();
+    public abstract List<Pair<String, String>> getCsvDataSet(LocalDateTime startTime, LocalDateTime endTime);
 
     protected List<CsvFilter> registryFilter(CsvFilter... csvFilterList) {
         if (null == this.csvFilterList) {

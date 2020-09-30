@@ -18,13 +18,16 @@ src:
     max-line: 20000
     executor: 4
     bak: true
-
+spring:
+  activemq:
+    broker-url: tcp://172.16.1.101:61616
+    user: admin
+    password: admin
 node:
-  home: /Users/gongxuanzhang/workSpace/support
+  home: D:/gaea-bin
   name: insomnia
-  src-path: /Users/gongxuanzhang/workSpace/support/src
-  data-path: /Users/gongxuanzhang/workSpace/support
-  category: reorganization
+  src-path: D:/data/src
+  data-path: D:/data
 logging:
   level:
     root: info

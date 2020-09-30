@@ -17,6 +17,7 @@ public class DataWarehouseJob extends QuartzJobBean {
 
     @Resource (name = QueueNames.DW_REORGANIZATION)
     Queue reorganizationQueue;
+
     @Autowired
     private DwProducer dwProducer;
 

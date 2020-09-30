@@ -43,7 +43,7 @@ public class FileUtils {
         List<File> result = new ArrayList<>();
         File root = new File(filePath);
         if (!root.exists()) {
-            throw new NullPointerException();
+            throw new NullPointerException(filePath + "不存在");
         }
         File[] files = root.listFiles();
         if (files != null && files.length > 0) {

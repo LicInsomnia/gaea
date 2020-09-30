@@ -1,8 +1,10 @@
-package com.tincer.gaea.producer.config;
+package com.tincery.gaea.producer.config;
 
+import com.tincery.gaea.api.base.QueueNames;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
@@ -13,6 +15,7 @@ import javax.jms.Queue;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Slf4j
+@EnableConfigurationProperties (ControllerConfigProperties.class)
 public class SourceJob extends QuartzJobBean {
 
     @Resource (name = QueueNames.SRC_SESSION)
@@ -29,15 +32,20 @@ public class SourceJob extends QuartzJobBean {
     private SrcProducer srcProducer;
     @Autowired
     private JmsMessagingTemplate jmsMessagingTemplate;
+    @Autowired
+    private ControllerConfigProperties controllerConfigProperties;
 
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
+        if (controllerConfigProperties.isEmail()) {
+            this.srcProducer.producer(this.emailQueue, "email", ".dat");
+        }
 
         this.srcProducer.producer(this.sessionQueue, "session", ".txt");
         this.srcProducer.producer(this.impSessionQueue, "impsession", ".txt");
         this.srcProducer.producer(this.sslQueue, "ssl", ".txt");
         this.srcProducer.producer(this.dnsQueue, "dns", ".txt");
-        this.srcProducer.producer(this.emailQueue, "email", ".dat");
+
     }
 }

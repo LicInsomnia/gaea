@@ -1,4 +1,4 @@
-package com.tincer.gaea.producer.config;
+package com.tincery.gaea.producer.config;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ public class DwProducer {
 
     @Autowired
     JmsMessagingTemplate jmsMessagingTemplate;
-
 
     public void producer(Queue queue) {
         jmsMessagingTemplate.convertAndSend(queue, "苍叔牛逼");
