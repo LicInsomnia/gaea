@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.16.1.102:8848
+        file-extension: yml
+        name: gaea
+  application:
+    name: src_session

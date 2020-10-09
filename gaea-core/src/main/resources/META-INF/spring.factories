@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.tincery.gaea.GaeaCoreAutoConfiguration
+  com.tincery.gaea.GaeaCoreAutoConfiguration

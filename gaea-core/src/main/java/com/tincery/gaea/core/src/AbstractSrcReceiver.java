@@ -200,8 +200,13 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      * 输出本地数据文件
      */
     protected synchronized void appendCsvData(String fileName, String csvLine, long captime) {
-        List<String> csvLines = this.csvMap.replace(fileName, new ArrayList<>());
-        csvLines = csvLines == null ? this.csvMap.get(fileName) : csvLines;
+        List<String> csvLines;
+        if (this.csvMap.containsKey(fileName)) {
+            csvLines = this.csvMap.get(fileName);
+        } else {
+            csvLines = new ArrayList<>();
+            this.csvMap.put(fileName, csvLines);
+        }
         csvLines.add(csvLine);
         if (++this.csvCount >= this.properties.getMaxLine()) {
             outputCsvData();

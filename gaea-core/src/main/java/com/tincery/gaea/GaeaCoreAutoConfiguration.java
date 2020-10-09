@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
         })
 public class GaeaCoreAutoConfiguration {
 
-
     @Bean
     public GaeaPropertiesInit getEnvInit() {
         return new GaeaPropertiesInit();

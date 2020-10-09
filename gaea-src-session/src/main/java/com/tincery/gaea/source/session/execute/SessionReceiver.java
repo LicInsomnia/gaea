@@ -32,7 +32,7 @@ public class SessionReceiver extends AbstractSrcReceiver<SessionData> {
         this.analysis = analysis;
     }
 
-
+    @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
