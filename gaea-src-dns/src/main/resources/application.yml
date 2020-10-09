@@ -1,18 +1,5 @@
 server:
   port: 11234
-mongodb:
-  pro:
-    host: 172.16.1.102
-    port: 27017
-    user: tincery
-    password: Txy123.com
-    database: simulation_pro
-  sys:
-    host: 172.16.1.102
-    port: 27017
-    user: tincery
-    password: Txy123.com
-    database: simulation_sys
 src:
   dns:
     max-line: 20000
@@ -26,7 +13,4 @@ node:
   data-path: D:/data
   category: dns
   name: test
-logging:
-  level:
-    root: info
 

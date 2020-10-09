@@ -9,7 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  **/
 @Setter
 @Getter
-@ConfigurationProperties (prefix = "src")
 public class SrcProperties {
 
 

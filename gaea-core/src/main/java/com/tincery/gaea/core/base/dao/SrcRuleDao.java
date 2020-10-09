@@ -37,7 +37,7 @@ public class SrcRuleDao extends SimpleBaseDaoImpl<SrcRuleDO> {
     }
 
     @Override
-    @Value("aaa")
+    @Value("src_rule")
     public void setDbName(String dbName) {
         this.dbName = dbName;
     }

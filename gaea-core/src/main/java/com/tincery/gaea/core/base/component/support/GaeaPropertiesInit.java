@@ -12,6 +12,7 @@ import org.springframework.core.env.Environment;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
+ * 环境初始化
  **/
 @Slf4j
 @ConfigurationProperties (prefix = "node")

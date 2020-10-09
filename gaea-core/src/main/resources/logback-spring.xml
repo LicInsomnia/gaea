@@ -18,136 +18,141 @@
     <!--龙湖标准 pattern layout-->
     <!-- appID | module |  dateTime | level | requestID | traceID | requestIP | userIP | serverIP | serverPort | processID | thread | location | detailInfo-->
     <property name="CONSOLE_LOG_PATTERN"
-              value="${nodeName}|%clr(${applicationName}){blue}|%clr(%d{ISO8601}){faint}|%clr(%p)|%clr(%.40logger{39}){cyan}.%clr(%method){cyan}:%L|%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+              value="${nodeHome}|${nodeName}|%clr(${applicationName}){blue}|%clr(%d{ISO8601}){faint}|%clr(%p)|%clr(%.40logger{39}){cyan}.%clr(%method){cyan}:%L|%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
 
     <property name="FILE_LOG_PATTERN"
               value="${nodeName}|${applicationName}|%d{ISO8601}|%p|%t|%.40logger{39}.%method:%L|%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
-
     <!-- 输出文件路径 -->
     <property name="FILE_PATH" value="${nodeHome}"/>
     <property name="OPEN_FILE_PATH" value="${FILE_PATH}/log/"/>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-    </appender>
 
-    <!-- all 文件日志输出 -->
-    <appender name="all" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!--日志文件输出的文件名-->
-            <FileNamePattern>${OPEN_FILE_PATH}/all/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
-            <!--日志文件保留天数-->
-            <MaxHistory>30</MaxHistory>
-            <TimeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!--日志文件最大的大小-->
-                <MaxFileSize>100MB</MaxFileSize>
-            </TimeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
+    <if condition='isDefined("nodeHome")'>
+        <then>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+            </appender>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-        </layout>
-    </appender>
+            <!-- all 文件日志输出 -->
+            <appender name="all" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <!--日志文件输出的文件名-->
+                    <FileNamePattern>${OPEN_FILE_PATH}/all/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <!--日志文件保留天数-->
+                    <MaxHistory>30</MaxHistory>
+                    <TimeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <!--日志文件最大的大小-->
+                        <MaxFileSize>100MB</MaxFileSize>
+                    </TimeBasedFileNamingAndTriggeringPolicy>
+                </rollingPolicy>
 
-    <!--输出到debug-->
-    <appender name="debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${OPEN_FILE_PATH}/debug/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
-            <MaxHistory>30</MaxHistory>
-            <TimeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <MaxFileSize>100MB</MaxFileSize>
-            </TimeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-        <append>true</append>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-            <charset>utf-8</charset>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印DEBUG日志 -->
-            <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <pattern>${FILE_LOG_PATTERN}</pattern>
+                </layout>
+            </appender>
 
-    <!--输出到info-->
-    <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${OPEN_FILE_PATH}/info/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
-            <MaxHistory>30</MaxHistory>
-            <TimeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <MaxFileSize>100MB</MaxFileSize>
-            </TimeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-        <append>true</append>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-            <charset>utf-8</charset>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
-            <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
+            <!--输出到debug-->
+            <appender name="debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <FileNamePattern>${OPEN_FILE_PATH}/debug/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <MaxHistory>30</MaxHistory>
+                    <TimeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <MaxFileSize>100MB</MaxFileSize>
+                    </TimeBasedFileNamingAndTriggeringPolicy>
+                </rollingPolicy>
+                <append>true</append>
+                <encoder>
+                    <pattern>${FILE_LOG_PATTERN}</pattern>
+                    <charset>utf-8</charset>
+                </encoder>
+                <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印DEBUG日志 -->
+                    <level>DEBUG</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+            </appender>
 
-    <!--输出到error-->
-    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${OPEN_FILE_PATH}/error/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
-            <MaxHistory>30</MaxHistory>
-            <TimeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <MaxFileSize>100MB</MaxFileSize>
-            </TimeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-        <append>true</append>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-            <charset>utf-8</charset>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印ERROR日志 -->
-            <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
+            <!--输出到info-->
+            <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <FileNamePattern>${OPEN_FILE_PATH}/info/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <MaxHistory>30</MaxHistory>
+                    <TimeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <MaxFileSize>100MB</MaxFileSize>
+                    </TimeBasedFileNamingAndTriggeringPolicy>
+                </rollingPolicy>
+                <append>true</append>
+                <encoder>
+                    <pattern>${FILE_LOG_PATTERN}</pattern>
+                    <charset>utf-8</charset>
+                </encoder>
+                <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+                    <level>INFO</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+            </appender>
 
-    <!--输出到warn-->
-    <appender name="warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${OPEN_FILE_PATH}/warn/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
-            <MaxHistory>30</MaxHistory>
-            <TimeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <MaxFileSize>100MB</MaxFileSize>
-            </TimeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-        <append>true</append>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-            <charset>utf-8</charset>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印WARN日志 -->
-            <level>WARN</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
+            <!--输出到error-->
+            <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <FileNamePattern>${OPEN_FILE_PATH}/error/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <MaxHistory>30</MaxHistory>
+                    <TimeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <MaxFileSize>100MB</MaxFileSize>
+                    </TimeBasedFileNamingAndTriggeringPolicy>
+                </rollingPolicy>
+                <append>true</append>
+                <encoder>
+                    <pattern>${FILE_LOG_PATTERN}</pattern>
+                    <charset>utf-8</charset>
+                </encoder>
+                <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印ERROR日志 -->
+                    <level>ERROR</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+            </appender>
+
+            <!--输出到warn-->
+            <appender name="warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <FileNamePattern>${OPEN_FILE_PATH}/warn/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <MaxHistory>30</MaxHistory>
+                    <TimeBasedFileNamingAndTriggeringPolicy
+                            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <MaxFileSize>100MB</MaxFileSize>
+                    </TimeBasedFileNamingAndTriggeringPolicy>
+                </rollingPolicy>
+                <append>true</append>
+                <encoder>
+                    <pattern>${FILE_LOG_PATTERN}</pattern>
+                    <charset>utf-8</charset>
+                </encoder>
+                <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印WARN日志 -->
+                    <level>WARN</level>
+                    <onMatch>ACCEPT</onMatch>
+                    <onMismatch>DENY</onMismatch>
+                </filter>
+            </appender>
+
+            <root level="${logLevel}">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="all"/>
+                <appender-ref ref="debug"/>
+                <appender-ref ref="info"/>
+                <appender-ref ref="error"/>
+                <appender-ref ref="warn"/>
+            </root>
+        </then>
+    </if>
 
 
-    <root level="${logLevel}">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="all"/>
-        <appender-ref ref="debug"/>
-        <appender-ref ref="info"/>
-        <appender-ref ref="error"/>
-        <appender-ref ref="warn"/>
-    </root>
 </configuration>

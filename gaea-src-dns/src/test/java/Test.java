@@ -6,14 +6,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest (classes = GaeaSourceDnsApplication.class)
 public class Test {
 
-    @Autowired
-    private DnsReceiver dnsExecute;
-
-
-    @org.junit.jupiter.api.Test
-    public void aa() {
-//        dnsExecute.receive();
-    }
-
 
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
  * SpringBoot集成Quartz的时候 会出现Spring容器没加载完成 但是定时任务已经开始执行的情况
  * 因为定时任务需要依赖Spring容器中的内容  所以就会出现空指针的情况
  * 此类就是为了解决如上问题
+ * @author gongxuanzhang
  */
 
 @Component

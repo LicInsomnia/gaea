@@ -10,6 +10,7 @@ import javax.jms.Queue;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
+ * ActiveMq 被注入的queue
  **/
 @Configuration
 public class ActiveMqConfig {
