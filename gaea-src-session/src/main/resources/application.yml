@@ -1,11 +1,5 @@
 server:
   port: 11234
-spring:
-  activemq:
-    broker-url: tcp://172.16.1.101:61616
-    user: admin
-    password: admin
-
 
 node:
   home: /Users/gongxuanzhang/workSpace/support
@@ -13,32 +7,9 @@ node:
   data-path: /Users/gongxuanzhang/workSpace/support
   name: test
 
-mongodb:
-  pro:
-    host: 172.16.1.102
-    port: 27017
-    user: tincery
-    password: Txy123.com
-    database: simulation_pro
-  sys:
-    host: 172.16.1.102
-    port: 27017
-    user: tincery
-    password: Txy123.com
-    database: simulation_sys
-
 src:
-  category: session
-  max-line: 20000
-  bak: true
   session:
     category: session
     max-line: 20000
     executor: 4
     bak: true
-
-
-logging:
-  level:
-    root: info
-

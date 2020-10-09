@@ -245,7 +245,6 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                         fileWriter.setCSV(filePath, this.getHead(), true);
                     }
                     fileWriter.write(csvLine);
-                    log.info("向{}输出了{}条记录，用时{}", filePath, this.csvCount, DateUtils.duration(st));
                     this.csvDataHandle.put(filePath, fileWriter);
                     if (this.csvDataHandle.size() > 120) {
                         close();
@@ -255,9 +254,11 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         }
         this.csvDataHandle.clear();
         this.csvMap.clear();
+        log.info("输出了{}条记录，用时{}", this.csvCount, DateUtils.duration(st));
         this.csvCount = 0;
         this.minTime = 0;
         this.maxTime = 0;
+
     }
 
     /****
