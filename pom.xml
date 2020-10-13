@@ -11,6 +11,7 @@
 
     <modules>
         <module>gaea-core</module>
+        <module>gaea-controller</module>
         <module>gaea-src-session</module>
         <module>gaea-src-ssl</module>
         <module>gaea-src-email</module>
@@ -23,10 +24,7 @@
         <module>gaea-src-flow</module>
         <module>gaea-dw-reorganization</module>
         <module>gaea-src-dns</module>
-        <module>gaea-src-jms-server</module>
-        <module>gaea-src-jms-client</module>
-        <module>gaea-controller</module>
-        <module>gaea-dm-asset</module>
+        <module>gaea-plug-pack</module>
     </modules>
 
 

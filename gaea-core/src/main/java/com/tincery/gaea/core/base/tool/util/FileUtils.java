@@ -91,6 +91,25 @@ public class FileUtils {
         }
     }
 
+    /**
+     * @param f:源文件路径
+     * @param t:目的文件路径
+     * @author Insomnia
+     * @see File
+     */
+    public static void fileCopy(String f, String t) {
+        File from = new File(f);
+        File to = new File(t);
+        if (!from.exists() || to.exists()) {
+            return;
+        }
+        try {
+            Files.copy(from, to);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /****
      * 读文件
      * @author gxz
