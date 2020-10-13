@@ -191,7 +191,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             String bakPathDir = NodeInfo.getBak();
             FileUtils.checkPath(bakPathDir);
             String srcPath = file.getAbsolutePath();
-            bakPathDir += file.getName();
+            bakPathDir += ("/" + file.getName());
             FileUtils.fileMove(srcPath, bakPathDir);
         }
     }
