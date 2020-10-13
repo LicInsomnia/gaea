@@ -1,9 +1,15 @@
+server:
+  port: 11112
+node:
+  name: insomnia
 spring:
+  application:
+    name: dw_reorganization
   cloud:
     nacos:
       config:
         server-addr: 172.16.1.102:8848
-        file-extension: yml
         name: gaea
-  application:
-    name: dw_reorganization
+        file-extension: yml
+  profiles:
+    active: ${node.name}
