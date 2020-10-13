@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 /**
  * @author gxz
  */
-@Component
 @Slf4j
 @Setter
 @Getter

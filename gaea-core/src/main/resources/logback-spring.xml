@@ -13,7 +13,6 @@
     <springProperty scope="context" name="nodeName" source="node.name"/>
     <springProperty scope="context" name="logLevel" source="logging.level.root"/>
     <springProperty scope="context" name="nodeHome" source="node.home"/>
-    <springProperty scope="context" name="category" source="node.category"/>
 
     <!--龙湖标准 pattern layout-->
     <!-- appID | module |  dateTime | level | requestID | traceID | requestIP | userIP | serverIP | serverPort | processID | thread | location | detailInfo-->
@@ -26,21 +25,20 @@
     <property name="FILE_PATH" value="${nodeHome}"/>
     <property name="OPEN_FILE_PATH" value="${FILE_PATH}/log/"/>
 
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
 
     <if condition='isDefined("nodeHome")'>
         <then>
-            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-                <encoder>
-                    <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-                    <charset>UTF-8</charset>
-                </encoder>
-            </appender>
-
             <!-- all 文件日志输出 -->
             <appender name="all" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                     <!--日志文件输出的文件名-->
-                    <FileNamePattern>${OPEN_FILE_PATH}/all/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <FileNamePattern>${OPEN_FILE_PATH}/all/%d{yyyy-MM-dd}/${applicationName}-%i.log</FileNamePattern>
                     <!--日志文件保留天数-->
                     <MaxHistory>30</MaxHistory>
                     <TimeBasedFileNamingAndTriggeringPolicy
@@ -58,7 +56,7 @@
             <!--输出到debug-->
             <appender name="debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${OPEN_FILE_PATH}/debug/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <FileNamePattern>${OPEN_FILE_PATH}/debug/%d{yyyy-MM-dd}/${applicationName}-%i.log</FileNamePattern>
                     <MaxHistory>30</MaxHistory>
                     <TimeBasedFileNamingAndTriggeringPolicy
                             class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -80,7 +78,7 @@
             <!--输出到info-->
             <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${OPEN_FILE_PATH}/info/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <FileNamePattern>${OPEN_FILE_PATH}/info/%d{yyyy-MM-dd}/${applicationName}-%i.log</FileNamePattern>
                     <MaxHistory>30</MaxHistory>
                     <TimeBasedFileNamingAndTriggeringPolicy
                             class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -102,7 +100,7 @@
             <!--输出到error-->
             <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${OPEN_FILE_PATH}/error/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <FileNamePattern>${OPEN_FILE_PATH}/error/%d{yyyy-MM-dd}/${applicationName}-%i.log</FileNamePattern>
                     <MaxHistory>30</MaxHistory>
                     <TimeBasedFileNamingAndTriggeringPolicy
                             class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -124,7 +122,7 @@
             <!--输出到warn-->
             <appender name="warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${OPEN_FILE_PATH}/warn/%d{yyyy-MM-dd}/${category}-%i.log</FileNamePattern>
+                    <FileNamePattern>${OPEN_FILE_PATH}/warn/%d{yyyy-MM-dd}/${applicationName}-%i.log</FileNamePattern>
                     <MaxHistory>30</MaxHistory>
                     <TimeBasedFileNamingAndTriggeringPolicy
                             class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -144,7 +142,6 @@
             </appender>
 
             <root level="${logLevel}">
-                <appender-ref ref="STDOUT"/>
                 <appender-ref ref="all"/>
                 <appender-ref ref="debug"/>
                 <appender-ref ref="info"/>
@@ -153,6 +150,7 @@
             </root>
         </then>
     </if>
-
-
+    <root>
+        <appender-ref ref="STDOUT"/>
+    </root>
 </configuration>

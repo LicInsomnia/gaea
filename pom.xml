@@ -26,6 +26,7 @@
         <module>gaea-src-jms-server</module>
         <module>gaea-src-jms-client</module>
         <module>gaea-controller</module>
+        <module>gaea-dm-asset</module>
     </modules>
 
 
