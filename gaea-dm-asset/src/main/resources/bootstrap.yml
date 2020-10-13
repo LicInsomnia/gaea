@@ -1,0 +1,16 @@
+node:
+  name: test
+spring:
+  application:
+    name: src_session
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.16.1.102:8848
+        name: gaea
+        file-extension: yml
+  profiles:
+    active: ${node.name}
+server:
+  port: 11234
+
