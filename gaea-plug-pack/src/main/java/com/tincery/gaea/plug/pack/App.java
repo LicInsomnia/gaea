@@ -57,6 +57,10 @@ public class App {
             return null;
         }
         File[] files = targetPath.listFiles();
+        if (null == files) {
+            System.err.println("模块[" + modelName + "]路径不存在");
+            return null;
+        }
         for (File file : files) {
             if (file.getName().endsWith(".jar")) {
                 return file.getAbsolutePath();
