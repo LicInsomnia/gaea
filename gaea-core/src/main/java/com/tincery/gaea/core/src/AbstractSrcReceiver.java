@@ -55,6 +55,19 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
 
     protected final Map<String, FileWriter> csvDataHandle = new HashMap<>();
 
+    private static ThreadPoolExecutor executorService;
+
+    static {
+        executorService = new ThreadPoolExecutor(
+                CPU + 1,
+                CPU * 2,
+                10,
+                TimeUnit.MINUTES,
+                new ArrayBlockingQueue<>(1024),
+                Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy());
+    }
+
 
     /****
      * 每个执行器都有自己的csv表头
@@ -91,24 +104,8 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             analysisLine(lines);
         } else {
             List<List<String>> partitions = Lists.partition(lines, executor);
-            ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-                    CPU + 1,
-                    CPU * 2,
-                    10,
-                    TimeUnit.MINUTES,
-                    new ArrayBlockingQueue<>(1024),
-                    Executors.defaultThreadFactory(),
-                    new ThreadPoolExecutor.AbortPolicy());
             for (List<String> partition : partitions) {
                 executorService.execute(() -> analysisLine(partition));
-            }
-            executorService.shutdown();
-            try {
-                executorService.awaitTermination(10, TimeUnit.MINUTES);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                executorService.shutdownNow();
             }
         }
     }

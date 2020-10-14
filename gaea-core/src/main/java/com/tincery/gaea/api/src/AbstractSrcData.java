@@ -105,12 +105,12 @@ public abstract class AbstractSrcData extends AbstractMetaData {
         if (caseTags == null) {
             caseTags = new HashSet<>();
         }
-        String serverIp = this.serverIp == null ? "" : ToolUtils.IP2long(this.serverIp) + "";
-        String clientIP = this.serverIp == null ? "" : ToolUtils.IP2long(this.clientIp) + "";
+        String serverIpN = this.serverIp == null ? "" : ToolUtils.IP2long(this.serverIp) + "";
+        String clientIPN = this.serverIp == null ? "" : ToolUtils.IP2long(this.clientIp) + "";
         Object[] join = new Object[]{
                 this.groupName, this.targetName, this.userId, this.serverId, super.toCsv(splitChar),
-                this.clientMac, this.serverMac, this.protocol, this.proName, this.clientIp, clientIP,
-                this.serverIp, serverIp, this.clientPort, this.serverPort, this.clientIpOuter,
+                this.clientMac, this.serverMac, this.protocol, this.proName, this.clientIp, clientIPN,
+                this.serverIp, serverIpN, this.clientPort, this.serverPort, this.clientIpOuter,
                 this.serverIpOuter, this.clientPortOuter, this.serverPortOuter, this.protocolOuter, this.upPkt,
                 this.upByte, this.downPkt, this.downByte, this.dataType, this.imsi, Joiner.on(";").join(caseTags)};
         return Joiner.on(splitChar).useForNull("").join(join);

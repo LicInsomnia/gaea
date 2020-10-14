@@ -5,10 +5,7 @@ import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -22,11 +19,11 @@ public class CsvReader {
 
     private final File csv;
 
-    private Map<String, Integer> headIndex;
+    private final Map<String, Integer> headIndex;
 
     private List<CsvFilter> csvFilterList;
 
-    private BufferedReader csvBufferedReader;
+    private final BufferedReader csvBufferedReader;
 
     private Map<Class<? extends CsvFilter>, Queue<CsvRow>> filterRows;
 
@@ -53,11 +50,18 @@ public class CsvReader {
         } else {
             csv = file;
         }
+        if (file.length() == 0) {
+            throw new IllegalAccessException("csv文件为空");
+        }
+        try {
+            csvBufferedReader = new BufferedReader(new FileReader(this.csv));
+        } catch (FileNotFoundException e) {
+            throw new IllegalAccessException("csv读取异常");
+        }
         // 设置表头
         if (head == null) {
             try {
                 // 这个句柄不关闭
-                csvBufferedReader = new BufferedReader(new FileReader(this.csv));
                 String first = csvBufferedReader.readLine();
                 head = StringUtils.FileLineSplit(first);
             } catch (IOException e) {

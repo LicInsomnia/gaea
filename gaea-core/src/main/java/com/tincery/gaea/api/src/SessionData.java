@@ -24,8 +24,8 @@ public class SessionData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.getDurationTime() / 1000, this.getSyn(), this.getFin()};
-        return Joiner.on(splitChar).join(join);
+        Object[] join = new Object[]{super.toCsv(splitChar), this.getDurationTime() / 1000, this.getSyn(), this.getFin(), this.upPayLoad, this.downPayLoad};
+        return Joiner.on(splitChar).useForNull("").join(join);
     }
 
 

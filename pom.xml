@@ -25,7 +25,6 @@
         <module>gaea-dw-reorganization</module>
         <module>gaea-src-dns</module>
         <module>gaea-plug-pack</module>
-        <module>gaea-dm-asset</module>
     </modules>
 
 

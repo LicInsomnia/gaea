@@ -35,7 +35,6 @@ public class SessionFactory {
 
     /**
      * 从csv数据中抽象
-     *
      * @param category csv类型
      * @param csvRow   csv某一行{@link CsvRow}
      * @return 抽象是否成功
@@ -83,29 +82,29 @@ public class SessionFactory {
 
     private AbstractDataWarehouseData appendBaseAndAttach(String category, CsvRow csvRow) {
         AbstractDataWarehouseData abstractDataWarehouseData = new AbstractDataWarehouseData();
-        abstractDataWarehouseData.setTargetName(csvRow.get(HeadConst.CSV.TARGET_NAME))
-                .setGroupName(csvRow.get(HeadConst.CSV.GROUP_NAME))
-                .setUserId(csvRow.get(HeadConst.CSV.USER_ID))
-                .setServerId(csvRow.get(HeadConst.CSV.SERVER_ID))
-                .setSource(csvRow.get(HeadConst.CSV.SOURCE))
-                .setCapTime(csvRow.getLong(HeadConst.CSV.CAPTIME_N))
+        abstractDataWarehouseData.setTargetName(csvRow.getEmptyNull(HeadConst.CSV.TARGET_NAME))
+                .setGroupName(csvRow.getEmptyNull(HeadConst.CSV.GROUP_NAME))
+                .setUserId(csvRow.getEmptyNull(HeadConst.CSV.USER_ID))
+                .setServerId(csvRow.getEmptyNull(HeadConst.CSV.SERVER_ID))
+                .setSource(csvRow.getEmptyNull(HeadConst.CSV.SOURCE))
+                .setCapTime(csvRow.getLong(HeadConst.CSV.CAPTIME))
                 .setDurationTime(csvRow.getLongOrDefault(HeadConst.CSV.DURATION, 0L))
                 .setProtocol(csvRow.getIntegerOrDefault(HeadConst.CSV.PROTOCOL, 0))
                 .setProName(csvRow.get(HeadConst.CSV.PRONAME))
-                .setClientMac(csvRow.get(HeadConst.CSV.CLIENT_MAC))
-                .setServerMac(csvRow.get(HeadConst.CSV.SERVER_MAC))
-                .setClientIp(csvRow.get(HeadConst.CSV.CLIENT_IP))
-                .setServerIp(csvRow.get(HeadConst.CSV.SERVER_IP))
+                .setClientMac(csvRow.getEmptyNull(HeadConst.CSV.CLIENT_MAC))
+                .setServerMac(csvRow.getEmptyNull(HeadConst.CSV.SERVER_MAC))
+                .setClientIp(csvRow.getEmptyNull(HeadConst.CSV.CLIENT_IP))
+                .setServerIp(csvRow.getEmptyNull(HeadConst.CSV.SERVER_IP))
                 .setClientPort(csvRow.getIntegerOrDefault(HeadConst.CSV.CLIENT_PORT, 0))
                 .setServerPort(csvRow.getIntegerOrDefault(HeadConst.CSV.SERVER_PORT, 0))
-                .setClientIpOuter(csvRow.get(HeadConst.CSV.CLIENT_IP_OUTER))
-                .setServerIpOuter(csvRow.get(HeadConst.CSV.SERVER_IP_OUTER))
+                .setClientIpOuter(csvRow.getEmptyNull(HeadConst.CSV.CLIENT_IP_OUTER))
+                .setServerIpOuter(csvRow.getEmptyNull(HeadConst.CSV.SERVER_IP_OUTER))
                 .setClientPortOuter(csvRow.getIntegerOrDefault(HeadConst.CSV.CLIENT_PORT_OUTER, 0))
                 .setServerPortOuter(csvRow.getIntegerOrDefault(HeadConst.CSV.SERVER_PORT_OUTER, 0))
                 .setProtocolOuter(csvRow.getIntegerOrDefault(HeadConst.CSV.PROTOCOL_OUTER, 0))
-                .setImsi(csvRow.get(HeadConst.CSV.IMSI))
-                .setImei(csvRow.get(HeadConst.CSV.IMEI))
-                .setMsisdn(csvRow.get(HeadConst.CSV.MSISDN))
+                .setImsi(csvRow.getEmptyNull(HeadConst.CSV.IMSI))
+                .setImei(csvRow.getEmptyNull(HeadConst.CSV.IMEI))
+                .setMsisdn(csvRow.getEmptyNull(HeadConst.CSV.MSISDN))
                 .setDataType(csvRow.getInteger(HeadConst.CSV.DATA_TYPE))
                 .setUpPkt(csvRow.getLongOrDefault(HeadConst.CSV.UP_PKT, 0L))
                 .setDownPkt(csvRow.getLongOrDefault(HeadConst.CSV.DOWN_PKT, 0L))
@@ -120,7 +119,8 @@ public class SessionFactory {
         if (null != caseTags) {
             abstractDataWarehouseData.setCaseTags(new HashSet<>(Arrays.asList(caseTags.split(";"))));
         }
-        String id = Joiner.on("_").join(new Object[]{
+        abstractDataWarehouseData.setAssetFlag((Integer) csvRow.getExtensionValue(HeadConst.CSV.ASSET_FLAG));
+        String id = Joiner.on("_").useForNull("").join(new Object[]{
                 abstractDataWarehouseData.getTargetName(),
                 abstractDataWarehouseData.getProtocol(),
                 abstractDataWarehouseData.getClientIp(),

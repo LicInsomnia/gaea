@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -24,7 +26,7 @@ public class AssetConfigDao extends SimpleBaseDaoImpl<AssetConfigDO> {
     }
 
     @Override
-    @Value("cloud_config")
+    @Value ("asset_config")
     public void setDbName(String dbName) {
         this.dbName = dbName;
     }
@@ -35,10 +37,16 @@ public class AssetConfigDao extends SimpleBaseDaoImpl<AssetConfigDO> {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public List<AssetConfigDO> getActivityData(){
+    public List<AssetConfigDO> getActivityData() {
         Query query = new Query();
         query.addCriteria(Criteria.where("activity").is(true));
         return findListData(query);
+    }
+
+    public long updateStrartime() {
+        Update update = new Update();
+        update.set("starttime", LocalDateTime.now());
+        return update(new Query(), update);
     }
 
 

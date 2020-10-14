@@ -11,6 +11,7 @@ public class HeadConst {
 
     public static final char CSV_SEPARATOR = 0x07;
 
+    public static final String CSV_SEPARATOR_STR = String.valueOf(CSV_SEPARATOR);
 
     /* 通用csv文件头 */
     private final static String BASE_COMMON_HEADER = CSV.GROUP_NAME + CSV_SEPARATOR +
@@ -19,7 +20,6 @@ public class HeadConst {
             CSV.SERVER_ID + CSV_SEPARATOR +
             CSV.SOURCE + CSV_SEPARATOR +
             CSV.CAPTIME + CSV_SEPARATOR +
-            CSV.CAPTIME_N + CSV_SEPARATOR +
             CSV.CLIENT_MAC + CSV_SEPARATOR +
             CSV.SERVER_MAC + CSV_SEPARATOR +
             CSV.PROTOCOL + CSV_SEPARATOR +
@@ -149,7 +149,6 @@ public class HeadConst {
         public static String SERVER_ID = "serverid";
         public static String SOURCE = "source";
         public static String CAPTIME = "captime";
-        public static String CAPTIME_N = "captime_n";
         public static String CLIENT_MAC = "clientmac";
         public static String SERVER_MAC = "servermac";
         public static String PROTOCOL = "protocol";
@@ -180,6 +179,8 @@ public class HeadConst {
         public static String FIN_FLAG = "finflag";
         /* EXTENSION */
         public static String EXTENSION = "extension";
+        /* ASSET */
+        public static String ASSET_FLAG = "assetFlag";
         /* SESSION */
         public static String UP_PAYLOAD = "uppayload";
         public static String DOWN_PAYLOAD = "downpayload";

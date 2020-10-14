@@ -49,16 +49,17 @@ public class AssetDetector implements InitializationRequired {
         return false;
     }
 
-    public boolean isAsset(String... ips) {
-        for (String ip : ips) {
-            if (checkAssetIp(ip)) {
-                return true;
-            }
-        }
-        return false;
+    /**
+     * assetFlag = 0:不是资产 assetFlag = 1:客户端资产 assetFlag = 2:服务端资产 assetFlag = 3:都是资产
+     */
+    public int checkSessionAsset(String clientIp, String serverIp) {
+        int assetFlag = 0;
+        assetFlag += checkAssetIp(clientIp) ? 1 : 0;
+        assetFlag += checkAssetIp(serverIp) ? 2 : 0;
+        return assetFlag;
     }
 
-    public AssetConfigDO getAsset(String ip){
+    public AssetConfigDO getAsset(String ip) {
         if (this.uniqueAssetMap.containsKey(ip)) {
             return this.uniqueAssetMap.get(ip);
         }

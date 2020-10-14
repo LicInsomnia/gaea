@@ -47,7 +47,7 @@ public class App {
                 "        name: gaea\n" +
                 "        file-extension: yml\n" +
                 "  profiles:\n" +
-                "    active: ${node.name}";
+                "    active: " + NODE_NAME;
     }
 
     private static String getJar(String modelName) {
@@ -73,6 +73,10 @@ public class App {
         Properties properties = System.getProperties();
         gaeaPath = properties.getProperty("user.dir");
         String packPath = gaeaPath + "/pack/";
+        File pack = new File(packPath);
+        if (pack.exists()) {
+            pack.delete();
+        }
         FileUtils.checkPath(packPath);
         for (int i = 0; i < MODELS.length; i++) {
             String model = MODELS[i];

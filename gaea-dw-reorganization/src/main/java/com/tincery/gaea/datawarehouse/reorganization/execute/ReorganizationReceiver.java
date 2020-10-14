@@ -39,7 +39,7 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
             "ftp_telnet",
             "esp_ah"
     };
-    private static int impsessionCount = 0;
+    private static int impSessionCount = 0;
     private static int assetCount = 0;
 
     public ReorganizationReceiver(AssetCsvFilter assetCsvFilter, ReorganizationFactory reorganizationFactory) {
@@ -75,9 +75,9 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     public void free() {
         this.impSessionFileWriter.close();
         this.assetFileWriter.close();
-        log.info("解析完成，共获取重点目标会话：{}条", impsessionCount);
+        log.info("解析完成，共获取重点目标会话：{}条", impSessionCount);
         log.info("解析完成，共获取资产会话：{}条", assetCount);
-        impsessionCount = assetCount = 0;
+        impSessionCount = assetCount = 0;
     }
 
     @Override
@@ -120,8 +120,9 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
                 try {
                     AbstractDataWarehouseData abstractDataWarehouseData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
                     impSessionFileWriter.write(JSONObject.toJSONString(abstractDataWarehouseData));
-                    impsessionCount++;
+                    impSessionCount++;
                 } catch (Exception e) {
+                    log.error("Csv构造错误：\n{}", csvRow.toString());
                     e.printStackTrace();
                 }
             }
@@ -148,6 +149,7 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
                     assetFileWriter.write(JSONObject.toJSONString(abstractDataWarehouseData));
                     assetCount++;
                 } catch (Exception e) {
+                    log.error("Csv构造错误：\n{}", csvRow.toString());
                     e.printStackTrace();
                 }
             }

@@ -3,8 +3,8 @@ package com.tincery.gaea.core.base.plugin.csv;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
-import org.springframework.boot.jackson.JsonObjectDeserializer;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,6 +16,8 @@ public class CsvRow {
 
     final String[] fields;
 
+    private Map<String, Object> extension;
+
 
     public CsvRow(Map<String, Integer> headerMap, String line) {
         this.headerMap = headerMap;
@@ -23,7 +25,33 @@ public class CsvRow {
     }
 
     public String get(String name) {
-        return getOrDefault(headerMap.getOrDefault(name, -1), null);
+        return get(headerMap.getOrDefault(name, -1));
+    }
+
+    /**
+     * 如果获取的字段值为""则强制返回null
+     *
+     * @param name
+     */
+    public String getEmptyNull(String name) {
+        String value = get(headerMap.getOrDefault(name, -1));
+        if (StringUtils.isEmpty(value)) {
+            value = null;
+        }
+        return value;
+    }
+
+    /**
+     * 获取字段的值为""则强制返回默认值
+     *
+     * @param name
+     */
+    public String getEmptyDefault(String name, String defaultValue) {
+        String value = get(headerMap.getOrDefault(name, -1));
+        if (StringUtils.isEmpty(value)) {
+            value = defaultValue;
+        }
+        return value;
     }
 
     public String get(int index) {
@@ -41,7 +69,7 @@ public class CsvRow {
     public Integer getInteger(String name) {
         try {
             return Integer.parseInt(get(name));
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -49,7 +77,7 @@ public class CsvRow {
     public Integer getInteger(int index) {
         try {
             return Integer.parseInt(get(index));
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -67,7 +95,7 @@ public class CsvRow {
     public Long getLong(String name) {
         try {
             return Long.parseLong(get(name));
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -75,7 +103,7 @@ public class CsvRow {
     public Long getLong(int index) {
         try {
             return Long.parseLong(get(index));
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -121,5 +149,20 @@ public class CsvRow {
         }
         toString.append("]");
         return toString.toString();
+    }
+
+    public CsvRow putExtension(String key, Object value) {
+        if (this.extension == null) {
+            this.extension = new HashMap<>(16);
+        }
+        this.extension.put(key, value);
+        return this;
+    }
+
+    public Object getExtensionValue(String key) {
+        if (this.extension == null) {
+            return null;
+        }
+        return this.extension.get(key);
     }
 }

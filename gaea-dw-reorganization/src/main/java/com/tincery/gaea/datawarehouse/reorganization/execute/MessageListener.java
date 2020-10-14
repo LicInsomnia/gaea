@@ -18,7 +18,6 @@ public class MessageListener {
     @JmsListener (destination = QueueNames.DW_REORGANIZATION)
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println("接收到了内容:" + textMessage.getText());
-
         receiver.receive(textMessage);
     }
 }

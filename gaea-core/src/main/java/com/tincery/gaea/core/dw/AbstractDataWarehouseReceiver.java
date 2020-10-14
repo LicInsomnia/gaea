@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
-import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import javafx.util.Pair;
@@ -33,20 +33,6 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
 
     private List<CsvFilter> csvFilterList;
 
-    public static void main(String[] args) {
-        String a = "D:\\data\\datawarehouse\\csv\\ssl\\20200813/ssl_202008131224.TINCERY_101.csv";
-        List<CsvFilter> csvFilterList = null;
-        try {
-            CsvReader build = CsvReader.builder().file(a).registerFilter(csvFilterList).build();
-            CsvRow csvRow = null;
-            while ((csvRow = build.nextRow()) != null) {
-                System.out.println(csvRow);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void receive(TextMessage textMessage) {
         try {
@@ -66,13 +52,59 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             LocalDateTime endTime = startTime.plusMinutes(recollTime);
             dataWarehouseAnalysis(startTime, endTime);
             runConfig.replace("starttime", endTime);
+            log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);
             DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
         } catch (JMSException e) {
             e.printStackTrace();
         }
     }
 
+    /****
+     * 每个执行器都有自己的csv表头
+     * @author gxz
+     * @return java.lang.String
+     **/
+    public String[] getHead(String category) {
+        String headString;
+        switch (category) {
+            case "session":
+                headString = HeadConst.SESSION_HEADER;
+                break;
+            case "ssl":
+                headString = HeadConst.SSL_HEADER;
+                break;
+            case "openvpn":
+                headString = HeadConst.OPENVPN_HEADER;
+                break;
+            case "dns":
+                headString = HeadConst.DNS_HEADER;
+                break;
+            case "http":
+                headString = HeadConst.HTTP_HEADER;
+                break;
+            case "email":
+                headString = HeadConst.EMAIL_HEADER;
+                break;
+            case "isakmp":
+                headString = HeadConst.ISAKMP_HEADER;
+                break;
+            case "ssh":
+                headString = HeadConst.SSH_HEADER;
+                break;
+            case "ftp_telnet":
+                headString = HeadConst.FTPANDTELNET_HEADER;
+                break;
+            case "esp_ah":
+                headString = HeadConst.ESPANDAH_HEADER;
+                break;
+            default:
+                return null;
+        }
+        return headString.split(HeadConst.CSV_SEPARATOR_STR);
+    }
+
     private void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
+        log.info("本次处理开始时间：{}，结束时间：{}", startTime, endTime);
         List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
         long st = Instant.now().toEpochMilli();
         log.info("开始解析CSV数据...");
@@ -80,8 +112,8 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             CsvReader csvReader;
             try {
                 csvReader = CsvReader.builder().file(csvPath.getValue()).registerFilter(csvFilterList).build();
-            } catch (IllegalAccessException e) {
-                log.error("CSV读取失败");
+            } catch (Exception e) {
+                log.error(e.getMessage());
                 continue;
             }
             analysis(csvPath.getKey(), csvReader);

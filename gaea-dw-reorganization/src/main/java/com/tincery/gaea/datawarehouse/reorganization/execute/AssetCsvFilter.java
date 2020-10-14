@@ -27,6 +27,11 @@ public class AssetCsvFilter implements CsvFilter {
         if (protocol == 6 && !syn) {
             return false;
         }
-        return this.assetDetector.isAsset(csvRow.get(HeadConst.CSV.CLIENT_IP), csvRow.get(HeadConst.CSV.SERVER_IP));
+        int assetFlag = this.assetDetector.checkSessionAsset(csvRow.get(HeadConst.CSV.CLIENT_IP), csvRow.get(HeadConst.CSV.SERVER_IP));
+        if (assetFlag == 0) {
+            return false;
+        }
+        csvRow.putExtension(HeadConst.CSV.ASSET_FLAG, assetFlag);
+        return true;
     }
 }
