@@ -56,8 +56,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
         setFixProperties(elements, sessionMetaData);
         // proName 赋默认值  如果匹配到了相关application 会替换掉proName
         sessionMetaData.setProName("other");
-        if (tryGetServerProName(elements, sessionMetaData) || tryGetClientProName(elements, sessionMetaData)) {
-        }
+        final boolean b = tryGetServerProName(elements, sessionMetaData) || tryGetClientProName(elements, sessionMetaData);
         return sessionMetaData;
     }
 
@@ -128,6 +127,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 .setDownPkt(Long.parseLong(element[4]))
                 .setDownByte(Long.parseLong(element[5]))
                 .setProName(clientApplication.getProName());
+        sessionData.setProName(clientApplication.getProName());
         return true;
     }
 
