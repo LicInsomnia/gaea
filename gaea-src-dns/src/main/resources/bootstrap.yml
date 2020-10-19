@@ -1,10 +1,10 @@
 server:
-  port: 11211
+  port: 11112
 node:
   name: insomnia
 spring:
   application:
-    name: dw_reorganization
+    name: src_dns
   cloud:
     nacos:
       config:
@@ -13,3 +13,4 @@ spring:
         file-extension: yml
   profiles:
     active: insomnia
+

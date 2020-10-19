@@ -41,7 +41,7 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
         this.analysis = analysis;
     }
 
-
+    @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
