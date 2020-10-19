@@ -62,7 +62,7 @@ public class AlarmRule extends BaseSimpleRule {
 
     public static void writeAlarm(String path, String prefix, int maxLine) {
         if (alarmList.size() == 0) {
-            System.out.println("No alarm information was detected...");
+            log.info("未检测到任何告警信息");
             return;
         }
         String file = path + prefix + "alarm_" + System.currentTimeMillis() + ".json";

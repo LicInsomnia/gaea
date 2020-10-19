@@ -14,34 +14,37 @@ public class HeadConst {
     public static final String CSV_SEPARATOR_STR = String.valueOf(CSV_SEPARATOR);
 
     /* 通用csv文件头 */
-    private final static String BASE_COMMON_HEADER = CSV.GROUP_NAME + CSV_SEPARATOR +
-            CSV.TARGET_NAME + CSV_SEPARATOR +
-            CSV.USER_ID + CSV_SEPARATOR +
-            CSV.SERVER_ID + CSV_SEPARATOR +
-            CSV.SOURCE + CSV_SEPARATOR +
-            CSV.CAPTIME + CSV_SEPARATOR +
-            CSV.CLIENT_MAC + CSV_SEPARATOR +
-            CSV.SERVER_MAC + CSV_SEPARATOR +
-            CSV.PROTOCOL + CSV_SEPARATOR +
-            CSV.PRONAME + CSV_SEPARATOR +
-            CSV.CLIENT_IP + CSV_SEPARATOR +
+    private final static String BASE_COMMON_HEADER =
+            CSV.GROUP_NAME + CSV_SEPARATOR +
+                    CSV.TARGET_NAME + CSV_SEPARATOR +
+                    CSV.USER_ID + CSV_SEPARATOR +
+                    CSV.SERVER_ID + CSV_SEPARATOR +
+                    CSV.SOURCE + CSV_SEPARATOR +
+                    CSV.CAPTIME + CSV_SEPARATOR +
+                    CSV.CLIENT_MAC + CSV_SEPARATOR +
+                    CSV.SERVER_MAC + CSV_SEPARATOR +
+                    CSV.PROTOCOL + CSV_SEPARATOR +
+                    CSV.PRONAME + CSV_SEPARATOR +
+                    CSV.CLIENT_IP + CSV_SEPARATOR +
             CSV.CLIENT_IP_N + CSV_SEPARATOR +
             CSV.SERVER_IP + CSV_SEPARATOR +
             CSV.SERVER_IP_N + CSV_SEPARATOR +
             CSV.CLIENT_PORT + CSV_SEPARATOR +
             CSV.SERVER_PORT + CSV_SEPARATOR +
             CSV.CLIENT_IP_OUTER + CSV_SEPARATOR +
-            CSV.SERVER_IP_OUTER + CSV_SEPARATOR +
-            CSV.CLIENT_PORT_OUTER + CSV_SEPARATOR +
-            CSV.SERVER_PORT_OUTER + CSV_SEPARATOR +
-            CSV.PROTOCOL_OUTER + CSV_SEPARATOR +
-            CSV.UP_PKT + CSV_SEPARATOR +
-            CSV.UP_BYTE + CSV_SEPARATOR +
-            CSV.DOWN_PKT + CSV_SEPARATOR +
-            CSV.DOWN_BYTE + CSV_SEPARATOR +
-            CSV.DATA_TYPE + CSV_SEPARATOR +
-            CSV.IMSI + CSV_SEPARATOR +
-            CSV.CASE_TAGS + CSV_SEPARATOR;
+                    CSV.SERVER_IP_OUTER + CSV_SEPARATOR +
+                    CSV.CLIENT_PORT_OUTER + CSV_SEPARATOR +
+                    CSV.SERVER_PORT_OUTER + CSV_SEPARATOR +
+                    CSV.PROTOCOL_OUTER + CSV_SEPARATOR +
+                    CSV.UP_PKT + CSV_SEPARATOR +
+                    CSV.UP_BYTE + CSV_SEPARATOR +
+                    CSV.DOWN_PKT + CSV_SEPARATOR +
+                    CSV.DOWN_BYTE + CSV_SEPARATOR +
+                    CSV.DATA_TYPE + CSV_SEPARATOR +
+                    CSV.IMSI + CSV_SEPARATOR +
+                    CSV.IMEI + CSV_SEPARATOR +
+                    CSV.MSISDN + CSV_SEPARATOR +
+                    CSV.CASE_TAGS + CSV_SEPARATOR;
 
     /* session csv文件头 */
     public final static String SESSION_HEADER = BASE_COMMON_HEADER +

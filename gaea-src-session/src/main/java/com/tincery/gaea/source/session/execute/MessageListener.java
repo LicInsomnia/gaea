@@ -17,7 +17,6 @@ public class MessageListener {
 
     @JmsListener (destination = QueueNames.SRC_SESSION)
     public void receive(TextMessage textMessage) throws JMSException {
-        System.out.println("接收到了内容");
         receiver.receive(textMessage);
     }
 }

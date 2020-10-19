@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.io.File;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,14 +41,16 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             JSONObject runConfig = DataWarehouseRunController.getRunConfig(ApplicationInfo.getCategory());
             // 获取run_config中的startTime（读CSV的开始时间）
             LocalDateTime startTime = DateUtils.Date2LocalDateTime(runConfig.getDate("starttime"));
-            Duration between = Duration.between(startTime, now);
-            long l = between.toHours();
-            if (l < 1L) {
+            LocalDateTime dwTime = now.plusHours(-1);
+            if (dwTime.compareTo(startTime) <= 0) {
                 log.info("执行时间临近当前时间1小时，本次执行跳出");
                 return;
             }
             int recollTime = runConfig.getInteger("recolltime");
             LocalDateTime endTime = startTime.plusMinutes(recollTime);
+            if (dwTime.compareTo(endTime) < 0) {
+                endTime = dwTime;
+            }
             dataWarehouseAnalysis(startTime, endTime);
             runConfig.replace("starttime", endTime);
             log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);

@@ -127,6 +127,7 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
                 }
             }
         }
+
     }
 
 

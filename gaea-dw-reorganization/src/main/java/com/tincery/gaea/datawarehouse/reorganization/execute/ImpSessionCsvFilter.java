@@ -4,6 +4,7 @@ import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.util.CsvUtils;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
 
 public class ImpSessionCsvFilter implements CsvFilter {
 
@@ -17,6 +18,6 @@ public class ImpSessionCsvFilter implements CsvFilter {
     }
 
     private boolean isImpSession(CsvRow csvRow){
-        return null != csvRow.get(HeadConst.CSV.TARGET_NAME);
+        return StringUtils.isNotEmpty(csvRow.get(HeadConst.CSV.TARGET_NAME));
     }
 }

@@ -6,7 +6,7 @@ import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
-import com.tincery.gaea.core.base.tool.util.NumberUtils;
+import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.starter.base.util.NetworkUtil;
@@ -56,7 +56,10 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
         setFixProperties(elements, sessionMetaData);
         // proName 赋默认值  如果匹配到了相关application 会替换掉proName
         sessionMetaData.setProName("other");
-        final boolean b = tryGetServerProName(elements, sessionMetaData) || tryGetClientProName(elements, sessionMetaData);
+        if (!tryGetServerProName(elements, sessionMetaData)) {
+            tryGetClientProName(elements, sessionMetaData);
+        }
+        sessionMetaData.setDataType("other".equals(sessionMetaData.getProName()) ? 0 : 1);
         return sessionMetaData;
     }
 
@@ -67,22 +70,26 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
      **/
     private void setFixProperties(String[] element, SessionData sessionData) {
         long captimeN = Long.parseLong(element[2]);
-        sessionData.setDurationTime(Long.parseLong(element[3]) - captimeN);
-        sessionData.setImsi(element[17]);
-        sessionData.setImei(element[18]);
-        sessionData.setMsisdn(element[19]);
         sessionData.setCapTime(DateUtils.validateTime(captimeN));
-        sessionData.setUpPayLoad(element[28]).setDownPayLoad(element[29])
-                .setProtocol(Integer.parseInt(element[8]))
-                .setClientIpOuter(element[20])
-                .setServerIpOuter(element[21])
-                .setClientPortOuter(NumberUtils.parseIntegerStr(element[22]))
-                .setServerPortOuter(NumberUtils.parseIntegerStr(element[23]))
-                .setProtocolOuter(NumberUtils.parseIntegerStr(element[24]))
-                .setUserId(element[25]);
-        sessionData.setServerId(element[26]);
-        sessionData.setSyn("1".equals(element[0]));
-        sessionData.setFin("1".equals(element[1]));
+        sessionData.setDurationTime(Long.parseLong(element[3]) - captimeN);
+        sessionData.setSource(element[15]);
+        sessionData.setImsi(SourceFieldUtils.parseStringStr(element[17]));
+        sessionData.setImei(SourceFieldUtils.parseStringStr(element[18]));
+        sessionData.setMsisdn(SourceFieldUtils.parseStringStr(element[19]));
+        sessionData.setProtocol(Integer.parseInt(element[8]))
+                .setUserId(element[25])
+                .setServerId(element[26]);
+        sessionData.setUpPayLoad(SourceFieldUtils.parseStringStr(element[28]))
+                .setDownPayLoad(SourceFieldUtils.parseStringStr(element[29]))
+                // 若为0则该字段无效，强制写null
+                .setClientIpOuter(SourceFieldUtils.parseStringStr(element[20]))
+                .setServerIpOuter(SourceFieldUtils.parseStringStr(element[21]))
+                .setClientPortOuter(SourceFieldUtils.parseIntegerStr(element[22]))
+                .setServerPortOuter(SourceFieldUtils.parseIntegerStr(element[23]))
+                .setProtocolOuter(SourceFieldUtils.parseIntegerStr(element[24]));
+        sessionData.setSyn(SourceFieldUtils.parseBooleanStr(element[0]))
+                .setFin(SourceFieldUtils.parseBooleanStr(element[1]));
+        sessionData.setMacOuter(SourceFieldUtils.parseBooleanStr(element[27]));
     }
 
     /****
@@ -107,7 +114,10 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
         if (serverApplication == null) {
             return false;
         }
-        sessionData.setProName(serverApplication.getProName());
+        String proName = serverApplication.getProName();
+        if (null != proName) {
+            sessionData.setProName(serverApplication.getProName());
+        }
         return true;
     }
 
@@ -127,7 +137,10 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 .setDownPkt(Long.parseLong(element[4]))
                 .setDownByte(Long.parseLong(element[5]))
                 .setProName(clientApplication.getProName());
-        sessionData.setProName(clientApplication.getProName());
+        String proName = clientApplication.getProName();
+        if (null != proName) {
+            sessionData.setProName(clientApplication.getProName());
+        }
         return true;
     }
 

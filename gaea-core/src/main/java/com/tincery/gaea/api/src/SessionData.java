@@ -20,6 +20,7 @@ public class SessionData extends AbstractSrcData {
 
     @Override
     public void adjust() {
+        super.adjust();
     }
 
     @Override

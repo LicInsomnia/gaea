@@ -112,7 +112,8 @@ public abstract class AbstractSrcData extends AbstractMetaData {
                 this.clientMac, this.serverMac, this.protocol, this.proName, this.clientIp, clientIPN,
                 this.serverIp, serverIpN, this.clientPort, this.serverPort, this.clientIpOuter,
                 this.serverIpOuter, this.clientPortOuter, this.serverPortOuter, this.protocolOuter, this.upPkt,
-                this.upByte, this.downPkt, this.downByte, this.dataType, this.imsi, Joiner.on(";").join(caseTags)};
+                this.upByte, this.downPkt, this.downByte, this.dataType, this.imsi, this.imei, this.msisdn,
+                Joiner.on(";").join(caseTags)};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 

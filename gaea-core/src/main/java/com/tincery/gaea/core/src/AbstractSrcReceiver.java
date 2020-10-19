@@ -63,7 +63,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 CPU * 2,
                 10,
                 TimeUnit.MINUTES,
-                new ArrayBlockingQueue<>(1024),
+                new ArrayBlockingQueue<>(4096),
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy());
     }
@@ -81,9 +81,12 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         log.info("消息传递时间：{}；执行时间：{}", DateUtils.format(textMessage.getJMSTimestamp()), DateUtils.now());
         String text = textMessage.getText();
         File file = new File(text);
+        log.info("开始解析文件:[{}]", file.getName());
+        long startTime = System.currentTimeMillis();
         analysisFile(file);
         this.clearFile(file);
         this.free();
+        log.info("文件:[{}]处理完成，用时{}毫秒", file.getName(), (System.currentTimeMillis() - startTime));
     }
 
     /*****
@@ -103,7 +106,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         if (executor <= 1) {
             analysisLine(lines);
         } else {
-            List<List<String>> partitions = Lists.partition(lines, executor);
+            List<List<String>> partitions = Lists.partition(lines, lines.size() / executor);
             for (List<String> partition : partitions) {
                 executorService.execute(() -> analysisLine(partition));
             }
@@ -224,7 +227,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         }
         long st = System.currentTimeMillis();
         String dataPath = ApplicationInfo.getDataWarehouseCsvPathByCategory();
-        this.checkFiles(dataPath, this.minTime, this.maxTime);
+        checkFiles(dataPath, this.minTime, this.maxTime);
         for (Map.Entry<String, List<String>> entry : this.csvMap.entrySet()) {
             String filePath = dataPath + entry.getKey();
             List<String> csvLines = entry.getValue();
@@ -249,9 +252,10 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 }
             }
         }
+        close();
         this.csvDataHandle.clear();
         this.csvMap.clear();
-        log.info("输出了{}条记录，用时{}", this.csvCount, DateUtils.duration(st));
+        log.info("输出了{}条记录，用时{}毫秒", this.csvCount, DateUtils.duration(st));
         this.csvCount = 0;
         this.minTime = 0;
         this.maxTime = 0;
@@ -273,7 +277,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     /**
      * @author Insomnia 整体检测数据集输出路径
      */
-    protected void checkFiles(String subPath, long min, long max) {
+    private void checkFiles(String subPath, long min, long max) {
         long minPath = Long.parseLong(DateUtils.format(min, "yyyyMMdd"));
         long maxPath = Long.parseLong(DateUtils.format(max, "yyyyMMdd"));
         while (minPath <= maxPath) {

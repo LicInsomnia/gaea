@@ -34,7 +34,7 @@ public abstract class AbstractMetaData extends GaeaData {
     /** 协议名 */
     protected String proName;
     /** 是否加密 */
-    protected int isEncrypt;
+    protected Boolean isEncrypt;
     /** 内外层五元组相关 */
     protected Integer protocol;
     protected String clientMac;
@@ -60,12 +60,8 @@ public abstract class AbstractMetaData extends GaeaData {
     /** 手机号 */
     protected String msisdn;
     /**
-     * dataType数据类型字段
-     * session：-1：其他 0：ssl 1：dns
-     * dns：-1：伪造 0：请求 1：应答
-     * ssl： -1：伪造 0：正常
-     * http： -1：伪造 1：正常
-     * ssh： -1：伪造  1：正常
+     * dataType数据类型字段 session：0：未知proName 1：已知proName dns：-1：伪造 0：请求 1：应答 ssl： -1：伪造 0：正常 http： -1：伪造 1：正常 ssh： -1：伪造
+     * 1：正常
      */
     protected Integer dataType;
     /** 组名 */

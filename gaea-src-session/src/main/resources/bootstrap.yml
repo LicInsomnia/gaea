@@ -12,5 +12,5 @@ spring:
         name: gaea
         file-extension: yml
   profiles:
-    active: ${node.name}
+    active: insomnia
 
