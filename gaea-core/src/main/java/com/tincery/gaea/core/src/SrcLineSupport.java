@@ -24,7 +24,6 @@ public class SrcLineSupport {
 
     /**
      * 通过查询application_protocol表获取协议名
-     *
      * @param key 协议_端口拼接（protocol_serverPort）
      * @return 协议名，若未查询到则返回null
      */
@@ -34,7 +33,6 @@ public class SrcLineSupport {
 
     /**
      * 根据目标名查表获得目标分组名
-     *
      * @param targetName 数据中目标名
      * @return 分组名
      */
@@ -45,15 +43,15 @@ public class SrcLineSupport {
     /**
      * 设置七元组
      *
-     * @param serverMac
-     * @param clientMac
-     * @param serverIp
-     * @param clientIp
-     * @param serverPort
-     * @param clientPort
-     * @param protocol
-     * @param proName
-     * @param data
+     * @param serverMac  服务端MAC地址
+     * @param clientMac  客户端MAC地址
+     * @param serverIp   服务端IP
+     * @param clientIp   客户端IP
+     * @param serverPort 服务端端口
+     * @param clientPort 客户端端口
+     * @param protocol   协议
+     * @param proName    协议名
+     * @param data       数据实体
      */
     public void set7Tuple(String serverMac,
                           String clientMac,
@@ -76,12 +74,11 @@ public class SrcLineSupport {
 
     /**
      * 设置流量
-     *
-     * @param upPkt
-     * @param upByte
-     * @param downPkt
-     * @param downByte
-     * @param data
+     * @param upPkt 上行字节数
+     * @param upByte 上行包数
+     * @param downPkt 下行字节数
+     * @param downByte 下行包数
+     * @param data 数据实体
      */
     public void setFlow(String upPkt, String upByte, String downPkt, String downByte, AbstractMetaData data) {
         data.setUpPkt(Long.parseLong(upPkt));
@@ -92,10 +89,9 @@ public class SrcLineSupport {
 
     /**
      * 设置malformed载荷信息
-     *
-     * @param upPayload
-     * @param downPayload
-     * @param data
+     * @param upPayload 上行载荷
+     * @param downPayload 下行载荷
+     * @param data 数据实体
      */
     public void setMalformedPayload(String upPayload, String downPayload, AbstractMetaData data) {
         data.setMalformedUpPayload("0000000000000000000000000000000000000000".equals(upPayload) ? "" : upPayload);
