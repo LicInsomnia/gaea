@@ -1,9 +1,9 @@
 package com.tincery.gaea.core.base.component.support;
 
 
+import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.PayloadDetectorDO;
-import com.tincery.gaea.api.src.AbstractSrcData;
 import com.tincery.gaea.core.base.dao.PayloadDetectorDao;
 import com.tincery.starter.base.InitializationRequired;
 import lombok.extern.slf4j.Slf4j;
@@ -63,9 +63,9 @@ public class PayloadDetector implements InitializationRequired {
     }
 
 
-    public String getProName(AbstractSrcData data){
-        return getProName(data.getProtocol(),data.getServerPort(),data.getClientPort(),
-                data.getMalformedUpPayload(),data.getMalformedDownPayload());
+    public String getProName(AbstractMetaData data) {
+        return getProName(data.getProtocol(), data.getServerPort(), data.getClientPort(),
+                data.getMalformedUpPayload(), data.getMalformedDownPayload());
     }
 
     public String getProName(int protocol,

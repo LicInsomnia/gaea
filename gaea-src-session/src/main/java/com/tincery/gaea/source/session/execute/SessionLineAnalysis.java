@@ -3,13 +3,11 @@ package com.tincery.gaea.source.session.execute;
 
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.src.SessionData;
-import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
-import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
-import com.tincery.starter.base.util.NetworkUtil;
+import com.tincery.gaea.core.src.SrcLineSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,16 +19,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
 
-
-    private final ApplicationProtocol applicationProtocol;
-
     @Autowired
-    public PayloadDetector payloadDetector;
-
-
-    public SessionLineAnalysis(ApplicationProtocol applicationProtocol) {
-        this.applicationProtocol = applicationProtocol;
-    }
+    private SrcLineSupport srcLineSupport;
 
     /****
      * 将一条记录包装成实体类
@@ -54,8 +44,6 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
         SessionData sessionMetaData = new SessionData();
         String[] elements = StringUtils.FileLineSplit(line);
         setFixProperties(elements, sessionMetaData);
-        // proName 赋默认值  如果匹配到了相关application 会替换掉proName
-        sessionMetaData.setProName("other");
         if (!tryGetServerProName(elements, sessionMetaData)) {
             tryGetClientProName(elements, sessionMetaData);
         }
@@ -69,15 +57,14 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
      * @author gxz
      **/
     private void setFixProperties(String[] element, SessionData sessionData) {
-        long captimeN = Long.parseLong(element[2]);
-        sessionData.setCapTime(DateUtils.validateTime(captimeN));
-        sessionData.setDurationTime(Long.parseLong(element[3]) - captimeN);
+        long capTimeN = Long.parseLong(element[2]);
+        sessionData.setCapTime(DateUtils.validateTime(capTimeN));
+        sessionData.setDurationTime(Long.parseLong(element[3]) - capTimeN);
         sessionData.setSource(element[15]);
         sessionData.setImsi(SourceFieldUtils.parseStringStr(element[17]));
         sessionData.setImei(SourceFieldUtils.parseStringStr(element[18]));
         sessionData.setMsisdn(SourceFieldUtils.parseStringStr(element[19]));
-        sessionData.setProtocol(Integer.parseInt(element[8]))
-                .setUserId(element[25])
+        sessionData.setUserId(element[25])
                 .setServerId(element[26]);
         sessionData.setUpPayLoad(SourceFieldUtils.parseStringStr(element[28]))
                 .setDownPayLoad(SourceFieldUtils.parseStringStr(element[29]))
@@ -100,46 +87,46 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
      * @return boolean 是否找到
      **/
     private boolean tryGetServerProName(String[] element, SessionData sessionData) {
-        sessionData.setServerMac(element[9]).setClientMac(element[10])
-                .setServerIp(NetworkUtil.arrangeIp(element[11]))
-                .setClientIp(NetworkUtil.arrangeIp(element[12]))
-                .setServerPort(Integer.parseInt(element[13]))
-                .setClientPort(Integer.parseInt(element[14]))
-                .setUpPkt(Long.parseLong(element[4]))
-                .setUpByte(Long.parseLong(element[5]))
-                .setDownPkt(Long.parseLong(element[6]))
-                .setDownByte(Long.parseLong(element[7]));
+        this.srcLineSupport.set7Tuple(
+                element[9],
+                element[10],
+                element[11],
+                element[12],
+                element[13],
+                element[14],
+                element[8],
+                "other",
+                sessionData);
+        this.srcLineSupport.setFlow(element[4], element[5], element[6], element[7], sessionData);
         String serverKey = element[8] + "_" + element[13];
-        ApplicationInformationBO serverApplication = applicationProtocol.getApplication(serverKey);
-        if (serverApplication == null) {
-            return false;
-        }
-        String proName = serverApplication.getProName();
-        if (null != proName) {
-            sessionData.setProName(serverApplication.getProName());
-        }
-        return true;
+        return getApplicationInformation(sessionData, serverKey);
     }
 
     private boolean tryGetClientProName(String[] element, SessionData sessionData) {
+        this.srcLineSupport.set7Tuple(
+                element[10],
+                element[9],
+                element[12],
+                element[11],
+                element[14],
+                element[13],
+                element[8],
+                "other",
+                sessionData
+        );
+        this.srcLineSupport.setFlow(element[6], element[7], element[4], element[5], sessionData);
         String clientKey = element[8] + "_" + element[14];
-        ApplicationInformationBO clientApplication = applicationProtocol.getApplication(clientKey);
+        return getApplicationInformation(sessionData, clientKey);
+    }
+
+    private boolean getApplicationInformation(SessionData sessionData, String key) {
+        ApplicationInformationBO clientApplication = this.srcLineSupport.getApplication(key);
         if (clientApplication == null) {
             return false;
         }
-        sessionData.setServerMac(element[10]).setClientMac(element[9])
-                .setServerIp(NetworkUtil.arrangeIp(element[12]))
-                .setClientIp(NetworkUtil.arrangeIp(element[11]))
-                .setServerPort(Integer.parseInt(element[14]))
-                .setClientPort(Integer.parseInt(element[13]))
-                .setUpPkt(Long.parseLong(element[6]))
-                .setUpByte(Long.parseLong(element[7]))
-                .setDownPkt(Long.parseLong(element[4]))
-                .setDownByte(Long.parseLong(element[5]))
-                .setProName(clientApplication.getProName());
         String proName = clientApplication.getProName();
-        if (null != proName) {
-            sessionData.setProName(clientApplication.getProName());
+        if (StringUtils.isNotEmpty(proName)) {
+            sessionData.setProName(proName);
         }
         return true;
     }

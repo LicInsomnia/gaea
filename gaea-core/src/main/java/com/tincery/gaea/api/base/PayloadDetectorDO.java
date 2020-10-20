@@ -99,23 +99,23 @@ public class PayloadDetectorDO extends SimpleBaseDO {
          * @return boolean
          **/
         private boolean hitUpPayload(String upPayload) {
-            if (StringUtils.isEmpty(upPayload)) {
+            if (StringUtils.isEmpty(this.upPayload)) {
                 return true;
             }
-            if (StringUtils.isEmpty(upPayload) || upPayload.length() < upIndex) {
+            if (StringUtils.isEmpty(upPayload) || upPayload.length() < this.upIndex) {
                 return false;
             }
-            return upPayload.substring(upIndex).startsWith(this.upPayload);
+            return upPayload.substring(this.upIndex).startsWith(this.upPayload);
         }
 
         private boolean hitDownPayload(String downPayload) {
-            if (StringUtils.isEmpty(downPayload)) {
+            if (StringUtils.isEmpty(this.downPayload)) {
                 return true;
             }
-            if (StringUtils.isEmpty(downPayload) || downPayload.length() < downIndex) {
+            if (StringUtils.isEmpty(downPayload) || downPayload.length() < this.downIndex) {
                 return false;
             }
-            return downPayload.substring(downIndex).startsWith(this.downPayload);
+            return downPayload.substring(this.downIndex).startsWith(this.downPayload);
         }
 
         private boolean hitExtension(Map<String, Object> extension) {

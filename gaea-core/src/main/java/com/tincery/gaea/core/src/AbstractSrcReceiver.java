@@ -155,8 +155,8 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
 
 
     /**
-     * @param data 单一session信息
-     * @author gxz 处理单条session记录
+     * @param data 单一Src层记录
+     * @author gxz 处理单条src层记录
      */
     protected void putCsvMap(M data) {
         if (RuleRegistry.getInstance().matchLoop(data)) {
@@ -188,7 +188,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      **/
     protected void bakFile(File file) {
         if (this.properties.isBack()) {
-            String bakPathDir = NodeInfo.getBak();
+            String bakPathDir = NodeInfo.getBakByCategory(ApplicationInfo.getCategory());
             FileUtils.checkPath(bakPathDir);
             String srcPath = file.getAbsolutePath();
             bakPathDir += ("/" + file.getName());
@@ -199,7 +199,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     /**
      * 输出本地数据文件
      */
-    protected synchronized void appendCsvData(String fileName, String csvLine, long captime) {
+    protected synchronized void appendCsvData(String fileName, String csvLine, long capTime) {
         List<String> csvLines;
         if (this.csvMap.containsKey(fileName)) {
             csvLines = this.csvMap.get(fileName);
@@ -211,11 +211,11 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         if (++this.csvCount >= this.properties.getMaxLine()) {
             outputCsvData();
         }
-        if (this.minTime == 0 || captime < this.minTime) {
-            this.minTime = captime;
+        if (this.minTime == 0 || capTime < this.minTime) {
+            this.minTime = capTime;
         }
-        if (captime > this.maxTime) {
-            this.maxTime = captime;
+        if (capTime > this.maxTime) {
+            this.maxTime = capTime;
         }
     }
 

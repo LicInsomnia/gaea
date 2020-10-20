@@ -4,6 +4,7 @@ package com.tincery.gaea.api.src;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.core.base.tool.ToolUtils;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.starter.base.util.NetworkUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,7 +63,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
     @Override
     public void adjust() {
         adjustPayload();
-        adjustClientId();
+        adjustUserId();
         adjustServerId();
         setOuterFromMac();
         adjustEventData();
@@ -74,7 +75,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
 
     @Override
     public AbstractSrcData setTargetName(String targetName) {
-        if (null == targetName || targetName.isEmpty()) {
+        if (StringUtils.isEmpty(targetName)) {
             return this;
         }
         int flag = targetName.charAt(0);
@@ -159,16 +160,16 @@ public abstract class AbstractSrcData extends AbstractMetaData {
         this.setServerPortOuter(p);
     }
 
-    protected void adjustClientId() {
-        if (null != this.imsi && !this.imsi.isEmpty()) {
+    protected void adjustUserId() {
+        if (StringUtils.isNotEmpty(this.imsi)) {
             this.userId = this.imsi;
-        } else if (null == userId || userId.isEmpty()) {
+        } else if (StringUtils.isEmpty(this.userId)) {
             this.userId = this.clientIp;
         }
     }
 
     protected void adjustServerId() {
-        if (null == serverId || serverId.isEmpty()) {
+        if (StringUtils.isEmpty(this.serverId)) {
             this.serverId = this.serverIp;
         }
     }

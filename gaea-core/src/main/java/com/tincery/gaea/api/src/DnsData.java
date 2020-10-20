@@ -5,8 +5,6 @@ import com.google.common.base.Joiner;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -28,12 +26,13 @@ public class DnsData extends AbstractSrcData {
 
     @Override
     public void adjust() {
+        super.adjust();
     }
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.getDurationTime() / 1000, this.getSyn(), this.getFin()};
-        return Joiner.on(splitChar).join(join);
+        Object[] join = new Object[]{super.toCsv(splitChar), this.domain, this.responseIp, this.malformedUpPayload, this.malformedDownPayload, this.extension};
+        return Joiner.on(splitChar).useForNull("").join(join);
     }
 
 
