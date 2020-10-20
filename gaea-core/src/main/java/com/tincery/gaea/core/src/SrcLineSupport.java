@@ -6,6 +6,7 @@ import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.GroupGetter;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
+import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class SrcLineSupport {
      * @return 协议名，若未查询到则返回null
      */
     public ApplicationInformationBO getApplication(String key) {
-        return applicationProtocol.getApplication(key);
+        return this.applicationProtocol.getApplication(key);
     }
 
     /**
@@ -62,14 +63,14 @@ public class SrcLineSupport {
                           String protocol,
                           String proName,
                           AbstractMetaData data) {
-        data.setServerMac(serverMac);
-        data.setClientMac(clientMac);
-        data.setServerIp(NetworkUtil.arrangeIp(serverIp));
-        data.setClientIp(NetworkUtil.arrangeIp(clientIp));
-        data.setServerPort(Integer.parseInt(serverPort));
-        data.setClientPort(Integer.parseInt(clientPort));
-        data.setProtocol(Integer.parseInt(protocol));
-        data.setProName(proName);
+        data.setServerMac(serverMac)
+                .setClientMac(clientMac)
+                .setServerIp(NetworkUtil.arrangeIp(serverIp))
+                .setClientIp(NetworkUtil.arrangeIp(clientIp))
+                .setServerPort(Integer.parseInt(serverPort))
+                .setClientPort(Integer.parseInt(clientPort))
+                .setProtocol(Integer.parseInt(protocol))
+                .setProName(proName);
     }
 
     /**
@@ -81,21 +82,38 @@ public class SrcLineSupport {
      * @param data 数据实体
      */
     public void setFlow(String upPkt, String upByte, String downPkt, String downByte, AbstractMetaData data) {
-        data.setUpPkt(Long.parseLong(upPkt));
-        data.setUpByte(Long.parseLong(upByte));
-        data.setDownPkt(Long.parseLong(downPkt));
-        data.setDownByte(Long.parseLong(downByte));
+        data.setUpPkt(Long.parseLong(upPkt))
+                .setUpByte(Long.parseLong(upByte))
+                .setDownPkt(Long.parseLong(downPkt))
+                .setDownByte(Long.parseLong(downByte));
+    }
+
+    public void set5TupleOuter(
+            String clientIpOuter,
+            String serverIpOuter,
+            String clientPortOuter,
+            String serverPortOuter,
+            String protocolOuter,
+            AbstractMetaData data
+    ) {
+        // 若为0则该字段无效，强制写null
+        data.setClientIpOuter(SourceFieldUtils.parseStringStr(clientIpOuter))
+                .setServerIpOuter(SourceFieldUtils.parseStringStr(serverIpOuter))
+                .setClientPortOuter(SourceFieldUtils.parseIntegerStr(clientPortOuter))
+                .setServerPortOuter(SourceFieldUtils.parseIntegerStr(serverPortOuter))
+                .setProtocolOuter(SourceFieldUtils.parseIntegerStr(protocolOuter));
     }
 
     /**
      * 设置malformed载荷信息
-     * @param upPayload 上行载荷
+     *
+     * @param upPayload   上行载荷
      * @param downPayload 下行载荷
-     * @param data 数据实体
+     * @param data        数据实体
      */
     public void setMalformedPayload(String upPayload, String downPayload, AbstractMetaData data) {
-        data.setMalformedUpPayload("0000000000000000000000000000000000000000".equals(upPayload) ? "" : upPayload);
-        data.setMalformedDownPayload("0000000000000000000000000000000000000000".equals(downPayload) ? "" : downPayload);
-        data.setProName(payloadDetector.getProName(data));
+        data.setMalformedUpPayload("0000000000000000000000000000000000000000".equals(upPayload) ? "" : upPayload)
+                .setMalformedDownPayload("0000000000000000000000000000000000000000".equals(downPayload) ? "" : downPayload)
+                .setProName(this.payloadDetector.getProName(data));
     }
 }

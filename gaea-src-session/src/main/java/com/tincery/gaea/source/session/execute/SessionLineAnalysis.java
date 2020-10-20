@@ -58,25 +58,27 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
      **/
     private void setFixProperties(String[] element, SessionData sessionData) {
         long capTimeN = Long.parseLong(element[2]);
-        sessionData.setCapTime(DateUtils.validateTime(capTimeN));
-        sessionData.setDurationTime(Long.parseLong(element[3]) - capTimeN);
-        sessionData.setSource(element[15]);
-        sessionData.setImsi(SourceFieldUtils.parseStringStr(element[17]));
-        sessionData.setImei(SourceFieldUtils.parseStringStr(element[18]));
-        sessionData.setMsisdn(SourceFieldUtils.parseStringStr(element[19]));
-        sessionData.setUserId(element[25])
-                .setServerId(element[26]);
+        sessionData.setCapTime(DateUtils.validateTime(capTimeN))
+                .setDurationTime(Long.parseLong(element[3]) - capTimeN)
+                .setSource(element[15])
+                .setImsi(SourceFieldUtils.parseStringStr(element[17]))
+                .setImei(SourceFieldUtils.parseStringStr(element[18]))
+                .setMsisdn(SourceFieldUtils.parseStringStr(element[19]))
+                .setUserId(element[25])
+                .setServerId(element[26])
+                .setSyn(SourceFieldUtils.parseBooleanStr(element[0]))
+                .setFin(SourceFieldUtils.parseBooleanStr(element[1]));
         sessionData.setUpPayLoad(SourceFieldUtils.parseStringStr(element[28]))
                 .setDownPayLoad(SourceFieldUtils.parseStringStr(element[29]))
-                // 若为0则该字段无效，强制写null
-                .setClientIpOuter(SourceFieldUtils.parseStringStr(element[20]))
-                .setServerIpOuter(SourceFieldUtils.parseStringStr(element[21]))
-                .setClientPortOuter(SourceFieldUtils.parseIntegerStr(element[22]))
-                .setServerPortOuter(SourceFieldUtils.parseIntegerStr(element[23]))
-                .setProtocolOuter(SourceFieldUtils.parseIntegerStr(element[24]));
-        sessionData.setSyn(SourceFieldUtils.parseBooleanStr(element[0]))
-                .setFin(SourceFieldUtils.parseBooleanStr(element[1]));
-        sessionData.setMacOuter(SourceFieldUtils.parseBooleanStr(element[27]));
+                .setMacOuter(SourceFieldUtils.parseBooleanStr(element[27]));
+        this.srcLineSupport.set5TupleOuter(
+                element[20],
+                element[21],
+                element[22],
+                element[23],
+                element[24],
+                sessionData
+        );
     }
 
     /****

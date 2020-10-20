@@ -42,19 +42,19 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
     public DnsData pack(String line) {
         DnsData dnsData = new DnsData();
         String[] elements = StringUtils.FileLineSplit(line);
-        dnsData.setDataType(Integer.parseInt(elements[25]));
-        dnsData.setSource(elements[11]);
-        dnsData.setTargetName(elements[12]);
-        dnsData.setGroupName(srcLineSupport.getGroupName(dnsData.getTargetName()));
-        dnsData.setDurationTime(0);
-        dnsData.setCapTime(DateUtils.validateTime(Long.parseLong(elements[13])));
-        dnsData.setSyn(false);
-        dnsData.setFin(false);
+        dnsData.setDataType(Integer.parseInt(elements[25]))
+                .setSource(elements[11])
+                .setTargetName(elements[12])
+                .setGroupName(this.srcLineSupport.getGroupName(dnsData.getTargetName()))
+                .setDurationTime(0)
+                .setCapTime(DateUtils.validateTime(Long.parseLong(elements[13])))
+                .setSyn(false)
+                .setFin(false)
+                .setImsi(elements[14])
+                .setImei(elements[15])
+                .setMsisdn(elements[16]);
         this.srcLineSupport.set7Tuple(elements[0], elements[1], elements[2], elements[3], elements[4], elements[5], elements[6], "DNS", dnsData);
         this.srcLineSupport.setFlow(elements[7], elements[9], elements[8], elements[10], dnsData);
-        dnsData.setImsi(elements[14]);
-        dnsData.setImei(elements[15]);
-        dnsData.setMsisdn(elements[16]);
         switch (dnsData.getDataType()) {
             case 0:
                 dnsData.setDomain(elements[26]);
