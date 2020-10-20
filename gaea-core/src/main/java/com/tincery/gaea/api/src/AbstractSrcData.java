@@ -73,32 +73,6 @@ public abstract class AbstractSrcData extends AbstractMetaData {
         this.eventData = ToolUtils.getMD5(this.toString());
     }
 
-    @Override
-    public AbstractSrcData setTargetName(String targetName) {
-        if (StringUtils.isEmpty(targetName)) {
-            return this;
-        }
-        int flag = targetName.charAt(0);
-        if (flag < '5') {
-            return this;
-        }
-        this.targetName = targetName.substring(1);
-        this.imp = true;
-        switch (flag) {
-            case 'l':
-                this.groupName = "l2tp";
-                break;
-            case 'p':
-                this.groupName = "pptp";
-                break;
-            case '6':
-                this.groupName = this.targetName;
-                break;
-            default:
-                break;
-        }
-        return this;
-    }
 
     @Override
     public String toCsv(char splitChar) {
@@ -136,6 +110,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
         }
         caseTags.add(tag);
     }
+
     protected void setOuterFromMac() {
         if (null == this.macOuter || !this.macOuter) {
             return;

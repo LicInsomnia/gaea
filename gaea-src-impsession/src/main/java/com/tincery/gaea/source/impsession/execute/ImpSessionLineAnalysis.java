@@ -1,17 +1,13 @@
 package com.tincery.gaea.source.impsession.execute;
 
 import com.tincery.gaea.api.src.ImpSessionData;
-import com.tincery.gaea.core.base.component.support.GroupGetter;
-import com.tincery.gaea.core.base.component.support.IpChecker;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
+import com.tincery.gaea.core.src.SrcLineSupport;
 import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author gongxuanzhang
@@ -20,12 +16,7 @@ import java.util.Map;
 public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
 
     @Autowired
-    private IpChecker ipChecker;
-
-    @Autowired
-    private GroupGetter groupGetter;
-
-    private final Map<String, ImpSessionData> impSessionMap = new HashMap<>();
+    private SrcLineSupport srcLineSupport;
 
     /***
      *
@@ -51,31 +42,22 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
     }
 
     private ImpSessionData fill(ImpSessionData impSessionData, String[] element) {
-        long captime = DateUtils.validateTime(Long.parseLong(element[2]));
-        impSessionData.setCapTime(captime);
-        long endtime = DateUtils.validateTime(Long.parseLong(element[3]));
-        impSessionData.setDurationTime(endtime - captime);
-        long duration = endtime - captime;
+        long capTime = DateUtils.validateTime(Long.parseLong(element[2]));
+        impSessionData.setCapTime(capTime);
+        long endTime = DateUtils.validateTime(Long.parseLong(element[3]));
+        impSessionData.setDurationTime(endTime - capTime);
+        long duration = endTime - capTime;
         impSessionData.setDurationTime(duration);
-        impSessionData.setTargetName(element[17]);
-        impSessionData.setGroupName(this.groupGetter.getGroupName(impSessionData.getTargetName()));
         impSessionData.setImsi(element[18]);
         impSessionData.setImei(element[19]);
         impSessionData.setMsisdn(element[20]);
         impSessionData.setPayload(element[29]);
-        impSessionData.set5TupleOuter(element[21], element[22], element[23], element[24], element[25]);
+        this.srcLineSupport.set5TupleOuter(element[21], element[22], element[23], element[24], element[25], impSessionData);
         impSessionData.setUserId(element[26]);
         impSessionData.setServerId(element[27]);
         impSessionData.setMacOuter("1".equals(element[28]));
-        String key = impSessionData.getKey();
-        String pairKey = impSessionData.getPairKey();
-        if (this.impSessionMap.containsKey(pairKey)) {
-            ImpSessionData buffer = this.impSessionMap.get(pairKey);
-            buffer.merge(impSessionData);
-            this.impSessionMap.replace(pairKey, buffer);
-        } else {
-            this.impSessionMap.put(key, impSessionData);
-        }
+        this.srcLineSupport.setTargetName(element[17], impSessionData);
+        this.srcLineSupport.setGroupName(impSessionData.getTargetName(), impSessionData);
         return impSessionData;
     }
 
@@ -83,9 +65,10 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
      * 是否需要IP矫正
      **/
     private boolean needCorrect(String[] element) {
-        return (Integer.parseInt(element[15]) == 17) &&
-                (element[11].length() <= 10) &&
-                ipChecker.isInner(Long.parseLong(element[11])) && !ipChecker.isInner(Long.parseLong(element[12]));
+        return true;
+//        return (Integer.parseInt(element[15]) == 17) &&
+//                (element[11].length() <= 10) &&
+//                ipChecker.isInner(Long.parseLong(element[11])) && !ipChecker.isInner(Long.parseLong(element[12]));
     }
 
     private void setImpSessionDataFix(ImpSessionData impSessionData, String[] element) {

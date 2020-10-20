@@ -55,7 +55,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
 
     protected final Map<String, FileWriter> csvDataHandle = new HashMap<>();
 
-    private static ThreadPoolExecutor executorService;
+    protected static ThreadPoolExecutor executorService;
 
     static {
         executorService = new ThreadPoolExecutor(
@@ -89,7 +89,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         log.info("文件:[{}]处理完成，用时{}毫秒", file.getName(), (System.currentTimeMillis() - startTime));
     }
 
-    /*****
+    /**
      * 多线程实现执行  基类默认实现为单线程  同analysisLine
      * 如需要多线程实现 请重写此方法
      * @author gxz
@@ -118,7 +118,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      * @author gxz
      * @param lines 多条记录
      **/
-    private void analysisLine(List<String> lines) {
+    protected void analysisLine(List<String> lines) {
         for (String line : lines) {
             if (StringUtils.isNotEmpty(line)) {
                 M pack;

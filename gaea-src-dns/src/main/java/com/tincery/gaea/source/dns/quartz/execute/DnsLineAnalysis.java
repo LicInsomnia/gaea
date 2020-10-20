@@ -27,7 +27,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
     @Autowired
     private SrcLineSupport srcLineSupport;
 
-    /****
+    /**
      * 将一条记录包装成实体类
      * 0.serverMac          1.clientMac         2.serverIp_n            3.clientIp_n
      * 4.serverPort         5.clientPort        6.protocol              7.uppkt
@@ -44,8 +44,6 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         String[] elements = StringUtils.FileLineSplit(line);
         dnsData.setDataType(Integer.parseInt(elements[25]))
                 .setSource(elements[11])
-                .setTargetName(elements[12])
-                .setGroupName(this.srcLineSupport.getGroupName(dnsData.getTargetName()))
                 .setDurationTime(0)
                 .setCapTime(DateUtils.validateTime(Long.parseLong(elements[13])))
                 .setSyn(false)
@@ -53,6 +51,8 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 .setImsi(elements[14])
                 .setImei(elements[15])
                 .setMsisdn(elements[16]);
+        this.srcLineSupport.setTargetName(elements[12], dnsData);
+        this.srcLineSupport.setGroupName(dnsData.getTargetName(), dnsData);
         this.srcLineSupport.set7Tuple(elements[0], elements[1], elements[2], elements[3], elements[4], elements[5], elements[6], "DNS", dnsData);
         this.srcLineSupport.setFlow(elements[7], elements[9], elements[8], elements[10], dnsData);
         switch (dnsData.getDataType()) {
