@@ -52,7 +52,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 .setImei(elements[15])
                 .setMsisdn(elements[16]);
         this.srcLineSupport.setTargetName(elements[12], dnsData);
-        this.srcLineSupport.setGroupName(dnsData.getTargetName(), dnsData);
+        this.srcLineSupport.setGroupName(dnsData);
         this.srcLineSupport.set7Tuple(elements[0], elements[1], elements[2], elements[3], elements[4], elements[5], elements[6], "DNS", dnsData);
         this.srcLineSupport.setFlow(elements[7], elements[9], elements[8], elements[10], dnsData);
         switch (dnsData.getDataType()) {

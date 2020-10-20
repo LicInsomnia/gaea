@@ -57,7 +57,7 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
         impSessionData.setServerId(element[27]);
         impSessionData.setMacOuter("1".equals(element[28]));
         this.srcLineSupport.setTargetName(element[17], impSessionData);
-        this.srcLineSupport.setGroupName(impSessionData.getTargetName(), impSessionData);
+        this.srcLineSupport.setGroupName(impSessionData);
         return impSessionData;
     }
 

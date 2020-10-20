@@ -66,10 +66,10 @@ public class SrcLineSupport {
     /**
      * 根据目标名查表获得目标分组名
      *
-     * @param targetName 数据中目标名
+     * @param data src数据实体
      */
-    public void setGroupName(String targetName, AbstractMetaData data) {
-        data.setGroupName(this.groupGetter.getGroupName(targetName));
+    public void setGroupName(AbstractMetaData data) {
+        data.setGroupName(this.groupGetter.getGroupName(data.getTargetName()));
     }
 
     /**
