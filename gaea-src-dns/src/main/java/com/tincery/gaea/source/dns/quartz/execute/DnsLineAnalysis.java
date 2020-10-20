@@ -45,7 +45,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         dnsData.setDataType(Integer.parseInt(elements[25]));
         dnsData.setSource(elements[11]);
         dnsData.setTargetName(elements[12]);
-        dnsData.setGroupName(srcLineSupport.getTargetName(dnsData.getTargetName()));
+        dnsData.setGroupName(srcLineSupport.getGroupName(dnsData.getTargetName()));
         dnsData.setDurationTime(0);
         dnsData.setCapTime(DateUtils.validateTime(Long.parseLong(elements[13])));
         dnsData.setSyn(false);
