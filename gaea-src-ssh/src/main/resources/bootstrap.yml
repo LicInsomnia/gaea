@@ -1,0 +1,15 @@
+server:
+  port: 11111
+node:
+  name: sparrow
+spring:
+  application:
+    name: src_ssh
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.16.1.102:8848
+        name: gaea
+        file-extension: yml
+  profiles:
+    active: sparrow

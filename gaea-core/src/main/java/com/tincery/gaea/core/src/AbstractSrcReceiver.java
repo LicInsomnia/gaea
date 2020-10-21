@@ -24,10 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com 汇聚执行器 此方法的执行策略是 将准备写入的csv内容存到map中 最终统一执行写入  流程如下图 Src处理器  此类监听由Producer 发送的Mq消息
@@ -54,6 +51,8 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     protected SrcLineAnalysis<M> analysis;
 
     protected final Map<String, FileWriter> csvDataHandle = new HashMap<>();
+
+    protected CountDownLatch countDownLatch;
 
     protected static ThreadPoolExecutor executorService;
 
@@ -84,6 +83,11 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         log.info("开始解析文件:[{}]", file.getName());
         long startTime = System.currentTimeMillis();
         analysisFile(file);
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         this.clearFile(file);
         this.free();
         log.info("文件:[{}]处理完成，用时{}毫秒", file.getName(), (System.currentTimeMillis() - startTime));
@@ -107,6 +111,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             analysisLine(lines);
         } else {
             List<List<String>> partitions = Lists.partition(lines, lines.size() / executor);
+            this.countDownLatch = new CountDownLatch(partitions.size());
             for (List<String> partition : partitions) {
                 executorService.execute(() -> analysisLine(partition));
             }
@@ -133,6 +138,9 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 }
                 this.putCsvMap(pack);
             }
+        }
+        if(this.countDownLatch!=null){
+            this.countDownLatch.countDown();
         }
     }
 

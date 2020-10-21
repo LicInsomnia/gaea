@@ -25,6 +25,7 @@ public class ControllerConfigProperties {
         private String impsession;
         private String http;
         private String dns;
+        private String ssh;
     }
     @Setter
     @Getter

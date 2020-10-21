@@ -9,7 +9,9 @@ public class QueueNames {
     public final static String SRC_DNS = "src_dns";
     public final static String SRC_HTTP = "src_http";
     public final static String SRC_EMAIL = "src_email";
+    public final static String SRC_SSH = "src_ssh";
     public final static String DW_REORGANIZATION = "dw_reorganization";
     public final static String DM_ASSET = "dm_asset";
+
 
 }

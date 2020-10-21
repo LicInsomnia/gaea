@@ -1,9 +1,6 @@
 package com.tincery.gaea.producer.config;
 
-import com.tincery.gaea.producer.job.src.DnsJob;
-import com.tincery.gaea.producer.job.src.ImpSessionJob;
-import com.tincery.gaea.producer.job.src.SessionJob;
-import com.tincery.gaea.producer.job.src.SslJob;
+import com.tincery.gaea.producer.job.src.*;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -148,4 +145,24 @@ public class SrcQuartzConfig {
                 .build();
     }
 
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX,name = "ssh")
+    public JobDetail sshJob() {
+        return JobBuilder.newJob(SshJob.class)
+                .withIdentity("sshJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX,name = "ssh")
+    public Trigger sshJobTrigger() {
+        String cron = controllerConfigProperties.getSrc().getSsh();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(sshJob())
+                .withIdentity("sshJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
 }

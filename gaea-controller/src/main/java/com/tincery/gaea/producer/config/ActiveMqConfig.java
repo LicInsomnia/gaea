@@ -51,4 +51,6 @@ public class ActiveMqConfig {
         return new ActiveMQQueue(QueueNames.DW_REORGANIZATION);
     }
 
+    @Bean(name = QueueNames.SRC_SSH)
+    public Queue getSrcSsh(){return new ActiveMQQueue(QueueNames.SRC_SSH);}
 }
