@@ -1,7 +1,6 @@
 package com.tincery.gaea.source.session.execute;
 
 
-import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
@@ -50,7 +49,6 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
         sessionMetaData.setDataType("other".equals(sessionMetaData.getProName()) ? 0 : 1);
         return sessionMetaData;
     }
-
 
     /****
      * 这是固定的属性  无论匹配到了server 还是client 都不会变的属性
@@ -101,7 +99,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 sessionData);
         this.srcLineSupport.setFlow(element[4], element[5], element[6], element[7], sessionData);
         String serverKey = element[8] + "_" + element[13];
-        return getApplicationInformation(sessionData, serverKey);
+        return this.srcLineSupport.setProName(serverKey, sessionData);
     }
 
     private boolean tryGetClientProName(String[] element, SessionData sessionData) {
@@ -118,19 +116,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
         );
         this.srcLineSupport.setFlow(element[6], element[7], element[4], element[5], sessionData);
         String clientKey = element[8] + "_" + element[14];
-        return getApplicationInformation(sessionData, clientKey);
-    }
-
-    private boolean getApplicationInformation(SessionData sessionData, String key) {
-        ApplicationInformationBO clientApplication = this.srcLineSupport.getApplication(key);
-        if (clientApplication == null) {
-            return false;
-        }
-        String proName = clientApplication.getProName();
-        if (StringUtils.isNotEmpty(proName)) {
-            sessionData.setProName(proName);
-        }
-        return true;
+        return this.srcLineSupport.setProName(clientKey, sessionData);
     }
 
 
