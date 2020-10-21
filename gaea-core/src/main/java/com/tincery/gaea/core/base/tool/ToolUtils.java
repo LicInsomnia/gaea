@@ -568,11 +568,19 @@ public class ToolUtils {
     }
 
     /**
+     * @param collection 集和
+     * @return 转换后字符串
+     * @author Insomnia 集和按特定字符转字符串
+     */
+    public static String convertString(Collection<?> collection) {
+        return convertString(collection, ";");
+    }
+
+    /**
      * @param toCovert  字符串
      * @param splitChar 按spiltChar分割
      * @return 转换后列表
-     * @author Elon
-     * 将字符串按特定分隔符分开并生成列表
+     * @author Elon 将字符串按特定分隔符分开并生成列表
      */
     public static List<String> string2List(String toCovert, String splitChar) {
         if (null == toCovert || toCovert.isEmpty()) {
