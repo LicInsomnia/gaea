@@ -1,5 +1,10 @@
 package com.tincery.gaea.core.base.tool.util;
 
+import com.google.common.base.Joiner;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Collection;
+
 /**
  * @author gxz gongxuanzhang@foxmail.com / insomnia 针对gaea.source层数据处理解析txt中部分限定规范提供方法
  **/
@@ -50,4 +55,25 @@ public class SourceFieldUtils {
         return null;
 
     }
+
+    /**
+     * 集合转字符串
+     *
+     * @param collection 带转换集合
+     * @param splitChar  分隔符
+     * @return 转换后的字符串
+     */
+    public static String formatCollection(Collection<?> collection, String splitChar) {
+        String result = null;
+        if (!CollectionUtils.isEmpty(collection)) {
+            result = Joiner.on(splitChar).join(collection);
+        }
+        return result;
+    }
+
+    public static String formatCollection(Collection<?> collection) {
+        return formatCollection(collection, ";");
+    }
+
+
 }
