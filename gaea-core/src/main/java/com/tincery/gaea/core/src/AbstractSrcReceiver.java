@@ -107,10 +107,11 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             return;
         }
         int executor = this.properties.getExecutor();
-        if (executor <= 1) {
+        if (executor <= 1 || executor<=lines.size()) {
             analysisLine(lines);
         } else {
-            List<List<String>> partitions = Lists.partition(lines, lines.size() / executor);
+            List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor)+1);
+
             this.countDownLatch = new CountDownLatch(partitions.size());
             for (List<String> partition : partitions) {
                 executorService.execute(() -> analysisLine(partition));
