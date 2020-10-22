@@ -1,5 +1,7 @@
 package com.tincery.gaea.core.base.mgt;
 
+import java.util.List;
+
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
@@ -98,7 +100,32 @@ public class HeadConst {
             CSV.FIN_FLAG + CSV_SEPARATOR +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.EXTENSION;
+            CSV.CLIENT_PROTOCOL + CSV_SEPARATOR +
+            CSV.SERVER_PROTOCOL + CSV_SEPARATOR +
+            CSV.CLIENT_KEX_ALGORITHMS + CSV_SEPARATOR +
+            CSV.SERVER_KEX_ALGORITHMS + CSV_SEPARATOR +
+            CSV.FINAL_KEX_ALGORITHMS + CSV_SEPARATOR +
+            CSV.CLIENT_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
+            CSV.SERVER_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
+            CSV.FINAL_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
+            CSV.CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            CSV.SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            CSV.FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            CSV.CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            CSV.SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            CSV.FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            CSV.CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            CSV.SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            CSV.CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            CSV.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT;
     /* isakmp csv文件头 */
     public final static String ISAKMP_HEADER = BASE_COMMON_HEADER +
             CSV.SYN_FLAG + CSV_SEPARATOR +
@@ -125,6 +152,7 @@ public class HeadConst {
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             CSV.EXTENSION;
+
     /* ESP&AH csv文件头 */
     public final static String ESPANDAH_HEADER = BASE_COMMON_HEADER +
             CSV.SPI + CSV_SEPARATOR +
@@ -143,80 +171,106 @@ public class HeadConst {
             CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             CSV.EXTENSION;
 
-
     public static class CSV {
         /* COMMON */
-        public static String GROUP_NAME = "groupname";
-        public static String TARGET_NAME = "targetname";
-        public static String USER_ID = "userid";
-        public static String SERVER_ID = "serverid";
+        public static String GROUP_NAME = "groupName";
+        public static String TARGET_NAME = "targetName";
+        public static String USER_ID = "userId";
+        public static String SERVER_ID = "serverId";
         public static String SOURCE = "source";
-        public static String CAPTIME = "captime";
-        public static String CLIENT_MAC = "clientmac";
-        public static String SERVER_MAC = "servermac";
+        public static String CAPTIME = "capTime";
+        public static String CLIENT_MAC = "clientMac";
+        public static String SERVER_MAC = "serverMac";
         public static String PROTOCOL = "protocol";
-        public static String PRONAME = "proname";
-        public static String CLIENT_IP = "clientip";
-        public static String CLIENT_IP_N = "clientip_n";
-        public static String SERVER_IP = "serverip";
-        public static String SERVER_IP_N = "serverip_n";
-        public static String CLIENT_PORT = "clientport";
-        public static String SERVER_PORT = "serverport";
-        public static String CLIENT_IP_OUTER = "clientip_outer";
-        public static String SERVER_IP_OUTER = "serverip_outer";
-        public static String CLIENT_PORT_OUTER = "clientport_outer";
-        public static String SERVER_PORT_OUTER = "serverport_outer";
-        public static String PROTOCOL_OUTER = "protocol_outer";
-        public static String UP_PKT = "uppkt";
-        public static String UP_BYTE = "upbyte";
-        public static String DOWN_PKT = "downpkt";
-        public static String DOWN_BYTE = "downbyte";
-        public static String DATA_TYPE = "datatype";
+        public static String PRONAME = "proName";
+        public static String CLIENT_IP = "clientIp";
+        public static String CLIENT_IP_N = "clientIp_n";
+        public static String SERVER_IP = "serverIp";
+        public static String SERVER_IP_N = "serverIp_n";
+        public static String CLIENT_PORT = "clientPort";
+        public static String SERVER_PORT = "serverPort";
+        public static String CLIENT_IP_OUTER = "clientIpOuter";
+        public static String SERVER_IP_OUTER = "serverIpOuter";
+        public static String CLIENT_PORT_OUTER = "clientPortOuter";
+        public static String SERVER_PORT_OUTER = "serverPortOuter";
+        public static String PROTOCOL_OUTER = "protocolOuter";
+        public static String UP_PKT = "upPkt";
+        public static String UP_BYTE = "upByte";
+        public static String DOWN_PKT = "downPkt";
+        public static String DOWN_BYTE = "downByte";
+        public static String DATA_TYPE = "dataType";
         public static String IMSI = "imsi";
         public static String IMEI = "imei";
         public static String MSISDN = "msisdn";
-        public static String CASE_TAGS = "casetags";
+        public static String CASE_TAGS = "caseTags";
         /* TCP */
         public static String DURATION = "duration";
-        public static String SYN_FLAG = "synflag";
-        public static String FIN_FLAG = "finflag";
+        public static String SYN_FLAG = "synFlag";
+        public static String FIN_FLAG = "finFlag";
         /* EXTENSION */
         public static String EXTENSION = "extension";
         /* ASSET */
         public static String ASSET_FLAG = "assetFlag";
         /* SESSION */
-        public static String UP_PAYLOAD = "uppayload";
-        public static String DOWN_PAYLOAD = "downpayload";
+        public static String UP_PAYLOAD = "upPayload";
+        public static String DOWN_PAYLOAD = "downPayload";
         /* HTTP */
         public static String HOST = "host";
-        public static String URL_ROOT = "url_root";
+        public static String URL_ROOT = "urlRoot";
         public static String METHOD = "method";
-        public static String USER_AGENT = "user_agent";
-        public static String CONTENT_LENGTH = "content_length";
+        public static String USER_AGENT = "userAgent";
+        public static String CONTENT_LENGTH = "contentLength";
         /* ESP&AH */
         public static String SPI = "spi";
         /* ISAKMP */
-        public static String MESSAGE_LIST = "message_list";
-        public static String INITIATOR_INFORMATION = "initiator_information";
-        public static String RESPONDER_INFORMATION = "responder_information";
-        public static String INITIATOR_VIDS = "initiator_vid";
-        public static String RESPONDER_VID = "responder_vid";
+        public static String MESSAGE_LIST = "messageList";
+        public static String INITIATOR_INFORMATION = "initiatorInformation";
+        public static String RESPONDER_INFORMATION = "responderInformation";
+        public static String INITIATOR_VIDS = "initiatorVid";
+        public static String RESPONDER_VID = "responderVid";
         /* SPECIAL */
         public static String KEY = "key";
         public static String IPS = "ips";
         public static String DOMAIN = "domain";
-        public static String SERVER_NAME = "servername";
+        public static String SERVER_NAME = "serverName";
         public static String SHA1 = "sha1";
-        public static String CERCHAIN = "cerchain";
-        public static String CLIENT_CERCHAIN = "clientcerchain";
-        public static String IS_DOUBLE = "isdouble";
+        public static String CERCHAIN = "cerChain";
+        public static String CLIENT_CERCHAIN = "clientCerChain";
+        public static String IS_DOUBLE = "isDouble";
         public static String RANDOM = "random";
         public static String VERSION = "version";
-        public static String CIPHER_SUITES = "ciphersuites";
-        public static String CLIENT_CIPHER_SUITE = "clientciphersuite";
-        public static String HAND_SHAKE = "handshake";
-        public static String MALFORMED_UP_PAYLOAD = "malformed_uppayload";
-        public static String MALFORMED_DOWN_PAYLOAD = "malformed_downpayload";
+        public static String CIPHER_SUITES = "cipherSuites";
+        public static String CLIENT_CIPHER_SUITE = "clientCipherSuite";
+        public static String HAND_SHAKE = "handShake";
+        public static String MALFORMED_UP_PAYLOAD = "malformedUpPayload";
+        public static String MALFORMED_DOWN_PAYLOAD = "malformedDownPayload";
+        /* SSH */
+        private static String CLIENT_PROTOCOL= "clientProtocol";
+        private static String SERVER_PROTOCOL= "serverProtocol";
+        private static String CLIENT_KEX_ALGORITHMS= "clientKexAlgorithms";
+        private static String SERVER_KEX_ALGORITHMS= "serverKexAlgorithms";
+        private static String FINAL_KEX_ALGORITHMS= "finalKexAlgorithms";
+        private static String CLIENT_SERVER_HOST_KEY_ALGORITHMS= "clientServerHostKeyAlgorithms";
+        private static String SERVER_SERVER_HOST_KEY_ALGORITHMS= "serverServerHostKeyAlgorithms";
+        private static String FINAL_SERVER_HOST_KEY_ALGORITHMS= "finalServerHostKeyAlgorithms";
+        private static String CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER= "clientEncryptionAlgorithmsClientToServer";
+        private static String SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER= "serverEncryptionAlgorithmsClientToServer";
+        private static String FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER= "finalEncryptionAlgorithmsClientToServer";
+        private static String CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT= "clientEncryptionAlgorithmsServerToClient";
+        private static String SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT= "serverEncryptionAlgorithmsServerToClient";
+        private static String FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT= "finalEncryptionAlgorithmsServerToClient";
+        private static String CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER= "clientMacAlgorithmsClientToServer";
+        private static String SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER= "serverMacAlgorithmsClientToServer";
+        private static String FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER= "finalMacAlgorithmsClientToServer";
+        private static String CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT= "clientMacAlgorithmsServerToClient";
+        private static String SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT= "serverMacAlgorithmsServerToClient";
+        private static String FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT= "finalMacAlgorithmsServerToClient";
+        private static String CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER= "clientCompressionAlgorithmsClientToServer";
+        private static String SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER= "serverCompressionAlgorithmsClientToServer";
+        private static String FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER= "finalCompressionAlgorithmsClientToServer";
+        private static String SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT= "serverCompressionAlgorithmsServerToClient";
+        private static String CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT= "clientCompressionAlgorithmsServerToClient";
+        private static String FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT= "finalCompressionAlgorithmsServerToClient";
 
     }
 

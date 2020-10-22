@@ -84,7 +84,9 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         long startTime = System.currentTimeMillis();
         analysisFile(file);
         try {
-            countDownLatch.await();
+            if(countDownLatch!=null){
+                countDownLatch.await();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

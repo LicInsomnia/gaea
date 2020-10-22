@@ -35,7 +35,7 @@ public class IpChecker implements InitializationRequired {
      *
      * Class A 10.0.0.0-10.255.255.255 （167772160 - 184549375）
      * Class B 172.16.0.0-172.31.255.255（2886729728 - 2887778303）
-     * Class C 192.168.0.0-192.168.255.255（3232235520 - 3232301055）
+     * Class C 192.168.0.0-192.168.255.255（3232235520 - 3232301055）fF
      */
     public boolean isInner(long ip) {
         return (167772160L <= ip && 184549375L >= ip) ||
