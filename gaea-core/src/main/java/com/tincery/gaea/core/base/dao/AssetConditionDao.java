@@ -1,53 +1,57 @@
 package com.tincery.gaea.core.base.dao;
 
-import com.tincery.gaea.api.dm.AssetConfigDO;
+
+import com.alibaba.fastjson.JSONObject;
+import com.tincery.gaea.api.base.AppRule;
+import com.tincery.gaea.api.dm.AssetCondition;
 import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveTask;
 
 /**
- * @author gxz gongxuanzhang@foxmail.com
+ * @author : gxz
+ * @date :  2019-12-17 11:11:59
  **/
+
+
 @Repository
-public class AssetConfigDao extends SimpleBaseDaoImpl<AssetConfigDO> {
+public class AssetConditionDao extends SimpleBaseDaoImpl<AssetCondition> {
+
 
 
     @Override
-    protected Class<AssetConfigDO> getClazz() {
-        return AssetConfigDO.class;
+    protected Class<AssetCondition> getClazz() {
+        return AssetCondition.class;
     }
 
+
     @Override
-    @Value ("asset_config")
+    @Value("asset_condition")
     public void setDbName(String dbName) {
         this.dbName = dbName;
     }
 
+
     @Override
-    @Resource(name="sysMongoTemplate")
+    @Resource(name = "sysMongoTemplate")
     protected void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public List<AssetConfigDO> getActivityData() {
+
+    public List<AssetCondition> findActivityData(){
         Query query = new Query();
         query.addCriteria(Criteria.where("activity").is(true));
         return findListData(query);
     }
-
-    public long updateStrartime() {
-        Update update = new Update();
-        update.set("starttime", LocalDateTime.now());
-        return update(new Query(), update);
-    }
-
 
 }

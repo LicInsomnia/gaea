@@ -1,6 +1,6 @@
 package com.tincery.gaea.core.base.component.support;
 
-import com.tincery.gaea.api.base.AssetConfigDO;
+import com.tincery.gaea.api.dm.AssetConfigDO;
 import com.tincery.gaea.core.base.dao.AssetConfigDao;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.starter.base.InitializationRequired;
@@ -80,11 +80,13 @@ public class AssetDetector implements InitializationRequired {
         log.info("成功加载{}条独立IP资产规则，{}条范围资产规则",this.uniqueAssetMap.size(),this.rangeAssetMap.size());
     }
     private void putAsset(AssetConfigDO asset){
+/*
         if (asset.isUnique()) {
             this.uniqueAssetMap.put(asset.getIp(), asset);
         } else {
             this.rangeAssetMap.put(new Pair<>(asset.getMinIp_n(), asset.getMaxIp_n()), asset);
         }
+*/
     }
 
 

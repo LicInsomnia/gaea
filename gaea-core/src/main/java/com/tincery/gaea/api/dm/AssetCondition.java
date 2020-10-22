@@ -3,6 +3,7 @@ package com.tincery.gaea.api.dm;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Data
-public class AssetCondition {
+public class AssetCondition extends SimpleBaseDO {
 
     private static final int EQUALS = 1;
     private static final int NO_EQUALS = 2;
@@ -50,7 +51,7 @@ public class AssetCondition {
 
     private String description;
 
-    private List<Condition> conditionGroup;
+    private List<List<Condition>> conditionGroup;
 
     /***是否为黑名单  false就是白名单*/
     private boolean blackList;
@@ -108,17 +109,17 @@ public class AssetCondition {
         private boolean matchInteger(int value) {
             int targetValue = Integer.parseInt(this.value.toString());
             switch (operator) {
-                case 1:
+                case EQUALS:
                     return value == targetValue;
-                case 2:
+                case NO_EQUALS:
                     return value != targetValue;
-                case 5:
+                case GT:
                     return value > targetValue;
-                case 6:
+                case GTE:
                     return value >= targetValue;
-                case 7:
+                case LT:
                     return value < targetValue;
-                case 8:
+                case LTE:
                     return value <= targetValue;
                 default:
                     throw new IllegalArgumentException("number operator can't is " + operator);
@@ -128,17 +129,17 @@ public class AssetCondition {
         private boolean matchLong(Long value) {
             long targetValue = Long.parseLong(this.value.toString());
             switch (operator) {
-                case 1:
+                case EQUALS:
                     return value == targetValue;
-                case 2:
+                case NO_EQUALS:
                     return value != targetValue;
-                case 5:
+                case GT:
                     return value > targetValue;
-                case 6:
+                case GTE:
                     return value >= targetValue;
-                case 7:
+                case LT:
                     return value < targetValue;
-                case 8:
+                case LTE:
                     return value <= targetValue;
                 default:
                     throw new IllegalArgumentException("number operator can't is " + operator);
@@ -148,17 +149,17 @@ public class AssetCondition {
         private boolean matchDouble(double value) {
             double targetValue = Double.parseDouble(this.value.toString());
             switch (operator) {
-                case 1:
+                case EQUALS:
                     return value == targetValue;
-                case 2:
+                case NO_EQUALS:
                     return value != targetValue;
-                case 5:
+                case GT:
                     return value > targetValue;
-                case 6:
+                case GTE:
                     return value >= targetValue;
-                case 7:
+                case LT:
                     return value < targetValue;
-                case 8:
+                case LTE:
                     return value <= targetValue;
                 default:
                     throw new IllegalArgumentException("number operator can't is " + operator);
@@ -169,9 +170,9 @@ public class AssetCondition {
             LocalDateTime value = LocalDateTime.parse(dateString, DateUtils.DEFAULT_DATE_PATTERN);
             LocalDateTime targetValue = LocalDateTime.parse(this.value.toString(), DateUtils.DEFAULT_DATE_PATTERN);
             switch (operator) {
-                case 9:
+                case AFTER:
                     return value.isAfter(targetValue);
-                case 10:
+                case BEFORE:
                     return value.isBefore(targetValue);
                 default:
                     throw new IllegalArgumentException("date operator can't is " + operator);
@@ -180,9 +181,9 @@ public class AssetCondition {
 
         private boolean matchBoolean(boolean value) {
             switch (operator) {
-                case 11:
+                case TRUE:
                     return value;
-                case 12:
+                case FALSE:
                     return !value;
                 default:
                     throw new IllegalArgumentException("boolean operator can't is " + operator);
@@ -191,9 +192,9 @@ public class AssetCondition {
 
         private boolean matchArray(JSONArray jsonArray) {
             switch (operator) {
-                case 3:
+                case CONTAIN:
                     return jsonArray.contains(this.value);
-                case 4:
+                case NO_CONTAIN:
                     return !jsonArray.contains(this.value);
                 default:
                     throw new IllegalArgumentException("array operator can't is " + operator);
@@ -203,13 +204,13 @@ public class AssetCondition {
         private boolean matchString(String value) {
             String targetValue = this.value.toString();
             switch (operator) {
-                case 1:
+                case EQUALS:
                     return value.equals(targetValue);
-                case 2:
+                case NO_EQUALS:
                     return !value.equals(targetValue);
-                case 3:
+                case CONTAIN:
                     return value.contains(targetValue);
-                case 4:
+                case NO_CONTAIN:
                     return !value.contains(targetValue);
                 default:
                     throw new IllegalArgumentException("String operator can't is " + operator);
@@ -223,11 +224,11 @@ public class AssetCondition {
      * @param jsonObject 一条json数据
      **/
     public boolean hit(JSONObject jsonObject) {
-        for (Condition conditionItem : this.conditionGroup) {
-            if(!conditionItem.hit(jsonObject)){
+      /*  for (Condition conditionItem : this.conditionGroup) {
+            if (!conditionItem.hit(jsonObject)) {
                 return false;
             }
-        }
+        }*/
         return true;
     }
 
