@@ -1,0 +1,15 @@
+server:
+  port: 11112
+node:
+  name: test
+spring:
+  application:
+    name: dm_asset
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.16.1.102:8848
+        name: gaea
+        file-extension: yml
+  profiles:
+    active: ${node.name}

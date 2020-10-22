@@ -3,6 +3,7 @@ package com.tincery.gaea.api.dm;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Data
-public class AssetCondition {
+public class AssetCondition extends SimpleBaseDO {
 
     private static final int EQUALS = 1;
     private static final int NO_EQUALS = 2;

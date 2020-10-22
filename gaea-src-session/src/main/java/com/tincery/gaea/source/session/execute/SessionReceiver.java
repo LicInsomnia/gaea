@@ -3,7 +3,9 @@ package com.tincery.gaea.source.session.execute;
 import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
+import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -26,6 +28,8 @@ public class SessionReceiver extends AbstractSrcReceiver<SessionData> {
 
     @Autowired
     private PassRule passrule;
+    @Autowired
+    private AlarmRule alarmRule;
 
 
     @Autowired
@@ -69,7 +73,7 @@ public class SessionReceiver extends AbstractSrcReceiver<SessionData> {
         registryRules(passrule);
     }
 
-    public void registryRules(PassRule rule) {
+    public void registryRules(Rule rule) {
         RuleRegistry.getInstance().putRule(rule);
     }
 

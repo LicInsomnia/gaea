@@ -51,6 +51,7 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
      *
      * @author gxz
      **/
+    @Override
     protected void analysisFile(File file) {
         super.analysisFile(file);
         if (this.impSessionMap.isEmpty()) {
