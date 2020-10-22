@@ -29,35 +29,31 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
      * 24.outserverport   25.outproto         26.userid           27.serverid
      * 28.ismac2outer      29.payload
      **/
-
     @Override
     public ImpSessionData pack(String line) {
         ImpSessionData impSessionData = new ImpSessionData();
         String[] element = StringUtils.FileLineSplit(line);
+        long capTime = DateUtils.validateTime(Long.parseLong(element[2]));
+        long endTime = DateUtils.validateTime(Long.parseLong(element[3]));
+        impSessionData.setSyn("1".equals(element[0]))
+                .setFin("1".equals(element[1]))
+                .setDataType(Integer.parseInt(element[8]))
+                .setCapTime(capTime)
+                .setDurationTime(endTime - capTime)
+                .setImsi(element[18])
+                .setImei(element[19])
+                .setMsisdn(element[20])
+                .setUserId(element[26])
+                .setServerId(element[27]);
+        this.srcLineSupport.setTargetName(element[17], impSessionData);
+        this.srcLineSupport.setGroupName(impSessionData);
+        this.srcLineSupport.set5TupleOuter(element[21], element[22], element[23], element[24], element[25], impSessionData);
+        impSessionData.setPayload(element[29]);
+        impSessionData.setMacOuter("1".equals(element[28]));
         setImpSessionDataFix(impSessionData, element);
         if (needCorrect(element)) {
             modifyImpSessionData(impSessionData, element);
         }
-        return fill(impSessionData, element);
-    }
-
-    private ImpSessionData fill(ImpSessionData impSessionData, String[] element) {
-        long capTime = DateUtils.validateTime(Long.parseLong(element[2]));
-        impSessionData.setCapTime(capTime);
-        long endTime = DateUtils.validateTime(Long.parseLong(element[3]));
-        impSessionData.setDurationTime(endTime - capTime);
-        long duration = endTime - capTime;
-        impSessionData.setDurationTime(duration);
-        impSessionData.setImsi(element[18]);
-        impSessionData.setImei(element[19]);
-        impSessionData.setMsisdn(element[20]);
-        impSessionData.setPayload(element[29]);
-        this.srcLineSupport.set5TupleOuter(element[21], element[22], element[23], element[24], element[25], impSessionData);
-        impSessionData.setUserId(element[26]);
-        impSessionData.setServerId(element[27]);
-        impSessionData.setMacOuter("1".equals(element[28]));
-        this.srcLineSupport.setTargetName(element[17], impSessionData);
-        this.srcLineSupport.setGroupName(impSessionData);
         return impSessionData;
     }
 
@@ -65,30 +61,31 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
      * 是否需要IP矫正
      **/
     private boolean needCorrect(String[] element) {
-        return true;
-//        return (Integer.parseInt(element[15]) == 17) &&
-//                (element[11].length() <= 10) &&
-//                ipChecker.isInner(Long.parseLong(element[11])) && !ipChecker.isInner(Long.parseLong(element[12]));
+        return (Integer.parseInt(element[15]) == 17) &&
+                (element[11].length() <= 10) &&
+                this.srcLineSupport.isInnerIp(element[11]) &&
+                !this.srcLineSupport.isInnerIp(element[12]);
     }
 
     private void setImpSessionDataFix(ImpSessionData impSessionData, String[] element) {
-        impSessionData.setSyn("1".equals(element[0]));
-        impSessionData.setFin("1".equals(element[1]));
-        impSessionData.setDataType(Integer.parseInt(element[8]));
-
-
-        impSessionData.setProtocol(Integer.parseInt(element[15]))
-                .setServerMac(element[9])
-                .setClientMac(element[10])
-                .setServerIp(NetworkUtil.arrangeIp(element[11]))
-                .setClientIp(NetworkUtil.arrangeIp(element[12]))
-                .setServerPort(Integer.parseInt(element[13]))
-                .setClientPort(Integer.parseInt(element[14]))
-                .setProName("other")
-                .setUpPkt(Long.parseLong(element[4]))
-                .setUpByte(Long.parseLong(element[5]))
-                .setDownPkt(Long.parseLong(element[6]))
-                .setDownByte(Long.parseLong(element[7]));
+        this.srcLineSupport.set7Tuple(
+                element[9],
+                element[10],
+                element[11],
+                element[12],
+                element[13],
+                element[14],
+                element[15],
+                "other",
+                impSessionData
+        );
+        this.srcLineSupport.setFlow(
+                element[4],
+                element[5],
+                element[6],
+                element[7],
+                impSessionData
+        );
     }
 
     private void modifyImpSessionData(ImpSessionData impSessionData, String[] element) {

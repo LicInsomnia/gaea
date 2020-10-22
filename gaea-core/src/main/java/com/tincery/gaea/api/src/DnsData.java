@@ -2,6 +2,7 @@ package com.tincery.gaea.api.src;
 
 
 import com.google.common.base.Joiner;
+import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +32,7 @@ public class DnsData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.domain, this.responseIp, this.malformedUpPayload, this.malformedDownPayload, this.extension};
+        Object[] join = new Object[]{super.toCsv(splitChar), this.domain, SourceFieldUtils.formatCollection(this.responseIp), this.malformedUpPayload, this.malformedDownPayload, this.extension};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 

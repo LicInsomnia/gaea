@@ -571,8 +571,7 @@ public class ToolUtils {
      * @param toCovert  字符串
      * @param splitChar 按spiltChar分割
      * @return 转换后列表
-     * @author Elon
-     * 将字符串按特定分隔符分开并生成列表
+     * @author Elon 将字符串按特定分隔符分开并生成列表
      */
     public static List<String> string2List(String toCovert, String splitChar) {
         if (null == toCovert || toCovert.isEmpty()) {

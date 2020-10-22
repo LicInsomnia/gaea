@@ -31,11 +31,22 @@ public class SrcLineSupport {
     /**
      * 通过查询application_protocol表获取协议名
      *
-     * @param key 协议_端口拼接（protocol_serverPort）
-     * @return 协议名，若未查询到则返回null
+     * @param key  协议_端口拼接（protocol_serverPort）
+     * @param data src数据实体
+     * @return 是否查询到ProName
      */
-    public ApplicationInformationBO getApplication(String key) {
-        return this.applicationProtocol.getApplication(key);
+    public boolean setProName(String key, AbstractMetaData data) {
+        ApplicationInformationBO clientApplication = this.applicationProtocol.getApplication(key);
+        if (clientApplication == null) {
+            return false;
+        }
+        String proName = clientApplication.getProName();
+        if (StringUtils.isNotEmpty(proName)) {
+            data.setProName(proName);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void setTargetName(String targetName, AbstractMetaData data) {
@@ -125,6 +136,17 @@ public class SrcLineSupport {
                 .setDownByte(Long.parseLong(downByte));
     }
 
+    /**
+     * 设置外层五元组
+     *
+     * @param clientIpOuter
+     * @param serverIpOuter
+     * @param clientPortOuter
+     * @param serverPortOuter
+     * @param protocolOuter
+     * @param data
+     * @throws NumberFormatException
+     */
     public void set5TupleOuter(
             String clientIpOuter,
             String serverIpOuter,
@@ -141,6 +163,10 @@ public class SrcLineSupport {
                 .setProtocolOuter(SourceFieldUtils.parseIntegerStr(protocolOuter));
     }
 
+    public boolean isInnerIp(String ipDecStr) {
+        return ipChecker.isInner(Long.parseLong(ipDecStr));
+    }
+
     /**
      * 设置malformed载荷信息
      *
@@ -153,4 +179,5 @@ public class SrcLineSupport {
                 .setMalformedDownPayload("0000000000000000000000000000000000000000".equals(downPayload) ? "" : downPayload)
                 .setProName(this.payloadDetector.getProName(data));
     }
+
 }
