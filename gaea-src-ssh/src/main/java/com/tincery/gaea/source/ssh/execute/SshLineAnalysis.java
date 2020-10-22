@@ -13,6 +13,7 @@ import com.tincery.gaea.core.src.SrcLineSupport;
 import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -198,14 +199,20 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
 
     private List<String> getFinalAlgorithm(List<String> clientAlgorithmStr, List<String> serverAlgorithmStr) {
         ArrayList<String> finalAlgorithm = new ArrayList<>();
-        clientAlgorithmStr.forEach(clientAlgorithm->{
-            if (serverAlgorithmStr.contains(clientAlgorithm)){
-                finalAlgorithm.add(clientAlgorithm);
-            }
-        });
-        if (finalAlgorithm.size() == 0){
+        if (CollectionUtils.isEmpty(clientAlgorithmStr) || CollectionUtils.isEmpty(serverAlgorithmStr)){
             finalAlgorithm.add("no match");
+            return finalAlgorithm;
         }
+        String clientAlgorithm = clientAlgorithmStr.get(0);
+        String serverAlgorithm = serverAlgorithmStr.get(0);
+        String[] clientAlgorithmArray = clientAlgorithm.split(";");
+        for (String clientItem : clientAlgorithmArray) {
+            if (serverAlgorithm.contains(clientItem)){
+                finalAlgorithm.add(clientItem);
+                return finalAlgorithm;
+            }
+        }
+        finalAlgorithm.add("no match");
         return finalAlgorithm;
     }
 
