@@ -8,9 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * 文件相关操作类（静态操作）
@@ -133,6 +131,50 @@ public class FileUtils {
         return readLine(new File(fileName));
     }
 
+    public static Map<String, byte[]> readByteArray(File file){
+        Map<String, byte[]> mapContent = new LinkedHashMap<>();
+        if (null == file || (!file.exists()) || file.isDirectory()) {
+            return new HashMap<>();
+        }
+        try {
+            byte[] records = Files.toByteArray(file);
+            if (null == records) {
+                return null;
+            }
+            int size = records.length;
+            int i = 0;
+            while (i < size) {
+                byte[] bufferLength = new byte[4];
+                if (size - i < 4) {
+                    break;
+                }
+                System.arraycopy(records, i, bufferLength, 0, 4);
+                int targetLength = byteArray2Int(bufferLength, 4);
+                i += 4;
+                byte[] bufferKey = new byte[256];
+                if (size - i < 256) {
+                    break;
+                }
+                System.arraycopy(records, i, bufferKey, 0, 256);
+                i += 256;
+                if (size - i < targetLength) {
+                    break;
+                }
+                byte[] bufferValue = new byte[targetLength];
+                System.arraycopy(records, i, bufferValue, 0, targetLength);
+                i += targetLength;
+                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), bufferValue);
+            }
+            return mapContent.isEmpty() ? null : mapContent;
+        } catch (IOException e) {
+            log.error("解析文件 {}是时出错", file.getName());
+            e.printStackTrace();
+            return new HashMap<>();
+        }
+    }
+
+
+
 
     public static boolean delFile(File file) {
         if (!file.exists()) {
@@ -172,6 +214,16 @@ public class FileUtils {
         String dirName = DateUtils.format(capTime, "yyyyMMdd");
         String fileName = category + "_" + DateUtils.format(capTime, "yyyyMMddHHmm") + "." + nodeName + ".csv";
         return "/" + dirName + "/" +fileName;
+    }
+
+
+    public static int byteArray2Int(byte[] byteArray, int arrayLength) {
+        int returnValue = 0;
+        for (int i = 0; i < arrayLength; i++) {
+            int number = Byte.toUnsignedInt(byteArray[i]);
+            returnValue += (number << i * 8);
+        }
+        return returnValue;
     }
 
 }

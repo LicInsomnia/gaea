@@ -25,6 +25,7 @@
         <module>gaea-dw-reorganization</module>
         <module>gaea-src-dns</module>
         <module>gaea-plug-pack</module>
+        <module>gaea-src-http</module>
     </modules>
 
 
