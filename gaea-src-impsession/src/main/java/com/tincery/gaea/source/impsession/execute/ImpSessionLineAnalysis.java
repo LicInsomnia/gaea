@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
 
     @Autowired
-    private SrcLineSupport srcLineSupport;
+    private ImpSessionLineSupport impSessionLineSupport;
 
     /***
      *
@@ -32,27 +32,27 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
     @Override
     public ImpSessionData pack(String line) {
         ImpSessionData impSessionData = new ImpSessionData();
-        String[] element = StringUtils.FileLineSplit(line);
-        long capTime = DateUtils.validateTime(Long.parseLong(element[2]));
-        long endTime = DateUtils.validateTime(Long.parseLong(element[3]));
-        impSessionData.setSyn("1".equals(element[0]))
-                .setFin("1".equals(element[1]))
-                .setDataType(Integer.parseInt(element[8]))
+        String[] elements = StringUtils.FileLineSplit(line);
+        long capTime = DateUtils.validateTime(Long.parseLong(elements[2]));
+        long endTime = DateUtils.validateTime(Long.parseLong(elements[3]));
+        impSessionData.setSyn("1".equals(elements[0]))
+                .setFin("1".equals(elements[1]))
+                .setDataType(Integer.parseInt(elements[8]))
                 .setCapTime(capTime)
                 .setDurationTime(endTime - capTime)
-                .setImsi(element[18])
-                .setImei(element[19])
-                .setMsisdn(element[20])
-                .setUserId(element[26])
-                .setServerId(element[27]);
-        this.srcLineSupport.setTargetName(element[17], impSessionData);
-        this.srcLineSupport.setGroupName(impSessionData);
-        this.srcLineSupport.set5TupleOuter(element[21], element[22], element[23], element[24], element[25], impSessionData);
-        impSessionData.setPayload(element[29]);
-        impSessionData.setMacOuter("1".equals(element[28]));
-        setImpSessionDataFix(impSessionData, element);
-        if (needCorrect(element)) {
-            modifyImpSessionData(impSessionData, element);
+                .setImsi(elements[18])
+                .setImei(elements[19])
+                .setMsisdn(elements[20])
+                .setUserId(elements[26])
+                .setServerId(elements[27]);
+        this.impSessionLineSupport.setTargetName(elements[17], impSessionData);
+        this.impSessionLineSupport.setGroupName(impSessionData);
+        this.impSessionLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], impSessionData);
+        impSessionData.setPayload(elements[29]);
+        impSessionData.setMacOuter("1".equals(elements[28]));
+        setImpSessionDataFix(impSessionData, elements);
+        if (needCorrect(elements)) {
+            modifyImpSessionData(impSessionData, elements);
         }
         return impSessionData;
     }
@@ -63,12 +63,12 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
     private boolean needCorrect(String[] element) {
         return (Integer.parseInt(element[15]) == 17) &&
                 (element[11].length() <= 10) &&
-                this.srcLineSupport.isInnerIp(element[11]) &&
-                !this.srcLineSupport.isInnerIp(element[12]);
+                this.impSessionLineSupport.isInnerIp(element[11]) &&
+                !this.impSessionLineSupport.isInnerIp(element[12]);
     }
 
     private void setImpSessionDataFix(ImpSessionData impSessionData, String[] element) {
-        this.srcLineSupport.set7Tuple(
+        this.impSessionLineSupport.set7Tuple(
                 element[9],
                 element[10],
                 element[11],
@@ -79,7 +79,7 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
                 "other",
                 impSessionData
         );
-        this.srcLineSupport.setFlow(
+        this.impSessionLineSupport.setFlow(
                 element[4],
                 element[5],
                 element[6],

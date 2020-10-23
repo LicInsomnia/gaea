@@ -2,9 +2,6 @@ package com.tincery.gaea.source.ssl.execute;
 
 
 import com.tincery.gaea.api.src.SslData;
-import com.tincery.gaea.core.base.component.support.GroupGetter;
-import com.tincery.gaea.core.base.component.support.PayloadDetector;
-import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -13,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author gxz
@@ -25,20 +20,8 @@ import java.util.Map;
 @Slf4j
 public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
 
-
-    protected Map<String, String> target2Group = new HashMap<>();
-
-    private final PayloadDetector payloadDetector;
-
-    private final ImpTargetSetupDao impTargetSetupDao;
-
     @Autowired
-    private GroupGetter groupGetter;
-
-    public SslLineAnalysis(PayloadDetector payloadDetector, ImpTargetSetupDao impTargetSetupDao) {
-        this.payloadDetector = payloadDetector;
-        this.impTargetSetupDao = impTargetSetupDao;
-    }
+    private SslLineSupport sslLineSupport;
 
     /**
      * 0.syn            1.fin           2.startTime         3.endTime           4.uppkt
@@ -47,29 +30,35 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
      * 15.clientPort    16.source       17.runleName        18.imsi             19.imei
      * 20.msisdn        21.outclientip  22.outserverip      23.outclientport    24.outserverport
      * 25.outproto      26.userid       27.serverid         28.ismac2outer      29.data1 / upPayload
-     * 30.data2 / downPayload           ….datan
+     * 30.data2 / downPayload           ...dataN
      */
     @Override
     public SslData pack(String line) {
         SslData sslData = new SslData();
         String[] elements = StringUtils.FileLineSplit(line);
-        sslData.set5TupleAndFlow(elements[9], elements[10], elements[11],
-                elements[12], elements[13], elements[14],
-                elements[15], "SSL", elements[4],
-                elements[5], elements[6], elements[7]);
-        sslData.setDataType(Integer.parseInt(elements[8]));
-        sslData.setSyn("1".equals(elements[0]));
-        sslData.setFin("1".equals(elements[1]));
-        sslData.setTargetName(elements[17]);
-        sslData.setGroupName(this.groupGetter.getGroupName(sslData.getTargetName()));
         sslData.setSource(elements[16]);
         sslData.setCapTime(DateUtils.validateTime(Long.parseUnsignedLong(elements[2])));
         sslData.setDurationTime((Long.parseUnsignedLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
         sslData.setImsi(elements[18]);
+        sslData.setImei(elements[19]);
+        sslData.setMsisdn(elements[20]);
+        sslData.setDataType(Integer.parseInt(elements[8]));
+        sslData.setSyn("1".equals(elements[0]));
+        sslData.setFin("1".equals(elements[1]));
+        this.sslLineSupport.set7Tuple(
+                elements[10], elements[11], elements[12],
+                elements[13], elements[14], elements[15],
+                elements[9], "SSL", sslData);
+        this.sslLineSupport.setFlow(
+                elements[4], elements[5], elements[6],
+                elements[7], sslData);
+        this.sslLineSupport.setTargetName(elements[17], sslData);
+        this.sslLineSupport.setGroupName(sslData);
+        this.sslLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], sslData);
+        sslData.setUserId(elements[26]);
+        sslData.setServerId(elements[27]);
         if (sslData.getDataType() == -1) {
-            sslData.setMalformedUpPayload(elements[29]);
-            sslData.setMalformedDownPayload(elements[30]);
-            sslData.setProName(this.payloadDetector.getProName(sslData));
+            this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
         } else {
             if (elements[29].contains("malformed")) {
                 sslData.setDataType(-2);
@@ -77,10 +66,6 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
                 addSslExtension(elements, sslData);
             }
         }
-        sslData.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25]);
-        sslData.setUserId(elements[26]);
-        sslData.setServerId(elements[27]);
-        sslData.adjust();
         return sslData;
     }
 

@@ -23,7 +23,6 @@ import java.util.Set;
 @Component
 public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
 
-
     @Autowired
     private SrcLineSupport srcLineSupport;
 
@@ -95,13 +94,21 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
             return;
         }
         Map<String, Object> extensionMap = new HashMap<>();
+        Set<String> cnames = new HashSet<>();
         String[] elements = extension.split(";");
         for (String element : elements) {
             String[] kvPair = element.split("=");
             if (kvPair.length != 2) {
                 continue;
             }
+            if ("cname".equals(kvPair[0])) {
+                cnames.add(kvPair[1]);
+                continue;
+            }
             extensionMap.put(kvPair[0], kvPair[1]);
+        }
+        if (!cnames.isEmpty()) {
+            dnsData.setCnames(cnames);
         }
         if (null != dnsData.getResponseIp()) {
             extensionMap.put(HeadConst.MONGO.IPS, dnsData.getResponseIp());

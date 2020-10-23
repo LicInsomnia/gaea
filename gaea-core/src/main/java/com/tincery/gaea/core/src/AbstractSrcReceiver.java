@@ -237,7 +237,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             return;
         }
         long st = System.currentTimeMillis();
-        String dataPath = ApplicationInfo.getDataWarehouseCsvPathByCategory();
+        String dataPath = getDataWarehouseCsvPath();
         checkFiles(dataPath, this.minTime, this.maxTime);
         for (Map.Entry<String, List<String>> entry : this.csvMap.entrySet()) {
             String filePath = dataPath + entry.getKey();
@@ -270,7 +270,10 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         this.csvCount = 0;
         this.minTime = 0;
         this.maxTime = 0;
+    }
 
+    protected String getDataWarehouseCsvPath() {
+        return ApplicationInfo.getDataWarehouseCsvPathByCategory();
     }
 
     /****
@@ -288,7 +291,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     /**
      * @author Insomnia 整体检测数据集输出路径
      */
-    private void checkFiles(String subPath, long min, long max) {
+    protected void checkFiles(String subPath, long min, long max) {
         long minPath = Long.parseLong(DateUtils.format(min, "yyyyMMdd"));
         long maxPath = Long.parseLong(DateUtils.format(max, "yyyyMMdd"));
         while (minPath <= maxPath) {

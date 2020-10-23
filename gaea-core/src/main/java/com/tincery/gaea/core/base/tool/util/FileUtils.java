@@ -167,10 +167,10 @@ public class FileUtils {
     }
 
 
-    public static String getCsvDataFile(String category, long captime, String nodeName) {
+    public static String getCsvDataFile(String category, long capTime, String nodeName) {
         // 目前默认是1分钟一个文件 所以不用取整  如果以后输出间隔改了   此处需要取整
-        String dirName = DateUtils.format(captime, "yyyyMMdd");
-        String fileName = category + "_" + DateUtils.format(captime, "yyyyMMddHHmm") + "." + nodeName + ".csv";
+        String dirName = DateUtils.format(capTime, "yyyyMMdd");
+        String fileName = category + "_" + DateUtils.format(capTime, "yyyyMMddHHmm") + "." + nodeName + ".csv";
         return "/" + dirName + "/" +fileName;
     }
 

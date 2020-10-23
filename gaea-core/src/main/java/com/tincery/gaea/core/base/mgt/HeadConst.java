@@ -58,6 +58,7 @@ public class HeadConst {
     /* dns csv文件头 */
     public final static String DNS_HEADER = BASE_COMMON_HEADER +
             CSV.DOMAIN + CSV_SEPARATOR +
+            CSV.CNAMES + CSV_SEPARATOR +
             CSV.IPS + CSV_SEPARATOR +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
@@ -232,6 +233,7 @@ public class HeadConst {
         public static String KEY = "key";
         public static String IPS = "ips";
         public static String DOMAIN = "domain";
+        public static String CNAMES = "cnames";
         public static String SERVER_NAME = "serverName";
         public static String SHA1 = "sha1";
         public static String CERCHAIN = "cerChain";
