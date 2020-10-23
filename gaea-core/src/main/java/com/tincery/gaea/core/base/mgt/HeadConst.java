@@ -1,7 +1,5 @@
 package com.tincery.gaea.core.base.mgt;
 
-import java.util.List;
-
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
@@ -230,50 +228,49 @@ public class HeadConst {
         public static String INITIATOR_VIDS = "initiatorVid";
         public static String RESPONDER_VID = "responderVid";
         /* SPECIAL */
-        public static String KEY = "key";
-        public static String IPS = "ips";
-        public static String DOMAIN = "domain";
-        public static String CNAMES = "cnames";
-        public static String SERVER_NAME = "serverName";
-        public static String SHA1 = "sha1";
-        public static String CERCHAIN = "cerChain";
-        public static String CLIENT_CERCHAIN = "clientCerChain";
-        public static String IS_DOUBLE = "isDouble";
-        public static String RANDOM = "random";
-        public static String VERSION = "version";
-        public static String CIPHER_SUITES = "cipherSuites";
-        public static String CLIENT_CIPHER_SUITE = "clientCipherSuite";
-        public static String HAND_SHAKE = "handShake";
-        public static String MALFORMED_UP_PAYLOAD = "malformedUpPayload";
-        public static String MALFORMED_DOWN_PAYLOAD = "malformedDownPayload";
+        public final static String KEY = "key";
+        public final static String IPS = "ips";
+        public final static String DOMAIN = "domain";
+        public final static String CNAMES = "cname";
+        public final static String SERVER_NAME = "serverName";
+        public final static String SHA1 = "sha1";
+        public final static String CERCHAIN = "cerChain";
+        public final static String CLIENT_CERCHAIN = "clientCerChain";
+        public final static String IS_DOUBLE = "isDouble";
+        public final static String RANDOM = "random";
+        public final static String VERSION = "version";
+        public final static String CIPHER_SUITES = "cipherSuites";
+        public final static String CLIENT_CIPHER_SUITE = "clientCipherSuite";
+        public final static String HAND_SHAKE = "handShake";
+        public final static String MALFORMED_UP_PAYLOAD = "malformedUpPayload";
+        public final static String MALFORMED_DOWN_PAYLOAD = "malformedDownPayload";
         /* SSH */
-        private static String CLIENT_PROTOCOL= "clientProtocol";
-        private static String SERVER_PROTOCOL= "serverProtocol";
-        private static String CLIENT_KEX_ALGORITHMS= "clientKexAlgorithms";
-        private static String SERVER_KEX_ALGORITHMS= "serverKexAlgorithms";
-        private static String FINAL_KEX_ALGORITHMS= "finalKexAlgorithms";
-        private static String CLIENT_SERVER_HOST_KEY_ALGORITHMS= "clientServerHostKeyAlgorithms";
-        private static String SERVER_SERVER_HOST_KEY_ALGORITHMS= "serverServerHostKeyAlgorithms";
-        private static String FINAL_SERVER_HOST_KEY_ALGORITHMS= "finalServerHostKeyAlgorithms";
-        private static String CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER= "clientEncryptionAlgorithmsClientToServer";
-        private static String SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER= "serverEncryptionAlgorithmsClientToServer";
-        private static String FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER= "finalEncryptionAlgorithmsClientToServer";
-        private static String CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT= "clientEncryptionAlgorithmsServerToClient";
-        private static String SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT= "serverEncryptionAlgorithmsServerToClient";
-        private static String FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT= "finalEncryptionAlgorithmsServerToClient";
-        private static String CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER= "clientMacAlgorithmsClientToServer";
-        private static String SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER= "serverMacAlgorithmsClientToServer";
-        private static String FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER= "finalMacAlgorithmsClientToServer";
-        private static String CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT= "clientMacAlgorithmsServerToClient";
-        private static String SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT= "serverMacAlgorithmsServerToClient";
-        private static String FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT= "finalMacAlgorithmsServerToClient";
-        private static String CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER= "clientCompressionAlgorithmsClientToServer";
-        private static String SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER= "serverCompressionAlgorithmsClientToServer";
-        private static String FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER= "finalCompressionAlgorithmsClientToServer";
-        private static String SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT= "serverCompressionAlgorithmsServerToClient";
-        private static String CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT= "clientCompressionAlgorithmsServerToClient";
-        private static String FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT= "finalCompressionAlgorithmsServerToClient";
-
+        private final static String CLIENT_PROTOCOL = "clientProtocol";
+        private final static String SERVER_PROTOCOL = "serverProtocol";
+        private final static String CLIENT_KEX_ALGORITHMS = "clientKexAlgorithms";
+        private final static String SERVER_KEX_ALGORITHMS = "serverKexAlgorithms";
+        private final static String FINAL_KEX_ALGORITHMS = "finalKexAlgorithms";
+        private final static String CLIENT_SERVER_HOST_KEY_ALGORITHMS = "clientServerHostKeyAlgorithms";
+        private final static String SERVER_SERVER_HOST_KEY_ALGORITHMS = "serverServerHostKeyAlgorithms";
+        private final static String FINAL_SERVER_HOST_KEY_ALGORITHMS = "finalServerHostKeyAlgorithms";
+        private final static String CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "clientEncryptionAlgorithmsClientToServer";
+        private final static String SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "serverEncryptionAlgorithmsClientToServer";
+        private final static String FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "finalEncryptionAlgorithmsClientToServer";
+        private final static String CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "clientEncryptionAlgorithmsServerToClient";
+        private final static String SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "serverEncryptionAlgorithmsServerToClient";
+        private final static String FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "finalEncryptionAlgorithmsServerToClient";
+        private final static String CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER = "clientMacAlgorithmsClientToServer";
+        private final static String SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER = "serverMacAlgorithmsClientToServer";
+        private final static String FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER = "finalMacAlgorithmsClientToServer";
+        private final static String CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT = "clientMacAlgorithmsServerToClient";
+        private final static String SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT = "serverMacAlgorithmsServerToClient";
+        private final static String FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT = "finalMacAlgorithmsServerToClient";
+        private final static String CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "clientCompressionAlgorithmsClientToServer";
+        private final static String SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "serverCompressionAlgorithmsClientToServer";
+        private final static String FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "finalCompressionAlgorithmsClientToServer";
+        private final static String SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "serverCompressionAlgorithmsServerToClient";
+        private final static String CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "clientCompressionAlgorithmsServerToClient";
+        private final static String FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "finalCompressionAlgorithmsServerToClient";
     }
 
     public static class PRONAME {

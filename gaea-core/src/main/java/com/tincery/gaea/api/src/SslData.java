@@ -2,52 +2,116 @@ package com.tincery.gaea.api.src;
 
 
 import com.google.common.base.Joiner;
+import com.tincery.gaea.api.base.CipherSuiteDO;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Setter
 @Getter
 public class SslData extends AbstractSrcData {
 
-
-    private String serverName;
-    private String sha1;
-    /**
-     * 是否是双向会话
-     */
-    private boolean doubleSession;
-    /**
-     * 证书链
-     */
-    private List<String> cerChain;
-    private List<String> clientCerChain;
-    /**
-     * 随机数
-     */
-    private String random;
-    /**
-     * 服务端支持的版本号
-     */
-    private List<String> versions;
-    /**
-     * 服务端支持的加密算法
-     */
-    private List<String> cipherSuites;
-    /**
-     * 客户端的加密算法
-     */
-    private String clientCipherSuite;
+    /* 会话信息 */
     /**
      * 握手过程
      */
-    private String handshake;
+    private List<String> handshake;
+    /**
+     * 会话中是否存在应用数据 通过拓展字段中是否包含Application Data判别
+     */
+    private boolean hasApplicationData;
+    /**
+     * 请求服务名 ServerName
+     */
+    private String serverName;
+    /**
+     * 证书认证模式：证书单向认证（只有一方证书链：false），证书双向认证（有双方证书链：true），无证书认证（无证书链：null）
+     */
+    private Boolean daulAuth;
+    /**
+     * 协议版本 ssl_version
+     */
+    private String version;
+    /**
+     * 协商后算法套件 cipher_suite
+     */
+    private CipherSuiteDO cipherSuite;
+
+    /* 会话客户端属性信息 */
+    /**
+     * 客户端证书链 cert
+     */
+    private String clientCerChain;
+    /**
+     * 客户端JA3 JA3
+     */
+    private String clientJA3;
+    /**
+     * 客户端指纹特征 fingerprint
+     */
+    private String clientFingerPrint;
+    /**
+     * 客户端支持的算法套件 CipherSuite
+     */
+    private String clientCipherSuites;
+    /**
+     * 客户端HASH算法 HashAlgorithms
+     */
+    private String clientHashAlgorithms;
+
+    /* 会话服务端属性信息 */
+    /**
+     * 服务端证书链 cert
+     */
+    private List<String> serverCerChain;
+    /**
+     * 服务端JA3 JA3S
+     */
+    private String serverJA3;
+    /**
+     * 服务端指纹特征 fingerprint
+     */
+    private String serverFingerPrint;
+    /**
+     * 服务端椭圆曲线曲线名称 named_curve
+     */
+    private String serverECDHENamedCurve;
+    /**
+     * 服务端椭圆曲线公钥数据 publicKey data
+     */
+    private String serverECDHPublicKeyData;
+    /**
+     * 服务端椭圆曲线签名算法 signature algorithm
+     */
+    private String serverECDHSignatureAlgorithm;
+    /**
+     * 服务端椭圆曲线签名数据 signature data
+     */
+    private String serverECDHSignatureData;
 
     @Override
     public void adjust() {
+        super.adjust();
+        adjustDaulAuth();
+    }
+
+    @Override
+    public void adjustCompleteSession() {
+        if (this.syn && hasApplicationData) {
+            this.completeSession = true;
+        }
+    }
+
+    private void adjustDaulAuth() {
+        if (null == this.clientCerChain && null == this.serverCerChain) {
+            return;
+        }
+        if (null != this.clientCerChain && null != this.serverCerChain) {
+            this.completeSession = true;
+            return;
+        }
+        this.completeSession = false;
     }
 
     @Override
@@ -56,56 +120,6 @@ public class SslData extends AbstractSrcData {
                 , formatList(this.cerChain), formatList(this.clientCerChain), this.doubleSession, this.random, formatList(this.versions)
                 , formatList(this.cipherSuites), this.clientCipherSuite, this.handshake, this.malformedUpPayload, this.malformedDownPayload};
         return Joiner.on(splitChar).useForNull("").join(join);
-    }
-
-    private String formatList(List<String> list) {
-        String result = null;
-        if (!CollectionUtils.isEmpty(list)) {
-            result = Joiner.on(";").join(list);
-        }
-        return result;
-    }
-
-    public void setHandshake(String handshake) {
-        String[] element = handshake.split(" --> ");
-        int len = element.length;
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < len; i++) {
-            String key = element[i];
-            stringBuilder.append(key);
-            if ("Application Data".equals(key)) {
-                int count = 0;
-                for (int j = i; j < len; j++, i++) {
-                    count++;
-                    i = j;
-                    if (!"Application Data".equals(element[j])) {
-                        break;
-                    }
-                }
-                if (count > 1) {
-                    stringBuilder.append(" * ").append(count);
-                }
-            }
-            stringBuilder.append(" --> ");
-        }
-        stringBuilder.setLength(stringBuilder.length() - 4);
-        this.handshake = stringBuilder.toString().trim();
-    }
-
-    public void addCert(String cert) {
-        if (null == cert || cert.isEmpty()) {
-            return;
-        }
-        if (null == this.sha1) {
-            String sha1 = cert.split("_")[0];
-            if (!sha1.isEmpty()) {
-                this.sha1 = sha1;
-            }
-        }
-        if (null == this.cerChain) {
-            this.cerChain = new ArrayList<>();
-        }
-        this.cerChain.add(cert);
     }
 
 

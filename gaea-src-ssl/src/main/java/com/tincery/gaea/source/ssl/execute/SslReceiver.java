@@ -35,7 +35,7 @@ public class SslReceiver extends AbstractSrcReceiver<SslData> {
         this.analysis = analysis;
     }
 
-
+    @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
