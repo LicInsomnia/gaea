@@ -25,9 +25,6 @@ public class SrcLineSupport {
     @Autowired
     private GroupGetter groupGetter;
 
-    @Autowired
-    private IpChecker ipChecker;
-
     /**
      * 通过查询application_protocol表获取协议名
      *
@@ -105,8 +102,8 @@ public class SrcLineSupport {
                           String protocol,
                           String proName,
                           AbstractMetaData data) throws NumberFormatException {
-        data.setServerMac(serverMac)
-                .setClientMac(clientMac)
+        data.setServerMac(serverMac.toUpperCase())
+                .setClientMac(clientMac.toUpperCase())
                 .setServerIp(NetworkUtil.arrangeIp(serverIp))
                 .setClientIp(NetworkUtil.arrangeIp(clientIp))
                 .setServerPort(Integer.parseInt(serverPort))
@@ -163,10 +160,6 @@ public class SrcLineSupport {
                 .setProtocolOuter(SourceFieldUtils.parseIntegerStr(protocolOuter));
     }
 
-    public boolean isInnerIp(String ipDecStr) {
-        return ipChecker.isInner(Long.parseLong(ipDecStr));
-    }
-
     /**
      * 设置malformed载荷信息
      *
@@ -175,8 +168,8 @@ public class SrcLineSupport {
      * @param data        数据实体
      */
     public void setMalformedPayload(String upPayload, String downPayload, AbstractMetaData data) {
-        data.setMalformedUpPayload("0000000000000000000000000000000000000000".equals(upPayload) ? "" : upPayload)
-                .setMalformedDownPayload("0000000000000000000000000000000000000000".equals(downPayload) ? "" : downPayload)
+        data.setMalformedUpPayload("0000000000000000000000000000000000000000".equals(upPayload) ? "" : upPayload.toLowerCase())
+                .setMalformedDownPayload("0000000000000000000000000000000000000000".equals(downPayload) ? "" : downPayload.toLowerCase())
                 .setProName(this.payloadDetector.getProName(data));
     }
 
