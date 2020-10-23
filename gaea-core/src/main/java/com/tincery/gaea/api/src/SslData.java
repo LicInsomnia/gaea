@@ -1,7 +1,9 @@
 package com.tincery.gaea.api.src;
 
 
+import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.CipherSuiteDO;
+import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,12 +38,16 @@ public class SslData extends AbstractSrcData {
      * 协商后算法套件 cipher_suite
      */
     private CipherSuiteDO cipherSuite;
+    /**
+     * 服务端应用证书SHA1
+     */
+    private String sha1;
 
     /* 会话客户端属性信息 */
     /**
      * 客户端证书链 cert
      */
-    private String clientCerChain;
+    private List<String> clientCerChain;
     /**
      * 客户端JA3 JA3
      */
@@ -75,7 +81,7 @@ public class SslData extends AbstractSrcData {
     /**
      * 服务端椭圆曲线曲线名称 named_curve
      */
-    private String serverECDHENamedCurve;
+    private String serverECDHNamedCurve;
     /**
      * 服务端椭圆曲线公钥数据 publicKey data
      */
@@ -93,6 +99,7 @@ public class SslData extends AbstractSrcData {
     public void adjust() {
         super.adjust();
         adjustDaulAuth();
+        adjustSha1();
     }
 
     @Override
@@ -113,13 +120,27 @@ public class SslData extends AbstractSrcData {
         this.completeSession = false;
     }
 
+    private void adjustSha1() {
+        if (null == this.serverCerChain) {
+            return;
+        }
+        this.sha1 = this.serverCerChain.get(0).split("_")[0];
+    }
+
     @Override
     public String toCsv(char splitChar) {
-//        Object[] join = new Object[]{super.toCsv(splitChar), this.durationTime, this.syn, this.fin, this.serverName, this.sha1
-//                , formatList(this.cerChain), formatList(this.clientCerChain), this.doubleSession, this.random, formatList(this.versions)
-//                , formatList(this.cipherSuites), this.clientCipherSuite, this.handshake, this.malformedUpPayload, this.malformedDownPayload};
-//        return Joiner.on(splitChar).useForNull("").join(join);
-        return null;
+        Object[] join = new Object[]{
+                super.toCsv(splitChar), this.durationTime, this.syn, this.fin,
+                SourceFieldUtils.formatCollection(this.handshake),
+                this.hasApplicationData, this.serverName, this.daulAuth,
+                this.version, this.cipherSuite, this.sha1,
+                SourceFieldUtils.formatCollection(this.clientCerChain),
+                this.clientJA3, this.clientFingerPrint, this.clientCipherSuites, this.clientHashAlgorithms,
+                SourceFieldUtils.formatCollection(this.serverCerChain),
+                this.serverJA3, this.serverFingerPrint, this.serverECDHNamedCurve, this.serverECDHPublicKeyData,
+                this.serverECDHSignatureAlgorithm, this.serverECDHSignatureData, this.malformedUpPayload, this.malformedDownPayload
+        };
+        return Joiner.on(splitChar).useForNull("").join(join);
     }
 
 

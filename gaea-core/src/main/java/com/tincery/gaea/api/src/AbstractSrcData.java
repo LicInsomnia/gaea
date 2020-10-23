@@ -4,6 +4,7 @@ package com.tincery.gaea.api.src;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.core.base.tool.ToolUtils;
+import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.starter.base.util.NetworkUtil;
 import lombok.Getter;
@@ -86,19 +87,15 @@ public abstract class AbstractSrcData extends AbstractMetaData {
 
     @Override
     public String toCsv(char splitChar) {
-        Set<String> caseTags = this.caseTags;
-        if (caseTags == null) {
-            caseTags = new HashSet<>();
-        }
         String serverIpN = this.serverIp == null ? "" : ToolUtils.IP2long(this.serverIp) + "";
-        String clientIPN = this.serverIp == null ? "" : ToolUtils.IP2long(this.clientIp) + "";
+        String clientIpN = this.serverIp == null ? "" : ToolUtils.IP2long(this.clientIp) + "";
         Object[] join = new Object[]{
                 this.groupName, this.targetName, this.userId, this.serverId, super.toCsv(splitChar),
-                this.clientMac, this.serverMac, this.protocol, this.proName, this.clientIp, clientIPN,
+                this.clientMac, this.serverMac, this.protocol, this.proName, this.clientIp, clientIpN,
                 this.serverIp, serverIpN, this.clientPort, this.serverPort, this.clientIpOuter,
                 this.serverIpOuter, this.clientPortOuter, this.serverPortOuter, this.protocolOuter, this.upPkt,
                 this.upByte, this.downPkt, this.downByte, this.dataType, this.imsi, this.imei, this.msisdn,
-                Joiner.on(";").join(caseTags)};
+                SourceFieldUtils.formatCollection(caseTags)};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
