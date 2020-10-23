@@ -3,15 +3,12 @@ package com.tincery.gaea.source.http.execute;
 
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.src.HttpData;
-import com.tincery.gaea.core.base.component.support.IpChecker;
-import com.tincery.gaea.core.base.component.support.IpSelector;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
-import com.tincery.gaea.core.src.SrcLineSupport;
 import com.tincery.gaea.source.http.constant.HttpConstant;
-import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -27,11 +24,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
 
 
     @Autowired
-    private SrcLineSupport srcLineSupport;
-    @Autowired
-    private IpChecker ipChecker;
-    @Autowired
-    private IpSelector ipSelector;
+    private HttpLineSupport httpLineSupport;
 
     /**
      * 将一行（一个）数据打包  数据传递格式为byte数组 切分  用 prefix（subName） + 特殊分隔符 + suffix（content）组成
@@ -58,9 +51,9 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
             System.arraycopy(value, 0, payloadMeta, 0, copyLength);
             String payload = DatatypeConverter.printHexBinary(payloadMeta);
             if (httpMetaData.getIsResponse()){
-                srcLineSupport.setMalformedPayload(null,payload,httpMetaData);
+                httpLineSupport.setMalformedPayload(null, payload, httpMetaData);
             }else {
-                srcLineSupport.setMalformedPayload(payload,null,httpMetaData);
+                httpLineSupport.setMalformedPayload(payload, null, httpMetaData);
             }
         }else{
             handleSuffix(httpMetaData,subName,text);
@@ -137,7 +130,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      * 25.isResponse
      * @param httpData 一条数据
      */
-    private void fixHttpData(HttpData httpData,String subName){
+    private void fixHttpData(HttpData httpData, String subName) {
         String[] element = subName.split(StringUtils.DEFAULT_SEP, -1);
         httpData.setSyn(SourceFieldUtils.parseBooleanStr(element[0]));
         httpData.setFin(SourceFieldUtils.parseBooleanStr(element[1]));
@@ -145,32 +138,36 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         httpData.setCapTime(DateUtils.validateTime(captimeN));
         long endTimeN = Long.parseLong(element[3]);
         httpData.setDuration(endTimeN - captimeN);
-        httpData.setProtocol(6)
-                .setServerMac(null)
-                .setClientMac(null)
-                .setClientIp(NetworkUtil.arrangeIp(element[8]))
-                .setServerIp(NetworkUtil.arrangeIp(element[9]))
-                .setServerPort(Integer.parseInt(element[10]))
-                .setClientPort(Integer.parseInt(element[11]))
-                .setProName("HTTP")
-                .setUpPkt(Long.parseLong(element[4]))
-                .setUpByte(Long.parseLong(element[5]))
-                .setDownPkt(Long.parseLong(element[6]))
-                .setDownByte(Long.parseLong(element[7]));
-        httpData.setServerIpInfo(ipSelector.getCommonInformation(httpData.getServerIp()));
-        httpData.setClientIpInfo(ipSelector.getCommonInformation(httpData.getClientIp()));
+        this.httpLineSupport.set7Tuple(null,
+                null,
+                element[8],
+                element[9],
+                element[10],
+                element[11],
+                "6",
+                HeadConst.PRONAME.HTTP,
+                httpData
+        );
+        this.httpLineSupport.setFlow(element[4],
+                element[5],
+                element[6],
+                element[7],
+                httpData
+        );
+        httpData.setServerIpInfo(this.httpLineSupport.getLocation(httpData.getServerIp()));
+        httpData.setClientIpInfo(this.httpLineSupport.getLocation(httpData.getClientIp()));
         httpData.setSource(element[12]);
-        srcLineSupport.setTargetName(element[13],httpData);
+        httpLineSupport.setTargetName(element[13], httpData);
         httpData.setImsi(element[14])
                 .setImei(element[15])
                 .setMsisdn(element[16]);
-        srcLineSupport.set5TupleOuter(element[17], element[18], element[19], element[20], element[21],httpData);
+        httpLineSupport.set5TupleOuter(element[17], element[18], element[19], element[20], element[21], httpData);
         httpData.setUserId(element[22])
                 .setServerId(element[23]);
-        httpData.setIsResponse("1".equals(element[25].substring(0,1)));
-        httpData.setKey(subName.substring(0,subName.lastIndexOf(StringUtils.DEFAULT_SEP)));
+        httpData.setIsResponse("1".equals(element[25].substring(0, 1)));
+        httpData.setKey(subName.substring(0, subName.lastIndexOf(StringUtils.DEFAULT_SEP)));
 //        httpData.reMarkTargetName(userId2TargetName);
-        httpData.setForeign(ipChecker.isForeign(httpData.getServerIp()));
+        this.httpLineSupport.isForeign(httpData.getServerIp());
     }
 
 

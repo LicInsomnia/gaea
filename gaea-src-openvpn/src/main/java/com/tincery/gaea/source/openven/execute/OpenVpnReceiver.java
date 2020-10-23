@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.ssl.execute;
+package com.tincery.gaea.source.openven.execute;
 
 import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Setter
 @Getter
-public class SslReceiver extends AbstractSrcReceiver<OpenVpnData> {
+public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
 
     @Autowired
     private AlarmRule alarmRule;
@@ -31,7 +31,7 @@ public class SslReceiver extends AbstractSrcReceiver<OpenVpnData> {
 
 
     @Autowired
-    public void setAnalysis(SslLineAnalysis analysis) {
+    public void setAnalysis(OpenVpnLineAnalysis analysis) {
         this.analysis = analysis;
     }
 
@@ -43,7 +43,7 @@ public class SslReceiver extends AbstractSrcReceiver<OpenVpnData> {
 
     @Override
     public String getHead() {
-        return HeadConst.SSL_HEADER;
+        return HeadConst.OPENVPN_HEADER;
     }
 
 

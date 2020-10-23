@@ -1,7 +1,8 @@
-package com.tincery.gaea.source.ssl.execute;
+package com.tincery.gaea.source.openven.execute;
 
 
 import com.tincery.gaea.api.src.OpenVpnData;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -18,10 +19,10 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
+public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
 
     @Autowired
-    private SslLineSupport sslLineSupport;
+    private OpenVpnLineSupport openVpnLineSupport;
 
     /**
      * 0.syn            1.fin           2.startTime         3.endTime           4.uppkt
@@ -45,31 +46,31 @@ public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         openVpnData.setDataType(Integer.parseInt(elements[8]));
         openVpnData.setSyn("1".equals(elements[0]));
         openVpnData.setFin("1".equals(elements[1]));
-        this.sslLineSupport.set7Tuple(
+        this.openVpnLineSupport.set7Tuple(
                 elements[10], elements[11], elements[12],
                 elements[13], elements[14], elements[15],
-                elements[9], "SSL", openVpnData);
-        this.sslLineSupport.setFlow(
+                elements[9], HeadConst.PRONAME.OPENVPN, openVpnData);
+        this.openVpnLineSupport.setFlow(
                 elements[4], elements[5], elements[6],
                 elements[7], openVpnData);
-        this.sslLineSupport.setTargetName(elements[17], openVpnData);
-        this.sslLineSupport.setGroupName(openVpnData);
-        this.sslLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], openVpnData);
+        this.openVpnLineSupport.setTargetName(elements[17], openVpnData);
+        this.openVpnLineSupport.setGroupName(openVpnData);
+        this.openVpnLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], openVpnData);
         openVpnData.setUserId(elements[26]);
         openVpnData.setServerId(elements[27]);
         if (openVpnData.getDataType() == -1) {
-            this.sslLineSupport.setMalformedPayload(elements[29], elements[30], openVpnData);
+            this.openVpnLineSupport.setMalformedPayload(elements[29], elements[30], openVpnData);
         } else {
             if (elements[29].contains("malformed")) {
                 openVpnData.setDataType(-2);
             } else {
-                addSslExtension(elements, openVpnData);
+                addOpenVpnExtension(elements, openVpnData);
             }
         }
         return openVpnData;
     }
 
-    private void addSslExtension(String[] elements, OpenVpnData openVpnData) {
+    private void addOpenVpnExtension(String[] elements, OpenVpnData openVpnData) {
         List<String> handshake = new ArrayList<>();
         boolean isServer = false;
         for (int i = 29; i < elements.length; i++) {
@@ -143,7 +144,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
                 openVpnData.setVersion(value);
                 break;
             case "cipher_suite":
-                openVpnData.setCipherSuite(this.sslLineSupport.getCipherSuite(value));
+                openVpnData.setCipherSuite(this.openVpnLineSupport.getCipherSuite(value));
                 break;
             case "HashAlgorithms":
                 openVpnData.setClientHashAlgorithms(value);

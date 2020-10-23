@@ -2,6 +2,7 @@ package com.tincery.gaea.source.dns.quartz.execute;
 
 
 import com.tincery.gaea.api.src.DnsData;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -51,8 +52,22 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 .setMsisdn(elements[16]);
         this.srcLineSupport.setTargetName(elements[12], dnsData);
         this.srcLineSupport.setGroupName(dnsData);
-        this.srcLineSupport.set7Tuple(elements[0], elements[1], elements[2], elements[3], elements[4], elements[5], elements[6], "DNS", dnsData);
-        this.srcLineSupport.setFlow(elements[7], elements[9], elements[8], elements[10], dnsData);
+        this.srcLineSupport.set7Tuple(elements[0],
+                elements[1],
+                elements[2],
+                elements[3],
+                elements[4],
+                elements[5],
+                elements[6],
+                HeadConst.PRONAME.DNS,
+                dnsData
+        );
+        this.srcLineSupport.setFlow(elements[7],
+                elements[9],
+                elements[8],
+                elements[10],
+                dnsData
+        );
         switch (dnsData.getDataType()) {
             case 0:
                 dnsData.setDomain(elements[26]);

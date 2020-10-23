@@ -11,7 +11,7 @@ import java.util.List;
 
 @Setter
 @Getter
-public class SslData extends AbstractSrcData {
+public class OpenVpnData extends AbstractSrcData {
 
     /* 会话信息 */
     /**

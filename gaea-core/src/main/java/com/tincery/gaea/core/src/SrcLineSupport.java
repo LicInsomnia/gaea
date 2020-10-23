@@ -105,8 +105,8 @@ public class SrcLineSupport {
                           String protocol,
                           String proName,
                           AbstractMetaData data) throws NumberFormatException {
-        data.setServerMac(serverMac.toUpperCase())
-                .setClientMac(clientMac.toUpperCase())
+        data.setServerMac(null == serverMac ? null : serverMac.toUpperCase())
+                .setClientMac(null == clientMac ? null : clientMac.toUpperCase())
                 .setServerIp(NetworkUtil.arrangeIp(serverIp))
                 .setClientIp(NetworkUtil.arrangeIp(clientIp))
                 .setServerPort(Integer.parseInt(serverPort))

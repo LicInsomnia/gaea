@@ -2,6 +2,7 @@ package com.tincery.gaea.source.session.execute;
 
 
 import com.tincery.gaea.api.src.SessionData;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
@@ -96,7 +97,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 element[13],
                 element[14],
                 element[8],
-                "other",
+                HeadConst.PRONAME.OTHER,
                 sessionData);
         this.srcLineSupport.setFlow(element[4], element[5], element[6], element[7], sessionData);
         String serverKey = element[8] + "_" + element[13];
@@ -112,13 +113,12 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 element[14],
                 element[13],
                 element[8],
-                "other",
+                HeadConst.PRONAME.OTHER,
                 sessionData
         );
         this.srcLineSupport.setFlow(element[6], element[7], element[4], element[5], sessionData);
         String clientKey = element[8] + "_" + element[14];
         return this.srcLineSupport.setProName(clientKey, sessionData);
     }
-
 
 }

@@ -7,6 +7,7 @@ public class HeadConst {
 
     public static final char CSV_SEPARATOR = 0x07;
     public static final String CSV_SEPARATOR_STR = String.valueOf(CSV_SEPARATOR);
+
     /* 通用csv文件头 */
     private final static String BASE_COMMON_HEADER = CSV.GROUP_NAME + CSV_SEPARATOR +
             CSV.TARGET_NAME + CSV_SEPARATOR +
@@ -285,15 +286,16 @@ public class HeadConst {
     }
 
     public static class PRONAME {
-        public static String SESSION = "session";
-        public static String SSL = "ssl";
-        public static String DNS = "dns";
-        public static String HTTP = "http";
-        public static String EMAIL = "email";
-        public static String SSH = "ssh";
-        public static String ISAKMP = "isakmp";
-        public static String FTP_TELNET = "ftp_telnet";
-        public static String OTHER = "other";
+        public static String SSL = "SSL";
+        public static String OPENVPN = "OPENVPN";
+        public static String DNS = "DNS";
+        public static String HTTP = "HTTP";
+        public static String EMAIL = "EMAIL";
+        public static String SSH = "SSH";
+        public static String ISAKMP = "ISAKMP";
+        public static String FTP = "FTP";
+        public static String TELNET = "TELNET";
+        public static String OTHER = "OTHER";
     }
 
     public static class MONGO {
