@@ -231,18 +231,18 @@ public class SessionFactory {
             putExtensionField(csvRow, HeadConst.CSV.VERSION, HeadConst.MONGO.VERSION_STRING, abstractDataWarehouseData);
             putExtensionField(csvRow, HeadConst.CSV.CIPHER_SUITES, HeadConst.MONGO.CIPHER_SUITES_STRING, abstractDataWarehouseData);
             putExtensionField(csvRow, HeadConst.CSV.HAND_SHAKE, HeadConst.MONGO.HAND_SHAKE_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.CERCHAIN, HeadConst.MONGO.CERCHAIN_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.CLIENT_CERCHAIN, HeadConst.MONGO.CLIENT_CERCHAIN_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.IS_DOUBLE, HeadConst.MONGO.IS_DOUBLE_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.CLIENT_CIPHER_SUITE, HeadConst.MONGO.CLIENT_CIPHER_SUITE_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.SERVER_NAME, HeadConst.MONGO.SERVER_NAME_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.RANDOM, HeadConst.MONGO.RANDOM_STRING, abstractDataWarehouseData);
+//            putExtensionField(csvRow, HeadConst.CSV.CERCHAIN, HeadConst.MONGO.CERCHAIN_STRING, abstractDataWarehouseData);
+//            putExtensionField(csvRow, HeadConst.CSV.CLIENT_CERCHAIN, HeadConst.MONGO.CLIENT_CERCHAIN_STRING, abstractDataWarehouseData);
+//            putExtensionField(csvRow, HeadConst.CSV.IS_DOUBLE, HeadConst.MONGO.IS_DOUBLE_STRING, abstractDataWarehouseData);
+//            putExtensionField(csvRow, HeadConst.CSV.CLIENT_CIPHER_SUITE, HeadConst.MONGO.CLIENT_CIPHER_SUITE_STRING, abstractDataWarehouseData);
+//            putExtensionField(csvRow, HeadConst.CSV.SERVER_NAME, HeadConst.MONGO.SERVER_NAME_STRING, abstractDataWarehouseData);
+//            putExtensionField(csvRow, HeadConst.CSV.RANDOM, HeadConst.MONGO.RANDOM_STRING, abstractDataWarehouseData);
             putExtensionField(csvRow, HeadConst.CSV.MALFORMED_UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
             putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
             abstractDataWarehouseData.setKeyWord(csvRow.get(HeadConst.CSV.SERVER_NAME));
-            String cerChain = csvRow.get(HeadConst.CSV.CERCHAIN);
-            if (null != cerChain) {
-                String sha1 = cerChain.split(";")[0].split("_")[0];
+            String sha1 = csvRow.get(HeadConst.CSV.SHA1);
+            if (null != sha1) {
+                sha1 = sha1.split("_")[0];
                 Map<String, Object> cer = this.cerSelector.selector(sha1);
                 if (null == abstractDataWarehouseData.getKeyWord() && null != cer && cer.containsKey(HeadConst.MONGO.SUBJECT_CN_STRING)) {
                     abstractDataWarehouseData.setKeyWord(cer.get(HeadConst.MONGO.SUBJECT_CN_STRING).toString());

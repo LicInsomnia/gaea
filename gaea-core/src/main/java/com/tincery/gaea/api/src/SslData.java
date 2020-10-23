@@ -124,7 +124,7 @@ public class SslData extends AbstractSrcData {
         if (null == this.serverCerChain) {
             return;
         }
-        this.sha1 = this.serverCerChain.get(0).split("_")[0];
+        this.sha1 = this.serverCerChain.get(0);
     }
 
     @Override

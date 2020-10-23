@@ -49,7 +49,6 @@ public class SslReceiver extends AbstractSrcReceiver<SslData> {
 
     @Override
     protected void putCsvMap(SslData sslData) {
-        sslData.adjust();
         if (RuleRegistry.getInstance().matchLoop(sslData)) {
             // 过滤规则  其中alarm规则是有同步块的
             return;

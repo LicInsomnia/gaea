@@ -71,19 +71,20 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
 
     private void addSslExtension(String[] elements, SslData sslData) {
         List<String> handshake = new ArrayList<>();
-        Boolean isServer = false;
+        boolean isServer = false;
         for (int i = 29; i < elements.length; i++) {
             if (StringUtils.isEmpty(elements[i])) {
                 continue;
             }
-            if (!elements[i].startsWith("(")) {
-                // 为握手会话信息
-                isServer = addHandshake(elements[i], sslData, handshake);
-            } else {
+            if (elements[i].startsWith("(")) {
                 // 为会话属性信息
                 addSessionProperties(elements[i], sslData, isServer);
+            } else {
+                // 为握手会话信息
+                isServer = isServer || addHandshake(elements[i], sslData, handshake);
             }
         }
+        sslData.setHandshake(handshake);
     }
 
     /**
@@ -113,7 +114,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
 
     private void addSessionProperties(String element, SslData sslData, boolean isServer) {
         String[] kv = element.substring(1, element.length() - 1).split(":");
-        if (element.length() != 2) {
+        if (kv.length != 2) {
             return;
         }
         String key = kv[0].trim();
