@@ -8,37 +8,37 @@ public class HeadConst {
     public static final char CSV_SEPARATOR = 0x07;
     public static final String CSV_SEPARATOR_STR = String.valueOf(CSV_SEPARATOR);
     /* 通用csv文件头 */
-    private final static String BASE_COMMON_HEADER =
-            CSV.GROUP_NAME + CSV_SEPARATOR +
-                    CSV.TARGET_NAME + CSV_SEPARATOR +
-                    CSV.USER_ID + CSV_SEPARATOR +
-                    CSV.SERVER_ID + CSV_SEPARATOR +
-                    CSV.SOURCE + CSV_SEPARATOR +
-                    CSV.CAPTIME + CSV_SEPARATOR +
-                    CSV.CLIENT_MAC + CSV_SEPARATOR +
-                    CSV.SERVER_MAC + CSV_SEPARATOR +
-                    CSV.PROTOCOL + CSV_SEPARATOR +
-                    CSV.PRONAME + CSV_SEPARATOR +
-                    CSV.CLIENT_IP + CSV_SEPARATOR +
-                    CSV.CLIENT_IP_N + CSV_SEPARATOR +
-                    CSV.SERVER_IP + CSV_SEPARATOR +
-                    CSV.SERVER_IP_N + CSV_SEPARATOR +
-                    CSV.CLIENT_PORT + CSV_SEPARATOR +
-                    CSV.SERVER_PORT + CSV_SEPARATOR +
-                    CSV.CLIENT_IP_OUTER + CSV_SEPARATOR +
-                    CSV.SERVER_IP_OUTER + CSV_SEPARATOR +
-                    CSV.CLIENT_PORT_OUTER + CSV_SEPARATOR +
-                    CSV.SERVER_PORT_OUTER + CSV_SEPARATOR +
-                    CSV.PROTOCOL_OUTER + CSV_SEPARATOR +
-                    CSV.UP_PKT + CSV_SEPARATOR +
-                    CSV.UP_BYTE + CSV_SEPARATOR +
-                    CSV.DOWN_PKT + CSV_SEPARATOR +
-                    CSV.DOWN_BYTE + CSV_SEPARATOR +
-                    CSV.DATA_TYPE + CSV_SEPARATOR +
-                    CSV.IMSI + CSV_SEPARATOR +
-                    CSV.IMEI + CSV_SEPARATOR +
-                    CSV.MSISDN + CSV_SEPARATOR +
-                    CSV.CASE_TAGS + CSV_SEPARATOR;
+    private final static String BASE_COMMON_HEADER = CSV.GROUP_NAME + CSV_SEPARATOR +
+            CSV.TARGET_NAME + CSV_SEPARATOR +
+            CSV.USER_ID + CSV_SEPARATOR +
+            CSV.SERVER_ID + CSV_SEPARATOR +
+            CSV.SOURCE + CSV_SEPARATOR +
+            CSV.CAPTIME + CSV_SEPARATOR +
+            CSV.CLIENT_MAC + CSV_SEPARATOR +
+            CSV.SERVER_MAC + CSV_SEPARATOR +
+            CSV.PROTOCOL + CSV_SEPARATOR +
+            CSV.PRONAME + CSV_SEPARATOR +
+            CSV.CLIENT_IP + CSV_SEPARATOR +
+            CSV.CLIENT_IP_N + CSV_SEPARATOR +
+            CSV.SERVER_IP + CSV_SEPARATOR +
+            CSV.SERVER_IP_N + CSV_SEPARATOR +
+            CSV.CLIENT_PORT + CSV_SEPARATOR +
+            CSV.SERVER_PORT + CSV_SEPARATOR +
+            CSV.CLIENT_IP_OUTER + CSV_SEPARATOR +
+            CSV.SERVER_IP_OUTER + CSV_SEPARATOR +
+            CSV.CLIENT_PORT_OUTER + CSV_SEPARATOR +
+            CSV.SERVER_PORT_OUTER + CSV_SEPARATOR +
+            CSV.PROTOCOL_OUTER + CSV_SEPARATOR +
+            CSV.UP_PKT + CSV_SEPARATOR +
+            CSV.UP_BYTE + CSV_SEPARATOR +
+            CSV.DOWN_PKT + CSV_SEPARATOR +
+            CSV.DOWN_BYTE + CSV_SEPARATOR +
+            CSV.DATA_TYPE + CSV_SEPARATOR +
+            CSV.IMSI + CSV_SEPARATOR +
+            CSV.IMEI + CSV_SEPARATOR +
+            CSV.MSISDN + CSV_SEPARATOR +
+            CSV.CASE_TAGS + CSV_SEPARATOR +
+            CSV.FOREIGN + CSV_SEPARATOR;
     /* session csv文件头 */
     public final static String SESSION_HEADER = BASE_COMMON_HEADER +
             CSV.DURATION + CSV_SEPARATOR +
@@ -48,11 +48,11 @@ public class HeadConst {
             CSV.DOWN_PAYLOAD;
     /* dns csv文件头 */
     public final static String DNS_HEADER = BASE_COMMON_HEADER +
+            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             CSV.DOMAIN + CSV_SEPARATOR +
             CSV.CNAMES + CSV_SEPARATOR +
             CSV.IPS + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             CSV.EXTENSION;
     /* ssl csv文件头 */
     public final static String SSL_HEADER = BASE_COMMON_HEADER +
@@ -175,7 +175,7 @@ public class HeadConst {
         public final static String DOMAIN = "domain";
         public final static String CNAMES = "cname";
         /* SSL */
-        public final static String HAND_SHAKE = "handShake";
+        public final static String HAND_SHAKE = "handshake";
         public final static String HAS_APPLICATION_DATA = "hasApplicationData";
         public final static String SERVER_NAME = "serverName";
         public final static String DAUL_AUTH = "daulAuth";
@@ -256,6 +256,7 @@ public class HeadConst {
         public static String IMEI = "imei";
         public static String MSISDN = "msisdn";
         public static String CASE_TAGS = "caseTags";
+        public static String FOREIGN = "foreign";
         /* TCP */
         public static String DURATION = "duration";
         public static String SYN_FLAG = "synFlag";

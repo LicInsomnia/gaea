@@ -4,7 +4,6 @@ import com.tincery.gaea.api.src.ImpSessionData;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
-import com.tincery.gaea.core.src.SrcLineSupport;
 import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,7 +38,7 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
                 .setFin("1".equals(elements[1]))
                 .setDataType(Integer.parseInt(elements[8]))
                 .setCapTime(capTime)
-                .setDurationTime(endTime - capTime)
+                .setDuration(endTime - capTime)
                 .setImsi(elements[18])
                 .setImei(elements[19])
                 .setMsisdn(elements[20])

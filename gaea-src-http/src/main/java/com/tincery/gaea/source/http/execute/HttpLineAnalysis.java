@@ -3,7 +3,6 @@ package com.tincery.gaea.source.http.execute;
 
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.src.HttpData;
-import com.tincery.gaea.api.src.SshData;
 import com.tincery.gaea.core.base.component.support.IpChecker;
 import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.xml.bind.DatatypeConverter;
-import java.nio.charset.Charset;
 import java.util.*;
 
 
@@ -39,14 +37,14 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      * 将一行（一个）数据打包  数据传递格式为byte数组 切分  用 prefix（subName） + 特殊分隔符 + suffix（content）组成
      */
     @Override
-    public HttpData pack(String line) {
+    public HttpData pack(String line) throws Exception {
         HttpData httpMetaData = new HttpData();
         String[] split = line.split(HttpConstant.HTTP_CONSTANT);
         String subName = split[0];
         String text;
-        if (split.length<2){
+        if (split.length < 2) {
             text = "";
-        }else{
+        } else {
             text = split[1];
         }
         byte[] value = text.getBytes();
@@ -83,11 +81,12 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
 
     /**
      * 处理截取出来的后缀（Content） 的方法
+     *
      * @param httpData 要封装属性的对象
-     * @param subName 截取的字符串
-     * @param text content 字符串
+     * @param subName  截取的字符串
+     * @param text     content 字符串
      */
-    private void handleSuffix(HttpData httpData,String subName,String text){
+    private void handleSuffix(HttpData httpData, String subName, String text) throws Exception {
         List<String> reqs = flagResponse(text);
         int blank = 0;
         for (int i = 0; i < reqs.size(); i++) {
@@ -99,7 +98,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
             String textError = fixSuffixData(httpData, req, i - blank);
             if (null != textError) {
                 //TODO 输出错误日志
-//                this.outputError(textError + ":\n" + meta + "\n" + req + "\n");
+                throw new Exception(textError + ":\n" + text + "\n" + req + "\n");
             }
         }
     }
@@ -145,7 +144,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         long captimeN = Long.parseLong(element[2]);
         httpData.setCapTime(DateUtils.validateTime(captimeN));
         long endTimeN = Long.parseLong(element[3]);
-        httpData.setDurationTime(endTimeN - captimeN);
+        httpData.setDuration(endTimeN - captimeN);
         httpData.setProtocol(6)
                 .setServerMac(null)
                 .setClientMac(null)
@@ -202,97 +201,93 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
 
     /**
      * 为截取的content封装属性
+     *
      * @param httpData httpData
-     * @param text content数据
-     * @param index 循环的角标
+     * @param text     content数据
+     * @param index    循环的角标
      * @return 错误信息
      */
-    private String fixSuffixData(HttpData httpData,String text, Integer index){
-        try {
-            HttpMeta meta;
-            if (CollectionUtils.isEmpty(httpData.getMetas())){
-                httpData.setMetas(new ArrayList<>());
+    private String fixSuffixData(HttpData httpData, String text, Integer index) {
+        HttpMeta meta;
+        if (CollectionUtils.isEmpty(httpData.getMetas())) {
+            httpData.setMetas(new ArrayList<>());
+        }
+        if (httpData.getMetas().size() > index) {
+            meta = httpData.getMetas().get(index);
+            meta.setHasResponse(httpData.getIsResponse());
+        } else {
+            meta = new HttpMeta();
+            meta.setHasResponse(httpData.getIsResponse());
+            httpData.getMetas().add(meta);
+        }
+        //meta = new HttpMeta(httpData.getIsResponse());
+        //httpData.metas.add(meta);
+        if (text.length() < 4 || !getLegelHeader().contains(text.substring(0, 4))) {
+            meta.setContent(text, httpData.getIsResponse());
+            meta.addMethod("", false);
+        } else {
+            meta.isMalformed = false;
+            String headers = text.split("\r\n\r\n")[0];
+            String[] lines = headers.split("\n");
+            String method = lines[0].split(" ")[0].trim();
+            //boolean getIsResponse() = method.startsWith("HTTP/");
+            meta.setContent(text, httpData.getIsResponse());
+            meta.addMethod(method, !httpData.getIsResponse());
+            httpData.setDataType(1);
+            if (!httpData.getIsResponse()) {
+                meta.setUrl(lines[0].substring(method.length() + 1)
+                        .replace(" HTTP/1.1", "").trim());
             }
-            if (httpData.getMetas().size() > index) {
-                meta = httpData.getMetas().get(index);
-                meta.setHasResponse(httpData.getIsResponse());
-            } else {
-                meta = new HttpMeta();
-                meta.setHasResponse(httpData.getIsResponse());
-                httpData.getMetas().add(meta);
-            }
-            //meta = new HttpMeta(httpData.getIsResponse());
-            //httpData.metas.add(meta);
-            if (text.length() < 4 || !getLegelHeader().contains(text.substring(0, 4))) {
-                meta.setContent(text, httpData.getIsResponse());
-                meta.addMethod("", false);
-            } else {
-                meta.isMalformed = false;
-                String headers = text.split("\r\n\r\n")[0];
-                String[] lines = headers.split("\n");
-                String method = lines[0].split(" ")[0].trim();
-                //boolean getIsResponse() = method.startsWith("HTTP/");
-                meta.setContent(text, httpData.getIsResponse());
-                meta.addMethod(method, !httpData.getIsResponse());
-                httpData.setDataType(1);
-                if (!httpData.getIsResponse()) {
-                    meta.setUrl(lines[0].substring(method.length() + 1)
-                            .replace(" HTTP/1.1", "").trim());
+            for (String line : lines) {
+                if (!line.contains(":")) {
+                    continue;
                 }
-                for (String line : lines) {
-                    if (!line.contains(":")) {
-                        continue;
-                    }
-                    String key = line.split(":")[0];
-                    String value = line.substring(key.length() + 1).trim();
-                    key = key.toLowerCase();
-                    switch (key) {
-                        case "host":
-                            meta.setHost(value);
-                            break;
-                        case "content-length":
-                            if(httpData.getIsResponse()) {
-                                meta.responseContentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
-                            } else {
-                                meta.requestContentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
-                            }
-                            //meta.contentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
-                            break;
-                        case "content-type":
-                            meta.contentType = value;
-                            break;
-                        case "user-agent":
-                            meta.userAgent = value;
-                            break;
-                        case "accept-language":
-                            meta.acceptLanguage = value;
-                            break;
-                        case "from":
-                            meta.from = value;
-                            break;
-                        case "authorization":
-                            meta.authorization = value.length() > 0;
-                            break;
-                        case "proxy-authenticate":
-                            meta.proxyauth = value.length() > 0;
-                            break;
-                        case "accept-encoding":
-                            meta.acceptEncoding = value;
-                            break;
-                        default:
-                            if(httpData.getIsResponse()) {
-                                meta.setResponseHeaders(key, value);
-                            } else {
-                                meta.setRequestHeaders(key, value);
-                            }
-                            //meta.setHeaders(key, value);
-                            break;
-                    }
+                String key = line.split(":")[0];
+                String value = line.substring(key.length() + 1).trim();
+                key = key.toLowerCase();
+                switch (key) {
+                    case "host":
+                        meta.setHost(value);
+                        break;
+                    case "content-length":
+                        if (httpData.getIsResponse()) {
+                            meta.responseContentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
+                        } else {
+                            meta.requestContentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
+                        }
+                        //meta.contentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
+                        break;
+                    case "content-type":
+                        meta.contentType = value;
+                        break;
+                    case "user-agent":
+                        meta.userAgent = value;
+                        break;
+                    case "accept-language":
+                        meta.acceptLanguage = value;
+                        break;
+                    case "from":
+                        meta.from = value;
+                        break;
+                    case "authorization":
+                        meta.authorization = value.length() > 0;
+                        break;
+                    case "proxy-authenticate":
+                        meta.proxyauth = value.length() > 0;
+                        break;
+                    case "accept-encoding":
+                        meta.acceptEncoding = value;
+                        break;
+                    default:
+                        if (httpData.getIsResponse()) {
+                            meta.setResponseHeaders(key, value);
+                        } else {
+                            meta.setRequestHeaders(key, value);
+                        }
+                        //meta.setHeaders(key, value);
+                        break;
                 }
             }
-        } catch (Exception e) {
-            e.getMessage();
-            return "Text Format Wrong!" + e.getMessage();
         }
         return null;
     }

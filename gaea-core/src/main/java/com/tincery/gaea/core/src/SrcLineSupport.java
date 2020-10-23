@@ -25,6 +25,9 @@ public class SrcLineSupport {
     @Autowired
     private GroupGetter groupGetter;
 
+    @Autowired
+    public IpChecker ipChecker;
+
     /**
      * 通过查询application_protocol表获取协议名
      *
@@ -136,13 +139,12 @@ public class SrcLineSupport {
     /**
      * 设置外层五元组
      *
-     * @param clientIpOuter
-     * @param serverIpOuter
-     * @param clientPortOuter
-     * @param serverPortOuter
-     * @param protocolOuter
-     * @param data
-     * @throws NumberFormatException
+     * @param clientIpOuter   外层客户端IP
+     * @param serverIpOuter   外层服务端IP
+     * @param clientPortOuter 外层客户端端口
+     * @param serverPortOuter 外层服务端端口
+     * @param protocolOuter   外层协议
+     * @param data            数据实体
      */
     public void set5TupleOuter(
             String clientIpOuter,
@@ -168,9 +170,17 @@ public class SrcLineSupport {
      * @param data        数据实体
      */
     public void setMalformedPayload(String upPayload, String downPayload, AbstractMetaData data) {
-        data.setMalformedUpPayload("0000000000000000000000000000000000000000".equals(upPayload) ? "" : upPayload.toLowerCase())
-                .setMalformedDownPayload("0000000000000000000000000000000000000000".equals(downPayload) ? "" : downPayload.toLowerCase())
+        data.setMalformedUpPayload((null == upPayload || "0000000000000000000000000000000000000000".equals(upPayload)) ? "" : upPayload.toLowerCase())
+                .setMalformedDownPayload((null == downPayload || "0000000000000000000000000000000000000000".equals(downPayload)) ? "" : downPayload.toLowerCase())
                 .setProName(this.payloadDetector.getProName(data));
+    }
+
+    public boolean isInnerIp(String ipDecStr) {
+        return this.ipChecker.isInner(Long.parseLong(ipDecStr));
+    }
+
+    public boolean isForeign(String ip) {
+        return this.ipChecker.isForeign(ip);
     }
 
 }

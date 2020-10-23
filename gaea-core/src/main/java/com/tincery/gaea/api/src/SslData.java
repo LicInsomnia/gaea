@@ -130,7 +130,8 @@ public class SslData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{
-                super.toCsv(splitChar), this.durationTime, this.syn, this.fin,
+                super.toCsv(splitChar), this.duration, this.syn, this.fin,
+                this.malformedUpPayload, this.malformedDownPayload,
                 SourceFieldUtils.formatCollection(this.handshake),
                 this.hasApplicationData, this.serverName, this.daulAuth,
                 this.version, this.cipherSuite, this.sha1,
@@ -138,7 +139,7 @@ public class SslData extends AbstractSrcData {
                 this.clientJA3, this.clientFingerPrint, this.clientCipherSuites, this.clientHashAlgorithms,
                 SourceFieldUtils.formatCollection(this.serverCerChain),
                 this.serverJA3, this.serverFingerPrint, this.serverECDHNamedCurve, this.serverECDHPublicKeyData,
-                this.serverECDHSignatureAlgorithm, this.serverECDHSignatureData, this.malformedUpPayload, this.malformedDownPayload
+                this.serverECDHSignatureAlgorithm, this.serverECDHSignatureData
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

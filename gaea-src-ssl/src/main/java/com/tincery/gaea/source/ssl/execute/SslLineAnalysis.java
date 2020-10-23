@@ -38,7 +38,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
         String[] elements = StringUtils.FileLineSplit(line);
         sslData.setSource(elements[16]);
         sslData.setCapTime(DateUtils.validateTime(Long.parseUnsignedLong(elements[2])));
-        sslData.setDurationTime((Long.parseUnsignedLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
+        sslData.setDuration((Long.parseUnsignedLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
         sslData.setImsi(elements[18]);
         sslData.setImei(elements[19]);
         sslData.setMsisdn(elements[20]);

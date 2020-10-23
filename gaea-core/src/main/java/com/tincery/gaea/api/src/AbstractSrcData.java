@@ -95,7 +95,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
                 this.serverIp, serverIpN, this.clientPort, this.serverPort, this.clientIpOuter,
                 this.serverIpOuter, this.clientPortOuter, this.serverPortOuter, this.protocolOuter, this.upPkt,
                 this.upByte, this.downPkt, this.downByte, this.dataType, this.imsi, this.imei, this.msisdn,
-                SourceFieldUtils.formatCollection(caseTags)};
+                SourceFieldUtils.formatCollection(caseTags), this.foreign};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
@@ -161,7 +161,5 @@ public abstract class AbstractSrcData extends AbstractMetaData {
             this.completeSession = true;
         }
     }
-
-
 
 }

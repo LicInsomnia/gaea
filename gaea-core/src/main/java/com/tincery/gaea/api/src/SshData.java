@@ -5,7 +5,6 @@ import com.google.common.base.Joiner;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -53,14 +52,21 @@ public class SshData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.getSyn(), this.getFin(),this.malformedUpPayload,this.malformedDownPayload, SourceFieldUtils.formatCollection(this.clientProtocol),
-        SourceFieldUtils.formatCollection(this.serverProtocol),SourceFieldUtils.formatCollection(this.clientKexAlgorithms),SourceFieldUtils.formatCollection(this.serverKexAlgorithms),
-                SourceFieldUtils.formatCollection(this.finalKexAlgorithms),SourceFieldUtils.formatCollection(this.clientServerHostKeyAlgorithms),SourceFieldUtils.formatCollection(this.serverServerHostKeyAlgorithms),SourceFieldUtils.formatCollection(this.finalServerHostKeyAlgorithms),
-                SourceFieldUtils.formatCollection(this.clientEncryptionAlgorithmsClientToServer),SourceFieldUtils.formatCollection(this.serverEncryptionAlgorithmsClientToServer),SourceFieldUtils.formatCollection(this.finalEncryptionAlgorithmsClientToServer),SourceFieldUtils.formatCollection(this.clientEncryptionAlgorithmsServerToClient),
-                SourceFieldUtils.formatCollection(this.serverEncryptionAlgorithmsServerToClient),SourceFieldUtils.formatCollection(this.finalEncryptionAlgorithmsServerToClient),SourceFieldUtils.formatCollection(this.clientMacAlgorithmsClientToServer),SourceFieldUtils.formatCollection(this.serverMacAlgorithmsClientToServer),
-                SourceFieldUtils.formatCollection(this.finalMacAlgorithmsClientToServer),SourceFieldUtils.formatCollection(this.clientMacAlgorithmsServerToClient),SourceFieldUtils.formatCollection(this.serverMacAlgorithmsServerToClient),SourceFieldUtils.formatCollection(this.finalMacAlgorithmsServerToClient),
-                SourceFieldUtils.formatCollection(this.clientCompressionAlgorithmsClientToServer),SourceFieldUtils.formatCollection(this.serverCompressionAlgorithmsClientToServer),SourceFieldUtils.formatCollection(this.finalCompressionAlgorithmsClientToServer),SourceFieldUtils.formatCollection(this.serverCompressionAlgorithmsServerToClient),
-                SourceFieldUtils.formatCollection(this.clientCompressionAlgorithmsServerToClient),SourceFieldUtils.formatCollection(this.finalCompressionAlgorithmsServerToClient)};
+        Object[] join = new Object[]{super.toCsv(splitChar), this.duration, this.getSyn(), this.getFin(), this.malformedUpPayload,
+                this.malformedDownPayload, SourceFieldUtils.formatCollection(this.clientProtocol),
+                SourceFieldUtils.formatCollection(this.serverProtocol), SourceFieldUtils.formatCollection(this.clientKexAlgorithms),
+                SourceFieldUtils.formatCollection(this.serverKexAlgorithms), SourceFieldUtils.formatCollection(this.finalKexAlgorithms),
+                SourceFieldUtils.formatCollection(this.clientServerHostKeyAlgorithms), SourceFieldUtils.formatCollection(this.serverServerHostKeyAlgorithms),
+                SourceFieldUtils.formatCollection(this.finalServerHostKeyAlgorithms), SourceFieldUtils.formatCollection(this.clientEncryptionAlgorithmsClientToServer),
+                SourceFieldUtils.formatCollection(this.serverEncryptionAlgorithmsClientToServer), SourceFieldUtils.formatCollection(this.finalEncryptionAlgorithmsClientToServer),
+                SourceFieldUtils.formatCollection(this.clientEncryptionAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.serverEncryptionAlgorithmsServerToClient),
+                SourceFieldUtils.formatCollection(this.finalEncryptionAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.clientMacAlgorithmsClientToServer),
+                SourceFieldUtils.formatCollection(this.serverMacAlgorithmsClientToServer), SourceFieldUtils.formatCollection(this.finalMacAlgorithmsClientToServer),
+                SourceFieldUtils.formatCollection(this.clientMacAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.serverMacAlgorithmsServerToClient),
+                SourceFieldUtils.formatCollection(this.finalMacAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.clientCompressionAlgorithmsClientToServer),
+                SourceFieldUtils.formatCollection(this.serverCompressionAlgorithmsClientToServer), SourceFieldUtils.formatCollection(this.finalCompressionAlgorithmsClientToServer),
+                SourceFieldUtils.formatCollection(this.serverCompressionAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.clientCompressionAlgorithmsServerToClient),
+                SourceFieldUtils.formatCollection(this.finalCompressionAlgorithmsServerToClient)};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 

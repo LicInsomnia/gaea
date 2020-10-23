@@ -11,10 +11,6 @@ public class ImpSessionLineSupport extends SrcLineSupport {
     @Autowired
     private IpChecker ipChecker;
 
-    public boolean isInnerIp(String ipDecStr) {
-        return ipChecker.isInner(Long.parseLong(ipDecStr));
-    }
-
 
 
 }

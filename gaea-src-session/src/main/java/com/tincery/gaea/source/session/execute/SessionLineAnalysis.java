@@ -57,7 +57,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
     private void setFixProperties(String[] element, SessionData sessionData) {
         long capTimeN = Long.parseLong(element[2]);
         sessionData.setCapTime(DateUtils.validateTime(capTimeN))
-                .setDurationTime(Long.parseLong(element[3]) - capTimeN)
+                .setDuration((Long.parseLong(element[3]) - capTimeN) / 1000)
                 .setSource(element[15])
                 .setImsi(SourceFieldUtils.parseStringStr(element[17]))
                 .setImei(SourceFieldUtils.parseStringStr(element[18]))
@@ -77,6 +77,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 element[24],
                 sessionData
         );
+        sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
     }
 
     /****

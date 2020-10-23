@@ -88,7 +88,7 @@ public class SessionFactory {
                 .setServerId(csvRow.getEmptyNull(HeadConst.CSV.SERVER_ID))
                 .setSource(csvRow.getEmptyNull(HeadConst.CSV.SOURCE))
                 .setCapTime(csvRow.getLong(HeadConst.CSV.CAPTIME))
-                .setDurationTime(csvRow.getLongOrDefault(HeadConst.CSV.DURATION, 0L))
+                .setDuration(csvRow.getLongOrDefault(HeadConst.CSV.DURATION, 0L))
                 .setProtocol(csvRow.getIntegerOrDefault(HeadConst.CSV.PROTOCOL, 0))
                 .setProName(csvRow.get(HeadConst.CSV.PRONAME))
                 .setClientMac(csvRow.getEmptyNull(HeadConst.CSV.CLIENT_MAC))

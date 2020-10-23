@@ -2,9 +2,6 @@ package com.tincery.gaea.source.ssh.execute;
 
 
 import com.tincery.gaea.api.src.SshData;
-import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
-import com.tincery.gaea.core.base.component.support.IpChecker;
-import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
@@ -15,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -28,9 +28,6 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
 
     @Autowired
     public SrcLineSupport srcLineSupport;
-
-    @Autowired
-    public IpChecker ipChecker;
 
     /****
      *
@@ -83,20 +80,18 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
         sshData.setSyn(SourceFieldUtils.parseBooleanStr(element[0]))
                 .setFin(SourceFieldUtils.parseBooleanStr(element[1]));
         sshData.setSource(element[16]);
-        srcLineSupport.setTargetName(element[17],sshData);
+        srcLineSupport.setTargetName(element[17], sshData);
         srcLineSupport.setGroupName(sshData);
         long captimeN = Long.parseLong(element[2]);
         sshData.setCapTime(DateUtils.validateTime(captimeN));
         long endTimeN = Long.parseLong(element[3]);
-        sshData.setDurationTime(endTimeN - captimeN);
+        sshData.setDuration(endTimeN - captimeN);
         sshData.setImsi(element[18])
                 .setImei(element[19])
                 .setMsisdn(element[20]);
         sshData.setUserId(element[26])
-            .setServerId(element[27]);
-        /*设置载荷*/
-        sshData.setForeign(ipChecker.isForeign(sshData.getServerIp()));
-
+                .setServerId(element[27]);
+        sshData.setForeign(this.srcLineSupport.isForeign(sshData.getServerIp()));
     }
 
     private void setExtension(String[] element,SshData sshData){

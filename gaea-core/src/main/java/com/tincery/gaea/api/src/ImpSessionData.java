@@ -20,7 +20,7 @@ public class ImpSessionData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.getDurationTime() / 1000, this.getSyn(), this.getFin()};
+        Object[] join = new Object[]{super.toCsv(splitChar), this.getDuration() / 1000, this.getSyn(), this.getFin()};
         return Joiner.on(splitChar).join(join);
     }
 
@@ -63,9 +63,9 @@ public class ImpSessionData extends AbstractSrcData {
 
     public void merge(ImpSessionData impsessionData) {
         long minCaptime = Math.min(this.capTime, impsessionData.capTime);
-        long endTime = Math.max(this.capTime + this.durationTime, impsessionData.capTime + impsessionData.durationTime);
+        long endTime = Math.max(this.capTime + this.duration, impsessionData.capTime + impsessionData.duration);
         this.capTime = minCaptime;
-        this.durationTime = endTime - capTime;
+        this.duration = endTime - capTime;
         this.syn = this.syn || impsessionData.syn;
         this.fin = this.fin || impsessionData.fin;
         this.upPkt += impsessionData.upPkt;
