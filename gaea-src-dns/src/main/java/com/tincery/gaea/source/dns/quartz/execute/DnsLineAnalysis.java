@@ -2,7 +2,6 @@ package com.tincery.gaea.source.dns.quartz.execute;
 
 
 import com.tincery.gaea.api.src.DnsData;
-import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -94,7 +93,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
             return;
         }
         Map<String, Object> extensionMap = new HashMap<>();
-        Set<String> cnames = new HashSet<>();
+        Set<String> cname = new HashSet<>();
         String[] elements = extension.split(";");
         for (String element : elements) {
             String[] kvPair = element.split("=");
@@ -102,16 +101,13 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 continue;
             }
             if ("cname".equals(kvPair[0])) {
-                cnames.add(kvPair[1]);
+                cname.add(kvPair[1]);
                 continue;
             }
             extensionMap.put(kvPair[0], kvPair[1]);
         }
-        if (!cnames.isEmpty()) {
-            dnsData.setCnames(cnames);
-        }
-        if (null != dnsData.getResponseIp()) {
-            extensionMap.put(HeadConst.MONGO.IPS, dnsData.getResponseIp());
+        if (!cname.isEmpty()) {
+            dnsData.setCname(cname);
         }
         if (!extensionMap.isEmpty()) {
             dnsData.setExtension(extensionMap);

@@ -22,7 +22,7 @@ public class DnsData extends AbstractSrcData {
     /**
      * DNS请求cname
      */
-    Set<String> cnames;
+    Set<String> cname;
     /**
      * DNS响应IP
      */
@@ -35,7 +35,7 @@ public class DnsData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.domain, SourceFieldUtils.formatCollection(this.cnames), SourceFieldUtils.formatCollection(this.responseIp), this.malformedUpPayload, this.malformedDownPayload, this.extension};
+        Object[] join = new Object[]{super.toCsv(splitChar), this.domain, SourceFieldUtils.formatCollection(this.cname), SourceFieldUtils.formatCollection(this.responseIp), this.malformedUpPayload, this.malformedDownPayload, this.extension};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
