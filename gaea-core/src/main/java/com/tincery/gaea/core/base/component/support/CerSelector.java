@@ -1,7 +1,6 @@
 package com.tincery.gaea.core.base.component.support;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.CommonConfig;
 import com.tincery.gaea.core.base.dao.CertDao;
 import com.tincery.starter.base.InitializationRequired;
@@ -40,13 +39,14 @@ public class CerSelector implements InitializationRequired {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void init() {
-        Object object = CommonConfig.get(ApplicationInfo.getCategory());
-        if (null == object) {
-            return;
+        Map<String, Object> configs = (Map<String, Object>) CommonConfig.get("cerKeys");
+        List<Map<String, Object>> fields = (List<Map<String, Object>>) configs.get("fields");
+        Set<String> cerKeys = new HashSet<>();
+        for (Map<String, Object> field : fields) {
+            cerKeys.add(field.get("key").toString());
         }
-        Map<String, Object> configs = (Map<String, Object>) object;
-        Set<String> cerKeys = new HashSet<>((List<String>) configs.get("cerkeys"));
         this.cerKeys = cerKeys.toArray(new String[0]);
     }
 }

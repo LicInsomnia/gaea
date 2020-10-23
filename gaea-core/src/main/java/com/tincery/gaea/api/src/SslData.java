@@ -1,7 +1,6 @@
 package com.tincery.gaea.api.src;
 
 
-import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.CipherSuiteDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -116,10 +115,11 @@ public class SslData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.durationTime, this.syn, this.fin, this.serverName, this.sha1
-                , formatList(this.cerChain), formatList(this.clientCerChain), this.doubleSession, this.random, formatList(this.versions)
-                , formatList(this.cipherSuites), this.clientCipherSuite, this.handshake, this.malformedUpPayload, this.malformedDownPayload};
-        return Joiner.on(splitChar).useForNull("").join(join);
+//        Object[] join = new Object[]{super.toCsv(splitChar), this.durationTime, this.syn, this.fin, this.serverName, this.sha1
+//                , formatList(this.cerChain), formatList(this.clientCerChain), this.doubleSession, this.random, formatList(this.versions)
+//                , formatList(this.cipherSuites), this.clientCipherSuite, this.handshake, this.malformedUpPayload, this.malformedDownPayload};
+//        return Joiner.on(splitChar).useForNull("").join(join);
+        return null;
     }
 
 

@@ -9,9 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author gxz
  */
@@ -63,83 +60,84 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
             if (elements[29].contains("malformed")) {
                 sslData.setDataType(-2);
             } else {
-                addSslExtension(elements, sslData);
+//                addSslExtension(elements, sslData);
             }
         }
         return sslData;
     }
 
-    private void addSslExtension(String[] elements, SslData sslData) {
-        StringBuilder handShake = new StringBuilder(256);
-        boolean isServerCer = false;
-        if (handShake.length() > 5) {
-            handShake.setLength(handShake.length() - 5);
-            sslData.setHandshake(handShake.toString());
-        }
-        for (int i = 29; i < elements.length; i++) {
-            if (elements[i].isEmpty()) {
-                continue;
-            }
-            sslData.setDataType(0);
-            if (!elements[i].startsWith("(")) {
-                handShake.append(elements[i]).append(" --> ");
-            } else {
-                String kv = elements[i].substring(1, elements[i].length() - 1);
-                if (kv.startsWith("CipherSuite:")) {
-                    sslData.setClientCipherSuite(kv.substring(12).trim());
-                } else if (kv.startsWith("ServerName:")) {
-                    sslData.setServerName(kv.substring(11).trim());
-                } else if (kv.startsWith("Random:")) {
-                    sslData.setRandom(kv.substring(7).trim());
-                } else if (kv.startsWith("ssl_version:")) {
-                    addVersion(kv.substring(12).trim(), sslData);
-                } else if (kv.startsWith("cipher_suite:")) {
-                    addCipherSuites(kv.substring(13).toLowerCase(), sslData);
-                } else if (kv.startsWith("cert:")) {
-                    addCerchain(kv.substring(5).trim(), sslData);
-                }
-            }
-            if ("Certificate".equals(elements[i])) {
-                isServerCer = !isServerCer;
-            }
-            if ("Certificate Request".equalsIgnoreCase(elements[i])) {
-                sslData.setDoubleSession(true);
-            }
-        }
-    }
-
-
-    public void addVersion(String version, SslData sslData) {
-        if (StringUtils.isNotEmpty(version)) {
-            List<String> versions = sslData.getVersions();
-            if (null == versions) {
-                versions = new ArrayList<>();
-                sslData.setVersions(versions);
-            }
-            versions.add(version);
-        }
-    }
-
-    public void addCipherSuites(String cipherSuite, SslData sslData) {
-        if (StringUtils.isNotEmpty(cipherSuite)) {
-            List<String> cipherSuites = sslData.getCipherSuites();
-            if (null == cipherSuites) {
-                cipherSuites = new ArrayList<>();
-                sslData.setVersions(cipherSuites);
-            }
-            cipherSuites.add(cipherSuite);
-        }
-    }
-
-    private void addCerchain(String cer, SslData sslData) {
-        if (StringUtils.isNotEmpty(cer)) {
-            List<String> cerChain = sslData.getCerChain();
-            if (null == cerChain) {
-                cerChain = new ArrayList<>();
-                sslData.setCerChain(cerChain);
-            }
-            cerChain.add(cer);
-        }
-    }
+//    private void addSslExtension(String[] elements, SslData sslDaa) {
+//        List<String> handshake = new ArrayList<>();
+//        StringBuilder handShake = new StringBuilder(256);
+//        boolean isServerCer = false;
+//        if (handShake.length() > 5) {
+//            handShake.setLength(handShake.length() - 5);
+//            sslData.setHandshake(handShake.toString());
+//        }
+//        for (int i = 29; i < elements.length; i++) {
+//            if (elements[i].isEmpty()) {
+//                continue;
+//            }
+//            sslData.setDataType(0);
+//            if (!elements[i].startsWith("(")) {
+//                handShake.append(elements[i]).append(" --> ");
+//            } else {
+//                String kv = elements[i].substring(1, elements[i].length() - 1);
+//                if (kv.startsWith("CipherSuite:")) {
+//                    sslData.setClientCipherSuite(kv.substring(12).trim());
+//                } else if (kv.startsWith("ServerName:")) {
+//                    sslData.setServerName(kv.substring(11).trim());
+//                } else if (kv.startsWith("Random:")) {
+//                    sslData.setRandom(kv.substring(7).trim());
+//                } else if (kv.startsWith("ssl_version:")) {
+//                    addVersion(kv.substring(12).trim(), sslData);
+//                } else if (kv.startsWith("cipher_suite:")) {
+//                    addCipherSuites(kv.substring(13).toLowerCase(), sslData);
+//                } else if (kv.startsWith("cert:")) {
+//                    addCerchain(kv.substring(5).trim(), sslData);
+//                }
+//            }
+//            if ("Certificate".equals(elements[i])) {
+//                isServerCer = !isServerCer;
+//            }
+//            if ("Certificate Request".equalsIgnoreCase(elements[i])) {
+//                sslData.setDoubleSession(true);
+//            }
+//        }
+//    }
+//
+//
+//    public void addVersion(String version, SslData sslData) {
+//        if (StringUtils.isNotEmpty(version)) {
+//            List<String> versions = sslData.getVersions();
+//            if (null == versions) {
+//                versions = new ArrayList<>();
+//                sslData.setVersions(versions);
+//            }
+//            versions.add(version);
+//        }
+//    }
+//
+//    public void addCipherSuites(String cipherSuite, SslData sslData) {
+//        if (StringUtils.isNotEmpty(cipherSuite)) {
+//            List<String> cipherSuites = sslData.getCipherSuites();
+//            if (null == cipherSuites) {
+//                cipherSuites = new ArrayList<>();
+//                sslData.setVersions(cipherSuites);
+//            }
+//            cipherSuites.add(cipherSuite);
+//        }
+//    }
+//
+//    private void addCerchain(String cer, SslData sslData) {
+//        if (StringUtils.isNotEmpty(cer)) {
+//            List<String> cerChain = sslData.getCerChain();
+//            if (null == cerChain) {
+//                cerChain = new ArrayList<>();
+//                sslData.setCerChain(cerChain);
+//            }
+//            cerChain.add(cer);
+//        }
+//    }
 
 }

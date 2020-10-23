@@ -1,7 +1,7 @@
 server:
   port: 11111
 node:
-  name: sparrow
+  name: insomnia
 spring:
   application:
     name: src_http
@@ -12,5 +12,5 @@ spring:
         name: gaea
         file-extension: yml
   profiles:
-    active: sparrow
+    active: insomnia
 
