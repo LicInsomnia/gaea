@@ -6,7 +6,6 @@ import com.tincery.gaea.api.base.Location;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -46,8 +45,17 @@ public class HttpData extends AbstractSrcData{
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{super.toCsv(splitChar), this.getSyn(), this.getFin(),
-                this.host,this.method,this.urlRoot,this.userAgent,this.contentLength,
-                this.malformedUpPayload,this.malformedDownPayload,this.extension};
+                this.host, this.method, this.urlRoot, this.userAgent, this.contentLength,
+                this.malformedUpPayload, this.malformedDownPayload, this.extension};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
+
+    public void setIndex(int index) {
+
+    }
+
+    public void merge(HttpData httpData) {
+
+    }
+
 }

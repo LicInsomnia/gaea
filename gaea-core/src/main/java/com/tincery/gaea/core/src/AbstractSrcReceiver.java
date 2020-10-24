@@ -96,8 +96,9 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     }
 
     /**
-     * 多线程实现执行  基类默认实现为单线程  同analysisLine
+     * 多线程实现执行
      * 如需要多线程实现 请重写此方法
+     *
      * @author gxz
      **/
     protected void analysisFile(File file) {

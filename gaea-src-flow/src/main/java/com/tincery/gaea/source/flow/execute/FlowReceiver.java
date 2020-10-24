@@ -1,10 +1,8 @@
 package com.tincery.gaea.source.flow.execute;
 
+import com.google.common.collect.Lists;
 import com.tincery.gaea.api.src.DnsData;
-import com.tincery.gaea.core.base.component.support.PayloadDetector;
-import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;
-import com.tincery.gaea.core.base.rule.PassRule;
-import com.tincery.gaea.core.base.rule.RuleRegistry;
+import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
 import lombok.Getter;
@@ -13,6 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author gxz
@@ -24,16 +26,33 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlowReceiver extends AbstractSrcReceiver<DnsData> {
 
+    /**
+     * 多线程实现执行
+     * 如需要多线程实现 请重写此方法
+     *
+     * @author gxz
+     **/
+    @Override
+    protected void analysisFile(File file) {
+        if (!file.exists()) {
+            return;
+        }
+        List<String> lines = FileUtils.readLine(file);
+        if (lines.isEmpty()) {
+            return;
+        }
+        int executor = this.properties.getExecutor();
+        if (executor <= 1 || executor <= lines.size()) {
+            analysisLine(lines);
+        } else {
+            List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor) + 1);
 
-    @Autowired
-    private ImpTargetSetupDao impTargetSetupDao;
-
-    @Autowired
-    private PassRule passrule;
-
-    @Autowired
-    private PayloadDetector payloadDetector;
-
+            this.countDownLatch = new CountDownLatch(partitions.size());
+            for (List<String> partition : partitions) {
+                executorService.execute(() -> analysisLine(partition));
+            }
+        }
+    }
 
     @Autowired
     public void setAnalysis(FlowLineAnalysis analysis) {
@@ -54,12 +73,6 @@ public class FlowReceiver extends AbstractSrcReceiver<DnsData> {
     @Override
     public void init() {
         // loadGroup();
-        registryRules(passrule);
     }
-
-    public void registryRules(PassRule rule) {
-        RuleRegistry.getInstance().putRule(rule);
-    }
-
 
 }
