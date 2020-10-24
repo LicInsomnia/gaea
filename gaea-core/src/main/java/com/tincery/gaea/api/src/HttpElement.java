@@ -8,10 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +63,6 @@ public class HttpElement extends AbstractSrcData {
                 .setUserId(httpData.getUserId())
                 .setServerId(httpData.getServerId())
                 .setProName(httpData.getProName())
-                .setIsEncrypt(httpData.getIsEncrypt())
                 .setProtocol(httpData.getProtocol())
                 .setClientMac(httpData.getClientMac())
                 .setServerMac(httpData.getServerMac())
@@ -131,11 +128,7 @@ public class HttpElement extends AbstractSrcData {
         if (CollectionUtils.isEmpty(httpData.getCaseTags())){
             this.setIsTrash(false);
         }else {
-            if (httpData.getCaseTags().contains("垃圾")){
-                this.setIsTrash(true);
-            }else {
-                this.setIsTrash(false);
-            }
+            this.setIsTrash(httpData.getCaseTags().contains("垃圾"));
         }
         this.setContent(httpMeta.getContent());
     }
