@@ -6,12 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.beanutils.BeanUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -58,7 +55,6 @@ public class HttpElement extends AbstractSrcData {
                 .setUserId(httpData.getUserId())
                 .setServerId(httpData.getServerId())
                 .setProName(httpData.getProName())
-                .setIsEncrypt(httpData.getIsEncrypt())
                 .setProtocol(httpData.getProtocol())
                 .setClientMac(httpData.getClientMac())
                 .setServerMac(httpData.getServerMac())

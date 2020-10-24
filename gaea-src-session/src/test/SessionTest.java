@@ -1,23 +1,21 @@
 import com.tincery.gaea.source.session.GaeaSourceSessionApplication;
 import com.tincery.gaea.source.session.execute.MessageListener;
 import org.apache.activemq.command.ActiveMQTextMessage;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-/**
- * @author gxz gongxuanzhang@foxmail.com
- **/
-@SpringBootTest (classes = GaeaSourceSessionApplication.class)
-public class Test {
+@SpringBootTest(classes = GaeaSourceSessionApplication.class)
+public class SessionTest {
 
     @Autowired
     private MessageListener messageListener;
 
-    @org.junit.jupiter.api.Test
-    public void aa() {
+    @Test
+    public void Test() {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
         try {
-            activeMQTextMessage.setText("asdf");
+            activeMQTextMessage.setText("D:\\data5\\src\\session\\session_0.txt");
             messageListener.receive(activeMQTextMessage);
         } catch (Exception e) {
             e.printStackTrace();

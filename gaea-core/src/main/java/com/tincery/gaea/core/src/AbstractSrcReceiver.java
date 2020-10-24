@@ -123,7 +123,6 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             analysisLine(lines);
         } else {
             List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor)+1);
-
             this.countDownLatch = new CountDownLatch(partitions.size());
             for (List<String> partition : partitions) {
                 executorService.execute(() -> analysisLine(partition));

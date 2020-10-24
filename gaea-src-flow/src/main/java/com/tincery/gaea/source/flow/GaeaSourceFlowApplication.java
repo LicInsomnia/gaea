@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @SpringBootApplication
-public class GaeaSrcFlowApplication {
+public class GaeaSourceFlowApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GaeaSrcFlowApplication.class,args);
+        SpringApplication.run(GaeaSourceFlowApplication.class, args);
     }
 
 }

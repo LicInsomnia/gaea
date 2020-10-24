@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
 
+    @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
