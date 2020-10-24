@@ -45,6 +45,8 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
                 .setMsisdn(elements[20])
                 .setUserId(elements[26])
                 .setServerId(elements[27]);
+        this.srcLineSupport.setMobileElements(elements[18], elements[19], elements[20], impSessionData);
+        this.srcLineSupport.setPartiesId(elements[26], elements[27], impSessionData);
         this.srcLineSupport.setTargetName(elements[17], impSessionData);
         this.srcLineSupport.setGroupName(impSessionData);
         this.srcLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], impSessionData);
