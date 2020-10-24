@@ -2,6 +2,7 @@ package com.tincery.gaea.core.base.tool.util;
 
 import com.google.common.io.Files;
 import com.tincery.gaea.core.base.mgt.CommonConst;
+import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -131,8 +132,8 @@ public class FileUtils {
         return readLine(new File(fileName));
     }
 
-    public static Map<String, byte[]> readByteArray(File file){
-        Map<String, byte[]> mapContent = new LinkedHashMap<>();
+    public static Map<String, Pair<Integer,byte[]>> readByteArray(File file){
+        Map<String, Pair<Integer,byte[]>> mapContent = new LinkedHashMap<>();
         if (null == file || (!file.exists()) || file.isDirectory()) {
             return new HashMap<>();
         }
@@ -142,6 +143,7 @@ public class FileUtils {
                 return null;
             }
             int size = records.length;
+            int index = 0;
             int i = 0;
             while (i < size) {
                 byte[] bufferLength = new byte[4];
@@ -163,7 +165,8 @@ public class FileUtils {
                 byte[] bufferValue = new byte[targetLength];
                 System.arraycopy(records, i, bufferValue, 0, targetLength);
                 i += targetLength;
-                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), bufferValue);
+                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index,bufferValue));
+                index++;
             }
             return mapContent.isEmpty() ? null : mapContent;
         } catch (IOException e) {
