@@ -1,12 +1,9 @@
 package com.tincery.gaea.source.impsession.execute;
 
 import com.tincery.gaea.api.src.ImpSessionData;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
-import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -30,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 @Slf4j
 public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
-
 
     @Override
     public void setProperties(SrcProperties properties) {
