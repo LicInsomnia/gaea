@@ -1,5 +1,8 @@
 package com.tincery.gaea.api.base;
 
+import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.tool.util.LevelDomainUtils;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,8 +17,8 @@ public class HttpMeta {
     public String url;
     public String host;
     public StringBuilder method = new StringBuilder();
-    public String secondHost;
-    public String topHost;
+    public String sld;
+    public String tld;
     public Integer requestContentLength;
     public Integer responseContentLength;
     public String contentType;
@@ -34,6 +37,14 @@ public class HttpMeta {
     public boolean isMalformed = true;
     public String request;
     public String response;
+    /**
+     * http内容 用request和response字段合并
+     */
+    public String content;
+    /**
+     * 该index为meta的顺序
+     */
+    public Integer index;
 
 
     public void setContent(String content, boolean isResponse) {
@@ -97,5 +108,53 @@ public class HttpMeta {
         head.put("key", key);
         head.put("value", value);
         this.req_headers.add(head);
+    }
+
+    /**
+     * 请求响应一方为空时执行的方法
+     */
+    public void fixContentByHalfEmpty(){
+        this.content = StringUtils.isEmpty(this.request)? this.response:this.request;
+    }
+
+    /**
+     * 请求和响应合并字段的方法
+     * @param response 响应参数
+     */
+    public HttpMeta fixContentAndOther(HttpMeta response) {
+
+        this.content = this.getRequest() + "\r\n" + HeadConst.GORGEOUS_DIVIDING_LINE +"\r\n"+ response.getResponse();
+        this.method = this.method.append(">>").append(response.getMethod());
+        this.rep_headers = response.rep_headers;
+        return this;
+    }
+
+
+    public void setUrl(String url) {
+        this.url = url;
+        if (url.contains("?")) {
+            String[] spc = url.split("\\?");
+            if (spc.length >= 2) {
+                this.urlRoot = spc[0];
+                String paraPairs = url.substring(spc[0].length() + 1);
+                StringBuilder para = new StringBuilder();
+                for (String paraPair : paraPairs.split("&")) {
+                    String paraKey = paraPair.split("=")[0];
+                    if (!paraKey.isEmpty()) {
+                        para.append(paraKey).append("&");
+                    }
+                }
+                if (para.length() > 0) {
+                    this.parameter = para.substring(0, para.length() - 1);
+                }
+            }
+        } else {
+            this.urlRoot = url;
+        }
+    }
+    public void setHost(String host) {
+        this.host = host.toLowerCase();
+        this.sld = LevelDomainUtils.SLD(this.host);
+        this.tld = LevelDomainUtils.TLD(this.host);
     }
 }

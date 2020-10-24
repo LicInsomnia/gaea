@@ -32,16 +32,27 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
     @Override
     public HttpData pack(String line) throws Exception {
         HttpData httpMetaData = new HttpData();
+        /*
+         数据格式  key + 苍叔牛逼 + index + 苍叔牛逼  + value
+         以下。subName 为要装载的key  以key区分meta
+         text为content  装载meta
+         index为meta的顺序
+         */
         String[] split = line.split(HttpConstant.HTTP_CONSTANT);
+
         String subName = split[0];
         String text;
-        if (split.length < 2) {
+        Integer index  = Integer.valueOf(split[1]);
+        if (split.length < 3) {
             text = "";
         } else {
-            text = split[1];
+            text = split[2];
         }
         byte[] value = text.getBytes();
 
+        /*
+         * 设置httpData的key  和 common
+         */
         handlePrefix(httpMetaData,subName);
 
         if (value.length < 4 || !isLegalHeader(value)) {
@@ -56,7 +67,10 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
                 httpLineSupport.setMalformedPayload(payload, null, httpMetaData);
             }
         }else{
-            handleSuffix(httpMetaData,subName,text);
+            /*
+            填装meta
+             */
+            handleSuffix(httpMetaData,subName,text,index);
         }
 
         return httpMetaData;
@@ -79,7 +93,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      * @param subName  截取的字符串
      * @param text     content 字符串
      */
-    private void handleSuffix(HttpData httpData, String subName, String text) throws Exception {
+    private void handleSuffix(HttpData httpData, String subName, String text,Integer sort) throws Exception {
         List<String> reqs = flagResponse(text);
         int blank = 0;
         for (int i = 0; i < reqs.size(); i++) {
@@ -88,10 +102,10 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
                 blank++;
                 continue;
             }
-            String textError = fixSuffixData(httpData, req, i - blank);
+            String textError = fixSuffixData(httpData, req, i - blank,sort);
             if (null != textError) {
                 //TODO 输出错误日志
-                throw new Exception(textError + ":\n" + text + "\n" + req + "\n");
+                throw new Exception(textError + ":\n" + subName + "\n" + req + "\n");
             }
         }
     }
@@ -154,8 +168,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
                 element[7],
                 httpData
         );
-        httpData.setServerIpInfo(this.httpLineSupport.getLocation(httpData.getServerIp()));
-        httpData.setClientIpInfo(this.httpLineSupport.getLocation(httpData.getClientIp()));
+
         httpData.setSource(element[12]);
         this.httpLineSupport.setTargetName(element[13], httpData);
         this.httpLineSupport.setGroupName(httpData);
@@ -167,7 +180,6 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
                 .setServerId(element[23]);
         httpData.setIsResponse("1".equals(element[25].substring(0, 1)));
         httpData.setKey(subName.substring(0, subName.lastIndexOf(StringUtils.DEFAULT_SEP)));
-//        httpData.reMarkTargetName(userId2TargetName);
         this.httpLineSupport.isForeign(httpData.getServerIp());
     }
 
@@ -203,10 +215,14 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      * @param httpData httpData
      * @param text     content数据
      * @param index    循环的角标
+     * @param sort  在文件的位置
      * @return 错误信息
      */
-    private String fixSuffixData(HttpData httpData, String text, Integer index) {
+    private String fixSuffixData(HttpData httpData, String text, Integer index,Integer sort) {
         HttpMeta meta;
+        /*
+        进来的时候肯定没有httpMeta？
+         */
         if (CollectionUtils.isEmpty(httpData.getMetas())) {
             httpData.setMetas(new ArrayList<>());
         }
@@ -218,8 +234,6 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
             meta.setHasResponse(httpData.getIsResponse());
             httpData.getMetas().add(meta);
         }
-        //meta = new HttpMeta(httpData.getIsResponse());
-        //httpData.metas.add(meta);
         if (text.length() < 4 || !getLegelHeader().contains(text.substring(0, 4))) {
             meta.setContent(text, httpData.getIsResponse());
             meta.addMethod("", false);
@@ -287,6 +301,8 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
                 }
             }
         }
+        meta.setIndex(sort);
+        httpData.getMetas().add(meta);
         return null;
     }
 

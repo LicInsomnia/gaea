@@ -8,10 +8,13 @@ import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
 import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
+import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
+import com.tincery.gaea.source.http.constant.HttpConstant;
+import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author gxz
@@ -39,6 +43,9 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
     private PassRule passrule;
     @Autowired
     private AlarmRule alarmRule;
+
+    @Autowired
+    private HttpLineSupport httpLineSupport;
 
     @Autowired
     public void setAnalysis(HttpLineAnalysis analysis) {
@@ -85,10 +92,15 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
 
     @Override
     protected List<String> getLines(File file) {
-        // TODO 返回dat转行解析器
-        return new ArrayList<>();
+        return FileUtils.readByteArray(file).entrySet().stream().map(entry -> entry.getKey() +
+                HttpConstant.HTTP_CONSTANT + +entry.getValue().getKey() +
+                HttpConstant.HTTP_CONSTANT + new String(entry.getValue().getValue())).collect(Collectors.toList());
     }
 
+    /**
+     * 解析文件 并在输出之前进行文件整理
+     * @param file 一个输入dat文件
+     */
     @Override
     protected void analysisFile(File file) {
         super.analysisFile(file);
@@ -100,11 +112,22 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
         FileWriter dataWarehouseJsonFileWriter = new FileWriter(dataWarehouseJsonFile);
         for (HttpData httpData : this.httpMap.values()) {
             httpData.adjust();
+            // 装载Location
+            fixHttpDataLocation(httpData);
             // 输出CSV
+            /*
+            csv  每个meta单独输出
+             */
             putCsvMap(httpData);
             // 输出cache中JSON，供数据入库
+            /*
+            json  要把meta取出来集合toJson
+            要遍历metas 取所有的common
+            cache的要把content截取  超过4096的不要
+             */
             putJson(httpData.toJsonObjects(), cacheJsonFileWriter);
             // 输出输出仓库的JSON，供后面的http分析使用
+
             putJson(httpData.toJsonObjects(), dataWarehouseJsonFileWriter);
         }
         cacheJsonFileWriter.close();
@@ -142,5 +165,14 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
         if (this.countDownLatch != null) {
             this.countDownLatch.countDown();
         }
+    }
+
+    /**
+     * 装载httpData的两个Location数据
+     * @param httpData 一条数据
+     */
+    private void fixHttpDataLocation(HttpData httpData){
+        httpData.setServerIpLocation(this.httpLineSupport.getLocation(httpData.getServerIp()));
+        httpData.setClientIpLocation(this.httpLineSupport.getLocation(httpData.getClientIp()));
     }
 }

@@ -8,6 +8,8 @@ public class HeadConst {
     public static final char CSV_SEPARATOR = 0x07;
     public static final String CSV_SEPARATOR_STR = String.valueOf(CSV_SEPARATOR);
 
+    /* 分割线 http分割请求响应用 */
+    public static final String GORGEOUS_DIVIDING_LINE = "|------------------------------------------------------------------------------|";
     /* 通用csv文件头 */
     private final static String BASE_COMMON_HEADER = CSV.GROUP_NAME + CSV_SEPARATOR +
             CSV.TARGET_NAME + CSV_SEPARATOR +
