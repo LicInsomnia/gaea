@@ -4,7 +4,6 @@ package com.tincery.gaea.source.http.execute;
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.src.HttpData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -135,7 +134,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         httpData.setSyn(SourceFieldUtils.parseBooleanStr(element[0]));
         httpData.setFin(SourceFieldUtils.parseBooleanStr(element[1]));
         long captimeN = Long.parseLong(element[2]);
-        httpData.setCapTime(DateUtils.validateTime(captimeN));
+        httpData.setCapTime(captimeN);
         long endTimeN = Long.parseLong(element[3]);
         httpData.setDuration(endTimeN - captimeN);
         this.httpLineSupport.set7Tuple(null,
@@ -154,8 +153,8 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
                 element[7],
                 httpData
         );
-        httpData.setServerIpInfo(this.httpLineSupport.getLocation(httpData.getServerIp()));
-        httpData.setClientIpInfo(this.httpLineSupport.getLocation(httpData.getClientIp()));
+        httpData.setServerIpLocation(this.httpLineSupport.getLocation(httpData.getServerIp()));
+        httpData.setClientIpLocation(this.httpLineSupport.getLocation(httpData.getClientIp()));
         httpData.setSource(element[12]);
         this.httpLineSupport.setTargetName(element[13], httpData);
         this.httpLineSupport.setGroupName(httpData);

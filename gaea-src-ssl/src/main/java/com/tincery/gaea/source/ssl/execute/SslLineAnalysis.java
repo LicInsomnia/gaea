@@ -1,8 +1,7 @@
 package com.tincery.gaea.source.ssl.execute;
 
 
-import com.tincery.gaea.api.src.OpenVpnData;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.gaea.api.src.SslData;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
+public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
 
     @Autowired
     private SslLineSupport sslLineSupport;
@@ -33,43 +32,43 @@ public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
      * 30.data2 / downPayload           ...dataN
      */
     @Override
-    public OpenVpnData pack(String line) {
-        OpenVpnData openVpnData = new OpenVpnData();
+    public SslData pack(String line) {
+        SslData sslData = new SslData();
         String[] elements = StringUtils.FileLineSplit(line);
-        openVpnData.setSource(elements[16]);
-        openVpnData.setCapTime(DateUtils.validateTime(Long.parseUnsignedLong(elements[2])));
-        openVpnData.setDuration((Long.parseUnsignedLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
-        openVpnData.setImsi(elements[18]);
-        openVpnData.setImei(elements[19]);
-        openVpnData.setMsisdn(elements[20]);
-        openVpnData.setDataType(Integer.parseInt(elements[8]));
-        openVpnData.setSyn("1".equals(elements[0]));
-        openVpnData.setFin("1".equals(elements[1]));
+        sslData.setSource(elements[16]);
+        sslData.setCapTime(Long.parseLong(elements[2]));
+        sslData.setDuration((Long.parseLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
+        sslData.setImsi(elements[18]);
+        sslData.setImei(elements[19]);
+        sslData.setMsisdn(elements[20]);
+        sslData.setDataType(Integer.parseInt(elements[8]));
+        sslData.setSyn("1".equals(elements[0]));
+        sslData.setFin("1".equals(elements[1]));
         this.sslLineSupport.set7Tuple(
                 elements[10], elements[11], elements[12],
                 elements[13], elements[14], elements[15],
-                elements[9], "SSL", openVpnData);
+                elements[9], "SSL", sslData);
         this.sslLineSupport.setFlow(
                 elements[4], elements[5], elements[6],
-                elements[7], openVpnData);
-        this.sslLineSupport.setTargetName(elements[17], openVpnData);
-        this.sslLineSupport.setGroupName(openVpnData);
-        this.sslLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], openVpnData);
-        openVpnData.setUserId(elements[26]);
-        openVpnData.setServerId(elements[27]);
-        if (openVpnData.getDataType() == -1) {
-            this.sslLineSupport.setMalformedPayload(elements[29], elements[30], openVpnData);
+                elements[7], sslData);
+        this.sslLineSupport.setTargetName(elements[17], sslData);
+        this.sslLineSupport.setGroupName(sslData);
+        this.sslLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], sslData);
+        sslData.setUserId(elements[26]);
+        sslData.setServerId(elements[27]);
+        if (sslData.getDataType() == -1) {
+            this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
         } else {
             if (elements[29].contains("malformed")) {
-                openVpnData.setDataType(-2);
+                sslData.setDataType(-2);
             } else {
-                addSslExtension(elements, openVpnData);
+                addSslExtension(elements, sslData);
             }
         }
-        return openVpnData;
+        return sslData;
     }
 
-    private void addSslExtension(String[] elements, OpenVpnData openVpnData) {
+    private void addSslExtension(String[] elements, SslData sslData) {
         List<String> handshake = new ArrayList<>();
         boolean isServer = false;
         for (int i = 29; i < elements.length; i++) {
@@ -78,13 +77,13 @@ public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
             }
             if (elements[i].startsWith("(")) {
                 // 为会话属性信息
-                addSessionProperties(elements[i], openVpnData, isServer);
+                addSessionProperties(elements[i], sslData, isServer);
             } else {
                 // 为握手会话信息
-                isServer = isServer || addHandshake(elements[i], openVpnData, handshake);
+                isServer = isServer || addHandshake(elements[i], sslData, handshake);
             }
         }
-        openVpnData.setHandshake(handshake);
+        sslData.setHandshake(handshake);
     }
 
     /**
@@ -94,7 +93,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
      * @param handshake 握手过程
      * @return 是否进行客户端服务端切换
      */
-    private boolean addHandshake(String element, OpenVpnData openVpnData, List<String> handshake) {
+    private boolean addHandshake(String element, SslData sslData, List<String> handshake) {
         boolean isServer = false;
         String[] kv = element.split(":");
         if (kv.length != 2) {
@@ -102,7 +101,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         }
         String handshakeKeyword = kv[0].trim();
         if ("Application Data".equals(handshakeKeyword)) {
-            openVpnData.setHasApplicationData(true);
+            sslData.setHasApplicationData(true);
             return false;
         }
         if ("Server Hello".equals(handshakeKeyword)) {
@@ -112,7 +111,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         return isServer;
     }
 
-    private void addSessionProperties(String element, OpenVpnData openVpnData, boolean isServer) {
+    private void addSessionProperties(String element, SslData sslData, boolean isServer) {
         String[] kv = element.substring(1, element.length() - 1).split(":");
         if (kv.length != 2) {
             return;
@@ -125,65 +124,65 @@ public class SslLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         switch (key) {
             case "fingerprint":
                 if (isServer) {
-                    openVpnData.setServerFingerPrint(value);
+                    sslData.setServerFingerPrint(value);
                 } else {
-                    openVpnData.setClientFingerPrint(value);
+                    sslData.setClientFingerPrint(value);
                 }
                 break;
             case "JA3":
-                openVpnData.setClientJA3(value);
+                sslData.setClientJA3(value);
                 break;
             case "CipherSuite":
-                openVpnData.setClientCipherSuites(value);
+                sslData.setClientCipherSuites(value);
                 break;
             case "ServerName":
-                openVpnData.setServerName(value);
+                sslData.setServerName(value);
                 break;
             case "ssl_version":
-                openVpnData.setVersion(value);
+                sslData.setVersion(value);
                 break;
             case "cipher_suite":
-                openVpnData.setCipherSuite(this.sslLineSupport.getCipherSuite(value));
+                sslData.setCipherSuite(this.sslLineSupport.getCipherSuite(value));
                 break;
             case "HashAlgorithms":
-                openVpnData.setClientHashAlgorithms(value);
+                sslData.setClientHashAlgorithms(value);
                 break;
             case "JA3S":
-                openVpnData.setServerJA3(value);
+                sslData.setServerJA3(value);
                 break;
             case "named_curve":
-                openVpnData.setServerECDHNamedCurve(value);
+                sslData.setServerECDHNamedCurve(value);
                 break;
             case "publicKey data":
-                openVpnData.setServerECDHPublicKeyData(value);
+                sslData.setServerECDHPublicKeyData(value);
                 break;
             case "signature algorithm":
-                openVpnData.setServerECDHSignatureAlgorithm(value);
+                sslData.setServerECDHSignatureAlgorithm(value);
                 break;
             case "signature data":
-                openVpnData.setServerECDHSignatureData(value);
+                sslData.setServerECDHSignatureData(value);
                 break;
             case "cert":
-                addCerchain(value, openVpnData, isServer);
+                addCerchain(value, sslData, isServer);
                 break;
             default:
                 break;
         }
     }
 
-    private void addCerchain(String cer, OpenVpnData openVpnData, boolean isServer) {
+    private void addCerchain(String cer, SslData sslData, boolean isServer) {
         List<String> cerChain;
         if (isServer) {
-            cerChain = openVpnData.getServerCerChain();
+            cerChain = sslData.getServerCerChain();
             if (null == cerChain) {
                 cerChain = new ArrayList<>();
-                openVpnData.setServerCerChain(cerChain);
+                sslData.setServerCerChain(cerChain);
             }
         } else {
-            cerChain = openVpnData.getClientCerChain();
+            cerChain = sslData.getClientCerChain();
             if (null == cerChain) {
                 cerChain = new ArrayList<>();
-                openVpnData.setClientCerChain(cerChain);
+                sslData.setClientCerChain(cerChain);
             }
         }
         cerChain.add(cer);

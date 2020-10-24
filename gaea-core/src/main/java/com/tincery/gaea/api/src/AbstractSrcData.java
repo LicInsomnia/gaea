@@ -4,6 +4,7 @@ package com.tincery.gaea.api.src;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.core.base.tool.ToolUtils;
+import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.starter.base.util.NetworkUtil;
@@ -42,6 +43,11 @@ public abstract class AbstractSrcData extends AbstractMetaData {
      */
     protected Boolean completeSession;
 
+    @Override
+    public AbstractMetaData setCapTime(Long capTime) {
+        this.capTime = DateUtils.validateTime(capTime);
+        return this;
+    }
 
     public void set5TupleAndFlow(String protocol, String serverMac, String clientMac,
                                  String serverIpN, String clientIpN, String serverPort,

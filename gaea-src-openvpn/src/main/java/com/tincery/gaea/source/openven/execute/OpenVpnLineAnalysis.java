@@ -3,7 +3,6 @@ package com.tincery.gaea.source.openven.execute;
 
 import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         OpenVpnData openVpnData = new OpenVpnData();
         String[] elements = StringUtils.FileLineSplit(line);
         openVpnData.setSource(elements[16]);
-        openVpnData.setCapTime(DateUtils.validateTime(Long.parseUnsignedLong(elements[2])));
+        openVpnData.setCapTime(Long.parseUnsignedLong(elements[2]));
         openVpnData.setDuration((Long.parseUnsignedLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
         openVpnData.setImsi(elements[18]);
         openVpnData.setImei(elements[19]);

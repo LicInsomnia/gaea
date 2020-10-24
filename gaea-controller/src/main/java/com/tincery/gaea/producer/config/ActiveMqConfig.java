@@ -15,13 +15,17 @@ import javax.jms.Queue;
 @Configuration
 public class ActiveMqConfig {
 
+    @Bean(name = QueueNames.SRC_FLOW)
+    public Queue getSrcFlowQueue() {
+        return new ActiveMQQueue(QueueNames.SRC_FLOW);
+    }
 
-    @Bean (name = QueueNames.SRC_SESSION)
+    @Bean(name = QueueNames.SRC_SESSION)
     public Queue getSrcSessionQueue() {
         return new ActiveMQQueue(QueueNames.SRC_SESSION);
     }
 
-    @Bean (name = QueueNames.SRC_IMPSESSION)
+    @Bean(name = QueueNames.SRC_IMPSESSION)
     public Queue getSrcImpSession() {
         return new ActiveMQQueue(QueueNames.SRC_IMPSESSION);
     }

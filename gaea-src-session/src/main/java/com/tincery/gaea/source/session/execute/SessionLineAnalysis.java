@@ -3,7 +3,6 @@ package com.tincery.gaea.source.session.execute;
 
 import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -57,7 +56,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
      **/
     private void setFixProperties(String[] element, SessionData sessionData) {
         long capTimeN = Long.parseLong(element[2]);
-        sessionData.setCapTime(DateUtils.validateTime(capTimeN))
+        sessionData.setCapTime(capTimeN)
                 .setDuration((Long.parseLong(element[3]) - capTimeN) / 1000)
                 .setSource(element[15])
                 .setImsi(SourceFieldUtils.parseStringStr(element[17]))

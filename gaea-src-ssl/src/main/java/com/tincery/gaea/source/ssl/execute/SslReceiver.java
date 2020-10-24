@@ -1,6 +1,6 @@
 package com.tincery.gaea.source.ssl.execute;
 
-import com.tincery.gaea.api.src.OpenVpnData;
+import com.tincery.gaea.api.src.SslData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Setter
 @Getter
-public class SslReceiver extends AbstractSrcReceiver<OpenVpnData> {
+public class SslReceiver extends AbstractSrcReceiver<SslData> {
 
     @Autowired
     private AlarmRule alarmRule;
@@ -48,14 +48,14 @@ public class SslReceiver extends AbstractSrcReceiver<OpenVpnData> {
 
 
     @Override
-    protected void putCsvMap(OpenVpnData openVpnData) {
-        if (RuleRegistry.getInstance().matchLoop(openVpnData)) {
+    protected void putCsvMap(SslData sslData) {
+        if (RuleRegistry.getInstance().matchLoop(sslData)) {
             // 过滤规则  其中alarm规则是有同步块的
             return;
         }
-        appendCsvData(openVpnData.getDateSetFileName(ApplicationInfo.getCategory()),
-                openVpnData.toCsv(HeadConst.CSV_SEPARATOR),
-                openVpnData.getCapTime()
+        appendCsvData(sslData.getDateSetFileName(ApplicationInfo.getCategory()),
+                sslData.toCsv(HeadConst.CSV_SEPARATOR),
+                sslData.getCapTime()
         );
     }
 

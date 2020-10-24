@@ -1,7 +1,6 @@
 package com.tincery.gaea.source.impsession.execute;
 
 import com.tincery.gaea.api.src.ImpSessionData;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
@@ -33,8 +32,8 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
     public ImpSessionData pack(String line) {
         ImpSessionData impSessionData = new ImpSessionData();
         String[] elements = StringUtils.FileLineSplit(line);
-        long capTime = DateUtils.validateTime(Long.parseLong(elements[2]));
-        long endTime = DateUtils.validateTime(Long.parseLong(elements[3]));
+        long capTime = Long.parseLong(elements[2]);
+        long endTime = Long.parseLong(elements[3]);
         impSessionData.setSyn("1".equals(elements[0]))
                 .setFin("1".equals(elements[1]))
                 .setDataType(Integer.parseInt(elements[8]))

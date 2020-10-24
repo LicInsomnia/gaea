@@ -111,7 +111,7 @@ public class DateUtils {
      * @param time 时间戳
      * @return long
      **/
-    public static long validateTime(long time){
+    public static long validateTime(Long time) {
         if (time > MICROSECOND) {
             time /= 1000;
         }
