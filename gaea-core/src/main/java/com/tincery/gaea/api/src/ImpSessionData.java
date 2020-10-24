@@ -25,7 +25,7 @@ public class ImpSessionData extends AbstractSrcData {
                 this.getSyn(), this.getFin(),
                 this.upPayLoad, this.downPayLoad
         };
-        return Joiner.on(splitChar).join(join);
+        return Joiner.on(splitChar).useForNull("").join(join);
     }
 
 

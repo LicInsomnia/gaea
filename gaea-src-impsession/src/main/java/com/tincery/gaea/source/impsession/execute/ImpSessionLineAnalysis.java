@@ -39,12 +39,7 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
                 .setFin("1".equals(elements[1]))
                 .setDataType(Integer.parseInt(elements[8]))
                 .setCapTime(capTime)
-                .setDuration(endTime - capTime)
-                .setImsi(elements[18])
-                .setImei(elements[19])
-                .setMsisdn(elements[20])
-                .setUserId(elements[26])
-                .setServerId(elements[27]);
+                .setDuration(endTime - capTime);
         this.srcLineSupport.setMobileElements(elements[18], elements[19], elements[20], impSessionData);
         this.srcLineSupport.setPartiesId(elements[26], elements[27], impSessionData);
         this.srcLineSupport.setTargetName(elements[17], impSessionData);
@@ -56,7 +51,7 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
         if (needCorrect(elements)) {
             modifyImpSessionData(impSessionData, elements);
         }
-        this.srcLineSupport.isForeign(impSessionData.getServerIp());
+        impSessionData.setForeign(this.srcLineSupport.isForeign(impSessionData.getServerIp()));
         return impSessionData;
     }
 

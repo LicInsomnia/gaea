@@ -62,7 +62,9 @@ public class HeadConst {
             CSV.DURATION + CSV_SEPARATOR +
             CSV.SYN_FLAG + CSV_SEPARATOR +
             CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.HAND_SHAKE + CSV_SEPARATOR +
+            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            CSV.HANDSHAKE + CSV_SEPARATOR +
             CSV.HAS_APPLICATION_DATA + CSV_SEPARATOR +
             CSV.SERVER_NAME + CSV_SEPARATOR +
             CSV.DAUL_AUTH + CSV_SEPARATOR +
@@ -84,9 +86,7 @@ public class HeadConst {
             CSV.SERVER_ECDH_NAMED_CURVE + CSV_SEPARATOR +
             CSV.SERVER_ECDH_PUBLIC_KEY_DATA + CSV_SEPARATOR +
             CSV.SERVER_SIGNATURE_ALGORITHM + CSV_SEPARATOR +
-            CSV.SERVER_ECDH_SIGNATURE_DATA + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD;
+            CSV.SERVER_ECDH_SIGNATURE_DATA;
     /* openvpn csv文件头 */
     public final static String OPENVPN_HEADER = SSL_HEADER;
     /* ssh csv文件头 */
@@ -178,7 +178,7 @@ public class HeadConst {
         public final static String DOMAIN = "domain";
         public final static String CNAMES = "cname";
         /* SSL */
-        public final static String HAND_SHAKE = "handshake";
+        public final static String HANDSHAKE = "handshake";
         public final static String HAS_APPLICATION_DATA = "hasApplicationData";
         public final static String SERVER_NAME = "serverName";
         public final static String DAUL_AUTH = "daulAuth";
