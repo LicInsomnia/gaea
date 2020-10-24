@@ -7,6 +7,7 @@ import com.tincery.gaea.core.base.tool.util.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Set;
 
@@ -33,8 +34,6 @@ public abstract class AbstractMetaData extends GaeaData {
     protected String serverId;
     /** 协议名 */
     protected String proName;
-    /** 是否加密 */
-    protected Boolean isEncrypt;
     /** 内外层五元组相关 */
     protected Integer protocol;
     protected String clientMac;
@@ -106,6 +105,7 @@ public abstract class AbstractMetaData extends GaeaData {
      */
     protected Boolean foreign;
 
+    @Field()
     protected String eventData;
 
     protected Set<String> caseTags;
