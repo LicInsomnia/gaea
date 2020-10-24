@@ -1,22 +1,15 @@
 package com.tincery.gaea.source.http.execute;
 
-import com.google.common.collect.Lists;
 import com.tincery.gaea.api.src.HttpData;
-import com.tincery.gaea.api.src.ImpSessionData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
-import com.tincery.gaea.core.base.component.support.IpChecker;
-import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
 import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
-import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
-import com.tincery.gaea.core.src.SrcLineSupport;
 import com.tincery.gaea.core.src.SrcProperties;
-import com.tincery.gaea.source.http.constant.HttpConstant;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.stream.Collectors;
 
 /**
  * @author gxz
@@ -38,19 +29,14 @@ import java.util.stream.Collectors;
 @Setter
 @Getter
 @Service
-public class HttpReceiverNew extends AbstractSrcReceiver<HttpData> {
+public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
 
     private final Map<String, HttpData> httpMap = new ConcurrentHashMap<>();
+
     @Autowired
     private PassRule passrule;
     @Autowired
     private AlarmRule alarmRule;
-    @Autowired
-    private IpSelector ipSelector;
-    @Autowired
-    private SrcLineSupport srcLineSupport;
-    @Autowired
-    private IpChecker ipChecker;
 
     @Autowired
     public void setAnalysis(HttpLineAnalysis analysis) {
@@ -96,33 +82,26 @@ public class HttpReceiverNew extends AbstractSrcReceiver<HttpData> {
     }
 
     @Override
-    protected void analysisFile(File file) {
-        if (!file.exists()) {
-            return;
-        }
-        List<String> lines = FileUtils.readByteArray(file).entrySet().stream().map(entry -> entry.getKey() + HttpConstant.HTTP_CONSTANT + new String(entry.getValue())).collect(Collectors.toList());
-        if (lines.isEmpty()) {
-            return;
-        }
-        List<HttpData> allHttpData = new ArrayList<>();
-        int executor = this.properties.getExecutor();
-        if (executor <= 1 || executor <= lines.size()) {
-            /*
-            在执行解析器前 先去csvMap中查看有没有这个文件。。。
-             */
-            try {
-                analysisLine(lines);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor) + 1);
-            this.countDownLatch = new CountDownLatch(partitions.size());
-            for (List<String> partition : partitions) {
-                executorService.execute(() -> analysisLine(partition));
-            }
-        }
+    protected List<String> getLines(File file) {
+        // TODO 返回dat转行解析器
+        return new ArrayList<>();
+    }
 
+    @Override
+    protected void analysisFile(File file) {
+        super.analysisFile(file);
+        for (HttpData httpData : this.httpMap.values()) {
+            httpData.adjust();
+            putCsvMap(httpData);
+            putCacheJson(httpData);
+            putDataWarehouse(httpData);
+        }
+    }
+
+    private void putCacheJson(HttpData httpData) {
+    }
+
+    private void putDataWarehouse(HttpData httpData) {
     }
 
     @Override
@@ -132,7 +111,6 @@ public class HttpReceiverNew extends AbstractSrcReceiver<HttpData> {
                 HttpData httpData;
                 try {
                     httpData = this.analysis.pack(line);
-                    httpData.adjust();
                 } catch (Exception e) {
                     log.error("解析实体出现了问题{}", line);
                     // TODO: 2020/9/8 实体解析有问题告警
@@ -141,11 +119,10 @@ public class HttpReceiverNew extends AbstractSrcReceiver<HttpData> {
                 }
                 String key = httpData.getKey();
                 if (this.httpMap.containsKey(key)) {
-                    ImpSessionData buffer = this.impSessionMap.get(pairKey);
-                    buffer.merge(impSessionData);
-                    this.impSessionMap.replace(pairKey, buffer);
+                    HttpData buffer = this.httpMap.get(key);
+                    buffer.merge(httpData);
                 } else {
-                    this.impSessionMap.put(key, impSessionData);
+                    this.httpMap.put(key, httpData);
                 }
             }
         }

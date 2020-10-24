@@ -96,6 +96,15 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     }
 
     /**
+     * 解析src层文件获取逐条会话记录
+     *
+     * @param file src层文件
+     */
+    protected List<String> getLines(File file) {
+        return FileUtils.readLine(file);
+    }
+
+    /**
      * 多线程实现执行
      * 如需要多线程实现 请重写此方法
      *
@@ -105,7 +114,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         if (!file.exists()) {
             return;
         }
-        List<String> lines = FileUtils.readLine(file);
+        List<String> lines = getLines(file);
         if (lines.isEmpty()) {
             return;
         }
