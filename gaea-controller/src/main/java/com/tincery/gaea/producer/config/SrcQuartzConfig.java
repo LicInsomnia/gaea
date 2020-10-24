@@ -18,9 +18,29 @@ public class SrcQuartzConfig {
     @Autowired
     private ControllerConfigProperties controllerConfigProperties;
 
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "flow")
+    public JobDetail flowJob() {
+        return JobBuilder.newJob(FlowJob.class)
+                .withIdentity("flowJob")
+                .storeDurably()
+                .build();
+    }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "session")
+    @ConditionalOnProperty(prefix = PREFIX, name = "flow")
+    public Trigger flowJobTrigger() {
+        String cron = controllerConfigProperties.getSrc().getFlow();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(sessionJob())
+                .withIdentity("flowJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "session")
     public JobDetail sessionJob() {
         return JobBuilder.newJob(SessionJob.class)
                 .withIdentity("sessionJob")
@@ -29,7 +49,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "session")
+    @ConditionalOnProperty(prefix = PREFIX, name = "session")
     public Trigger sessionJobTrigger() {
         String cron = controllerConfigProperties.getSrc().getSession();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
@@ -41,7 +61,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "impsession")
+    @ConditionalOnProperty(prefix = PREFIX, name = "impsession")
     public JobDetail impsessionJob() {
         return JobBuilder.newJob(ImpSessionJob.class)
                 .withIdentity("impsessionJob")
@@ -50,7 +70,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "impsession")
+    @ConditionalOnProperty(prefix = PREFIX, name = "impsession")
     public Trigger impsessionJobTrigger() {
         String cron = controllerConfigProperties.getSrc().getImpsession();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
@@ -62,7 +82,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "http")
+    @ConditionalOnProperty(prefix = PREFIX, name = "http")
     public JobDetail httpJob() {
         return JobBuilder.newJob(SessionJob.class)
                 .withIdentity("httpJob")
@@ -71,7 +91,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "http")
+    @ConditionalOnProperty(prefix = PREFIX, name = "http")
     public Trigger httpJobTrigger() {
         String cron = controllerConfigProperties.getSrc().getHttp();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
@@ -83,7 +103,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "dns")
+    @ConditionalOnProperty(prefix = PREFIX, name = "dns")
     public JobDetail dnsJob() {
         return JobBuilder.newJob(DnsJob.class)
                 .withIdentity("dnsJob")
@@ -92,7 +112,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "dns")
+    @ConditionalOnProperty(prefix = PREFIX, name = "dns")
     public Trigger dnsJobTrigger() {
         String cron = controllerConfigProperties.getSrc().getDns();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
@@ -104,7 +124,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "ssl")
+    @ConditionalOnProperty(prefix = PREFIX, name = "ssl")
     public JobDetail sslJob() {
         return JobBuilder.newJob(SslJob.class)
                 .withIdentity("sslJob")
@@ -113,7 +133,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "ssl")
+    @ConditionalOnProperty(prefix = PREFIX, name = "ssl")
     public Trigger sslJobTrigger() {
         String cron = controllerConfigProperties.getSrc().getSsl();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
@@ -125,7 +145,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "email")
+    @ConditionalOnProperty(prefix = PREFIX, name = "email")
     public JobDetail emailJob() {
         return JobBuilder.newJob(SslJob.class)
                 .withIdentity("emailJob")
@@ -134,7 +154,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "email")
+    @ConditionalOnProperty(prefix = PREFIX, name = "email")
     public Trigger emailJobTrigger() {
         String cron = controllerConfigProperties.getSrc().getEmail();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
@@ -146,7 +166,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "ssh")
+    @ConditionalOnProperty(prefix = PREFIX, name = "ssh")
     public JobDetail sshJob() {
         return JobBuilder.newJob(SshJob.class)
                 .withIdentity("sshJob")
@@ -155,7 +175,7 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "ssh")
+    @ConditionalOnProperty(prefix = PREFIX, name = "ssh")
     public Trigger sshJobTrigger() {
         String cron = controllerConfigProperties.getSrc().getSsh();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);

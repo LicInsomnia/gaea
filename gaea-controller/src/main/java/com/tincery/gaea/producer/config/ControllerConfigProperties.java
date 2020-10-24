@@ -19,18 +19,20 @@ public class ControllerConfigProperties {
     @Setter
     @Getter
     public static class SrcConfig {
-        private String email;
-        private String ssl;
+        private String flow;
         private String session;
         private String impsession;
+        private String ssl;
+        private String email;
         private String http;
         private String dns;
         private String ssh;
     }
+
     @Setter
     @Getter
     public static class DataWarehouseConfig {
-       private String reorganization;
+        private String reorganization;
     }
 
 

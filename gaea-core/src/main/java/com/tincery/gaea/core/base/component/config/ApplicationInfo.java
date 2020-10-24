@@ -79,6 +79,10 @@ public class ApplicationInfo {
         return NodeInfo.getDataWarehouseCustomPathByCategory(getCategory());
     }
 
+    public static String getCachePathByCategory() {
+        return NodeInfo.getCacheByCategory(getCategory());
+    }
+
     public static String getCacheByCategory() {
         return NodeInfo.getCacheByCategory(getCategory());
     }
