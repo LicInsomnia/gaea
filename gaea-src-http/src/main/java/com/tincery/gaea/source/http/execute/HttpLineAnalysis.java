@@ -157,11 +157,12 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         httpData.setServerIpInfo(this.httpLineSupport.getLocation(httpData.getServerIp()));
         httpData.setClientIpInfo(this.httpLineSupport.getLocation(httpData.getClientIp()));
         httpData.setSource(element[12]);
-        httpLineSupport.setTargetName(element[13], httpData);
+        this.httpLineSupport.setTargetName(element[13], httpData);
+        this.httpLineSupport.setGroupName(httpData);
         httpData.setImsi(element[14])
                 .setImei(element[15])
                 .setMsisdn(element[16]);
-        httpLineSupport.set5TupleOuter(element[17], element[18], element[19], element[20], element[21], httpData);
+        this.httpLineSupport.set5TupleOuter(element[17], element[18], element[19], element[20], element[21], httpData);
         httpData.setUserId(element[22])
                 .setServerId(element[23]);
         httpData.setIsResponse("1".equals(element[25].substring(0, 1)));
