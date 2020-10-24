@@ -124,7 +124,6 @@ public class HttpMeta {
     public HttpMeta fixContentAndOther(HttpMeta response) {
 
         this.content = this.getRequest() + "\r\n" + HeadConst.GORGEOUS_DIVIDING_LINE +"\r\n"+ response.getResponse();
-        this.method = this.method.append(">>").append(response.getMethod());
         this.rep_headers = response.rep_headers;
         return this;
     }

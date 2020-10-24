@@ -1,12 +1,17 @@
 package com.tincery.gaea.api.src;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.base.Location;
+import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.util.CollectionUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +24,10 @@ public class HttpElement extends AbstractSrcData {
      * 用来保存上下行数据
      */
     private String contentLength;
+
     private Boolean isResponse;
-    private Location serverIpLocation;
-    private Location clientIpLocation;
+    private Location serverLocation;
+    private Location clientLocation;
     private String host;
     private String method;
     private String urlRoot;
@@ -38,16 +44,20 @@ public class HttpElement extends AbstractSrcData {
     public Boolean authorization;
     public Boolean proxyauth;
     //public List<Map<String, String>> headers;
-    public List<Map<String, String>> req_headers;
-    public List<Map<String, String>> rep_headers;
+    public List<Map<String, String>> reqHeaders;
+    public List<Map<String, String>> repHeaders;
     public String acceptEncoding;
     public String parameter;
+    @JSONField(serialize = false)
     public Boolean hasResponse;
+    @JSONField(serialize = false)
     public Boolean isMalformed;
+    @JSONField(serialize = false)
     public String request;
     public String response;
+    public String content;
 
-
+    public Boolean isTrash;
 
     public void init(HttpData httpData, HttpMeta httpMeta){
         this.setSource(httpData.getSource())
@@ -55,6 +65,7 @@ public class HttpElement extends AbstractSrcData {
                 .setUserId(httpData.getUserId())
                 .setServerId(httpData.getServerId())
                 .setProName(httpData.getProName())
+                .setIsEncrypt(httpData.getIsEncrypt())
                 .setProtocol(httpData.getProtocol())
                 .setClientMac(httpData.getClientMac())
                 .setServerMac(httpData.getServerMac())
@@ -67,12 +78,12 @@ public class HttpElement extends AbstractSrcData {
                 .setClientPortOuter(httpData.getClientPortOuter())
                 .setServerPortOuter(httpData.getServerPortOuter())
                 .setProtocolOuter(httpData.getProtocolOuter())
-                .setImp(httpData.getImp())
+//                .setImp(httpData.getImp())
                 .setMalformedUpPayload(httpData.getMalformedUpPayload())
                 .setMalformedDownPayload(httpData.getMalformedDownPayload())
-                .setImsi(httpData.getImsi())
-                .setImei(httpData.getImei())
-                .setMsisdn(httpData.getMsisdn())
+                .setImsi(SourceFieldUtils.parseStringStrEmptyToNull(httpData.getImsi()))
+                .setImei(SourceFieldUtils.parseStringStrEmptyToNull(httpData.getImei()))
+                .setMsisdn(SourceFieldUtils.parseStringStrEmptyToNull(httpData.getMsisdn()))
                 .setDataType(httpData.getDataType())
                 .setGroupName(httpData.getGroupName())
                 .setTargetName(httpData.getTargetName())
@@ -81,10 +92,9 @@ public class HttpElement extends AbstractSrcData {
                 .setDownPkt(httpData.getDownPkt())
                 .setDownByte(httpData.getDownByte())
                 .setDuration(httpData.getDuration())
-                .setSyn(httpData.getSyn())
-                .setFin(httpData.getFin())
+//                .setSyn(httpData.getSyn())
+//                .setFin(httpData.getFin())
                 .setForeign(httpData.getForeign())
-                .setEventData(httpData.getEventData())
                 .setCaseTags(httpData.getCaseTags());
 
         this.setMacOuter(httpData.getMacOuter())
@@ -105,8 +115,8 @@ public class HttpElement extends AbstractSrcData {
                 .setFrom(httpMeta.getFrom())
                 .setAuthorization(httpMeta.getAuthorization())
                 .setProxyauth(httpMeta.getProxyauth())
-                .setReq_headers(httpMeta.getReq_headers())
-                .setRep_headers(httpMeta.getRep_headers())
+                .setReqHeaders(httpMeta.getReq_headers())
+                .setRepHeaders(httpMeta.getRep_headers())
                 .setAcceptEncoding(httpMeta.getAcceptEncoding())
                 .setUrlRoot(httpMeta.getUrlRoot())
                 .setParameter(httpMeta.getParameter())
@@ -115,10 +125,18 @@ public class HttpElement extends AbstractSrcData {
                 .setRequest(httpMeta.getRequest())
                 .setResponse(httpMeta.getResponse());
 
-        this.setClientIpLocation(httpData.getClientIpLocation())
-                .setServerIpLocation(httpData.getServerIpLocation());
+        this.setClientLocation(httpData.getClientLocation())
+                .setServerLocation(httpData.getServerLocation());
 
-
-
+        if (CollectionUtils.isEmpty(httpData.getCaseTags())){
+            this.setIsTrash(false);
+        }else {
+            if (httpData.getCaseTags().contains("垃圾")){
+                this.setIsTrash(true);
+            }else {
+                this.setIsTrash(false);
+            }
+        }
+        this.setContent(httpMeta.getContent());
     }
 }
