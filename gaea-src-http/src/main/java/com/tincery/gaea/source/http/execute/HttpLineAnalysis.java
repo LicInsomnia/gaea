@@ -242,7 +242,6 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
             String headers = text.split("\r\n\r\n")[0];
             String[] lines = headers.split("\n");
             String method = lines[0].split(" ")[0].trim();
-            //boolean getIsResponse() = method.startsWith("HTTP/");
             meta.setContent(text, httpData.getIsResponse());
             meta.addMethod(method, !httpData.getIsResponse());
             httpData.setDataType(1);

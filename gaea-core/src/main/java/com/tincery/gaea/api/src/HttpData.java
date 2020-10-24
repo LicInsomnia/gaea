@@ -26,8 +26,8 @@ public class HttpData extends AbstractSrcData {
     private String userAgent;
     private String contentLength;
     private Boolean isResponse;
-    private Location serverIpLocation;
-    private Location clientIpLocation;
+    private Location serverLocation;
+    private Location clientLocation;
     /**
      * 用来保存上下行数据
      */
@@ -139,6 +139,9 @@ public class HttpData extends AbstractSrcData {
         for (HttpMeta meta : metas) {
             HttpElement element = new HttpElement();
             element.init(this,meta);
+            if (element.getIsMalformed()){
+                continue;
+            }
             JSONObject jsonObject = (JSONObject) JSONObject.toJSON(element);
             result.add(jsonObject);
         }

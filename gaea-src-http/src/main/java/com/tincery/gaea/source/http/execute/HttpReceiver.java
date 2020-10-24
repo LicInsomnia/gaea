@@ -127,7 +127,6 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
              */
             putJson(httpData.toJsonObjects(), cacheJsonFileWriter);
             // 输出输出仓库的JSON，供后面的http分析使用
-
             putJson(httpData.toJsonObjects(), dataWarehouseJsonFileWriter);
         }
         cacheJsonFileWriter.close();
@@ -172,7 +171,7 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
      * @param httpData 一条数据
      */
     private void fixHttpDataLocation(HttpData httpData){
-        httpData.setServerIpLocation(this.httpLineSupport.getLocation(httpData.getServerIp()));
-        httpData.setClientIpLocation(this.httpLineSupport.getLocation(httpData.getClientIp()));
+        httpData.setServerLocation(this.httpLineSupport.getLocation(httpData.getServerIp()));
+        httpData.setClientLocation(this.httpLineSupport.getLocation(httpData.getClientIp()));
     }
 }
