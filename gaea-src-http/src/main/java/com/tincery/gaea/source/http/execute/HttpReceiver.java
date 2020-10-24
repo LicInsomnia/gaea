@@ -1,5 +1,6 @@
 package com.tincery.gaea.source.http.execute;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.src.HttpData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -7,6 +8,7 @@ import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
 import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
+import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -90,18 +92,29 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
     @Override
     protected void analysisFile(File file) {
         super.analysisFile(file);
+        String cacheJsonFile = ApplicationInfo.getCachePathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
+                System.currentTimeMillis() + ".json";
+        FileWriter cacheJsonFileWriter = new FileWriter(cacheJsonFile);
+        String dataWarehouseJsonFile = ApplicationInfo.getDataWarehouseJsonPathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
+                System.currentTimeMillis() + ".json";
+        FileWriter dataWarehouseJsonFileWriter = new FileWriter(dataWarehouseJsonFile);
         for (HttpData httpData : this.httpMap.values()) {
             httpData.adjust();
+            // 输出CSV
             putCsvMap(httpData);
-            putCacheJson(httpData);
-            putDataWarehouse(httpData);
+            // 输出cache中JSON，供数据入库
+            putJson(httpData.toJsonObjects(), cacheJsonFileWriter);
+            // 输出输出仓库的JSON，供后面的http分析使用
+            putJson(httpData.toJsonObjects(), dataWarehouseJsonFileWriter);
         }
+        cacheJsonFileWriter.close();
+        dataWarehouseJsonFileWriter.close();
     }
 
-    private void putCacheJson(HttpData httpData) {
-    }
-
-    private void putDataWarehouse(HttpData httpData) {
+    private void putJson(List<JSONObject> jsonObjects, FileWriter fileWriter) {
+        for (JSONObject jsonObject : jsonObjects) {
+            fileWriter.write(JSONObject.toJSONString(jsonObject));
+        }
     }
 
     @Override

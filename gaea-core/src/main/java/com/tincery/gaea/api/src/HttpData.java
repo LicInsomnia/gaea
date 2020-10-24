@@ -1,16 +1,18 @@
 package com.tincery.gaea.api.src;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.base.Location;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-public class HttpData extends AbstractSrcData{
+public class HttpData extends AbstractSrcData {
 
     private String host;
     private String method;
@@ -19,8 +21,8 @@ public class HttpData extends AbstractSrcData{
     private String contentLength;
     private Boolean isResponse;
 
-    private Location serverIpInfo;
-    private Location clientIpInfo;
+    private Location serverIpLocation;
+    private Location clientIpLocation;
     /**
      * 用来保存上下行数据
      */
@@ -42,6 +44,13 @@ public class HttpData extends AbstractSrcData{
         super.adjust();
     }
 
+    /**
+     * 整理Meta链表数据，调整顺序
+     */
+    private void adjustMetas() {
+
+    }
+
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{super.toCsv(splitChar), this.getSyn(), this.getFin(),
@@ -50,12 +59,13 @@ public class HttpData extends AbstractSrcData{
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
-    public void setIndex(int index) {
+    public void merge(HttpData httpData) {
 
     }
 
-    public void merge(HttpData httpData) {
-
+    public List<JSONObject> toJsonObjects() {
+        List<JSONObject> result = new ArrayList<>();
+        return result;
     }
 
 }
