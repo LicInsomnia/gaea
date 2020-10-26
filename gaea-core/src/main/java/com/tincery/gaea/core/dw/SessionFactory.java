@@ -230,7 +230,7 @@ public class SessionFactory {
             putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
             putExtensionField(csvRow, HeadConst.CSV.VERSION, HeadConst.MONGO.VERSION_STRING, abstractDataWarehouseData);
             putExtensionField(csvRow, HeadConst.CSV.CIPHER_SUITES, HeadConst.MONGO.CIPHER_SUITES_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.HAND_SHAKE, HeadConst.MONGO.HAND_SHAKE_STRING, abstractDataWarehouseData);
+            putExtensionField(csvRow, HeadConst.CSV.HANDSHAKE, HeadConst.MONGO.HAND_SHAKE_STRING, abstractDataWarehouseData);
 //            putExtensionField(csvRow, HeadConst.CSV.CERCHAIN, HeadConst.MONGO.CERCHAIN_STRING, abstractDataWarehouseData);
 //            putExtensionField(csvRow, HeadConst.CSV.CLIENT_CERCHAIN, HeadConst.MONGO.CLIENT_CERCHAIN_STRING, abstractDataWarehouseData);
 //            putExtensionField(csvRow, HeadConst.CSV.IS_DOUBLE, HeadConst.MONGO.IS_DOUBLE_STRING, abstractDataWarehouseData);

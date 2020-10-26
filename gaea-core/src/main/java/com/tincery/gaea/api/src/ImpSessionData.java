@@ -20,8 +20,12 @@ public class ImpSessionData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.getDuration() / 1000, this.getSyn(), this.getFin()};
-        return Joiner.on(splitChar).join(join);
+        Object[] join = new Object[]{super.toCsv(splitChar),
+                this.getDuration(),
+                this.getSyn(), this.getFin(),
+                this.upPayLoad, this.downPayLoad
+        };
+        return Joiner.on(splitChar).useForNull("").join(join);
     }
 
 
@@ -44,11 +48,9 @@ public class ImpSessionData extends AbstractSrcData {
 
     public void setPayload(String payload) {
         if (this.getDataType() == 1) {
-            this.upPayLoad = "";
             this.downPayLoad = payload;
         } else {
             this.upPayLoad = payload;
-            this.downPayLoad = "";
         }
     }
 

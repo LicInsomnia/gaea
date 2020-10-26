@@ -2,6 +2,7 @@ package com.tincery.gaea.source.ssl.execute;
 
 
 import com.tincery.gaea.api.src.SslData;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import lombok.extern.slf4j.Slf4j;
@@ -38,24 +39,22 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
         sslData.setSource(elements[16]);
         sslData.setCapTime(Long.parseLong(elements[2]));
         sslData.setDuration((Long.parseLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
-        sslData.setImsi(elements[18]);
-        sslData.setImei(elements[19]);
-        sslData.setMsisdn(elements[20]);
         sslData.setDataType(Integer.parseInt(elements[8]));
         sslData.setSyn("1".equals(elements[0]));
         sslData.setFin("1".equals(elements[1]));
         this.sslLineSupport.set7Tuple(
                 elements[10], elements[11], elements[12],
                 elements[13], elements[14], elements[15],
-                elements[9], "SSL", sslData);
+                elements[9], HeadConst.PRONAME.SSL, sslData);
         this.sslLineSupport.setFlow(
                 elements[4], elements[5], elements[6],
                 elements[7], sslData);
         this.sslLineSupport.setTargetName(elements[17], sslData);
         this.sslLineSupport.setGroupName(sslData);
         this.sslLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], sslData);
-        sslData.setUserId(elements[26]);
-        sslData.setServerId(elements[27]);
+        this.sslLineSupport.setMobileElements(elements[18], elements[19], elements[20], sslData);
+        this.sslLineSupport.setPartiesId(elements[26], elements[27], sslData);
+        sslData.setForeign(this.sslLineSupport.isForeign(sslData.getServerIp()));
         if (sslData.getDataType() == -1) {
             this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
         } else {
@@ -163,14 +162,14 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
                 sslData.setServerECDHSignatureData(value);
                 break;
             case "cert":
-                addCerchain(value, sslData, isServer);
+                addCerChain(value, sslData, isServer);
                 break;
             default:
                 break;
         }
     }
 
-    private void addCerchain(String cer, SslData sslData, boolean isServer) {
+    private void addCerChain(String cer, SslData sslData, boolean isServer) {
         List<String> cerChain;
         if (isServer) {
             cerChain = sslData.getServerCerChain();

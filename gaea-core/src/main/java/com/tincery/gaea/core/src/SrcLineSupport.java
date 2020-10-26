@@ -3,6 +3,7 @@ package com.tincery.gaea.core.src;
 
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
+import com.tincery.gaea.api.src.AbstractSrcData;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.GroupGetter;
 import com.tincery.gaea.core.base.component.support.IpChecker;
@@ -134,6 +135,17 @@ public class SrcLineSupport {
                 .setUpByte(Long.parseLong(upByte))
                 .setDownPkt(Long.parseLong(downPkt))
                 .setDownByte(Long.parseLong(downByte));
+    }
+
+    public void setMobileElements(String imsi, String imei, String msisdn, AbstractSrcData data) {
+        data.setImsi(SourceFieldUtils.parseStringStrEmptyToNull(imsi))
+                .setImei(SourceFieldUtils.parseStringStrEmptyToNull(imei))
+                .setMsisdn(SourceFieldUtils.parseStringStrEmptyToNull(msisdn));
+    }
+
+    public void setPartiesId(String userId, String serverId, AbstractSrcData data) {
+        data.setUserId(SourceFieldUtils.parseStringStrEmptyToNull(userId))
+                .setServerId(SourceFieldUtils.parseStringStrEmptyToNull(serverId));
     }
 
     /**

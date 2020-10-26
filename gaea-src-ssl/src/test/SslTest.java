@@ -1,12 +1,12 @@
-import com.tincery.gaea.source.impsession.GaeaSourceImpSessionApplication;
-import com.tincery.gaea.source.impsession.execute.MessageListener;
+import com.tincery.gaea.source.ssl.GaeaSourceSslApplication;
+import com.tincery.gaea.source.ssl.execute.MessageListener;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = GaeaSourceImpSessionApplication.class)
-public class ImpSessionTest {
+@SpringBootTest(classes = GaeaSourceSslApplication.class)
+public class SslTest {
 
     @Autowired
     private MessageListener messageListener;
@@ -15,7 +15,7 @@ public class ImpSessionTest {
     public void Test() {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
         try {
-            activeMQTextMessage.setText("D:\\data5\\src\\impsession\\impsession_1.txt");
+            activeMQTextMessage.setText("D:\\data5\\src\\ssl\\ssl_0.txt");
             messageListener.receive(activeMQTextMessage);
         } catch (Exception e) {
             e.printStackTrace();

@@ -45,10 +45,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 .setDuration(0)
                 .setCapTime(Long.parseLong(elements[13]))
                 .setSyn(false)
-                .setFin(false)
-                .setImsi(elements[14])
-                .setImei(elements[15])
-                .setMsisdn(elements[16]);
+                .setFin(false);
         this.srcLineSupport.setTargetName(elements[12], dnsData);
         this.srcLineSupport.setGroupName(dnsData);
         this.srcLineSupport.set7Tuple(elements[0],
@@ -67,6 +64,9 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 elements[10],
                 dnsData
         );
+        this.srcLineSupport.setMobileElements(elements[14], elements[15], elements[16], dnsData);
+        this.srcLineSupport.setPartiesId(elements[22], elements[23], dnsData);
+        dnsData.setMacOuter("1".equals(elements[24]));
         switch (dnsData.getDataType()) {
             case 0:
                 dnsData.setDomain(elements[26]);

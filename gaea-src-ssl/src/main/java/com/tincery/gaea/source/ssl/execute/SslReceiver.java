@@ -65,5 +65,4 @@ public class SslReceiver extends AbstractSrcReceiver<SslData> {
         RuleRegistry.getInstance().putRule(alarmRule).putRule(passRule);
     }
 
-
 }

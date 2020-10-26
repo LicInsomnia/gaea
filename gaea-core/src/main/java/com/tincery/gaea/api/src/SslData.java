@@ -9,6 +9,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * @author Insomnia
+ */
 @Setter
 @Getter
 public class SslData extends AbstractSrcData {
@@ -129,12 +132,13 @@ public class SslData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
+        String cipherSuites = null == this.cipherSuite ? "" : this.cipherSuite.toCsv(splitChar);
         Object[] join = new Object[]{
                 super.toCsv(splitChar), this.duration, this.syn, this.fin,
                 this.malformedUpPayload, this.malformedDownPayload,
                 SourceFieldUtils.formatCollection(this.handshake),
                 this.hasApplicationData, this.serverName, this.daulAuth,
-                this.version, this.cipherSuite, this.sha1,
+                this.version, cipherSuites, this.sha1,
                 SourceFieldUtils.formatCollection(this.clientCerChain),
                 this.clientJA3, this.clientFingerPrint, this.clientCipherSuites, this.clientHashAlgorithms,
                 SourceFieldUtils.formatCollection(this.serverCerChain),
