@@ -41,11 +41,10 @@ public class HttpElement extends AbstractSrcData {
     public String from;
     public Boolean authorization;
     public Boolean proxyauth;
-    //public List<Map<String, String>> headers;
     public List<Map<String, String>> reqHeaders;
     public List<Map<String, String>> repHeaders;
     public String acceptEncoding;
-    public String parameter;
+    public String params;
     @JSONField(serialize = false)
     public Boolean hasResponse;
     @JSONField(serialize = false)
@@ -56,6 +55,7 @@ public class HttpElement extends AbstractSrcData {
     public String content;
 
     public Boolean isTrash;
+
 
     public void init(HttpData httpData, HttpMeta httpMeta){
         this.setSource(httpData.getSource())
@@ -81,7 +81,7 @@ public class HttpElement extends AbstractSrcData {
                 .setImsi(SourceFieldUtils.parseStringStrEmptyToNull(httpData.getImsi()))
                 .setImei(SourceFieldUtils.parseStringStrEmptyToNull(httpData.getImei()))
                 .setMsisdn(SourceFieldUtils.parseStringStrEmptyToNull(httpData.getMsisdn()))
-                .setDataType(httpData.getDataType())
+//                .setDataType(httpData.getDataType())
                 .setGroupName(httpData.getGroupName())
                 .setTargetName(httpData.getTargetName())
                 .setUpPkt(httpData.getUpPkt())
@@ -95,8 +95,8 @@ public class HttpElement extends AbstractSrcData {
                 .setCaseTags(httpData.getCaseTags());
 
         this.setMacOuter(httpData.getMacOuter())
-                .setExtension(httpData.getExtension())
-                .setCompleteSession(httpData.getCompleteSession());
+                .setExtension(httpData.getExtension());
+//                .setCompleteSession(httpData.getCompleteSession());
 
 
         this.setUrl(httpMeta.getUrl())
@@ -112,11 +112,11 @@ public class HttpElement extends AbstractSrcData {
                 .setFrom(httpMeta.getFrom())
                 .setAuthorization(httpMeta.getAuthorization())
                 .setProxyauth(httpMeta.getProxyauth())
-                .setReqHeaders(httpMeta.getReq_headers())
-                .setRepHeaders(httpMeta.getRep_headers())
+                .setReqHeaders(httpMeta.getReqHeaders())
+                .setRepHeaders(httpMeta.getRepHeaders())
                 .setAcceptEncoding(httpMeta.getAcceptEncoding())
                 .setUrlRoot(httpMeta.getUrlRoot())
-                .setParameter(httpMeta.getParameter())
+                .setParams(httpMeta.getParams())
                 .setHasResponse(httpMeta.hasResponse)
                 .setIsMalformed(httpMeta.isMalformed)
                 .setRequest(httpMeta.getRequest())
@@ -131,5 +131,6 @@ public class HttpElement extends AbstractSrcData {
             this.setIsTrash(httpData.getCaseTags().contains("垃圾"));
         }
         this.setContent(httpMeta.getContent());
+
     }
 }
