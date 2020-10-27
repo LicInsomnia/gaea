@@ -2,6 +2,7 @@ package com.tincery.gaea.source.dns.quartz.execute;
 
 
 import com.tincery.gaea.api.src.DnsData;
+import com.tincery.gaea.api.src.extension.DnsExtension;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -10,9 +11,7 @@ import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -67,46 +66,53 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         this.srcLineSupport.setMobileElements(elements[14], elements[15], elements[16], dnsData);
         this.srcLineSupport.setPartiesId(elements[22], elements[23], dnsData);
         dnsData.setMacOuter("1".equals(elements[24]));
-        switch (dnsData.getDataType()) {
+        DnsExtension dnsExtension = packExtension(elements, dnsData);
+        dnsData.setDnsExtension(dnsExtension);
+        return dnsData;
+    }
+
+    private DnsExtension packExtension(String[] elements, DnsData dnsData) {
+        int dataType = dnsData.getDataType();
+        DnsExtension dnsExtension = new DnsExtension();
+        switch (dataType) {
             case 0:
-                dnsData.setDomain(elements[26]);
+                dnsExtension.setDomain(elements[26].toLowerCase());
                 break;
             case 1:
-                dnsData.setDomain(elements[26].toLowerCase());
+                dnsExtension.setDomain(elements[26].toLowerCase());
                 String[] ipv4s = elements[28].split(";");
                 String[] ipv6s = elements[29].split(";");
                 for (String ipv4 : ipv4s) {
-                    addresponseIp(ipv4, dnsData);
+                    addresponseIp(ipv4, dnsExtension);
                 }
                 for (String ipv6 : ipv6s) {
-                    addresponseIp(NetworkUtil.iPv6Hex2Host(ipv6), dnsData);
+                    addresponseIp(NetworkUtil.iPv6Hex2Host(ipv6), dnsExtension);
                 }
-                setExtension(elements[27], dnsData);
+                setExtension(elements[27], dnsExtension);
                 break;
             default:
                 this.srcLineSupport.setMalformedPayload(elements[26], elements[27], dnsData);
                 break;
         }
-        return dnsData;
+        return dnsExtension;
     }
 
-    private void addresponseIp(String ip, DnsData dnsData) {
+    private void addresponseIp(String ip, DnsExtension dnsExtension) {
         if (StringUtils.isEmpty(ip)) {
             return;
         }
-        Set<String> responseIp = dnsData.getResponseIp();
+        Set<String> responseIp = dnsExtension.getResponseIp();
         if (null == responseIp) {
             responseIp = new HashSet<>();
         }
         responseIp.add(ip);
-        dnsData.setResponseIp(responseIp);
+        dnsExtension.setResponseIp(responseIp);
     }
 
-    private void setExtension(String extension, DnsData dnsData) {
+    private void setExtension(String extension, DnsExtension dnsExtension) {
         if (StringUtils.isEmpty(extension)) {
             return;
         }
-        Map<String, Object> extensionMap = new HashMap<>();
         Set<String> cname = new HashSet<>();
         String[] elements = extension.split(";");
         for (String element : elements) {
@@ -116,15 +122,10 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
             }
             if ("cname".equals(kvPair[0])) {
                 cname.add(kvPair[1]);
-                continue;
             }
-            extensionMap.put(kvPair[0], kvPair[1]);
         }
         if (!cname.isEmpty()) {
-            dnsData.setCname(cname);
-        }
-        if (!extensionMap.isEmpty()) {
-            dnsData.setExtension(extensionMap);
+            dnsExtension.setCname(cname);
         }
     }
 

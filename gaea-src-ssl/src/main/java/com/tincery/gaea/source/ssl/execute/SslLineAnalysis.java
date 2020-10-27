@@ -1,7 +1,9 @@
 package com.tincery.gaea.source.ssl.execute;
 
 
+import com.tincery.gaea.api.base.Handshake;
 import com.tincery.gaea.api.src.SslData;
+import com.tincery.gaea.api.src.extension.SslExtension;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -33,7 +35,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
      * 30.data2 / downPayload           ...dataN
      */
     @Override
-    public SslData pack(String line) {
+    public SslData pack(String line) throws Exception {
         SslData sslData = new SslData();
         String[] elements = StringUtils.FileLineSplit(line);
         sslData.setSource(elements[16]);
@@ -55,34 +57,47 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
         this.sslLineSupport.setMobileElements(elements[18], elements[19], elements[20], sslData);
         this.sslLineSupport.setPartiesId(elements[26], elements[27], sslData);
         sslData.setForeign(this.sslLineSupport.isForeign(sslData.getServerIp()));
+        SslExtension sslExtension = new SslExtension();
         if (sslData.getDataType() == -1) {
             this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
         } else {
             if (elements[29].contains("malformed")) {
                 sslData.setDataType(-2);
             } else {
-                addSslExtension(elements, sslData);
+                addSslExtension(elements, sslExtension, sslData);
             }
         }
+        sslData.setSslExtension(sslExtension);
         return sslData;
     }
 
-    private void addSslExtension(String[] elements, SslData sslData) {
-        List<String> handshake = new ArrayList<>();
-        boolean isServer = false;
-        for (int i = 29; i < elements.length; i++) {
-            if (StringUtils.isEmpty(elements[i])) {
-                continue;
-            }
-            if (elements[i].startsWith("(")) {
-                // 为会话属性信息
-                addSessionProperties(elements[i], sslData, isServer);
+    private void addSslExtension(String[] elements, SslExtension sslExtension, SslData sslData) throws Exception {
+        if (sslData.getDataType() == -1) {
+            this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
+        } else {
+            if (elements[29].contains("malformed")) {
+                sslData.setDataType(-2);
             } else {
-                // 为握手会话信息
-                isServer = isServer || addHandshake(elements[i], sslData, handshake);
+                Handshake handshake = null;
+                Boolean isServer = null;
+                for (int i = 29; i < elements.length; i++) {
+                    if (StringUtils.isEmpty(elements[i])) {
+                        continue;
+                    }
+                    if (elements[i].startsWith("(")) {
+                        // 为会话属性信息
+                        addSessionProperties(elements[i], sslExtension, isServer);
+                    } else {
+                        if (null == handshake) {
+                            handshake = new Handshake();
+                        }
+                        // 为握手会话信息
+                        isServer = addHandshake(elements[i], sslExtension, handshake);
+                    }
+                }
+                sslExtension.setHandshake(handshake);
             }
         }
-        sslData.setHandshake(handshake);
     }
 
     /**
@@ -92,96 +107,149 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
      * @param handshake 握手过程
      * @return 是否进行客户端服务端切换
      */
-    private boolean addHandshake(String element, SslData sslData, List<String> handshake) {
-        boolean isServer = false;
+    private boolean addHandshake(String element, SslExtension sslExtension, Handshake handshake) throws Exception {
         String[] kv = element.split(":");
-        if (kv.length != 2) {
-            return false;
+        if (kv.length != 3) {
+            throw new Exception("握手会话数据格式有误...");
         }
-        String handshakeKeyword = kv[0].trim();
-        if ("Application Data".equals(handshakeKeyword)) {
-            sslData.setHasApplicationData(true);
-            return false;
+        boolean isServer;
+        switch (kv[0]) {
+            case "C":
+                isServer = false;
+                break;
+            case "S":
+                isServer = true;
+                break;
+            default:
+                throw new Exception("握手会话数据格式有误...");
         }
-        if ("Server Hello".equals(handshakeKeyword)) {
-            isServer = true;
+        String handshakeKeyword = kv[0].trim() + "." + kv[1].trim();
+        int length = Integer.parseInt(kv[2].trim());
+        switch (handshakeKeyword) {
+            case "C.Client Hello":
+                handshake.setClientHello(length);
+                break;
+            case "S.Server Hello":
+                handshake.setServerHello(length);
+                break;
+            case "S.Certificate":
+                handshake.setServerCertificate(length);
+                break;
+            case "S.Server Key Exchange":
+                handshake.setServerKeyExchange(length);
+                break;
+            case "S.Certificate Request":
+                handshake.setServerCertificateRequest(length);
+                break;
+            case "S.Server Hello Done":
+                handshake.setServerHelloDone(length);
+                break;
+            case "C.Certificate":
+                handshake.setClientCertificate(length);
+                break;
+            case "C.Client Key Exchange":
+                handshake.setClientKeyExchange(length);
+                break;
+            case "C.Certificate Verify":
+                handshake.setClientCertificateVerify(length);
+                break;
+            case "C.Finished":
+                handshake.setClientFinished(length);
+                break;
+            case "S.Finished":
+                handshake.setServerFinished(length);
+                break;
+            case "C.Change Cipher Spec":
+                handshake.setClientChangeCipherSpec(length);
+                break;
+            case "S.Change Cipher Spec":
+                handshake.setServerChangeCipherSpec(length);
+                break;
+            case "C.Application Data":
+            case "S.Application Data":
+                sslExtension.setHasApplicationData(true);
+                break;
+            default:
+                break;
         }
-        handshake.add(handshakeKeyword);
         return isServer;
     }
 
-    private void addSessionProperties(String element, SslData sslData, boolean isServer) {
+    private void addSessionProperties(String element, SslExtension sslExtension, Boolean isServer) throws Exception {
+        if (null == isServer) {
+            throw new Exception("握手会话数据格式有误...");
+        }
         String[] kv = element.substring(1, element.length() - 1).split(":");
         if (kv.length != 2) {
-            return;
+            throw new Exception("握手会话数据格式有误...");
         }
         String key = kv[0].trim();
         String value = kv[1].trim();
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
-            return;
+            throw new Exception("握手会话数据格式有误...");
         }
         switch (key) {
             case "fingerprint":
                 if (isServer) {
-                    sslData.setServerFingerPrint(value);
+                    sslExtension.setServerFingerPrint(value);
                 } else {
-                    sslData.setClientFingerPrint(value);
+                    sslExtension.setClientFingerPrint(value);
                 }
                 break;
             case "JA3":
-                sslData.setClientJA3(value);
+                sslExtension.setClientJA3(value);
                 break;
             case "CipherSuite":
-                sslData.setClientCipherSuites(value);
+                sslExtension.setClientCipherSuites(value);
                 break;
             case "ServerName":
-                sslData.setServerName(value);
+                sslExtension.setServerName(value);
                 break;
             case "ssl_version":
-                sslData.setVersion(value);
+                sslExtension.setVersion(value);
                 break;
             case "cipher_suite":
-                sslData.setCipherSuite(this.sslLineSupport.getCipherSuite(value));
+                sslExtension.setCipherSuite(this.sslLineSupport.getCipherSuite(value));
                 break;
             case "HashAlgorithms":
-                sslData.setClientHashAlgorithms(value);
+                sslExtension.setClientHashAlgorithms(value);
                 break;
             case "JA3S":
-                sslData.setServerJA3(value);
+                sslExtension.setServerJA3(value);
                 break;
             case "named_curve":
-                sslData.setServerECDHNamedCurve(value);
+                sslExtension.setServerECDHNamedCurve(value);
                 break;
             case "publicKey data":
-                sslData.setServerECDHPublicKeyData(value);
+                sslExtension.setServerECDHPublicKeyData(value);
                 break;
             case "signature algorithm":
-                sslData.setServerECDHSignatureAlgorithm(value);
+                sslExtension.setServerECDHSignatureAlgorithm(value);
                 break;
             case "signature data":
-                sslData.setServerECDHSignatureData(value);
+                sslExtension.setServerECDHSignatureData(value);
                 break;
             case "cert":
-                addCerChain(value, sslData, isServer);
+                addCerChain(value, sslExtension, isServer);
                 break;
             default:
                 break;
         }
     }
 
-    private void addCerChain(String cer, SslData sslData, boolean isServer) {
+    private void addCerChain(String cer, SslExtension sslExtension, boolean isServer) {
         List<String> cerChain;
         if (isServer) {
-            cerChain = sslData.getServerCerChain();
+            cerChain = sslExtension.getServerCerChain();
             if (null == cerChain) {
                 cerChain = new ArrayList<>();
-                sslData.setServerCerChain(cerChain);
+                sslExtension.setServerCerChain(cerChain);
             }
         } else {
-            cerChain = sslData.getClientCerChain();
+            cerChain = sslExtension.getClientCerChain();
             if (null == cerChain) {
                 cerChain = new ArrayList<>();
-                sslData.setClientCerChain(cerChain);
+                sslExtension.setClientCerChain(cerChain);
             }
         }
         cerChain.add(cer);
