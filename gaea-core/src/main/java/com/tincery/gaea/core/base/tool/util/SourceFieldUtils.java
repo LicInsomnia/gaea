@@ -3,7 +3,9 @@ package com.tincery.gaea.core.base.tool.util;
 import com.google.common.base.Joiner;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com / insomnia 针对gaea.source层数据处理解析txt中部分限定规范提供方法
@@ -20,6 +22,18 @@ public class SourceFieldUtils {
             return str.equals("0") ? null : str;
         }
         return null;
+    }
+
+    /**
+     * 实体中部分string字段赋值时，若txt中该值为empty"" 则强制赋值为null
+     * @param str txt中字符串
+     * @return 返回值
+     */
+    public static String parseStringStrEmptyToNull(String str){
+        if (StringUtils.isEmpty(str)){
+            return null;
+        }
+        return str;
     }
 
     /**
@@ -66,13 +80,21 @@ public class SourceFieldUtils {
     public static String formatCollection(Collection<?> collection, String splitChar) {
         String result = null;
         if (!CollectionUtils.isEmpty(collection)) {
-            result = Joiner.on(splitChar).join(collection);
+            result = Joiner.on(splitChar).useForNull("").join(collection);
         }
         return result;
     }
 
     public static String formatCollection(Collection<?> collection) {
         return formatCollection(collection, ";");
+    }
+
+    public static String formatStringBuilder(StringBuilder stringBuilder,String splitChar){
+        if (stringBuilder!=null && stringBuilder.length()!=0){
+            List<String> collection = Arrays.asList(stringBuilder.toString().split(","));
+            return formatCollection(collection,splitChar);
+        }
+        return null;
     }
 
 

@@ -4,7 +4,9 @@ import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.api.src.SshData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
+import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -25,6 +27,8 @@ public class SshReceiver extends AbstractSrcReceiver<SshData> {
 
     @Autowired
     private PassRule passrule;
+    @Autowired
+    private AlarmRule alarmRule;
 
 
     @Autowired
@@ -66,9 +70,10 @@ public class SshReceiver extends AbstractSrcReceiver<SshData> {
     @Override
     public void init() {
         registryRules(passrule);
+        registryRules(alarmRule);
     }
 
-    public void registryRules(PassRule rule) {
+    public void registryRules(Rule rule) {
         RuleRegistry.getInstance().putRule(rule);
     }
 

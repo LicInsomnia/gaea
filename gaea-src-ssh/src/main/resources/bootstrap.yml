@@ -1,5 +1,5 @@
 server:
-  port: 11111
+  port: 11115
 node:
   name: insomnia
 spring:

@@ -3,6 +3,7 @@ package com.tincery.gaea.core.src;
 
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
+import com.tincery.gaea.api.src.AbstractSrcData;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.GroupGetter;
 import com.tincery.gaea.core.base.component.support.IpChecker;
@@ -26,7 +27,7 @@ public class SrcLineSupport {
     private GroupGetter groupGetter;
 
     @Autowired
-    private IpChecker ipChecker;
+    public IpChecker ipChecker;
 
     /**
      * 通过查询application_protocol表获取协议名
@@ -105,8 +106,8 @@ public class SrcLineSupport {
                           String protocol,
                           String proName,
                           AbstractMetaData data) throws NumberFormatException {
-        data.setServerMac(serverMac)
-                .setClientMac(clientMac)
+        data.setServerMac(null == serverMac ? null : serverMac.toUpperCase())
+                .setClientMac(null == clientMac ? null : clientMac.toUpperCase())
                 .setServerIp(NetworkUtil.arrangeIp(serverIp))
                 .setClientIp(NetworkUtil.arrangeIp(clientIp))
                 .setServerPort(Integer.parseInt(serverPort))
@@ -136,16 +137,26 @@ public class SrcLineSupport {
                 .setDownByte(Long.parseLong(downByte));
     }
 
+    public void setMobileElements(String imsi, String imei, String msisdn, AbstractSrcData data) {
+        data.setImsi(SourceFieldUtils.parseStringStrEmptyToNull(imsi))
+                .setImei(SourceFieldUtils.parseStringStrEmptyToNull(imei))
+                .setMsisdn(SourceFieldUtils.parseStringStrEmptyToNull(msisdn));
+    }
+
+    public void setPartiesId(String userId, String serverId, AbstractSrcData data) {
+        data.setUserId(SourceFieldUtils.parseStringStrEmptyToNull(userId))
+                .setServerId(SourceFieldUtils.parseStringStrEmptyToNull(serverId));
+    }
+
     /**
      * 设置外层五元组
      *
-     * @param clientIpOuter
-     * @param serverIpOuter
-     * @param clientPortOuter
-     * @param serverPortOuter
-     * @param protocolOuter
-     * @param data
-     * @throws NumberFormatException
+     * @param clientIpOuter   外层客户端IP
+     * @param serverIpOuter   外层服务端IP
+     * @param clientPortOuter 外层客户端端口
+     * @param serverPortOuter 外层服务端端口
+     * @param protocolOuter   外层协议
+     * @param data            数据实体
      */
     public void set5TupleOuter(
             String clientIpOuter,
@@ -163,10 +174,6 @@ public class SrcLineSupport {
                 .setProtocolOuter(SourceFieldUtils.parseIntegerStr(protocolOuter));
     }
 
-    public boolean isInnerIp(String ipDecStr) {
-        return ipChecker.isInner(Long.parseLong(ipDecStr));
-    }
-
     /**
      * 设置malformed载荷信息
      *
@@ -175,9 +182,17 @@ public class SrcLineSupport {
      * @param data        数据实体
      */
     public void setMalformedPayload(String upPayload, String downPayload, AbstractMetaData data) {
-        data.setMalformedUpPayload("0000000000000000000000000000000000000000".equals(upPayload) ? "" : upPayload)
-                .setMalformedDownPayload("0000000000000000000000000000000000000000".equals(downPayload) ? "" : downPayload)
+        data.setMalformedUpPayload((null == upPayload || "0000000000000000000000000000000000000000".equals(upPayload)) ? "" : upPayload.toLowerCase())
+                .setMalformedDownPayload((null == downPayload || "0000000000000000000000000000000000000000".equals(downPayload)) ? "" : downPayload.toLowerCase())
                 .setProName(this.payloadDetector.getProName(data));
+    }
+
+    public boolean isInnerIp(String ipDecStr) {
+        return this.ipChecker.isInner(Long.parseLong(ipDecStr));
+    }
+
+    public boolean isForeign(String ip) {
+        return this.ipChecker.isForeign(ip);
     }
 
 }

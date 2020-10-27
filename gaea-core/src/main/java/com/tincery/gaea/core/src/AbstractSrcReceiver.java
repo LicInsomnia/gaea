@@ -84,7 +84,9 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         long startTime = System.currentTimeMillis();
         analysisFile(file);
         try {
-            countDownLatch.await();
+            if(countDownLatch!=null){
+                countDownLatch.await();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -94,15 +96,25 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     }
 
     /**
-     * 多线程实现执行  基类默认实现为单线程  同analysisLine
+     * 解析src层文件获取逐条会话记录
+     *
+     * @param file src层文件
+     */
+    protected List<String> getLines(File file) {
+        return FileUtils.readLine(file);
+    }
+
+    /**
+     * 多线程实现执行
      * 如需要多线程实现 请重写此方法
+     *
      * @author gxz
      **/
     protected void analysisFile(File file) {
         if (!file.exists()) {
             return;
         }
-        List<String> lines = FileUtils.readLine(file);
+        List<String> lines = getLines(file);
         if (lines.isEmpty()) {
             return;
         }
@@ -111,7 +123,6 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             analysisLine(lines);
         } else {
             List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor)+1);
-
             this.countDownLatch = new CountDownLatch(partitions.size());
             for (List<String> partition : partitions) {
                 executorService.execute(() -> analysisLine(partition));
@@ -126,19 +137,20 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      **/
     protected void analysisLine(List<String> lines) {
         for (String line : lines) {
-            if (StringUtils.isNotEmpty(line)) {
-                M pack;
-                try {
-                    pack = this.analysis.pack(line);
-                    pack.adjust();
-                } catch (Exception e) {
-                    log.error("解析实体出现了问题{}", line);
-                    // TODO: 2020/9/8 实体解析有问题告警
-                    e.printStackTrace();
-                    continue;
-                }
-                this.putCsvMap(pack);
+            if (StringUtils.isEmpty(line)) {
+                continue;
             }
+            M pack;
+            try {
+                pack = this.analysis.pack(line);
+                pack.adjust();
+            } catch (Exception e) {
+                log.error("解析实体出现了问题{}", line);
+                // TODO: 2020/9/8 实体解析有问题告警
+                e.printStackTrace();
+                continue;
+            }
+            this.putCsvMap(pack);
         }
         if(this.countDownLatch!=null){
             this.countDownLatch.countDown();
@@ -235,7 +247,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             return;
         }
         long st = System.currentTimeMillis();
-        String dataPath = ApplicationInfo.getDataWarehouseCsvPathByCategory();
+        String dataPath = getDataWarehouseCsvPath();
         checkFiles(dataPath, this.minTime, this.maxTime);
         for (Map.Entry<String, List<String>> entry : this.csvMap.entrySet()) {
             String filePath = dataPath + entry.getKey();
@@ -268,7 +280,10 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         this.csvCount = 0;
         this.minTime = 0;
         this.maxTime = 0;
+    }
 
+    protected String getDataWarehouseCsvPath() {
+        return ApplicationInfo.getDataWarehouseCsvPathByCategory();
     }
 
     /****
@@ -286,7 +301,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     /**
      * @author Insomnia 整体检测数据集输出路径
      */
-    private void checkFiles(String subPath, long min, long max) {
+    protected void checkFiles(String subPath, long min, long max) {
         long minPath = Long.parseLong(DateUtils.format(min, "yyyyMMdd"));
         long maxPath = Long.parseLong(DateUtils.format(max, "yyyyMMdd"));
         while (minPath <= maxPath) {

@@ -15,6 +15,6 @@ public interface LineAnalysis<INPUT, OUTPUT extends AbstractMetaData> {
      * @param input 一行数据
      * @return T 解析完成的实体
      **/
-    public OUTPUT pack(INPUT input);
+    OUTPUT pack(INPUT input) throws Exception;
 
 }

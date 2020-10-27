@@ -4,6 +4,8 @@ package com.tincery.gaea.api.src;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.core.base.tool.ToolUtils;
+import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.starter.base.util.NetworkUtil;
 import lombok.Getter;
@@ -24,18 +26,33 @@ import java.util.Set;
 @Setter
 public abstract class AbstractSrcData extends AbstractMetaData {
 
-    /** 标签 */
+    /**
+     * 标签
+     */
     protected Set<String> caseTags;
-    /** 是否将特殊会话的MAC地址字段转为外层五元组 */
+    /**
+     * 是否将特殊会话的MAC地址字段转为外层五元组
+     */
     protected Boolean macOuter;
-    /** 特殊不可控字段，含预留信息 */
+    /**
+     * 特殊不可控字段，含预留信息
+     */
     protected Map<String, Object> extension;
+    /**
+     * 会话是否完整
+     */
+    protected Boolean completeSession;
 
+    @Override
+    public AbstractMetaData setCapTime(Long capTime) {
+        this.capTime = DateUtils.validateTime(capTime);
+        return this;
+    }
 
     public void set5TupleAndFlow(String protocol, String serverMac, String clientMac,
                                  String serverIpN, String clientIpN, String serverPort,
                                  String clientPort, String proName, String upPkt, String upByte,
-                                 String downPkt, String downByte) throws NumberFormatException{
+                                 String downPkt, String downByte) throws NumberFormatException {
         this.setProtocol(Integer.parseInt(protocol));
         this.setClientMac(clientMac);
         this.setServerMac(serverMac);
@@ -67,28 +84,24 @@ public abstract class AbstractSrcData extends AbstractMetaData {
         adjustServerId();
         setOuterFromMac();
         adjustEventData();
+        adjustCompleteSession();
     }
 
     protected  void adjustEventData(){
         this.eventData = ToolUtils.getMD5(this.toString());
     }
 
-
     @Override
     public String toCsv(char splitChar) {
-        Set<String> caseTags = this.caseTags;
-        if (caseTags == null) {
-            caseTags = new HashSet<>();
-        }
         String serverIpN = this.serverIp == null ? "" : ToolUtils.IP2long(this.serverIp) + "";
-        String clientIPN = this.serverIp == null ? "" : ToolUtils.IP2long(this.clientIp) + "";
+        String clientIpN = this.serverIp == null ? "" : ToolUtils.IP2long(this.clientIp) + "";
         Object[] join = new Object[]{
                 this.groupName, this.targetName, this.userId, this.serverId, super.toCsv(splitChar),
-                this.clientMac, this.serverMac, this.protocol, this.proName, this.clientIp, clientIPN,
+                this.clientMac, this.serverMac, this.protocol, this.proName, this.clientIp, clientIpN,
                 this.serverIp, serverIpN, this.clientPort, this.serverPort, this.clientIpOuter,
                 this.serverIpOuter, this.clientPortOuter, this.serverPortOuter, this.protocolOuter, this.upPkt,
                 this.upByte, this.downPkt, this.downByte, this.dataType, this.imsi, this.imei, this.msisdn,
-                Joiner.on(";").join(caseTags)};
+                SourceFieldUtils.formatCollection(caseTags), this.foreign};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
@@ -149,7 +162,10 @@ public abstract class AbstractSrcData extends AbstractMetaData {
         }
     }
 
-
-
+    protected void adjustCompleteSession() {
+        if (this.syn && this.fin) {
+            this.completeSession = true;
+        }
+    }
 
 }

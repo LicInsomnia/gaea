@@ -35,7 +35,7 @@ public class SslReceiver extends AbstractSrcReceiver<SslData> {
         this.analysis = analysis;
     }
 
-
+    @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
@@ -49,7 +49,6 @@ public class SslReceiver extends AbstractSrcReceiver<SslData> {
 
     @Override
     protected void putCsvMap(SslData sslData) {
-        sslData.adjust();
         if (RuleRegistry.getInstance().matchLoop(sslData)) {
             // 过滤规则  其中alarm规则是有同步块的
             return;
@@ -65,6 +64,5 @@ public class SslReceiver extends AbstractSrcReceiver<SslData> {
         // TODO: 2020/9/2  初始化有一个IP内容
         RuleRegistry.getInstance().putRule(alarmRule).putRule(passRule);
     }
-
 
 }

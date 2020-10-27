@@ -1,7 +1,6 @@
 package com.tincery.gaea.source.impsession.execute;
 
 import com.tincery.gaea.api.src.ImpSessionData;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
@@ -32,28 +31,27 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
     @Override
     public ImpSessionData pack(String line) {
         ImpSessionData impSessionData = new ImpSessionData();
-        String[] element = StringUtils.FileLineSplit(line);
-        long capTime = DateUtils.validateTime(Long.parseLong(element[2]));
-        long endTime = DateUtils.validateTime(Long.parseLong(element[3]));
-        impSessionData.setSyn("1".equals(element[0]))
-                .setFin("1".equals(element[1]))
-                .setDataType(Integer.parseInt(element[8]))
+        String[] elements = StringUtils.FileLineSplit(line);
+        long capTime = Long.parseLong(elements[2]);
+        long endTime = Long.parseLong(elements[3]);
+        impSessionData.setSource(elements[16])
+                .setSyn("1".equals(elements[0]))
+                .setFin("1".equals(elements[1]))
+                .setDataType(Integer.parseInt(elements[8]))
                 .setCapTime(capTime)
-                .setDurationTime(endTime - capTime)
-                .setImsi(element[18])
-                .setImei(element[19])
-                .setMsisdn(element[20])
-                .setUserId(element[26])
-                .setServerId(element[27]);
-        this.srcLineSupport.setTargetName(element[17], impSessionData);
+                .setDuration(endTime - capTime);
+        this.srcLineSupport.setMobileElements(elements[18], elements[19], elements[20], impSessionData);
+        this.srcLineSupport.setPartiesId(elements[26], elements[27], impSessionData);
+        this.srcLineSupport.setTargetName(elements[17], impSessionData);
         this.srcLineSupport.setGroupName(impSessionData);
-        this.srcLineSupport.set5TupleOuter(element[21], element[22], element[23], element[24], element[25], impSessionData);
-        impSessionData.setPayload(element[29]);
-        impSessionData.setMacOuter("1".equals(element[28]));
-        setImpSessionDataFix(impSessionData, element);
-        if (needCorrect(element)) {
-            modifyImpSessionData(impSessionData, element);
+        this.srcLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], impSessionData);
+        impSessionData.setPayload(elements[29]);
+        impSessionData.setMacOuter("1".equals(elements[28]));
+        setImpSessionDataFix(impSessionData, elements);
+        if (needCorrect(elements)) {
+            modifyImpSessionData(impSessionData, elements);
         }
+        impSessionData.setForeign(this.srcLineSupport.isForeign(impSessionData.getServerIp()));
         return impSessionData;
     }
 

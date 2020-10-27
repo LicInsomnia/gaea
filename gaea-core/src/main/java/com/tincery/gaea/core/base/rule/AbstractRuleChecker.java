@@ -1,11 +1,14 @@
 package com.tincery.gaea.core.base.rule;
 
 
+import com.tincery.gaea.api.base.AbstractMetaData;
+import com.tincery.gaea.api.base.GaeaData;
 import com.tincery.gaea.api.base.SrcRuleDO;
 import com.tincery.gaea.api.src.AbstractSrcData;
+import com.tincery.gaea.api.src.SshData;
 
 import java.lang.reflect.Field;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author gongxuanzhang
@@ -23,7 +26,7 @@ public abstract class AbstractRuleChecker {
     protected Integer range;
 
 
-    public AbstractRuleChecker(SrcRuleDO srcRuleDO){
+    public AbstractRuleChecker(SrcRuleDO srcRuleDO) {
         this.matchField = srcRuleDO.getMatchField();
         this.ruleValue = srcRuleDO.getRuleValue();
         this.mode = srcRuleDO.getMode();
@@ -38,42 +41,73 @@ public abstract class AbstractRuleChecker {
      * true: 表示终止匹配   false：表示此规则过滤之后继续执行之后的逻辑
      **/
 
-    public  boolean checkAndStop(AbstractSrcData data){
+    public boolean checkAndStop(AbstractSrcData data) {
         Class<?> clazz = data.getClass();
-        // 通过反射检测 效率远远大于通过jsonObject
+        Class<?> srcDataClass = data.getClass();
+        while (srcDataClass != AbstractMetaData.class) {
+            srcDataClass = srcDataClass.getSuperclass();
+        }
         try {
-            Field targetNameField = clazz.getDeclaredField("targetName");
+            // 获取targetName 属性 如果符合条件直接返回
+            Field targetNameField = srcDataClass.getDeclaredField("targetName");
             targetNameField.setAccessible(true);
-            targetNameField.get(data);
-        } catch (NoSuchFieldException | IllegalAccessException ignore) {
-                if(this.range.equals(1)){
+            Object targetName = targetNameField.get(data);
+            if (null == targetName && this.range.equals(1)) {
+                return false;
+            }
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        // 将所有属性放到set中 最后按配置的规则匹配
+        Set<Field> fields = new HashSet<>();
+        while (clazz != GaeaData.class) {
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        String matchValue = null;
+        Optional<Field> matchFieldOptional = fields.stream().filter(field -> field.getName().equals(this.matchField)).findFirst();
+        if (matchFieldOptional.isPresent()) {
+            Field matchField = matchFieldOptional.get();
+            matchField.setAccessible(true);
+            try {
+                Object matchValueObject = matchField.get(data);
+                if (matchValueObject == null) {
                     return false;
                 }
-        }
-        try {
-            Field matchField = clazz.getDeclaredField(this.matchField);
-            matchField.setAccessible(true);
-            String matchValue = matchField.get(data).toString().toLowerCase();
-            switch (this.mode) {
-                case 0:
-                    return matchValue.equals(this.ruleValue.toLowerCase());
-                case 1:
-                    return matchValue.contains(this.ruleValue.toLowerCase());
-                case 2:
-                    return matchValue.startsWith(this.ruleValue.toLowerCase());
-                case 3:
-                    return matchValue.endsWith(this.ruleValue.toLowerCase());
-                default:
-                    return false;
+                matchValue = matchValueObject.toString().toLowerCase();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            // 如果不含有告警规则内的属性 直接返回
-             return false;
         }
+        if (matchValue == null) {
+            return false;
+        }
+        switch (this.mode) {
+            case 0:
+                return matchValue.equals(this.ruleValue.toLowerCase());
+            case 1:
+                return matchValue.contains(this.ruleValue.toLowerCase());
+            case 2:
+                return matchValue.startsWith(this.ruleValue.toLowerCase());
+            case 3:
+                return matchValue.endsWith(this.ruleValue.toLowerCase());
+            default:
+                return false;
+        }
+
     }
 
+    public static void main(String[] args) throws Exception {
+        Class<?> clazz = SshData.class;
+        Class<?> srcDataClass = SshData.class;
+        while (srcDataClass != AbstractMetaData.class) {
+            srcDataClass = srcDataClass.getSuperclass();
+        }
+        Field targetName = srcDataClass.getDeclaredField("targetName");
 
-
+        System.out.println(targetName);
+    }
 
 
 }

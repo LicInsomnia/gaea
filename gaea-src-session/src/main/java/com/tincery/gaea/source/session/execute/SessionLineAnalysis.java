@@ -2,7 +2,7 @@ package com.tincery.gaea.source.session.execute;
 
 
 import com.tincery.gaea.api.src.SessionData;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -56,8 +56,8 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
      **/
     private void setFixProperties(String[] element, SessionData sessionData) {
         long capTimeN = Long.parseLong(element[2]);
-        sessionData.setCapTime(DateUtils.validateTime(capTimeN))
-                .setDurationTime(Long.parseLong(element[3]) - capTimeN)
+        sessionData.setCapTime(capTimeN)
+                .setDuration((Long.parseLong(element[3]) - capTimeN) / 1000)
                 .setSource(element[15])
                 .setImsi(SourceFieldUtils.parseStringStr(element[17]))
                 .setImei(SourceFieldUtils.parseStringStr(element[18]))
@@ -77,6 +77,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 element[24],
                 sessionData
         );
+        sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
     }
 
     /****
@@ -95,7 +96,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 element[13],
                 element[14],
                 element[8],
-                "other",
+                HeadConst.PRONAME.OTHER,
                 sessionData);
         this.srcLineSupport.setFlow(element[4], element[5], element[6], element[7], sessionData);
         String serverKey = element[8] + "_" + element[13];
@@ -111,13 +112,12 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 element[14],
                 element[13],
                 element[8],
-                "other",
+                HeadConst.PRONAME.OTHER,
                 sessionData
         );
         this.srcLineSupport.setFlow(element[6], element[7], element[4], element[5], sessionData);
         String clientKey = element[8] + "_" + element[14];
         return this.srcLineSupport.setProName(clientKey, sessionData);
     }
-
 
 }

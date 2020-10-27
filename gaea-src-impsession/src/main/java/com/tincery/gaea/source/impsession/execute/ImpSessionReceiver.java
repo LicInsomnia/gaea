@@ -1,6 +1,7 @@
 package com.tincery.gaea.source.impsession.execute;
 
 import com.tincery.gaea.api.src.ImpSessionData;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
 
-
+    @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
@@ -75,20 +76,20 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
                 try {
                     impSessionData = this.analysis.pack(line);
                     impSessionData.adjust();
+                    String key = impSessionData.getKey();
+                    String pairKey = impSessionData.getPairKey();
+                    if (this.impSessionMap.containsKey(pairKey)) {
+                        ImpSessionData buffer = this.impSessionMap.get(pairKey);
+                        buffer.merge(impSessionData);
+                        this.impSessionMap.replace(pairKey, buffer);
+                    } else {
+                        this.impSessionMap.put(key, impSessionData);
+                    }
                 } catch (Exception e) {
                     log.error("解析实体出现了问题{}", line);
                     // TODO: 2020/9/8 实体解析有问题告警
                     e.printStackTrace();
                     continue;
-                }
-                String key = impSessionData.getKey();
-                String pairKey = impSessionData.getPairKey();
-                if (this.impSessionMap.containsKey(pairKey)) {
-                    ImpSessionData buffer = this.impSessionMap.get(pairKey);
-                    buffer.merge(impSessionData);
-                    this.impSessionMap.replace(pairKey, buffer);
-                } else {
-                    this.impSessionMap.put(key, impSessionData);
                 }
             }
         }
@@ -112,6 +113,11 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
         this.appendCsvData(fileName,
                 impSessionData.toCsv(HeadConst.CSV_SEPARATOR),
                 impSessionData.capTime);
+    }
+
+    @Override
+    protected String getDataWarehouseCsvPath() {
+        return NodeInfo.getDataWarehouseCsvPathByCategory("session");
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.tincery.gaea.source.dns.quartz.execute;
 
 import com.tincery.gaea.api.src.DnsData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
@@ -22,7 +21,6 @@ import java.util.Set;
  */
 @Component
 public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
-
 
     @Autowired
     private SrcLineSupport srcLineSupport;
@@ -44,17 +42,31 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         String[] elements = StringUtils.FileLineSplit(line);
         dnsData.setDataType(Integer.parseInt(elements[25]))
                 .setSource(elements[11])
-                .setDurationTime(0)
-                .setCapTime(DateUtils.validateTime(Long.parseLong(elements[13])))
+                .setDuration(0)
+                .setCapTime(Long.parseLong(elements[13]))
                 .setSyn(false)
-                .setFin(false)
-                .setImsi(elements[14])
-                .setImei(elements[15])
-                .setMsisdn(elements[16]);
+                .setFin(false);
         this.srcLineSupport.setTargetName(elements[12], dnsData);
         this.srcLineSupport.setGroupName(dnsData);
-        this.srcLineSupport.set7Tuple(elements[0], elements[1], elements[2], elements[3], elements[4], elements[5], elements[6], "DNS", dnsData);
-        this.srcLineSupport.setFlow(elements[7], elements[9], elements[8], elements[10], dnsData);
+        this.srcLineSupport.set7Tuple(elements[0],
+                elements[1],
+                elements[2],
+                elements[3],
+                elements[4],
+                elements[5],
+                elements[6],
+                HeadConst.PRONAME.DNS,
+                dnsData
+        );
+        this.srcLineSupport.setFlow(elements[7],
+                elements[9],
+                elements[8],
+                elements[10],
+                dnsData
+        );
+        this.srcLineSupport.setMobileElements(elements[14], elements[15], elements[16], dnsData);
+        this.srcLineSupport.setPartiesId(elements[22], elements[23], dnsData);
+        dnsData.setMacOuter("1".equals(elements[24]));
         switch (dnsData.getDataType()) {
             case 0:
                 dnsData.setDomain(elements[26]);
@@ -95,16 +107,21 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
             return;
         }
         Map<String, Object> extensionMap = new HashMap<>();
+        Set<String> cname = new HashSet<>();
         String[] elements = extension.split(";");
         for (String element : elements) {
             String[] kvPair = element.split("=");
             if (kvPair.length != 2) {
                 continue;
             }
+            if ("cname".equals(kvPair[0])) {
+                cname.add(kvPair[1]);
+                continue;
+            }
             extensionMap.put(kvPair[0], kvPair[1]);
         }
-        if (null != dnsData.getResponseIp()) {
-            extensionMap.put(HeadConst.MONGO.IPS, dnsData.getResponseIp());
+        if (!cname.isEmpty()) {
+            dnsData.setCname(cname);
         }
         if (!extensionMap.isEmpty()) {
             dnsData.setExtension(extensionMap);

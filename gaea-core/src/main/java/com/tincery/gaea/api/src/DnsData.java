@@ -15,11 +15,14 @@ import java.util.Set;
 @Getter
 public class DnsData extends AbstractSrcData {
 
-
     /**
      * DNS请求域名
      */
     String domain;
+    /**
+     * DNS请求cname
+     */
+    Set<String> cname;
     /**
      * DNS响应IP
      */
@@ -32,7 +35,11 @@ public class DnsData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.domain, SourceFieldUtils.formatCollection(this.responseIp), this.malformedUpPayload, this.malformedDownPayload, this.extension};
+        Object[] join = new Object[]{super.toCsv(splitChar),
+                this.malformedUpPayload, this.malformedDownPayload, this.domain,
+                SourceFieldUtils.formatCollection(this.cname),
+                SourceFieldUtils.formatCollection(this.responseIp),
+                this.extension};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 

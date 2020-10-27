@@ -25,8 +25,11 @@ public class SrcProducer {
     private String srcPath;
 
     public void producer(Queue queue, String category, String extension) {
-        String path = srcPath + "/" + category + "/";
-        List<String> files = FileUtils.searchFiles(path,
+        File path = new File(srcPath + "/" + category + "/");
+        if (!path.exists()) {
+            return;
+        }
+        List<String> files = FileUtils.searchFiles(path.getAbsolutePath(),
                 category,
                 null,
                 extension,

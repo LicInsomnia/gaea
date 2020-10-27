@@ -2,15 +2,14 @@ package com.tincery.gaea.core.base.tool.util;
 
 import com.google.common.io.Files;
 import com.tincery.gaea.core.base.mgt.CommonConst;
+import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * 文件相关操作类（静态操作）
@@ -60,7 +59,6 @@ public class FileUtils {
         }
         return result;
     }
-
 
     /**
      * 创建所有有效文件夹
@@ -133,6 +131,52 @@ public class FileUtils {
         return readLine(new File(fileName));
     }
 
+    public static Map<String, Pair<Integer,byte[]>> readByteArray(File file){
+        Map<String, Pair<Integer,byte[]>> mapContent = new LinkedHashMap<>();
+        if (null == file || (!file.exists()) || file.isDirectory()) {
+            return new HashMap<>();
+        }
+        try {
+            byte[] records = Files.toByteArray(file);
+            if (null == records) {
+                return null;
+            }
+            int size = records.length;
+            int index = 0;
+            int i = 0;
+            while (i < size) {
+                byte[] bufferLength = new byte[4];
+                if (size - i < 4) {
+                    break;
+                }
+                System.arraycopy(records, i, bufferLength, 0, 4);
+                int targetLength = byteArray2Int(bufferLength, 4);
+                i += 4;
+                byte[] bufferKey = new byte[256];
+                if (size - i < 256) {
+                    break;
+                }
+                System.arraycopy(records, i, bufferKey, 0, 256);
+                i += 256;
+                if (size - i < targetLength) {
+                    break;
+                }
+                byte[] bufferValue = new byte[targetLength];
+                System.arraycopy(records, i, bufferValue, 0, targetLength);
+                i += targetLength;
+                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index,bufferValue));
+                index++;
+            }
+            return mapContent.isEmpty() ? null : mapContent;
+        } catch (IOException e) {
+            log.error("解析文件 {}是时出错", file.getName());
+            e.printStackTrace();
+            return new HashMap<>();
+        }
+    }
+
+
+
 
     public static boolean delFile(File file) {
         if (!file.exists()) {
@@ -167,11 +211,21 @@ public class FileUtils {
     }
 
 
-    public static String getCsvDataFile(String category, long captime, String nodeName) {
+    public static String getCsvDataFile(String category, long capTime, String nodeName) {
         // 目前默认是1分钟一个文件 所以不用取整  如果以后输出间隔改了   此处需要取整
-        String dirName = DateUtils.format(captime, "yyyyMMdd");
-        String fileName = category + "_" + DateUtils.format(captime, "yyyyMMddHHmm") + "." + nodeName + ".csv";
+        String dirName = DateUtils.format(capTime, "yyyyMMdd");
+        String fileName = category + "_" + DateUtils.format(capTime, "yyyyMMddHHmm") + "." + nodeName + ".csv";
         return "/" + dirName + "/" +fileName;
+    }
+
+
+    public static int byteArray2Int(byte[] byteArray, int arrayLength) {
+        int returnValue = 0;
+        for (int i = 0; i < arrayLength; i++) {
+            int number = Byte.toUnsignedInt(byteArray[i]);
+            returnValue += (number << i * 8);
+        }
+        return returnValue;
     }
 
 }
