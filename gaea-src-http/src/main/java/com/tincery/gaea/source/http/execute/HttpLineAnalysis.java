@@ -72,6 +72,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
              */
             handleSuffix(httpMetaData,subName,text,index);
         }
+        httpMetaData.setForeign(httpLineSupport.isForeign(httpMetaData.getServerIp()));
 
         return httpMetaData;
     }
@@ -232,7 +233,6 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         } else {
             meta = new HttpMeta();
             meta.setHasResponse(httpData.getIsResponse());
-            httpData.getMetas().add(meta);
         }
         if (text.length() < 4 || !getLegelHeader().contains(text.substring(0, 4))) {
             meta.setContent(text, httpData.getIsResponse());

@@ -80,7 +80,7 @@ public class SourceFieldUtils {
     public static String formatCollection(Collection<?> collection, String splitChar) {
         String result = null;
         if (!CollectionUtils.isEmpty(collection)) {
-            result = Joiner.on(splitChar).join(collection);
+            result = Joiner.on(splitChar).useForNull("").join(collection);
         }
         return result;
     }

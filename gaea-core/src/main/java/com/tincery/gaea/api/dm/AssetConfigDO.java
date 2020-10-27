@@ -18,7 +18,6 @@ import java.util.*;
 public class AssetConfigDO extends SimpleBaseDO {
 
 
-
     @Id
     private String id;
 
@@ -29,6 +28,9 @@ public class AssetConfigDO extends SimpleBaseDO {
     private Integer level;
     private String remark;
 
+    private String address;
+    private List<String> pids;
+
     private Boolean activity;
     private String type;
     private List<Long> ips;
@@ -36,40 +38,61 @@ public class AssetConfigDO extends SimpleBaseDO {
 
     // 出入站相关
 
-    private List<OutInputFilter> blackList;
-    private List<OutInputFilter> whiteList;
+    private BlackOrWhiteList blackList;
+    private BlackOrWhiteList whiteList;
 
     // 安全策略相关
     // 一组中有多个条件
 
-    List<List<AssetCondition>> assetStrategyConditionGroup;
+    private List<AssetCondition> assetStrategyCondition;
+
+    // 证书
+
+    private AssetCondition assetCertStrategy;
 
 
-
-
-    /**
-     * 出入站规则  一个IP或者IP段下可配置多个协议
+    /****
+     * 黑白名单列表
+     * 黑白名单中都含有一个 in 入站规则   out 出站规则
      **/
     @Setter
     @Getter
-    public static class OutInputFilter{
-        private boolean in;
+    public static class BlackOrWhiteList {
+        private OutInputFilter in;
+        private OutInputFilter out;
+    }
+
+    /**
+     * 出入站规则 包含一个境外规则和多个境内规则
+     **/
+    @Setter
+    @Getter
+    public static class OutInputFilter {
+        private List<DomesticFilter> domestic;
+        private OverseasFilter overseas;
+    }
+
+    /**
+     * 境内规则  一个IP或者IP段下可配置多个协议
+     **/
+    @Setter
+    @Getter
+    public static class DomesticFilter {
         private boolean unique;
         private Long minIp;
         private Long maxIp;
-        private List<Protocol> protocols;
+        private List<ProtocolGroup> protocols;
     }
 
-
     /**
-     * 协议配置   一个协议下可配置多个端口
-     *
+     * 境外规则   包含被被移除的IP、协议、端口组
+     * 也可移除内容
      **/
     @Setter
     @Getter
-    private static class Protocol{
-        private int type;
-        private List<Integer> ports;
+    public static class OverseasFilter {
+        private List<IpGroup> exclusions;
     }
+
 
 }

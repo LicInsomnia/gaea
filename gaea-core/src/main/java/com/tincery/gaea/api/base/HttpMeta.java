@@ -1,41 +1,51 @@
 package com.tincery.gaea.api.base;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.LevelDomainUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
+@ToString
 public class HttpMeta {
     public String url;
     public String host;
-    public StringBuilder method = new StringBuilder();
+    public StringBuilder method;
     public String sld;
     public String tld;
     public Integer requestContentLength;
     public Integer responseContentLength;
+    @JSONField(serialize = false)
     public String contentType;
     public String userAgent;
+    @JSONField(serialize = false)
     public String acceptLanguage;
+    @JSONField(serialize = false)
     public String from;
+    @JSONField(serialize = false)
     public Boolean authorization;
+    @JSONField(serialize = false)
     public Boolean proxyauth;
     //public List<Map<String, String>> headers;
-    public List<Map<String, String>> req_headers;
-    public List<Map<String, String>> rep_headers;
+    public List<Map<String, String>> reqHeaders;
+    public List<Map<String, String>> repHeaders;
+    @JSONField(serialize = false)
     public String acceptEncoding;
     public String urlRoot;
-    public String parameter;
+    public String params;
+    @JSONField(serialize = false)
     public boolean hasResponse;
+    @JSONField(serialize = false)
     public boolean isMalformed = true;
+    @JSONField(serialize = false)
     public String request;
+    @JSONField(serialize = false)
     public String response;
     /**
      * http内容 用request和response字段合并
@@ -44,6 +54,7 @@ public class HttpMeta {
     /**
      * 该index为meta的顺序
      */
+    @JSONField(serialize = false)
     public Integer index;
 
 
@@ -64,6 +75,9 @@ public class HttpMeta {
 
     public void addMethod(String method, boolean before) {
         StringBuilder methodBuilder = new StringBuilder(method);
+        if (Objects.isNull(this.method)){
+            this.method = new StringBuilder();
+        }
         if (before) {
             this.method = connectBuilder(methodBuilder, this.method);
         } else {
@@ -91,23 +105,23 @@ public class HttpMeta {
     }
 
     public void setResponseHeaders(String key, String value) {
-        if (null == this.rep_headers) {
-            this.rep_headers = new ArrayList<>();
+        if (null == this.repHeaders) {
+            this.repHeaders = new ArrayList<>();
         }
         Map<String, String> head = new HashMap<>();
         head.put("key", key);
         head.put("value", value);
-        this.rep_headers.add(head);
+        this.repHeaders.add(head);
     }
 
     public void setRequestHeaders(String key, String value) {
-        if (null == this.req_headers) {
-            this.req_headers = new ArrayList<>();
+        if (null == this.reqHeaders) {
+            this.reqHeaders = new ArrayList<>();
         }
         Map<String, String> head = new HashMap<>();
         head.put("key", key);
         head.put("value", value);
-        this.req_headers.add(head);
+        this.reqHeaders.add(head);
     }
 
     /**
@@ -124,7 +138,8 @@ public class HttpMeta {
     public HttpMeta fixContentAndOther(HttpMeta response) {
 
         this.content = this.getRequest() + "\r\n" + HeadConst.GORGEOUS_DIVIDING_LINE +"\r\n"+ response.getResponse();
-        this.rep_headers = response.rep_headers;
+        this.repHeaders = response.repHeaders;
+        this.method.append(">>").append(response.method);
         return this;
     }
 
@@ -144,7 +159,7 @@ public class HttpMeta {
                     }
                 }
                 if (para.length() > 0) {
-                    this.parameter = para.substring(0, para.length() - 1);
+                    this.params = para.substring(0, para.length() - 1);
                 }
             }
         } else {

@@ -3,10 +3,13 @@ package com.tincery.gaea.datamarket.asset.execute;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.dm.AssetConfigDO;
+import com.tincery.gaea.api.dm.AssetConfigs;
 import com.tincery.gaea.api.dm.AssetDataDTO;
 import com.tincery.gaea.api.dm.AssetCondition;
 import com.tincery.gaea.core.base.component.Receiver;
+import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.dao.AssetConditionDao;
+import jdk.nashorn.internal.ir.EmptyNode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +20,12 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -30,12 +37,9 @@ import java.util.stream.Collectors;
 @Service
 public class AssetReceiver implements Receiver {
 
+
     @Autowired
-    private AssetConditionDao assetConditionDao;
-
-    List<AssetCondition> whiteListConditions;
-    List<AssetCondition> blackListConditions;
-
+    private AssetDetector assetDetector;
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
@@ -45,16 +49,8 @@ public class AssetReceiver implements Receiver {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 JSONObject assetJson = JSON.parseObject(line);
-                allJsonObject.add(assetJson);
-                // 如果黑名单命中
-                if (blackListConditions.stream().anyMatch(condition -> condition.hit(assetJson))) {
-                    System.out.println("告警");
-                    continue;
-                }
-
-                if (whiteListConditions.stream().noneMatch(condition -> condition.hit(assetJson))) {
-                    System.out.println("告警");
-                }
+                int assetFlag = assetJson.getIntValue("assetFlag");
+                JSONObject jsonObject = AssetFlag.jsonRun(assetFlag, assetJson);
 
             }
         } catch (IOException e) {
@@ -63,36 +59,35 @@ public class AssetReceiver implements Receiver {
     }
 
 
-    /****
-     *
-     * @author gxz
-     * @param  jsonObject
-     **/
-    private List<AssetConfigDO> detector(JSONObject jsonObject){
-
-    }
-
-
-    private List<AssetDataDTO> assetIpGroup(List<JSONObject> assetJsons){
-        List<AssetDataDTO> insertLists = new ArrayList<>();
-        Map<String, List<JSONObject>> collect = assetJsons.stream().collect(Collectors.groupingBy(json->json.getString("ip")));
-        collect.forEach((groupField,list)->{
-
-        });
-    }
 
     @Override
     public void init() {
-        whiteListConditions = new ArrayList<>();
-        blackListConditions = new ArrayList<>();
-        List<AssetCondition> activityData = assetConditionDao.findActivityData();
-        activityData.forEach((condition) -> {
-            if (condition.isBlackList()) {
-                blackListConditions.add(condition);
-            } else {
-                whiteListConditions.add(condition);
-            }
-        });
+
+    }
+
+    public enum AssetFlag {
+        NOT_ASSET(0, (json) -> json),
+        CLIENT_ASSET(1, AssetConfigs::detectorClient),
+        SERVER_ASSET(2,  AssetConfigs::detectorServer),
+        SERVER_AND_CLIENT_ASSET(3,  AssetConfigs::detectorClientAndServer);
+
+        private int flag;
+
+        private Function<JSONObject, JSONObject> function;
+
+        AssetFlag(int flag, Function<JSONObject, JSONObject> function) {
+            this.flag = flag;
+            this.function = function;
+        }
+
+        private static AssetFlag findByFlag(int flag) {
+            Optional<AssetFlag> first = Arrays.stream(values()).filter(assetFlag -> assetFlag.flag == flag).findFirst();
+            return first.orElse(null);
+        }
+
+        public static JSONObject jsonRun(int flag, JSONObject assetJson) {
+            return findByFlag(flag).function.apply(assetJson);
+        }
 
     }
 }

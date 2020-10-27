@@ -163,6 +163,7 @@ public class HeadConst {
             CSV.CONTENT_LENGTH + CSV_SEPARATOR +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            CSV.META_LIST + CSV_SEPARATOR +
             CSV.EXTENSION;
 
     private HeadConst() {
@@ -272,11 +273,12 @@ public class HeadConst {
         public static String UP_PAYLOAD = "upPayload";
         public static String DOWN_PAYLOAD = "downPayload";
         /* HTTP */
-        public static String HOST = "host";
-        public static String URL_ROOT = "urlRoot";
-        public static String METHOD = "method";
-        public static String USER_AGENT = "userAgent";
-        public static String CONTENT_LENGTH = "contentLength";
+        public static String HOST = "hostList";
+        public static String URL_ROOT = "urlRootList";
+        public static String METHOD = "methodList";
+        public static String USER_AGENT = "userAgentList";
+        public static String CONTENT_LENGTH = "contentLengthList";
+        public static String META_LIST = "metaList";
         /* ESP&AH */
         public static String SPI = "spi";
         /* ISAKMP */
