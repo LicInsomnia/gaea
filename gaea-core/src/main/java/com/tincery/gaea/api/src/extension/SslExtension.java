@@ -97,9 +97,10 @@ public class SslExtension {
     protected String serverECDHSignatureData;
 
     public String toCsv(char splitChar) {
+        String handshake = null == this.handshake ? "" : JSONObject.toJSONString(this.handshake);
         String cipherSuites = null == this.cipherSuite ? "" : this.cipherSuite.toCsv(splitChar);
         Object[] join = new Object[]{
-                JSONObject.toJSONString(this.handshake),
+                handshake,
                 this.hasApplicationData, this.serverName, this.daulAuth,
                 this.version, cipherSuites, this.sha1,
                 SourceFieldUtils.formatCollection(this.clientCerChain),
