@@ -1,13 +1,16 @@
 package com.tincery.gaea.api.dm;
 
+import com.tincery.gaea.api.base.IpHitable;
 import com.tincery.gaea.api.base.IpRange;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author gxz
@@ -78,11 +81,35 @@ public class AssetConfigDO extends SimpleBaseDO {
      **/
     @Setter
     @Getter
-    public static class DomesticFilter {
+    public static class DomesticFilter implements IpHitable {
         private boolean unique;
         private Long minIp;
         private Long maxIp;
         private List<ProtocolGroup> protocols;
+
+        @Override
+        public boolean hit(long ip, int protocol, int port) {
+            if (!checkIp(ip)) {
+                return false;
+            }
+            if (CollectionUtils.isEmpty(protocols)) {
+                return true;
+            }
+            return protocols.stream().anyMatch(protocolItem -> protocolItem.checkProtocolAndPort(protocol, port));
+        }
+
+        /****
+         * IP是否符合规则
+         * @param ip ip
+         * @return boolean 是否符合
+         **/
+        private boolean checkIp(long ip) {
+            if (unique) {
+                return Objects.equals(minIp, ip);
+            } else {
+                return ip >= minIp && ip <= maxIp;
+            }
+        }
     }
 
     /**
@@ -91,8 +118,19 @@ public class AssetConfigDO extends SimpleBaseDO {
      **/
     @Setter
     @Getter
-    public static class OverseasFilter {
+    public static class OverseasFilter implements IpHitable {
         private List<IpGroup> exclusions;
+
+        /****
+         * 境外规则是否命中  如果在被忽略的内容中  则不会被命中
+         **/
+        @Override
+        public boolean hit(long ip, int protocol, int port) {
+            if (CollectionUtils.isEmpty(exclusions)) {
+                return true;
+            }
+            return exclusions.stream().anyMatch(ipGroup -> ipGroup.hit(ip, protocol, port));
+        }
     }
 
 

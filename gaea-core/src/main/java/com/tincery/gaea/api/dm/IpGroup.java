@@ -1,10 +1,13 @@
 package com.tincery.gaea.api.dm;
 
+import com.tincery.gaea.api.base.IpHitable;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
@@ -15,11 +18,36 @@ import java.util.List;
  **/
 @Setter
 @Getter
-public class IpGroup extends SimpleBaseDO {
+public class IpGroup extends SimpleBaseDO implements IpHitable {
     private boolean unique;
     private Long minIp;
     private Long maxIp;
     private List<ProtocolGroup> protocols;
+
+    @Override
+    public boolean hit(long ip, int protocol, int port) {
+        if (!checkIp(ip)) {
+            return false;
+        }
+        if (CollectionUtils.isEmpty(protocols)) {
+            return false;
+        }
+        return protocols.stream().anyMatch(protocolGroup -> protocolGroup.checkProtocolAndPort(protocol,port));
+    }
+
+    /****
+     * IP是否符合规则
+     * @param ip ip
+     * @return boolean 是否符合
+     **/
+    private boolean checkIp(long ip) {
+        if (unique) {
+            return Objects.equals(minIp, ip);
+        } else {
+            return ip >= minIp && ip <= maxIp;
+        }
+    }
+
 
 
 }

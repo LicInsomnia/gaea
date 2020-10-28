@@ -2,9 +2,15 @@ package com.tincery.gaea.datamarket.asset.execute;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.tincery.gaea.api.base.AlarmMaterialData;
+import com.tincery.gaea.api.dm.AssetConfigDO;
 import com.tincery.gaea.api.dm.AssetConfigs;
+import com.tincery.gaea.api.dm.AssetDataDTO;
+import com.tincery.gaea.api.dm.AssetCondition;
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
+import com.tincery.gaea.core.base.dao.AssetConditionDao;
+import jdk.nashorn.internal.ir.EmptyNode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,15 +19,16 @@ import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author gxz
@@ -60,16 +67,17 @@ public class AssetReceiver implements Receiver {
     }
 
     public enum AssetFlag {
-        NOT_ASSET(0, (json) -> json),
+
+        NOT_ASSET(0, (json,detector) -> null),
         CLIENT_ASSET(1, AssetConfigs::detectorClient),
-        SERVER_ASSET(2, AssetConfigs::detectorServer),
-        SERVER_AND_CLIENT_ASSET(3, AssetConfigs::detectorClientAndServer);
+        SERVER_ASSET(2,  AssetConfigs::detectorServer),
+        SERVER_AND_CLIENT_ASSET(3,  AssetConfigs::detectorClientAndServer);
 
-        private final int flag;
+        private int flag;
 
-        private final Function<JSONObject, JSONObject> function;
+        private BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function;
 
-        AssetFlag(int flag, Function<JSONObject, JSONObject> function) {
+        AssetFlag(int flag, BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function) {
             this.flag = flag;
             this.function = function;
         }
@@ -79,9 +87,9 @@ public class AssetReceiver implements Receiver {
             return first.orElse(null);
         }
 
-        public static JSONObject jsonRun(int flag, JSONObject assetJson) {
-            return findByFlag(flag).function.apply(assetJson);
+        public static List<AlarmMaterialData> jsonRun(int flag, JSONObject assetJson, AssetDetector assetDetector) {
+            return findByFlag(flag).function.apply(assetJson, assetDetector);
         }
-
     }
+
 }
