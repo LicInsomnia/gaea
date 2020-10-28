@@ -1,12 +1,11 @@
 package com.tincery.gaea.api.src;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
-import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
+import com.tincery.gaea.api.src.extension.DnsExtension;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 /**
  * @author gongxuanzhang
@@ -15,18 +14,7 @@ import java.util.Set;
 @Getter
 public class DnsData extends AbstractSrcData {
 
-    /**
-     * DNS请求域名
-     */
-    String domain;
-    /**
-     * DNS请求cname
-     */
-    Set<String> cname;
-    /**
-     * DNS响应IP
-     */
-    Set<String> responseIp;
+    DnsExtension dnsExtension;
 
     @Override
     public void adjust() {
@@ -36,10 +24,9 @@ public class DnsData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{super.toCsv(splitChar),
-                this.malformedUpPayload, this.malformedDownPayload, this.domain,
-                SourceFieldUtils.formatCollection(this.cname),
-                SourceFieldUtils.formatCollection(this.responseIp),
-                this.extension};
+                this.malformedUpPayload, this.malformedDownPayload,
+                this.dnsExtension.toCsv(splitChar),
+                JSONObject.toJSONString(this.dnsExtension)};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 

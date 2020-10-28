@@ -14,7 +14,6 @@ import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
 import com.tincery.gaea.source.http.constant.HttpConstant;
-import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -147,9 +145,9 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
                 try {
                     httpData = this.analysis.pack(line);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     log.error("解析实体出现了问题{}", line);
                     // TODO: 2020/9/8 实体解析有问题告警
-                    e.printStackTrace();
                     continue;
                 }
                 String key = httpData.getKey();

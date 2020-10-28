@@ -50,6 +50,12 @@ public class SrcLineSupport {
         }
     }
 
+    /**
+     * 根据src层中targetName信息为实体中targetName赋值
+     *
+     * @param targetName
+     * @param data
+     */
     public void setTargetName(String targetName, AbstractMetaData data) {
         if (StringUtils.isEmpty(targetName)) {
             return;
@@ -137,12 +143,27 @@ public class SrcLineSupport {
                 .setDownByte(Long.parseLong(downByte));
     }
 
+    /**
+     * 设置移动终端属性
+     *
+     * @param imsi   IMSI
+     * @param imei   IMEI
+     * @param msisdn MSISDN
+     * @param data   数据实体
+     */
     public void setMobileElements(String imsi, String imei, String msisdn, AbstractSrcData data) {
         data.setImsi(SourceFieldUtils.parseStringStrEmptyToNull(imsi))
                 .setImei(SourceFieldUtils.parseStringStrEmptyToNull(imei))
                 .setMsisdn(SourceFieldUtils.parseStringStrEmptyToNull(msisdn));
     }
 
+    /**
+     * 设置会话ID
+     *
+     * @param userId   客户端ID
+     * @param serverId 服务端ID
+     * @param data     数据实体
+     */
     public void setPartiesId(String userId, String serverId, AbstractSrcData data) {
         data.setUserId(SourceFieldUtils.parseStringStrEmptyToNull(userId))
                 .setServerId(SourceFieldUtils.parseStringStrEmptyToNull(serverId));

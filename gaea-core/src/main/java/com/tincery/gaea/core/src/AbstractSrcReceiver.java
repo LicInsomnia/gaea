@@ -28,7 +28,7 @@ import java.util.concurrent.*;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com 汇聚执行器 此方法的执行策略是 将准备写入的csv内容存到map中 最终统一执行写入  流程如下图 Src处理器  此类监听由Producer 发送的Mq消息
- *         处理内容
+ * 处理内容
  **/
 @Getter
 @Setter
@@ -36,14 +36,20 @@ import java.util.concurrent.*;
 public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements Receiver {
 
     protected SrcProperties properties;
-    /** 当前csv输出中缓存的csv记录数 */
+    /**
+     * 当前csv输出中缓存的csv记录数
+     */
     protected int csvCount;
 
     /***此map存放 用fileName 信息做key  行内容作为value的map*/
     protected Map<String, List<String>> csvMap = new HashMap<>();
-    /** 当前csv输出中缓存的csv记录中的最小时间 */
+    /**
+     * 当前csv输出中缓存的csv记录中的最小时间
+     */
     protected long minTime;
-    /** 当前csv输出中缓存的csv记录中的最大时间 */
+    /**
+     * 当前csv输出中缓存的csv记录中的最大时间
+     */
     protected long maxTime;
 
     public abstract void setProperties(SrcProperties properties);
@@ -84,7 +90,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         long startTime = System.currentTimeMillis();
         analysisFile(file);
         try {
-            if(countDownLatch!=null){
+            if (countDownLatch != null) {
                 countDownLatch.await();
             }
         } catch (InterruptedException e) {
@@ -112,6 +118,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      **/
     protected void analysisFile(File file) {
         if (!file.exists()) {
+            log.info("文件：{}已被处理" + file.getAbsolutePath());
             return;
         }
         List<String> lines = getLines(file);
@@ -119,10 +126,10 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             return;
         }
         int executor = this.properties.getExecutor();
-        if (executor <= 1 || executor<=lines.size()) {
+        if (executor <= 1 || executor <= lines.size()) {
             analysisLine(lines);
         } else {
-            List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor)+1);
+            List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor) + 1);
             this.countDownLatch = new CountDownLatch(partitions.size());
             for (List<String> partition : partitions) {
                 executorService.execute(() -> analysisLine(partition));
@@ -152,7 +159,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             }
             this.putCsvMap(pack);
         }
-        if(this.countDownLatch!=null){
+        if (this.countDownLatch != null) {
             this.countDownLatch.countDown();
         }
     }
