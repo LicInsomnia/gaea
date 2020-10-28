@@ -2,6 +2,7 @@ package com.tincery.gaea.datamarket.asset.execute;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.dm.AssetConfigDO;
 import com.tincery.gaea.api.dm.AssetConfigs;
 import com.tincery.gaea.api.dm.AssetDataDTO;
@@ -25,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -59,23 +61,23 @@ public class AssetReceiver implements Receiver {
     }
 
 
-
     @Override
     public void init() {
 
     }
 
     public enum AssetFlag {
-        NOT_ASSET(0, (json) -> json),
+
+        NOT_ASSET(0, (json,detector) -> null),
         CLIENT_ASSET(1, AssetConfigs::detectorClient),
         SERVER_ASSET(2,  AssetConfigs::detectorServer),
         SERVER_AND_CLIENT_ASSET(3,  AssetConfigs::detectorClientAndServer);
 
         private int flag;
 
-        private Function<JSONObject, JSONObject> function;
+        private BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function;
 
-        AssetFlag(int flag, Function<JSONObject, JSONObject> function) {
+        AssetFlag(int flag, BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function) {
             this.flag = flag;
             this.function = function;
         }
@@ -85,9 +87,9 @@ public class AssetReceiver implements Receiver {
             return first.orElse(null);
         }
 
-        public static JSONObject jsonRun(int flag, JSONObject assetJson) {
-            return findByFlag(flag).function.apply(assetJson);
+        public static List<AlarmMaterialData> jsonRun(int flag, JSONObject assetJson, AssetDetector assetDetector) {
+            return findByFlag(flag).function.apply(assetJson, assetDetector);
         }
-
     }
+
 }
