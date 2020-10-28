@@ -1,8 +1,10 @@
 package com.tincery.gaea.api.src;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
+import com.tincery.gaea.api.src.extension.SessionExtension;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
@@ -14,16 +16,15 @@ import lombok.Setter;
 @Getter
 public class ImpSessionData extends AbstractSrcData {
 
-
-    private String upPayLoad;
-    private String downPayLoad;
+    SessionExtension sessionExtension = new SessionExtension();
 
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{super.toCsv(splitChar),
                 this.getDuration(),
                 this.getSyn(), this.getFin(),
-                this.upPayLoad, this.downPayLoad
+                this.sessionExtension.toCsv(splitChar),
+                JSONObject.toJSONString(this.sessionExtension)
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }
@@ -37,7 +38,8 @@ public class ImpSessionData extends AbstractSrcData {
 
     void setProName(ApplicationProtocol applicationProtocol, PayloadDetector payloadDetector) {
         String key = this.protocol + "_" + this.serverPort;
-        String proName = payloadDetector.getProName(this.protocol, this.serverPort, this.clientPort, this.upPayLoad, this.downPayLoad);
+        String proName = payloadDetector.getProName(this.protocol, this.serverPort, this.clientPort,
+                this.sessionExtension.getUpPayLoad(), this.sessionExtension.getDownPayLoad());
         if ("other".equals(proName)) {
             ApplicationInformationBO applicationInformation = applicationProtocol.getApplication(key);
             if (null != applicationInformation) {
@@ -48,9 +50,9 @@ public class ImpSessionData extends AbstractSrcData {
 
     public void setPayload(String payload) {
         if (this.getDataType() == 1) {
-            this.downPayLoad = payload;
+            this.sessionExtension.setDownPayLoad(payload);
         } else {
-            this.upPayLoad = payload;
+            this.sessionExtension.setUpPayLoad(payload);
         }
     }
 
@@ -74,11 +76,11 @@ public class ImpSessionData extends AbstractSrcData {
         this.downPkt += impsessionData.downPkt;
         this.upByte += impsessionData.upByte;
         this.downByte += impsessionData.downByte;
-        if (impsessionData.dataType == 1 && !impsessionData.downPayLoad.isEmpty()) {
-            this.downPayLoad = impsessionData.downPayLoad;
+        if (impsessionData.dataType == 1 && !impsessionData.sessionExtension.getDownPayLoad().isEmpty()) {
+            this.sessionExtension.setDownPayLoad(impsessionData.sessionExtension.getDownPayLoad());
         }
-        if (impsessionData.dataType == 2 && !impsessionData.upPayLoad.isEmpty()) {
-            this.upPayLoad = impsessionData.upPayLoad;
+        if (impsessionData.dataType == 2 && !impsessionData.sessionExtension.getUpPayLoad().isEmpty()) {
+            this.sessionExtension.setUpPayLoad(impsessionData.sessionExtension.getUpPayLoad());
         }
         this.dataType = 0;
     }

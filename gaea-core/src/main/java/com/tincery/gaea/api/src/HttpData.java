@@ -11,7 +11,10 @@ import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -21,7 +24,6 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class HttpData extends AbstractSrcData {
-
 
     private List<String> host;
     private List<String> method;
@@ -85,21 +87,21 @@ public class HttpData extends AbstractSrcData {
      *
      */
     private void adjustMetas() {
-        if (Objects.isNull(this.getMetas())){
+        if (Objects.isNull(this.getMetas())) {
             return;
         }
         this.getMetas().sort(Comparator.comparingInt(HttpMeta::getIndex));
 
-        ArrayList<HttpMeta> requestList = new ArrayList<>();
-        ArrayList<HttpMeta> responseList = new ArrayList<>();
+        List<HttpMeta> requestList = new ArrayList<>();
+        List<HttpMeta> responseList = new ArrayList<>();
         for (HttpMeta meta : this.getMetas()) {
-            if (StringUtils.isEmpty(meta.getRequest())){
+            if (StringUtils.isEmpty(meta.getRequest())) {
                 responseList.add(meta);
                 continue;
             }
             requestList.add(meta);
         }
-        if (CollectionUtils.isEmpty(requestList) || CollectionUtils.isEmpty(responseList)){
+        if (CollectionUtils.isEmpty(requestList) || CollectionUtils.isEmpty(responseList)) {
             //如果两个集合有一个为空 那么无法合并
             for (HttpMeta meta : metas) {
                 meta.fixContentByHalfEmpty();
@@ -152,16 +154,13 @@ public class HttpData extends AbstractSrcData {
             return null;
         }
         ArrayList<String> result = new ArrayList<>();
-        metaList.forEach(meta->{
-           result.add(JSONObject.toJSON(meta).toString());
-        });
+        metaList.forEach(meta -> result.add(JSONObject.toJSON(meta).toString()));
 
         return result;
     }
 
     /**
      * 合并两个httpData的数据
-     * @param httpData
      */
     public void merge(HttpData httpData) {
         List<HttpMeta> newMetas = this.getMetas();

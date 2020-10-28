@@ -48,7 +48,8 @@ public class HeadConst {
             CSV.SYN_FLAG + CSV_SEPARATOR +
             CSV.FIN_FLAG + CSV_SEPARATOR +
             CSV.UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.DOWN_PAYLOAD;
+            CSV.DOWN_PAYLOAD +
+            CSV.EXTENSION;
     /* dns csv文件头 */
     public final static String DNS_HEADER = BASE_COMMON_HEADER +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
@@ -86,11 +87,13 @@ public class HeadConst {
             CSV.SERVER_ECDH_NAMED_CURVE + CSV_SEPARATOR +
             CSV.SERVER_ECDH_PUBLIC_KEY_DATA + CSV_SEPARATOR +
             CSV.SERVER_SIGNATURE_ALGORITHM + CSV_SEPARATOR +
-            CSV.SERVER_ECDH_SIGNATURE_DATA;
+            CSV.SERVER_ECDH_SIGNATURE_DATA +
+            CSV.EXTENSION;
     /* openvpn csv文件头 */
     public final static String OPENVPN_HEADER = SSL_HEADER;
     /* ssh csv文件头 */
     public final static String SSH_HEADER = BASE_COMMON_HEADER +
+            CSV.DURATION + CSV_SEPARATOR +
             CSV.SYN_FLAG + CSV_SEPARATOR +
             CSV.FIN_FLAG + CSV_SEPARATOR +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
@@ -120,7 +123,8 @@ public class HeadConst {
             CSV.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
             CSV.SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
             CSV.CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT;
+            CSV.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT +
+            CSV.EXTENSION;
     /* isakmp csv文件头 */
     public final static String ISAKMP_HEADER = BASE_COMMON_HEADER +
             CSV.SYN_FLAG + CSV_SEPARATOR +

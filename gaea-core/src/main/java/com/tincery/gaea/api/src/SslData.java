@@ -1,6 +1,7 @@
 package com.tincery.gaea.api.src;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.src.extension.SslExtension;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Getter
 public class SslData extends AbstractSrcData {
 
-    SslExtension sslExtension;
+    private SslExtension sslExtension;
 
     @Override
     public void adjust() {
@@ -52,7 +53,8 @@ public class SslData extends AbstractSrcData {
         Object[] join = new Object[]{
                 super.toCsv(splitChar), this.duration, this.syn, this.fin,
                 this.malformedUpPayload, this.malformedDownPayload,
-                this.sslExtension.toCsv(splitChar)
+                this.sslExtension.toCsv(splitChar),
+                JSONObject.toJSONString(this.sslExtension)
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }
