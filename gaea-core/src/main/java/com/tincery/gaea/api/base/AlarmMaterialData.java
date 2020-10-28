@@ -1,6 +1,5 @@
 package com.tincery.gaea.api.base;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.dm.AssetConfigDO;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
@@ -287,7 +286,7 @@ public final class AlarmMaterialData {
             return;
         }
         this.assetIp = singleAssetIp;
-     //   this.assetInfo = new Document((JSONObject) JSONObject.toJSON(asset.getInfo()));
+        //   this.assetInfo = new Document((JSONObject) JSONObject.toJSON(asset.getInfo()));
     }
 
 }

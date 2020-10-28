@@ -17,7 +17,7 @@ import javax.jms.Queue;
 public class ImpSessionJob extends QuartzJobBean {
 
 
-    @Resource (name = QueueNames.SRC_IMPSESSION)
+    @Resource(name = QueueNames.SRC_IMPSESSION)
     private Queue impsessionQueue;
     @Autowired
     private SrcProducer srcProducer;
@@ -25,6 +25,6 @@ public class ImpSessionJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-            this.srcProducer.producer(this.impsessionQueue, "impsession", ".txt");
+        this.srcProducer.producer(this.impsessionQueue, "impsession", ".txt");
     }
 }

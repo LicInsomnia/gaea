@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,19 +29,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
 
+    private final Map<String, OpenVpnData> openVpnMap = new ConcurrentHashMap<>();
     @Autowired
     private AlarmRule alarmRule;
-
     @Autowired
     private PassRule passRule;
-
 
     @Autowired
     public void setAnalysis(OpenVpnLineAnalysis analysis) {
         this.analysis = analysis;
     }
 
-    @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
@@ -51,7 +50,16 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
         return HeadConst.OPENVPN_HEADER;
     }
 
-    private final Map<String, OpenVpnData> openVpnMap = new ConcurrentHashMap<>();
+    @Override
+    protected void analysisFile(File file) {
+        super.analysisFile(file);
+        if (this.openVpnMap.isEmpty()) {
+            return;
+        }
+        for (OpenVpnData openVpnData : this.openVpnMap.values()) {
+            putCsvMap(openVpnData);
+        }
+    }
 
     /****
      * 解析一行记录 填充到相应的容器中
@@ -82,7 +90,6 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
                 log.error("解析实体出现了问题{}", line);
                 // TODO: 2020/9/8 实体解析有问题告警
                 e.printStackTrace();
-                continue;
             }
         }
         if (this.countDownLatch != null) {

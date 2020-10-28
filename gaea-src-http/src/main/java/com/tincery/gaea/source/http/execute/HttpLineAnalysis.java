@@ -17,14 +17,38 @@ import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 
 
-
-
 @Component
 public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
 
 
     @Autowired
     private HttpLineSupport httpLineSupport;
+
+    /**
+     * 用来对http的正文进行标记，从而便于后面进行分割。
+     * 适用于型似"POST xxxx"和"POST\n xxxx"的http
+     * PUT HEAD DELETE OPTIONS GET POST HTTP/1.1
+     *
+     * @param http http全文
+     *             //     * @param flag 后文将用于分割的标志位
+     */
+    static List<String> flagResponse(String http) {
+        String flag = "\07\08\09";
+        String[] splited = http.replace("POST /", flag + "POST /").
+                replace("HTTP/1.1 2", flag + "HTTP/1.1 2").
+                replace("HTTP/1.1 1", flag + "HTTP/1.1 1").
+                replace("HTTP/1.0 2", flag + "HTTP/1.0 2").
+                replace("HTTP/1.0 1", flag + "HTTP/1.0 1").
+                replace("GET /", flag + "GET /").
+                replace("HTTP/1.1\n2", flag + "HTTP/1.1 2").
+                replace("HTTP/1.1\n1", flag + "HTTP/1.1 1").
+                replace("HTTP/1.0\n2", flag + "HTTP/1.0 2").
+                replace("HTTP/1.0\n1", flag + "HTTP/1.0 1").
+                replace("POST\n/", flag + "POST /").
+                replace("GET\n/", flag + "GET /").
+                split(flag);
+        return Arrays.asList(splited);
+    }
 
     /**
      * 将一行（一个）数据打包  数据传递格式为byte数组 切分  用 prefix（subName） + 特殊分隔符 + suffix（content）组成
@@ -42,7 +66,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
 
         String subName = split[0];
         String text;
-        Integer index  = Integer.valueOf(split[1]);
+        Integer index = Integer.valueOf(split[1]);
         if (split.length < 3) {
             text = "";
         } else {
@@ -53,7 +77,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         /*
          * 设置httpData的key  和 common
          */
-        handlePrefix(httpMetaData,subName);
+        handlePrefix(httpMetaData, subName);
 
         if (value.length < 4 || !isLegalHeader(value)) {
             httpMetaData.setDataType(-1);
@@ -61,16 +85,16 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
             byte[] payloadMeta = new byte[copyLength];
             System.arraycopy(value, 0, payloadMeta, 0, copyLength);
             String payload = DatatypeConverter.printHexBinary(payloadMeta);
-            if (httpMetaData.getIsResponse()){
+            if (httpMetaData.getIsResponse()) {
                 httpLineSupport.setMalformedPayload(null, payload, httpMetaData);
-            }else {
+            } else {
                 httpLineSupport.setMalformedPayload(payload, null, httpMetaData);
             }
-        }else{
+        } else {
             /*
             填装meta
              */
-            handleSuffix(httpMetaData,subName,text,index);
+            handleSuffix(httpMetaData, subName, text, index);
         }
         httpMetaData.setForeign(httpLineSupport.isForeign(httpMetaData.getServerIp()));
 
@@ -79,12 +103,13 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
 
     /**
      * 处理截取出来的subName 前缀的方法
+     *
      * @param httpData 要封装属性的对象
-     * @param subName 截取的字符串
+     * @param subName  截取的字符串
      */
-    private void handlePrefix(HttpData httpData,String subName){
-        setSubName(subName,httpData);
-        fixHttpData(httpData,subName);
+    private void handlePrefix(HttpData httpData, String subName) {
+        setSubName(subName, httpData);
+        fixHttpData(httpData, subName);
     }
 
     /**
@@ -94,7 +119,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      * @param subName  截取的字符串
      * @param text     content 字符串
      */
-    private void handleSuffix(HttpData httpData, String subName, String text,Integer sort) throws Exception {
+    private void handleSuffix(HttpData httpData, String subName, String text, Integer sort) throws Exception {
         List<String> reqs = flagResponse(text);
         int blank = 0;
         for (int i = 0; i < reqs.size(); i++) {
@@ -103,7 +128,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
                 blank++;
                 continue;
             }
-            String textError = fixSuffixData(httpData, req, i - blank,sort);
+            String textError = fixSuffixData(httpData, req, i - blank, sort);
             if (null != textError) {
                 //TODO 输出错误日志
                 throw new Exception(textError + ":\n" + subName + "\n" + req + "\n");
@@ -113,6 +138,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
 
     /**
      * 判断字节数组是否符合规范
+     *
      * @param bytes 判断的数组
      * @return boolean
      */
@@ -123,15 +149,14 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         return HttpConstant.legelHeader.contains(head);
     }
 
-    private void setSubName(String subName,HttpData httpData){
+    private void setSubName(String subName, HttpData httpData) {
         httpData.setSubName(subName.substring(0, subName.lastIndexOf(StringUtils.DEFAULT_SEP)));
     }
-
 
     /**
      * 如果不在outputmap中 补充httpData的属性
      * 0.syn 1.fin 2.captime_n 3. endtime_n 4.uppkt 5.upbyte 6.downpkt 7.downbyte
-     *  8.clientIp 9.serverIp
+     * 8.clientIp 9.serverIp
      * 10. serverPort 11.clientPort 12.source 13.targetName
      * 14.imsi 15.imei 16.msisdn
      * 17 clientIpOuter,
@@ -143,6 +168,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      * 23. serverId
      * 24.outformMac
      * 25.isResponse
+     *
      * @param httpData 一条数据
      */
     private void fixHttpData(HttpData httpData, String subName) {
@@ -184,42 +210,16 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         this.httpLineSupport.isForeign(httpData.getServerIp());
     }
 
-
-    /**
-     * 用来对http的正文进行标记，从而便于后面进行分割。
-     * 适用于型似"POST xxxx"和"POST\n xxxx"的http
-     * PUT HEAD DELETE OPTIONS GET POST HTTP/1.1
-     * @param http http全文
-     *             //     * @param flag 后文将用于分割的标志位
-     */
-    static List<String> flagResponse(String http) {
-        String flag = "\07\08\09";
-        String[] splited = http.replace("POST /", flag + "POST /").
-                replace("HTTP/1.1 2", flag + "HTTP/1.1 2").
-                replace("HTTP/1.1 1", flag + "HTTP/1.1 1").
-                replace("HTTP/1.0 2", flag + "HTTP/1.0 2").
-                replace("HTTP/1.0 1", flag + "HTTP/1.0 1").
-                replace("GET /", flag + "GET /").
-                replace("HTTP/1.1\n2", flag + "HTTP/1.1 2").
-                replace("HTTP/1.1\n1", flag + "HTTP/1.1 1").
-                replace("HTTP/1.0\n2", flag + "HTTP/1.0 2").
-                replace("HTTP/1.0\n1", flag + "HTTP/1.0 1").
-                replace("POST\n/", flag + "POST /").
-                replace("GET\n/", flag + "GET /").
-                split(flag);
-        return Arrays.asList(splited);
-    }
-
     /**
      * 为截取的content封装属性
      *
      * @param httpData httpData
      * @param text     content数据
      * @param index    循环的角标
-     * @param sort  在文件的位置
+     * @param sort     在文件的位置
      * @return 错误信息
      */
-    private String fixSuffixData(HttpData httpData, String text, Integer index,Integer sort) {
+    private String fixSuffixData(HttpData httpData, String text, Integer index, Integer sort) {
         HttpMeta meta;
         /*
         进来的时候肯定没有httpMeta？
@@ -305,7 +305,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         return null;
     }
 
-    private Set<String> getLegelHeader(){
+    private Set<String> getLegelHeader() {
         return new HashSet<String>() {{
             add("GET ");
             add("POST");

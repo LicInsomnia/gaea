@@ -9,14 +9,15 @@ import com.alibaba.fastjson.JSONObject;
 public class AssetConfigs {
 
 
-
-    public static JSONObject detectorClient(JSONObject assetJson){
-            return assetJson;
-    }
-    public static JSONObject detectorServer(JSONObject assetJson){
+    public static JSONObject detectorClient(JSONObject assetJson) {
         return assetJson;
     }
-    public static JSONObject detectorClientAndServer(JSONObject assetJson){
+
+    public static JSONObject detectorServer(JSONObject assetJson) {
+        return assetJson;
+    }
+
+    public static JSONObject detectorClientAndServer(JSONObject assetJson) {
         return assetJson;
     }
 

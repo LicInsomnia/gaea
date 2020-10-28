@@ -1,15 +1,11 @@
 package com.tincery.gaea.api.dm;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -58,8 +54,6 @@ public class AssetCondition extends SimpleBaseDO {
         List<FieldCondition> conditions;
         List<String> certLinks;
     }
-
-
 
 
 }

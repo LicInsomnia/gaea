@@ -17,7 +17,7 @@ public class ImpSessionCsvFilter implements CsvFilter {
         return isImpSession(csvRow);
     }
 
-    private boolean isImpSession(CsvRow csvRow){
+    private boolean isImpSession(CsvRow csvRow) {
         return StringUtils.isNotEmpty(csvRow.get(HeadConst.CSV.TARGET_NAME));
     }
 }

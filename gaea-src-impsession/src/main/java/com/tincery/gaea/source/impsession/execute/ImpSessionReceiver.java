@@ -28,6 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
 
+    private final Map<String, ImpSessionData> impSessionMap = new ConcurrentHashMap<>();
+
     @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
@@ -39,13 +41,10 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
         return HeadConst.SESSION_HEADER;
     }
 
-
     @Autowired
     public void setAnalysis(ImpSessionLineAnalysis analysis) {
         this.analysis = analysis;
     }
-
-    private final Map<String, ImpSessionData> impSessionMap = new ConcurrentHashMap<>();
 
     /**
      * 多线程实现执行  基类默认实现为单线程  同analysisLine 如需要多线程实现 请重写此方法

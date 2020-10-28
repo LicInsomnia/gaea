@@ -15,23 +15,24 @@ public class ObjectUtils {
      * 也可以传一个boolean 表达式  表达式为true 视为此项为null
      * @author gxz
      **/
-    public static boolean allNotNull(Object... objects){
+    public static boolean allNotNull(Object... objects) {
         for (Object object : objects) {
-            if(object == null){
+            if (object == null) {
                 return false;
             }
-            if(object instanceof Boolean && (Boolean) object){
+            if (object instanceof Boolean && (Boolean) object) {
                 return false;
             }
         }
         return true;
     }
+
     /****
      * 参数中存在不为null的值
      **/
-    public static boolean haveNotNull(Object... objects){
+    public static boolean haveNotNull(Object... objects) {
         for (Object object : objects) {
-            if(object !=null){
+            if (object != null) {
                 return true;
             }
         }

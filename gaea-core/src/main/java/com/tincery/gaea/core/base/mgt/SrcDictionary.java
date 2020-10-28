@@ -21,9 +21,8 @@ import java.util.Map;
 public class SrcDictionary implements Dictionary {
 
 
-    private final ConstantComparisonTableDao constantComparisonTableDao;
-
     private static final Map<String, List<String>> DICTIONARY = new HashMap<>();
+    private final ConstantComparisonTableDao constantComparisonTableDao;
 
     @Autowired
     public SrcDictionary(ConstantComparisonTableDao constantComparisonTableDao) {

@@ -9,6 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class GaeaSrcQQApplication {
     public static void main(String[] args) {
-        SpringApplication.run(GaeaSrcQQApplication.class,args);
+        SpringApplication.run(GaeaSrcQQApplication.class, args);
     }
 }

@@ -44,7 +44,7 @@ public class DnsRequest implements InitializationRequired {
     }
 
     @Override
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     public void init() {
         JSONObject jsonObject = new JSONObject((Map) CommonConfig.get("reorganization"));
         Date startTime = jsonObject.getDate("starttime");

@@ -15,7 +15,7 @@ import org.springframework.core.env.Environment;
  * 环境初始化
  **/
 @Slf4j
-@ConfigurationProperties (prefix = "node")
+@ConfigurationProperties(prefix = "node")
 @Setter
 public class GaeaPropertiesInit implements ApplicationListener<ContextRefreshedEvent> {
 

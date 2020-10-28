@@ -15,7 +15,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener (destination = QueueNames.SRC_SSH)
+    @JmsListener(destination = QueueNames.SRC_SSH)
     public void receive(TextMessage textMessage) throws JMSException {
         receiver.receive(textMessage);
     }

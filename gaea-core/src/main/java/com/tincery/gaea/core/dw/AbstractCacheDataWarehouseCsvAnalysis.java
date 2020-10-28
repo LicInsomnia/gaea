@@ -13,29 +13,29 @@ import java.util.Map;
 public abstract class AbstractCacheDataWarehouseCsvAnalysis implements DataWarehouseLineMultiAnalysis {
 
 
-    final Map<Class<? extends MergeAble>,Integer> indexMap;
+    final Map<Class<? extends MergeAble>, Integer> indexMap;
 
-    final Map<String,MergeAble>[] cacheMap;
+    final Map<String, MergeAble>[] cacheMap;
 
     protected AbstractCacheDataWarehouseCsvAnalysis(@NotNull Class<MergeAble>... clazz) {
-        indexMap = new HashMap<>(clazz.length/3*4+1);
+        indexMap = new HashMap<>(clazz.length / 3 * 4 + 1);
         cacheMap = new HashMap[clazz.length];
         for (int i = 0; i < clazz.length; i++) {
-            indexMap.put(clazz[i],i);
+            indexMap.put(clazz[i], i);
             cacheMap[i] = new HashMap<>();
         }
     }
 
 
-    public void append(CsvRow csvRow){
+    public void append(CsvRow csvRow) {
         MergeAble[] packs = this.pack(csvRow);
         for (MergeAble pack : packs) {
             Map<String, MergeAble> cache = cacheMap[indexMap.get(pack.getClass())];
-            if(cache.containsKey(pack.getId())){
+            if (cache.containsKey(pack.getId())) {
                 MergeAble mergeAble = cache.get(pack.getId());
                 mergeAble.merge(pack);
-            }else{
-                cache.put(pack.getId(),pack);
+            } else {
+                cache.put(pack.getId(), pack);
             }
         }
     }

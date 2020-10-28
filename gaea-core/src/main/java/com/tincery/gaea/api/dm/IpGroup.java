@@ -12,7 +12,6 @@ import java.util.List;
  * 包含一个IP或者一个IP段
  * IP对应一个或多个协议组
  * 一个协议组包含一个协议和 0到多个端口
- *
  **/
 @Setter
 @Getter

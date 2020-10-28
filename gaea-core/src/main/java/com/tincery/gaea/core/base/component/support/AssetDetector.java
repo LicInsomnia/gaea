@@ -24,8 +24,6 @@ import java.util.Map;
 public class AssetDetector implements InitializationRequired {
 
 
-    @Autowired
-    private AssetConfigDao assetConfigDao;
     /**
      * assetFlag = 0:不是资产
      * assetFlag = 1:客户端资产
@@ -33,8 +31,9 @@ public class AssetDetector implements InitializationRequired {
      * assetFlag = 3:都是资产
      */
     private final Map<Long, AssetConfigDO> uniqueAssetMap = new HashMap<>();
-
     private final Map<Pair<Long, Long>, AssetConfigDO> rangeAssetMap = new HashMap<>();
+    @Autowired
+    private AssetConfigDao assetConfigDao;
 
     /****
      * 匹配IP是否是资产

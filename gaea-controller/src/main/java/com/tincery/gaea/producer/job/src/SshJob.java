@@ -17,7 +17,7 @@ import javax.jms.Queue;
 public class SshJob extends QuartzJobBean {
 
 
-    @Resource (name = QueueNames.SRC_SSH)
+    @Resource(name = QueueNames.SRC_SSH)
     private Queue sshQueue;
     @Autowired
     private SrcProducer srcProducer;
@@ -25,6 +25,6 @@ public class SshJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-            this.srcProducer.producer(this.sshQueue, "ssh", ".txt");
+        this.srcProducer.producer(this.sshQueue, "ssh", ".txt");
     }
 }

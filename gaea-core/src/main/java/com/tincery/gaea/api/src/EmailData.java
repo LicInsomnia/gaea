@@ -18,17 +18,14 @@ import java.util.Set;
 
 @Setter
 @Getter
-public class EmailData extends AbstractSrcData implements Cloneable{
+public class EmailData extends AbstractSrcData implements Cloneable {
 
+    List<String> attachSuffixList;
+    List<Communication> emailDataList;
+    Communication emailData;
     private List<String> rcpt;
     private Location clientLocation;
     private Location serverLocation;
-    List<String> attachSuffixList;
-
-    List<Communication> emailDataList;
-
-    Communication emailData;
-
 
     @Override
     public String toCsv(char splitChar) {
@@ -40,14 +37,13 @@ public class EmailData extends AbstractSrcData implements Cloneable{
     }
 
 
-
     public List<EmailData> split() {
-        List<EmailData> result  = new ArrayList<>(this.emailDataList.size());
+        List<EmailData> result = new ArrayList<>(this.emailDataList.size());
         this.setEmailDataList(null);
         for (Communication emailDatum : this.emailDataList) {
-                EmailData tempData =  this.clone();
-                tempData.setEmailData(emailDatum);
-                result.add(tempData);
+            EmailData tempData = this.clone();
+            tempData.setEmailData(emailDatum);
+            result.add(tempData);
         }
         return result;
     }
@@ -92,7 +88,7 @@ public class EmailData extends AbstractSrcData implements Cloneable{
     @Setter
     @Getter
     @ToString
-    public static class Communication implements Serializable{
+    public static class Communication implements Serializable {
         private Set<String> domain = new HashSet<>();
         private Set<String> domainTag = new HashSet<>();
         private List<Document> language = new ArrayList<>();

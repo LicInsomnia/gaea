@@ -31,24 +31,24 @@ public class CertDao extends SimpleBaseDaoImpl<CertDo> {
     }
 
     @Override
-    @Resource(name="proMongoTemplate")
+    @Resource(name = "proMongoTemplate")
     protected void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public JSONObject findOneById(String id, String... projections){
+    public JSONObject findOneById(String id, String... projections) {
         Query query = new Query(Criteria.where("_id").is(id));
         Field fields = query.fields();
         for (String projection : projections) {
             fields.include(projection);
         }
         fields.exclude("_id");
-        return this.mongoTemplate.findOne(query,JSONObject.class,this.getDbName());
+        return this.mongoTemplate.findOne(query, JSONObject.class, this.getDbName());
     }
 
-    public JSONObject findOneById(String id){
+    public JSONObject findOneById(String id) {
         Query query = new Query(Criteria.where("_id").is(id));
-        return this.mongoTemplate.findOne(query,JSONObject.class,this.getDbName());
+        return this.mongoTemplate.findOne(query, JSONObject.class, this.getDbName());
     }
 
 

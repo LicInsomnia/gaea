@@ -10,6 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class GaeaSrcHttpApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GaeaSrcHttpApplication.class,args);
+        SpringApplication.run(GaeaSrcHttpApplication.class, args);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext;
 
 import javax.jms.MessageNotWriteableException;
 
-@SpringBootTest (classes = GaeaDwReorganizationApplication.class)
+@SpringBootTest(classes = GaeaDwReorganizationApplication.class)
 public class Test {
 
     @Autowired

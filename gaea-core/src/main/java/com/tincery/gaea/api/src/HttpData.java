@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Setter
 public class HttpData extends AbstractSrcData {
 
+    public List<HttpMeta> metas;
     private List<String> host;
     private List<String> method;
     private List<String> urlRoot;
@@ -37,7 +38,6 @@ public class HttpData extends AbstractSrcData {
      * 用来保存上下行数据
      */
     private String payload;
-
     /**
      * 用来保存sub 截取的key
      */
@@ -47,8 +47,6 @@ public class HttpData extends AbstractSrcData {
      */
     private String subName;
 
-    public List<HttpMeta> metas;
-
     @Override
     public void adjust() {
         super.adjust();
@@ -56,13 +54,13 @@ public class HttpData extends AbstractSrcData {
         adjustHttpData();
     }
 
-    private void adjustHttpData(){
-        if (Objects.isNull(this.metas)){
+    private void adjustHttpData() {
+        if (Objects.isNull(this.metas)) {
             return;
         }
         this.host = this.metas.stream().map(HttpMeta::getHost).collect(Collectors.toList());
         this.host = fixCollection(this.host);
-        this.method = this.metas.stream().filter(item-> item.getMethod().toString().contains(">>"))
+        this.method = this.metas.stream().filter(item -> item.getMethod().toString().contains(">>"))
                 .map(HttpMeta::getMethod).map(Object::toString).collect(Collectors.toList());
         this.method = fixCollection(this.method);
         this.urlRoot = this.metas.stream().map(HttpMeta::getUrlRoot).collect(Collectors.toList());
@@ -70,21 +68,21 @@ public class HttpData extends AbstractSrcData {
         this.userAgent = this.metas.stream().map(HttpMeta::getUserAgent).collect(Collectors.toList());
         this.userAgent = fixCollection(this.userAgent);
 
-        this.contentLength = this.metas.stream().mapToInt(httpMeta->{
-            if (httpMeta.getResponseContentLength()!=null && httpMeta.getResponseContentLength()!=0){
+        this.contentLength = this.metas.stream().mapToInt(httpMeta -> {
+            if (httpMeta.getResponseContentLength() != null && httpMeta.getResponseContentLength() != 0) {
                 return httpMeta.getResponseContentLength();
-            }else if (httpMeta.getRequestContentLength()!=null && httpMeta.getRequestContentLength()!=0){
+            } else if (httpMeta.getRequestContentLength() != null && httpMeta.getRequestContentLength() != 0) {
                 return httpMeta.getRequestContentLength();
-            }else{
+            } else {
                 return 0;
             }
         }).sum();
 
     }
+
     /**
      * 整理Meta链表数据，调整顺序
      * 合并字段
-     *
      */
     private void adjustMetas() {
         if (Objects.isNull(this.getMetas())) {
@@ -113,7 +111,7 @@ public class HttpData extends AbstractSrcData {
          */
         ArrayList<HttpMeta> result = new ArrayList<>();
 
-        int index = Math.min(requestList.size(),responseList.size());
+        int index = Math.min(requestList.size(), responseList.size());
 
         for (int i = 0; i < index; i++) {
             HttpMeta request = requestList.get(i);
@@ -124,15 +122,16 @@ public class HttpData extends AbstractSrcData {
         /*
         处理剩余的请求和响应
          */
-        if (index!=requestList.size()){
+        if (index != requestList.size()) {
             result.addAll(requestList);
-        }else if (index!= responseList.size()){
+        } else if (index != responseList.size()) {
             result.addAll(responseList);
         }
         this.setMetas(result);
     }
-    private HttpMeta fixContentAndOther(HttpMeta request,HttpMeta response){
-        request.setContent(request.getRequest() + HeadConst.GORGEOUS_DIVIDING_LINE +"\r\n"+ response.getResponse());
+
+    private HttpMeta fixContentAndOther(HttpMeta request, HttpMeta response) {
+        request.setContent(request.getRequest() + HeadConst.GORGEOUS_DIVIDING_LINE + "\r\n" + response.getResponse());
         request.setRepHeaders(response.repHeaders);
         request.setMethod(request.getMethod().append((">>")).append(response.getMethod()));
         return request;
@@ -149,8 +148,8 @@ public class HttpData extends AbstractSrcData {
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
-    private List<String> httpMetaToJsonString(List<HttpMeta> metaList){
-        if (CollectionUtils.isEmpty(metaList)){
+    private List<String> httpMetaToJsonString(List<HttpMeta> metaList) {
+        if (CollectionUtils.isEmpty(metaList)) {
             return null;
         }
         ArrayList<String> result = new ArrayList<>();
@@ -164,16 +163,16 @@ public class HttpData extends AbstractSrcData {
      */
     public void merge(HttpData httpData) {
         List<HttpMeta> newMetas = this.getMetas();
-        if (CollectionUtils.isEmpty(newMetas)){
+        if (CollectionUtils.isEmpty(newMetas)) {
             newMetas = new ArrayList<>();
         }
         List<HttpMeta> oldMetas = httpData.getMetas();
-        if (CollectionUtils.isEmpty(oldMetas)){
+        if (CollectionUtils.isEmpty(oldMetas)) {
             oldMetas = new ArrayList<>();
         }
         newMetas.addAll(oldMetas);
         this.setMetas(newMetas);
-        this.setCapTime(Math.min(this.getCapTime(),httpData.getCapTime()));
+        this.setCapTime(Math.min(this.getCapTime(), httpData.getCapTime()));
 
         long endTime = Math.max(this.getCapTime() + this.getDuration(), httpData.getCapTime() + httpData.getDuration());
         this.setDuration(endTime - this.getCapTime());
@@ -184,13 +183,13 @@ public class HttpData extends AbstractSrcData {
     public List<JSONObject> toJsonObjects() {
         List<JSONObject> result = new ArrayList<>();
         List<HttpMeta> metas = this.getMetas();
-        if (CollectionUtils.isEmpty(metas)){
+        if (CollectionUtils.isEmpty(metas)) {
             metas = new ArrayList<>();
         }
         for (HttpMeta meta : metas) {
             HttpElement element = new HttpElement();
-            element.init(this,meta);
-            if (element.getIsMalformed()){
+            element.init(this, meta);
+            if (element.getIsMalformed()) {
                 continue;
             }
             JSONObject jsonObject = (JSONObject) JSONObject.toJSON(element);
@@ -199,8 +198,8 @@ public class HttpData extends AbstractSrcData {
         return result;
     }
 
-    private List<String> fixCollection(List<String> collection){
-        if (CollectionUtils.isEmpty(collection)){
+    private List<String> fixCollection(List<String> collection) {
+        if (CollectionUtils.isEmpty(collection)) {
             collection = new ArrayList<>();
         }
         return collection;

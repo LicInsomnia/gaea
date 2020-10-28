@@ -53,6 +53,7 @@ public class SslData extends AbstractSrcData {
         Object[] join = new Object[]{
                 super.toCsv(splitChar), this.duration, this.syn, this.fin,
                 this.malformedUpPayload, this.malformedDownPayload,
+                this.completeSession,
                 this.sslExtension.toCsv(splitChar),
                 JSONObject.toJSONString(this.sslExtension)
         };

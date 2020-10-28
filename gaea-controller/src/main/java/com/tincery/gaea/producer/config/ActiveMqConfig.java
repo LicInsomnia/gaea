@@ -30,31 +30,38 @@ public class ActiveMqConfig {
         return new ActiveMQQueue(QueueNames.SRC_IMPSESSION);
     }
 
-    @Bean (name = QueueNames.SRC_SSL)
+    @Bean(name = QueueNames.SRC_SSL)
     public Queue getSrcSsl() {
         return new ActiveMQQueue(QueueNames.SRC_SSL);
     }
 
-    @Bean (name = QueueNames.SRC_DNS)
+    @Bean(name = QueueNames.SRC_OPENVPN)
+    public Queue getSrcOpenVpn() {
+        return new ActiveMQQueue(QueueNames.SRC_OPENVPN);
+    }
+
+    @Bean(name = QueueNames.SRC_DNS)
     public Queue getSrcDns() {
         return new ActiveMQQueue(QueueNames.SRC_DNS);
     }
 
-    @Bean (name = QueueNames.SRC_HTTP)
+    @Bean(name = QueueNames.SRC_HTTP)
     public Queue getSrcHttp() {
         return new ActiveMQQueue(QueueNames.SRC_HTTP);
     }
 
-    @Bean (name = QueueNames.SRC_EMAIL)
+    @Bean(name = QueueNames.SRC_EMAIL)
     public Queue getSrcEmail() {
         return new ActiveMQQueue(QueueNames.SRC_EMAIL);
     }
 
-    @Bean (name = QueueNames.DW_REORGANIZATION)
+    @Bean(name = QueueNames.DW_REORGANIZATION)
     public Queue getDwReorganization() {
         return new ActiveMQQueue(QueueNames.DW_REORGANIZATION);
     }
 
     @Bean(name = QueueNames.SRC_SSH)
-    public Queue getSrcSsh(){return new ActiveMQQueue(QueueNames.SRC_SSH);}
+    public Queue getSrcSsh() {
+        return new ActiveMQQueue(QueueNames.SRC_SSH);
+    }
 }

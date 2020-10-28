@@ -28,10 +28,6 @@ public class SslExtension {
      */
     protected String serverName;
     /**
-     * 证书认证模式：证书单向认证（只有一方证书链：false），证书双向认证（有双方证书链：true），无证书认证（无证书链：null）
-     */
-    protected Boolean daulAuth;
-    /**
      * 协议版本 ssl_version
      */
     protected String version;
@@ -101,7 +97,7 @@ public class SslExtension {
         String cipherSuites = null == this.cipherSuite ? "" : this.cipherSuite.toCsv(splitChar);
         Object[] join = new Object[]{
                 handshake,
-                this.hasApplicationData, this.serverName, this.daulAuth,
+                this.hasApplicationData, this.serverName,
                 this.version, cipherSuites, this.sha1,
                 SourceFieldUtils.formatCollection(this.clientCerChain),
                 this.clientJA3, this.clientFingerPrint, this.clientCipherSuites, this.clientHashAlgorithms,

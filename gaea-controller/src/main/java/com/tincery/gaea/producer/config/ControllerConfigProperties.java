@@ -12,17 +12,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ControllerConfigProperties {
 
-    private SrcConfig src;
-    private DataWarehouseConfig datawarehouse;
-
+    private SourceConfig source;
+    private DataWarehouseConfig dataWarehouse;
 
     @Setter
     @Getter
-    public static class SrcConfig {
+    public static class SourceConfig {
         private String flow;
         private String session;
-        private String impsession;
+        private String impSession;
         private String ssl;
+        private String openVpn;
         private String email;
         private String http;
         private String dns;
@@ -34,8 +34,5 @@ public class ControllerConfigProperties {
     public static class DataWarehouseConfig {
         private String reorganization;
     }
-
-
-
 
 }

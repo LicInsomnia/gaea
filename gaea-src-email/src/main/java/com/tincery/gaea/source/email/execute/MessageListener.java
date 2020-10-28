@@ -15,7 +15,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener (destination = QueueNames.SRC_EMAIL)
+    @JmsListener(destination = QueueNames.SRC_EMAIL)
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println("接收到了内容");
         receiver.receive(textMessage);

@@ -2,7 +2,6 @@ package com.tincery.gaea.core.src;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com Src层通用配置

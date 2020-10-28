@@ -131,8 +131,8 @@ public class FileUtils {
         return readLine(new File(fileName));
     }
 
-    public static Map<String, Pair<Integer,byte[]>> readByteArray(File file){
-        Map<String, Pair<Integer,byte[]>> mapContent = new LinkedHashMap<>();
+    public static Map<String, Pair<Integer, byte[]>> readByteArray(File file) {
+        Map<String, Pair<Integer, byte[]>> mapContent = new LinkedHashMap<>();
         if (null == file || (!file.exists()) || file.isDirectory()) {
             return new HashMap<>();
         }
@@ -164,7 +164,7 @@ public class FileUtils {
                 byte[] bufferValue = new byte[targetLength];
                 System.arraycopy(records, i, bufferValue, 0, targetLength);
                 i += targetLength;
-                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index,bufferValue));
+                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index, bufferValue));
                 index++;
             }
             return mapContent.isEmpty() ? null : mapContent;
@@ -174,8 +174,6 @@ public class FileUtils {
             return new HashMap<>();
         }
     }
-
-
 
 
     public static boolean delFile(File file) {
@@ -215,7 +213,7 @@ public class FileUtils {
         // 目前默认是1分钟一个文件 所以不用取整  如果以后输出间隔改了   此处需要取整
         String dirName = DateUtils.format(capTime, "yyyyMMdd");
         String fileName = category + "_" + DateUtils.format(capTime, "yyyyMMddHHmm") + "." + nodeName + ".csv";
-        return "/" + dirName + "/" +fileName;
+        return "/" + dirName + "/" + fileName;
     }
 
 

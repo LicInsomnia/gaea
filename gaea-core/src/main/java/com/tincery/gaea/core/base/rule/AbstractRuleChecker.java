@@ -8,7 +8,10 @@ import com.tincery.gaea.api.src.AbstractSrcData;
 import com.tincery.gaea.api.src.SshData;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author gongxuanzhang
@@ -31,6 +34,17 @@ public abstract class AbstractRuleChecker {
         this.ruleValue = srcRuleDO.getRuleValue();
         this.mode = srcRuleDO.getMode();
         this.range = srcRuleDO.getRange();
+    }
+
+    public static void main(String[] args) throws Exception {
+        Class<?> clazz = SshData.class;
+        Class<?> srcDataClass = SshData.class;
+        while (srcDataClass != AbstractMetaData.class) {
+            srcDataClass = srcDataClass.getSuperclass();
+        }
+        Field targetName = srcDataClass.getDeclaredField("targetName");
+
+        System.out.println(targetName);
     }
 
     /****
@@ -96,17 +110,6 @@ public abstract class AbstractRuleChecker {
                 return false;
         }
 
-    }
-
-    public static void main(String[] args) throws Exception {
-        Class<?> clazz = SshData.class;
-        Class<?> srcDataClass = SshData.class;
-        while (srcDataClass != AbstractMetaData.class) {
-            srcDataClass = srcDataClass.getSuperclass();
-        }
-        Field targetName = srcDataClass.getDeclaredField("targetName");
-
-        System.out.println(targetName);
     }
 
 

@@ -28,13 +28,21 @@ public abstract class AbstractMetaData extends GaeaData {
      * 数据采集时间
      */
     public Long capTime;
-    /** 用户标识 */
+    /**
+     * 用户标识
+     */
     protected String userId;
-    /** 服务端标识 */
+    /**
+     * 服务端标识
+     */
     protected String serverId;
-    /** 协议名 */
+    /**
+     * 协议名
+     */
     protected String proName;
-    /** 内外层五元组相关 */
+    /**
+     * 内外层五元组相关
+     */
     protected Integer protocol;
     protected String clientMac;
     protected String serverMac;

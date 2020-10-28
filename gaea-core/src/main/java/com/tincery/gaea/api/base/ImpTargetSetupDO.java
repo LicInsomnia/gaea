@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Data
 public class ImpTargetSetupDO extends SimpleBaseDO {
-        @Id
+    @Id
     private String id;
     /**
      * 组名
@@ -42,7 +42,7 @@ public class ImpTargetSetupDO extends SimpleBaseDO {
     private String name;
     /***自定义的键值对**/
     @Field("custom_map")
-    private List<KV>  customMap;
+    private List<KV> customMap;
     /**
      * 最后时间
      **/
@@ -74,7 +74,7 @@ public class ImpTargetSetupDO extends SimpleBaseDO {
 
     @Setter
     @Getter
-    public static class TargetInfo{
+    public static class TargetInfo {
         private String name;
         private List<String> ip;
         private List<String> adsl;

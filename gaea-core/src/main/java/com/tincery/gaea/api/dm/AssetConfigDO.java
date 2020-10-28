@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
-import java.util.*;
+
+import java.util.List;
 
 /**
  * @author gxz

@@ -36,7 +36,7 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
 
     @Autowired
     private PassRule passRule;
-    @Resource (name = "sysMongoTemplate")
+    @Resource(name = "sysMongoTemplate")
     private MongoTemplate sysMongoTemplate;
 
 

@@ -20,11 +20,8 @@ public class CsvReader {
     private final File csv;
 
     private final Map<String, Integer> headIndex;
-
-    private List<CsvFilter> csvFilterList;
-
     private final BufferedReader csvBufferedReader;
-
+    private List<CsvFilter> csvFilterList;
     private Map<Class<? extends CsvFilter>, Queue<CsvRow>> filterRows;
 
     private Map<Class<? extends CsvFilter>, BlockingQueue<CsvRow>> blockFilterRows;
@@ -111,7 +108,7 @@ public class CsvReader {
     }
 
     private void registerSimpleFilter(List<CsvFilter> csvFilters) {
-        if(CollectionUtils.isEmpty(csvFilters)){
+        if (CollectionUtils.isEmpty(csvFilters)) {
             return;
         }
         if (this.filterRows == null) {
@@ -167,7 +164,7 @@ public class CsvReader {
         return csvRow;
     }
 
-    public CsvRow nextRow(Class<? extends CsvFilter> clazz)  {
+    public CsvRow nextRow(Class<? extends CsvFilter> clazz) {
         if (this.csvFilterList == null) {
             throw new NullPointerException(clazz + "此过滤器没注册");
         }
@@ -198,7 +195,7 @@ public class CsvReader {
         }
 
         public CsvReaderBuilder registerFilter(List<CsvFilter> csvFilters) {
-            if(CollectionUtils.isEmpty(csvFilters)){
+            if (CollectionUtils.isEmpty(csvFilters)) {
                 return this;
             }
             if (this.csvFilterList == null) {

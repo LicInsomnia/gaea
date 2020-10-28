@@ -35,18 +35,16 @@ public class AssetDataDTO extends SimpleBaseDO {
     private Long upByte;
     private Long upPkt;
     private List<AssetClient> clients;
-    private Map<String,Object> extensions;
+    private Map<String, Object> extensions;
 
     @Setter
     @Getter
-    private static class AssetClient{
+    private static class AssetClient {
         private String clientIp;
         private String country;
         private boolean foreign;
         private Long value;
     }
-
-
 
 
 }

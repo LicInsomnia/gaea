@@ -46,34 +46,34 @@ public class CloudServerIpSelector implements InitializationRequired {
     @Override
     public void init() {
         List<CloudConfigDO> all = cloudConfigDao.findAll();
-        if(CollectionUtils.isEmpty(all)){
+        if (CollectionUtils.isEmpty(all)) {
             throw new InitException("cloud_config 为空");
         }
         List<CloudServerIp> collect = all.stream().map(CloudServerIp::new)
-                .filter(cloud->cloud.ip!=-1).sorted().collect(Collectors.toList());
+                .filter(cloud -> cloud.ip != -1).sorted().collect(Collectors.toList());
         this.services = collect.toArray(new CloudServerIp[]{});
-        log.info("cloud_config 加载了{}组条件",services.length);
+        log.info("cloud_config 加载了{}组条件", services.length);
     }
 
-    private static class CloudServerIp implements Comparable<CloudServerIp>{
+    private static class CloudServerIp implements Comparable<CloudServerIp> {
         long ip;
         int mask;
         String service;
 
-        CloudServerIp(CloudConfigDO cloudConfigDO) throws NumberFormatException{
+        CloudServerIp(CloudConfigDO cloudConfigDO) throws NumberFormatException {
             String id = cloudConfigDO.getId();
-            try{
-                if(id.contains("/")){
+            try {
+                if (id.contains("/")) {
                     this.ip = ToolUtils.IP2long(id.split("/")[0]);
                     this.mask = 32 - Integer.parseInt(id.split("/")[1]);
-                }else{
+                } else {
                     this.ip = ToolUtils.IP2long(id);
                     this.mask = 32;
                     this.service = cloudConfigDO.getService();
                 }
-            }catch (Exception ignore){
+            } catch (Exception ignore) {
                 this.ip = -1;
-                log.error("遇到cloud_config表初始化问题{}",id+"无法解析");
+                log.error("遇到cloud_config表初始化问题{}", id + "无法解析");
             }
 
 
@@ -85,7 +85,8 @@ public class CloudServerIpSelector implements InitializationRequired {
             return compare(o.ip);
 
         }
-        public int compare(long ipN){
+
+        public int compare(long ipN) {
             return Long.compareUnsigned(this.ip, ipN >> this.mask << this.mask);
         }
     }

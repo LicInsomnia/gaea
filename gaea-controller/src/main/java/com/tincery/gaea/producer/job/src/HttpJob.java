@@ -17,7 +17,7 @@ import javax.jms.Queue;
 public class HttpJob extends QuartzJobBean {
 
 
-    @Resource (name = QueueNames.SRC_HTTP)
+    @Resource(name = QueueNames.SRC_HTTP)
     private Queue httpQueue;
     @Autowired
     private SrcProducer srcProducer;
@@ -25,6 +25,6 @@ public class HttpJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-            this.srcProducer.producer(this.httpQueue, "http", ".txt");
+        this.srcProducer.producer(this.httpQueue, "http", ".txt");
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.jms.annotation.EnableJms;
 /**
  * @author gongxuanzhang
  */
-@SpringBootApplication (exclude = {GaeaCoreAutoConfiguration.class})
+@SpringBootApplication(exclude = {GaeaCoreAutoConfiguration.class})
 @EnableJms
 @EnableDiscoveryClient
 public class GaeaControllerApplication {

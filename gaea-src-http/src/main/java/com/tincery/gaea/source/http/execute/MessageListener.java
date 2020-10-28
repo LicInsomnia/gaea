@@ -15,7 +15,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener (destination = QueueNames.SRC_HTTP)
+    @JmsListener(destination = QueueNames.SRC_HTTP)
     public void receive(TextMessage textMessage) throws JMSException {
         receiver.receive(textMessage);
     }

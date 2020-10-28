@@ -17,7 +17,7 @@ public class DataWarehouseRunController {
 
     private static MongoTemplate mongoTemplate;
 
-    @Resource (name = "sysMongoTemplate")
+    @Resource(name = "sysMongoTemplate")
     private MongoTemplate sysMongoTemplate;
 
     public static JSONObject getRunConfig(String category) {

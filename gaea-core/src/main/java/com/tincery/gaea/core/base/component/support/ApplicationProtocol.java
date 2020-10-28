@@ -27,9 +27,9 @@ public class ApplicationProtocol implements InitializationRequired {
     @Resource(name = "sysMongoTemplate")
     private MongoTemplate sysMongoTemplate;
 
-    private Map<String, ApplicationInformationBO> key2App = new HashMap<>();
+    private final Map<String, ApplicationInformationBO> key2App = new HashMap<>();
 
-    private Map<String, Boolean> app2IsEnc = new HashMap<>();
+    private final Map<String, Boolean> app2IsEnc = new HashMap<>();
 
     public final Map<String, ApplicationInformationBO> getKey2App() {
         return this.key2App;
@@ -43,17 +43,17 @@ public class ApplicationProtocol implements InitializationRequired {
         return this.key2App.getOrDefault(key, null);
     }
 
-    public String getProNameOrDefault(String key, String defaultProName){
+    public String getProNameOrDefault(String key, String defaultProName) {
         ApplicationInformationBO orDefault = this.key2App.getOrDefault(key, null);
-        if(orDefault == null){
+        if (orDefault == null) {
             return defaultProName;
-        }else{
+        } else {
             return orDefault.getProName();
         }
     }
 
-    public String getProName(String key){
-        if(this.key2App.containsKey(key)){
+    public String getProName(String key) {
+        if (this.key2App.containsKey(key)) {
             return this.key2App.get(key).getProName();
         }
         return null;
@@ -62,7 +62,7 @@ public class ApplicationProtocol implements InitializationRequired {
     @Override
     public void init() {
         log.info("开始加载application protocol ...");
-        List<ApplicationInformationBO> all = sysMongoTemplate.findAll(ApplicationInformationBO.class,"application_protocol");
+        List<ApplicationInformationBO> all = sysMongoTemplate.findAll(ApplicationInformationBO.class, "application_protocol");
         for (ApplicationInformationBO applicationInformationBO : all) {
             this.key2App.put(applicationInformationBO.getId(), applicationInformationBO);
             String proName = applicationInformationBO.getTitle();

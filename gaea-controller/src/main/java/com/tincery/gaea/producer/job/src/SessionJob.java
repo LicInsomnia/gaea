@@ -17,7 +17,7 @@ import javax.jms.Queue;
 public class SessionJob extends QuartzJobBean {
 
 
-    @Resource (name = QueueNames.SRC_SESSION)
+    @Resource(name = QueueNames.SRC_SESSION)
     private Queue sessionQueue;
     @Autowired
     private SrcProducer srcProducer;
@@ -25,6 +25,6 @@ public class SessionJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-            this.srcProducer.producer(this.sessionQueue, "session", ".txt");
+        this.srcProducer.producer(this.sessionQueue, "session", ".txt");
     }
 }

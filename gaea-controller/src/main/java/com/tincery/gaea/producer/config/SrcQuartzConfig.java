@@ -30,7 +30,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "flow")
     public Trigger flowJobTrigger() {
-        String cron = controllerConfigProperties.getSrc().getFlow();
+        String cron = controllerConfigProperties.getSource().getFlow();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sessionJob())
@@ -51,7 +51,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "session")
     public Trigger sessionJobTrigger() {
-        String cron = controllerConfigProperties.getSrc().getSession();
+        String cron = controllerConfigProperties.getSource().getSession();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sessionJob())
@@ -72,7 +72,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "impsession")
     public Trigger impsessionJobTrigger() {
-        String cron = controllerConfigProperties.getSrc().getImpsession();
+        String cron = controllerConfigProperties.getSource().getImpSession();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(impsessionJob())
@@ -93,7 +93,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "http")
     public Trigger httpJobTrigger() {
-        String cron = controllerConfigProperties.getSrc().getHttp();
+        String cron = controllerConfigProperties.getSource().getHttp();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(httpJob())
@@ -114,7 +114,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "dns")
     public Trigger dnsJobTrigger() {
-        String cron = controllerConfigProperties.getSrc().getDns();
+        String cron = controllerConfigProperties.getSource().getDns();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(dnsJob())
@@ -135,11 +135,32 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "ssl")
     public Trigger sslJobTrigger() {
-        String cron = controllerConfigProperties.getSrc().getSsl();
+        String cron = controllerConfigProperties.getSource().getSsl();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sslJob())
                 .withIdentity("sslJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "openvpn")
+    public JobDetail openVpnJob() {
+        return JobBuilder.newJob(OpenVpnJob.class)
+                .withIdentity("openVpnJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "openVpn")
+    public Trigger openVpnJobTrigger() {
+        String cron = controllerConfigProperties.getSource().getOpenVpn();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(sslJob())
+                .withIdentity("openVpnJob")
                 .withSchedule(cronScheduleBuilder)
                 .build();
     }
@@ -156,7 +177,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "email")
     public Trigger emailJobTrigger() {
-        String cron = controllerConfigProperties.getSrc().getEmail();
+        String cron = controllerConfigProperties.getSource().getEmail();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(emailJob())
@@ -177,7 +198,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "ssh")
     public Trigger sshJobTrigger() {
-        String cron = controllerConfigProperties.getSrc().getSsh();
+        String cron = controllerConfigProperties.getSource().getSsh();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sshJob())

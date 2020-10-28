@@ -1,4 +1,3 @@
-
 package com.tincery.gaea.source.email.execute;
 
 
@@ -36,18 +35,13 @@ import java.util.Map;
 public class EmailLineAnalysis implements SrcLineAnalysis<EmailData>, InitializationRequired {
 
 
-    protected Map<String, String> target2Group = new HashMap<>();
-
     private final PayloadDetector payloadDetector;
-
     private final ImpTargetSetupDao impTargetSetupDao;
-
     private final ApplicationProtocol applicationProtocol;
-
+    private final IpChecker ipChecker;
+    protected Map<String, String> target2Group = new HashMap<>();
     @Autowired
     private GroupGetter groupGetter;
-
-    private final IpChecker ipChecker;
 
     public EmailLineAnalysis(PayloadDetector payloadDetector, ImpTargetSetupDao impTargetSetupDao, ApplicationProtocol applicationProtocol, IpChecker ipChecker) {
         this.payloadDetector = payloadDetector;

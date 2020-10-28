@@ -9,6 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class GaeaSrcIsakmpApplication {
     public static void main(String[] args) {
-        SpringApplication.run(GaeaSrcIsakmpApplication.class,args);
+        SpringApplication.run(GaeaSrcIsakmpApplication.class, args);
     }
 }

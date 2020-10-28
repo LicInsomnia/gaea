@@ -30,6 +30,8 @@ import java.util.Map;
 @Slf4j
 public class AlarmRule extends BaseSimpleRule {
 
+    public static final Map<String, AlarmMaterialData> alarmList = new HashMap<>();
+    public static final List<String> eventDataList = new ArrayList<>();
     /**
      * IP地址库
      */
@@ -40,25 +42,12 @@ public class AlarmRule extends BaseSimpleRule {
      */
     @Autowired
     protected AssetDetector assetDetector;
-
-    @Autowired
-    private SrcRuleDao srcRuleDao;
-
-
     /**
      * 告警信息标签
      */
     protected String category;
-
-
-    public static final Map<String, AlarmMaterialData> alarmList = new HashMap<>();
-
-    public static final List<String> eventDataList = new ArrayList<>();
-
-
-    public int alarmCount() {
-        return alarmList.size();
-    }
+    @Autowired
+    private SrcRuleDao srcRuleDao;
 
     public static void writeAlarm(String path, String prefix, int maxLine) {
         if (alarmList.size() == 0) {
@@ -83,25 +72,6 @@ public class AlarmRule extends BaseSimpleRule {
         }
     }
 
-    protected void pushAlarm(AlarmMaterialData alarmMaterialData, String keyStr) {
-        alarmMaterialData.setKey(keyStr);
-        alarmMaterialData.setAsset(this.assetDetector);
-        //根据自定义键值获取该条告警信息key
-        String md5Key = alarmMaterialData.getKey();
-        if (null == md5Key) {
-            return;
-        }
-        if (alarmList.containsKey(md5Key)) {
-            //若已经存在该条告警
-            alarmMaterialData.merge(alarmList.get(md5Key));
-            alarmList.replace(md5Key, alarmMaterialData);
-        } else {
-            alarmList.put(md5Key, alarmMaterialData);
-            eventDataList.add(alarmMaterialData.getEventData());
-        }
-    }
-
-
     public static void writeEvent(String path, String prefix, int maxLine) {
         if (eventDataList.isEmpty()) {
             return;
@@ -123,6 +93,27 @@ public class AlarmRule extends BaseSimpleRule {
         }
     }
 
+    public int alarmCount() {
+        return alarmList.size();
+    }
+
+    protected void pushAlarm(AlarmMaterialData alarmMaterialData, String keyStr) {
+        alarmMaterialData.setKey(keyStr);
+        alarmMaterialData.setAsset(this.assetDetector);
+        //根据自定义键值获取该条告警信息key
+        String md5Key = alarmMaterialData.getKey();
+        if (null == md5Key) {
+            return;
+        }
+        if (alarmList.containsKey(md5Key)) {
+            //若已经存在该条告警
+            alarmMaterialData.merge(alarmList.get(md5Key));
+            alarmList.replace(md5Key, alarmMaterialData);
+        } else {
+            alarmList.put(md5Key, alarmMaterialData);
+            eventDataList.add(alarmMaterialData.getEventData());
+        }
+    }
 
     @Override
     public void init() {
@@ -140,9 +131,8 @@ public class AlarmRule extends BaseSimpleRule {
 
     private class AlarmRuleChecker extends AbstractRuleChecker {
 
-        private boolean activity = true;
-
         private final SrcRuleDO source;
+        private boolean activity = true;
 
 
         /****
@@ -194,10 +184,11 @@ public class AlarmRule extends BaseSimpleRule {
                         int min = Math.max(0, index - 20);
                         int max = Math.min(index + 20, matchValue.length());
                         context = matchValue.substring(min, max);
-                    } catch (NoSuchFieldException | IllegalAccessException ignored) {}
+                    } catch (NoSuchFieldException | IllegalAccessException ignored) {
+                    }
 
                 }
-                AlarmMaterialData alarmMaterialData = new AlarmMaterialData(data,this.source, context, AlarmRule.this.ipSelector);
+                AlarmMaterialData alarmMaterialData = new AlarmMaterialData(data, this.source, context, AlarmRule.this.ipSelector);
                 pushAlarm(alarmMaterialData, null);
             }
             return false;

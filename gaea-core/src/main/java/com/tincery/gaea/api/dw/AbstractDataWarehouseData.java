@@ -54,12 +54,18 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
      * "general"}） 4.未知应用（{"label.apptype" : "unknown"}） 5.其它应用（{"label.apptype" : "other"}）
      */
     private String applicationType;
-    /** 会话加密标识(null:未知;false:非加密;true:加密) */
+    /**
+     * 会话加密标识(null:未知;false:非加密;true:加密)
+     */
     private Boolean enc;
-    /** 资产标识(0:无资产;1:client为资产;2:server为资产;3:双方均为资产) */
+    /**
+     * 资产标识(0:无资产;1:client为资产;2:server为资产;3:双方均为资产)
+     */
     private Integer assetFlag;
 
-    /** 拓展标识 */
+    /**
+     * 拓展标识
+     */
 //    private Map<String, Object> extLabel = new HashMap<>();
     @Override
     public void adjust() {

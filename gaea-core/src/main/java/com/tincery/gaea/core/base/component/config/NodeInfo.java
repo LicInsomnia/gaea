@@ -17,9 +17,9 @@ import java.util.Map;
  * │   ├── systemRule
  * │   └── trainingResultSet
  * └── log
- *     ├── error
- *     └── standard
- *
+ * ├── error
+ * └── standard
+ * <p>
  * DATA    # 数据路径，如果不配置默认写在$HOME/data
  * ├── dataWarehouse   #数据仓库路径
  * │   ├── csv
@@ -37,10 +37,10 @@ import java.util.Map;
  * │   ├── ssl
  * │   └── more...
  * └── cache   # 缓存的json数据，由logstash统一进行入库
- *     ├── eventData
- *     ├── alarm
- *     └── more...
- *
+ * ├── eventData
+ * ├── alarm
+ * └── more...
+ * <p>
  * SRC    # 探针输出路径，gaea数据输入起点
  * ├── session
  * ├── ssl
@@ -49,14 +49,11 @@ import java.util.Map;
 @Slf4j
 public class NodeInfo {
 
-    private NodeInfo() {
-        throw new RuntimeException();
-    }
-
-    private static Map<String, String> NODE_MAP;
-
+    /**
+     * AES加密解密密码
+     */
+    public final static String AES_PASSWORD = "Insomnia!@23";
     private static final Map<String, String> GLOBAL_MAP = new HashMap<>();
-
     private static final String NODE_NAME = "nodeName";
     private static final String HOME = "nodeHome";
     private static final String CONFIG = "configPath";
@@ -68,14 +65,13 @@ public class NodeInfo {
     private static final String DATA_WAREHOUSE_CUSTOM = "dataWarehouseCustom";
     private static final String BAK = "bak";
     private static final String CACHE = "cache";
-
+    private static Map<String, String> NODE_MAP;
     private static volatile boolean lock = false;
 
 
-    /**
-     * AES加密解密密码
-     */
-    public final static String AES_PASSWORD = "Insomnia!@23";
+    private NodeInfo() {
+        throw new RuntimeException();
+    }
 
     public static void init(String nodeName, String home, String srcPath, String dataPath) {
         if (StringUtils.isEmpty(home)) {

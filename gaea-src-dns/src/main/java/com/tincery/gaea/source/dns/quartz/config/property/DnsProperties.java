@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-@ConfigurationProperties (DnsProperties.PREFIX)
+@ConfigurationProperties(DnsProperties.PREFIX)
 @Component
 @Getter
 @Setter

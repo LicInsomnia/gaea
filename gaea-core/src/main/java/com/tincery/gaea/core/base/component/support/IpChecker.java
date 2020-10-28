@@ -1,7 +1,6 @@
 package com.tincery.gaea.core.base.component.support;
 
 import com.tincery.gaea.core.base.component.config.NodeInfo;
-import com.tincery.gaea.core.base.exception.InitException;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.NetUtil;
@@ -10,7 +9,6 @@ import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +28,10 @@ public class IpChecker implements InitializationRequired {
 
     /**
      * 内外网ip检测
+     *
      * @param ip 待检测ip
      * @return true:内网ip false:外网ip
-     *
+     * <p>
      * Class A 10.0.0.0-10.255.255.255 （167772160 - 184549375）
      * Class B 172.16.0.0-172.31.255.255（2886729728 - 2887778303）
      * Class C 192.168.0.0-192.168.255.255（3232235520 - 3232301055）fF
@@ -101,15 +100,15 @@ public class IpChecker implements InitializationRequired {
 
     @Override
     public void init() {
-        List<String> domesticIp =  FileUtils.readLine(NodeInfo.getConfig() + "/geo2ip/ChinaIPList.db");
+        List<String> domesticIp = FileUtils.readLine(NodeInfo.getConfig() + "/geo2ip/ChinaIPList.db");
         for (String ip : domesticIp) {
             this.ChinaIps.add(NetUtil.getRange(ip));
         }
-        if(this.ChinaIps.isEmpty()){
+        if (this.ChinaIps.isEmpty()) {
             log.error("ip加载失败");
-           // throw new InitException("IP加载失败");
-        }else{
-            log.info("加载了{}IP",ChinaIps.size());
+            // throw new InitException("IP加载失败");
+        } else {
+            log.info("加载了{}IP", ChinaIps.size());
         }
 
     }
