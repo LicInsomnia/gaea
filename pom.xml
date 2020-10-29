@@ -26,7 +26,7 @@
         <module>gaea-src-dns</module>
         <module>gaea-src-http</module>
         <module>gaea-dw-reorganization</module>
-        <module>gaea-dm-asset</module>
+<!--        <module>gaea-dm-asset</module>-->
     </modules>
 
 

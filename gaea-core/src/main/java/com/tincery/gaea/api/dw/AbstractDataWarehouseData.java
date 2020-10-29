@@ -5,6 +5,7 @@ import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.DnsRequestBO;
 import com.tincery.gaea.api.base.Location;
+import com.tincery.gaea.api.src.extension.*;
 import com.tincery.gaea.core.dw.MergeAble;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,13 +33,26 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
     private Set<String> appCheckModes;
     private String checkMode;
     /**
+     * 会话标签，标记协议名或malformed
+     */
+    private String extensionFlag;
+    /**
+     * 各协议不同的拓展信息
+     */
+    private SessionExtension sessionExtension;
+    private SslExtension sslExtension;
+    private OpenVpnExtension openVpnExtension;
+    private DnsExtension dnsExtension;
+    private SshExtension sshExtension;
+    private HttpExtension httpExtension;
+    private IsakmpExtension isakmpExtension;
+    private FtpAndTelnetExtension ftpAndTelnetExtension;
+    private EspAndAhExtension espAndAhExtension;
+    private MalformedExtension malformedExtension;
+    /**
      * 键值参考sys.common_config.reorganization.value.cerkeys
      */
     private JSONObject cer;
-    /**
-     * 键值参考sys.common_config.reorganization.value.extensionkeys
-     */
-    private Map<String, Object> extension;
     private DnsRequestBO dnsRequestBO;
     /**
      * 标签信息根据属性抽象
@@ -66,7 +80,6 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
     /**
      * 拓展标识
      */
-//    private Map<String, Object> extLabel = new HashMap<>();
     @Override
     public void adjust() {
         this.applicationType = "unknown";

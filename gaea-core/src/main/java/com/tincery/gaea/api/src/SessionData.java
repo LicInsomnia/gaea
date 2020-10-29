@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 public class SessionData extends AbstractSrcData {
 
-    SessionExtension sessionExtension = new SessionExtension();
+    SessionExtension sessionExtension;
 
     @Override
     public void adjust() {

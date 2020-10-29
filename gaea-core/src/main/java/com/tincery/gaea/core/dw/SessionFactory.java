@@ -3,35 +3,30 @@ package com.tincery.gaea.core.dw;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
-import com.tincery.gaea.core.base.component.config.CommonConfig;
+import com.tincery.gaea.api.src.extension.*;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.CerSelector;
 import com.tincery.gaea.core.base.component.support.DnsRequest;
 import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 
 public class SessionFactory {
 
-    private final IpSelector ipSelector;
-    private final CerSelector cerSelector;
-    private final ApplicationProtocol applicationProtocol;
-    private final DnsRequest dnsRequest;
-    private final Map<String, List<String>> extensionKeyMap;
-
-    @SuppressWarnings("unchecked")
-    public SessionFactory(IpSelector ipSelector, CerSelector cerSelector, ApplicationProtocol applicationProtocol, DnsRequest dnsRequest) {
-        this.ipSelector = ipSelector;
-        this.cerSelector = cerSelector;
-        this.applicationProtocol = applicationProtocol;
-        this.dnsRequest = dnsRequest;
-        Map<String, Object> configs = (Map<String, Object>) CommonConfig.get(ApplicationInfo.getCategory());
-        this.extensionKeyMap = (Map<String, List<String>>) configs.get("extensionkeys");
-    }
+    @Autowired
+    private IpSelector ipSelector;
+    @Autowired
+    private CerSelector cerSelector;
+    @Autowired
+    private ApplicationProtocol applicationProtocol;
+    @Autowired
+    private DnsRequest dnsRequest;
 
     /**
      * 从csv数据中抽象
@@ -41,49 +36,52 @@ public class SessionFactory {
      * @return 抽象是否成功
      */
     public AbstractDataWarehouseData create(String category, CsvRow csvRow) {
-        AbstractDataWarehouseData abstractDataWarehouseData = appendBaseAndAttach(category, csvRow);
-        List<String> extensionKeys = this.extensionKeyMap.get(category);
-        switch (category) {
-            case "session":
-                this.append4Session(csvRow, abstractDataWarehouseData);
-                break;
-            case "ssl":
-                this.append4Ssl(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            case "openvpn":
-                this.append4OpenVpn(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            case "dns":
-                this.append4Dns(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            case "http":
-                this.append4Http(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            case "email":
-                this.append4Email(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            case "isakmp":
-                this.append4Isakmp(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            case "ssh":
-                this.append4Ssh(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            case "ftp_telnet":
-                this.append4FtpAndTelenet(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            case "esp_ah":
-                this.append4EspAndAh(csvRow, extensionKeys, abstractDataWarehouseData);
-                break;
-            default:
-                return null;
+        AbstractDataWarehouseData data = appendBaseAndAttach(category, csvRow);
+        adjust(data);
+        if (data.getMalFormed()) {
+            append4Malformed(csvRow, data);
+        } else {
+            switch (category) {
+                case "session":
+                    this.append4Session(csvRow, data);
+                    break;
+                case "ssl":
+                    this.append4Ssl(csvRow, data);
+                    break;
+                case "openvpn":
+                    this.append4OpenVpn(csvRow, data);
+                    break;
+                case "dns":
+                    this.append4Dns(csvRow, data);
+                    break;
+                case "http":
+                    this.append4Http(csvRow, data);
+                    break;
+                case "email":
+                    this.append4Email(csvRow, data);
+                    break;
+                case "isakmp":
+                    this.append4Isakmp(csvRow, data);
+                    break;
+                case "ssh":
+                    this.append4Ssh(csvRow, data);
+                    break;
+                case "ftp_telnet":
+                    this.append4FtpAndTelnet(csvRow, data);
+                    break;
+                case "esp_ah":
+                    this.append4EspAndAh(csvRow, data);
+                    break;
+                default:
+                    return null;
+            }
         }
-        adjust(abstractDataWarehouseData);
-        return abstractDataWarehouseData;
+        return data;
     }
 
     private AbstractDataWarehouseData appendBaseAndAttach(String category, CsvRow csvRow) {
-        AbstractDataWarehouseData abstractDataWarehouseData = new AbstractDataWarehouseData();
-        abstractDataWarehouseData.setTargetName(csvRow.getEmptyNull(HeadConst.CSV.TARGET_NAME))
+        AbstractDataWarehouseData data = new AbstractDataWarehouseData();
+        data.setTargetName(csvRow.getEmptyNull(HeadConst.CSV.TARGET_NAME))
                 .setGroupName(csvRow.getEmptyNull(HeadConst.CSV.GROUP_NAME))
                 .setUserId(csvRow.getEmptyNull(HeadConst.CSV.USER_ID))
                 .setServerId(csvRow.getEmptyNull(HeadConst.CSV.SERVER_ID))
@@ -112,241 +110,152 @@ public class SessionFactory {
                 .setUpByte(csvRow.getLongOrDefault(HeadConst.CSV.UP_BYTE, 0L))
                 .setDownByte(csvRow.getLongOrDefault(HeadConst.CSV.DOWN_BYTE, 0L))
                 .setServerPortOuter(csvRow.getIntegerOrDefault(HeadConst.CSV.SERVER_PORT, 0));
-        abstractDataWarehouseData
-                .setClientLocation(this.ipSelector.getCommonInformation(abstractDataWarehouseData.getClientIp()))
-                .setServerLocation(this.ipSelector.getCommonInformation(abstractDataWarehouseData.getServerIp()))
+        data.setClientLocation(this.ipSelector.getCommonInformation(data.getClientIp()))
+                .setServerLocation(this.ipSelector.getCommonInformation(data.getServerIp()))
                 .setDataSource(category);
         String caseTags = csvRow.get(HeadConst.CSV.CASE_TAGS);
         if (null != caseTags) {
-            abstractDataWarehouseData.setCaseTags(new HashSet<>(Arrays.asList(caseTags.split(";"))));
+            data.setCaseTags(new HashSet<>(Arrays.asList(caseTags.split(";"))));
         }
-        abstractDataWarehouseData.setAssetFlag((Integer) csvRow.getExtensionValue(HeadConst.CSV.ASSET_FLAG));
+        data.setAssetFlag((Integer) csvRow.getExtensionValue(HeadConst.CSV.ASSET_FLAG));
         String id = Joiner.on("_").useForNull("").join(new Object[]{
-                abstractDataWarehouseData.getTargetName(),
-                abstractDataWarehouseData.getProtocol(),
-                abstractDataWarehouseData.getClientIp(),
-                abstractDataWarehouseData.getServerIp(),
-                abstractDataWarehouseData.getClientPort(),
-                abstractDataWarehouseData.getServerPort(),
-                abstractDataWarehouseData.getCapTime()
+                data.getTargetName(),
+                data.getProtocol(),
+                data.getClientIp(),
+                data.getServerIp(),
+                data.getClientPort(),
+                data.getServerPort(),
+                data.getCapTime()
         });
-        return abstractDataWarehouseData.setId(id);
+        return data.setId(id);
     }
 
-    private void adjust(AbstractDataWarehouseData abstractDataWarehouseData) {
+    private void adjust(AbstractDataWarehouseData data) {
         // 设置dnsRequest
-        abstractDataWarehouseData.setProtocolKnown(!HeadConst.PRONAME.OTHER.equals(abstractDataWarehouseData.getProName()));
-        abstractDataWarehouseData.setMalFormed(Objects.equals(-1, abstractDataWarehouseData.getDataType()));
-        if (!HeadConst.PRONAME.DNS.equals(abstractDataWarehouseData.getProName())) {
-            String key = abstractDataWarehouseData.getUserId() + "_" + abstractDataWarehouseData.getServerIp();
-            abstractDataWarehouseData.setDnsRequestBO(this.dnsRequest.getDnsRequest(key, abstractDataWarehouseData.getCapTime()));
-            if (null == abstractDataWarehouseData.getKeyWord() && null != abstractDataWarehouseData.getDnsRequestBO()) {
-                abstractDataWarehouseData.setKeyWord(abstractDataWarehouseData.getDnsRequestBO().getDomain());
+        data.setProtocolKnown(!HeadConst.PRONAME.OTHER.equals(data.getProName()));
+        data.setMalFormed(Objects.equals(-1, data.getDataType()));
+        if (!HeadConst.PRONAME.DNS.equals(data.getProName())) {
+            String key = data.getUserId() + "_" + data.getServerIp();
+            data.setDnsRequestBO(this.dnsRequest.getDnsRequest(key, data.getCapTime()));
+            if (null == data.getKeyWord() && null != data.getDnsRequestBO()) {
+                data.setKeyWord(data.getDnsRequestBO().getDomain());
             }
         }
         // 设置malformed
-        if (!abstractDataWarehouseData.getMalFormed()) {
-            abstractDataWarehouseData.setEnc(this.applicationProtocol.isEnc(abstractDataWarehouseData.getProName()));
+        if (!data.getMalFormed()) {
+            data.setEnc(this.applicationProtocol.isEnc(data.getProName()));
         }
         // 设置tag
-        if (abstractDataWarehouseData.getProtocol() == 6 && ((abstractDataWarehouseData.getUpByte() + abstractDataWarehouseData.getDownByte()) == 0)) {
-            abstractDataWarehouseData.setTag("SYN");
+        if (data.getProtocol() == 6 && ((data.getUpByte() + data.getDownByte()) == 0)) {
+            data.setTag("SYN");
             return;
         }
         /* 是否为netproc已解析协议 */
-        if (null == abstractDataWarehouseData.getMalFormed()) {
+        if (null == data.getMalFormed()) {
             /* netproc未解析协议 */
-            if (HeadConst.PRONAME.OTHER.equals(abstractDataWarehouseData.getProName())) {
+            if (HeadConst.PRONAME.OTHER.equals(data.getProName())) {
                 /* 特殊端口 */
-                abstractDataWarehouseData.setTag("特殊端口");
+                data.setTag("特殊端口");
             } else {
                 /* 已知端口 */
-                abstractDataWarehouseData.setTag(abstractDataWarehouseData.getProName().replace("(payload)", ""));
+                data.setTag(data.getProName().replace("(payload)", ""));
             }
         } else {
             /* netproc已解析协议 */
-            if (abstractDataWarehouseData.getMalFormed()) {
+            if (data.getMalFormed()) {
                 /* 异常协议 */
-                if (HeadConst.PRONAME.OTHER.equals(abstractDataWarehouseData.getProName())) {
+                if (HeadConst.PRONAME.OTHER.equals(data.getProName())) {
                     /* 未知异常协议 */
-                    abstractDataWarehouseData.setTag("异常协议");
+                    data.setTag("异常协议");
                 } else {
                     /* 端口仿冒 */
-                    abstractDataWarehouseData.setTag("端口仿冒");
+                    data.setTag("端口仿冒");
                 }
             } else {
                 /* 正常协议 */
-                abstractDataWarehouseData.setTag(abstractDataWarehouseData.getProName().replace("(payload)", ""));
+                data.setTag(data.getProName().replace("(payload)", ""));
             }
         }
     }
 
-    private void putExtensionField(CsvRow csvRow, String key4Csv, String key2Ext, AbstractDataWarehouseData abstractDataWarehouseData) {
-        String value = csvRow.get(key4Csv);
-        if (null != value) {
-            Map<String, Object> extension = abstractDataWarehouseData.getExtension();
-            if (null == extension) {
-                extension = new HashMap<>();
-                abstractDataWarehouseData.setExtension(extension);
+    private void append4Malformed(CsvRow csvRow, AbstractDataWarehouseData data) {
+        MalformedExtension malformedExtension = new MalformedExtension();
+        malformedExtension.setMalformedUpPayload(csvRow.getEmptyNull(HeadConst.CSV.MALFORMED_UP_PAYLOAD));
+        malformedExtension.setMalformedDownPayload(csvRow.getEmptyNull(HeadConst.CSV.MALFORMED_DOWN_PAYLOAD));
+        data.setMalformedExtension(malformedExtension);
+    }
+
+    private void append4Session(CsvRow csvRow, AbstractDataWarehouseData data) {
+        SessionExtension sessionExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), SessionExtension.class);
+        data.setSessionExtension(sessionExtension);
+        data.setExtensionFlag(data.getDataSource());
+    }
+
+    private void append4Ssl(CsvRow csvRow, AbstractDataWarehouseData data) {
+        SslExtension sslExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), SslExtension.class);
+        data.setSslExtension(sslExtension);
+        data.setExtensionFlag(data.getDataSource());
+        data.setKeyWord(sslExtension.getServerName());
+        String sha1 = sslExtension.getSha1();
+        if (null != sha1) {
+            sha1 = sha1.split("_")[0];
+            Map<String, Object> cer = this.cerSelector.selector(sha1);
+            if (null == data.getKeyWord() && null != cer) {
+                data.setKeyWord(cer.get(HeadConst.MONGO.SUBJECT_CN_STRING).toString());
             }
-            extension.put(key2Ext, value);
         }
     }
 
-    private void putExtensionKeys(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        if (null == extensionKeys || extensionKeys.isEmpty()) {
-            return;
-        }
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = csvRow.getJsonObject(HeadConst.CSV.EXTENSION);
-        } catch (Exception ignore) {
-        }
-        if (null != jsonObject) {
-            Map<String, Object> extension = extensionKeys.stream()
-                    .filter(jsonObject::containsKey)
-                    .collect(Collectors.toMap((key) -> key, jsonObject::get));
-            abstractDataWarehouseData.setExtension(extension);
-        }
-    }
-
-
-    /**
-     * SESSION_HEADER uppayload downpayload
-     */
-    private void append4Session(CsvRow csvRow, AbstractDataWarehouseData abstractDataWarehouseData) {
-        try {
-            putExtensionField(csvRow, HeadConst.CSV.UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.DOWN_PAYLOAD, "downPayload", abstractDataWarehouseData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * version ciphersuites handshake cerchain clientciphersuite servername random malformedpayload
-     */
-    private void append4Ssl(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        try {
-            putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.VERSION, HeadConst.MONGO.VERSION_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.CIPHER_SUITES, HeadConst.MONGO.CIPHER_SUITES_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.HANDSHAKE, HeadConst.MONGO.HAND_SHAKE_STRING, abstractDataWarehouseData);
-//            putExtensionField(csvRow, HeadConst.CSV.CERCHAIN, HeadConst.MONGO.CERCHAIN_STRING, abstractDataWarehouseData);
-//            putExtensionField(csvRow, HeadConst.CSV.CLIENT_CERCHAIN, HeadConst.MONGO.CLIENT_CERCHAIN_STRING, abstractDataWarehouseData);
-//            putExtensionField(csvRow, HeadConst.CSV.IS_DOUBLE, HeadConst.MONGO.IS_DOUBLE_STRING, abstractDataWarehouseData);
-//            putExtensionField(csvRow, HeadConst.CSV.CLIENT_CIPHER_SUITE, HeadConst.MONGO.CLIENT_CIPHER_SUITE_STRING, abstractDataWarehouseData);
-//            putExtensionField(csvRow, HeadConst.CSV.SERVER_NAME, HeadConst.MONGO.SERVER_NAME_STRING, abstractDataWarehouseData);
-//            putExtensionField(csvRow, HeadConst.CSV.RANDOM, HeadConst.MONGO.RANDOM_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.MALFORMED_UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
-            putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
-            abstractDataWarehouseData.setKeyWord(csvRow.get(HeadConst.CSV.SERVER_NAME));
-            String sha1 = csvRow.get(HeadConst.CSV.SHA1);
-            if (null != sha1) {
-                sha1 = sha1.split("_")[0];
-                Map<String, Object> cer = this.cerSelector.selector(sha1);
-                if (null == abstractDataWarehouseData.getKeyWord() && null != cer && cer.containsKey(HeadConst.MONGO.SUBJECT_CN_STRING)) {
-                    abstractDataWarehouseData.setKeyWord(cer.get(HeadConst.MONGO.SUBJECT_CN_STRING).toString());
-                }
+    private void append4OpenVpn(CsvRow csvRow, AbstractDataWarehouseData data) {
+        OpenVpnExtension openVpnExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), OpenVpnExtension.class);
+        data.setOpenVpnExtension(openVpnExtension);
+        data.setExtensionFlag(data.getDataSource());
+        data.setKeyWord(openVpnExtension.getServerName());
+        String sha1 = openVpnExtension.getSha1();
+        if (null != sha1) {
+            sha1 = sha1.split("_")[0];
+            Map<String, Object> cer = this.cerSelector.selector(sha1);
+            if (null == data.getKeyWord() && null != cer) {
+                data.setKeyWord(cer.get(HeadConst.MONGO.SUBJECT_CN_STRING).toString());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
-    /**
-     * 同ssl
-     */
-    private void append4OpenVpn(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        append4Ssl(csvRow, extensionKeys, abstractDataWarehouseData);
+    private void append4Dns(CsvRow csvRow, AbstractDataWarehouseData data) {
+        DnsExtension dnsExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), DnsExtension.class);
+        data.setDnsExtension(dnsExtension);
+        data.setExtensionFlag(data.getDataSource());
+        data.setKeyWord(dnsExtension.getDomain());
     }
 
-    /**
-     * domain ips ext malformedpayload
-     */
-    private void append4Dns(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.DOMAIN, HeadConst.MONGO.DOMAIN_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.IPS, HeadConst.MONGO.IPS, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
-        abstractDataWarehouseData.setKeyWord(csvRow.get(HeadConst.CSV.DOMAIN));
+    private void append4Http(CsvRow csvRow, AbstractDataWarehouseData data) {
     }
 
-    /**
-     * ext host malformedpayload
-     */
-    private void append4Http(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.URL_ROOT, HeadConst.MONGO.URL_ROOT_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.USER_AGENT, HeadConst.MONGO.USER_AGENT_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.HOST, HeadConst.MONGO.HOST_STRING, abstractDataWarehouseData);
-        abstractDataWarehouseData.setKeyWord(csvRow.get(HeadConst.CSV.HOST));
+    private void append4Email(CsvRow csvRow, AbstractDataWarehouseData data) {
     }
 
-    /**
-     * ext malformedpayload
-     */
-    private void append4Email(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
+    private void append4Ssh(CsvRow csvRow, AbstractDataWarehouseData data) {
+        SshExtension sshExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), SshExtension.class);
+        data.setSshExtension(sshExtension);
+        data.setExtensionFlag(data.getDataSource());
     }
 
-    /**
-     * ext malformedpayload
-     */
-    private void append4Ssh(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
+    private void append4FtpAndTelnet(CsvRow csvRow, AbstractDataWarehouseData data) {
+        FtpAndTelnetExtension ftpAndTelnetExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), FtpAndTelnetExtension.class);
+        data.setFtpAndTelnetExtension(ftpAndTelnetExtension);
+        data.setExtensionFlag(data.getDataSource());
     }
 
-    /**
-     * ext malformedpayload
-     */
-    private void append4FtpAndTelenet(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
+    private void append4EspAndAh(CsvRow csvRow, AbstractDataWarehouseData data) {
+        EspAndAhExtension espAndAhExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), EspAndAhExtension.class);
+        data.setEspAndAhExtension(espAndAhExtension);
+        data.setExtensionFlag(data.getDataSource());
     }
 
-    /**
-     * spi
-     */
-    private void append4EspAndAh(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.SPI, HeadConst.MONGO.SPI_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
+    private void append4Isakmp(CsvRow csvRow, AbstractDataWarehouseData data) {
+        IsakmpExtension isakmpExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), IsakmpExtension.class);
+        data.setIsakmpExtension(isakmpExtension);
+        data.setExtensionFlag(data.getDataSource());
     }
-
-    /**
-     * ext malformedpayload
-     */
-    private void append4Isakmp(CsvRow csvRow, List<String> extensionKeys, AbstractDataWarehouseData abstractDataWarehouseData) {
-        putExtensionKeys(csvRow, extensionKeys, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_UP_PAYLOAD, HeadConst.MONGO.UP_PAYLOAD_STRING, abstractDataWarehouseData);
-        putExtensionField(csvRow, HeadConst.CSV.MALFORMED_DOWN_PAYLOAD, HeadConst.MONGO.DOWN_PAYLOAD_STRING, abstractDataWarehouseData);
-    }
-
-//    /**
-//     * @param sessionUtils 就近udp会话上下行合并
-//     * @return 0:不可合并 1：已合并
-//     */
-//    public final int append4UnknownUdp(SessionUtils sessionUtils) {
-//        if ((this.extension.containsKey("uppayload") && sessionUtils.extension.containsKey("uppayload")) ||
-//                (this.extension.containsKey("downpayload") && sessionUtils.extension.containsKey("downpayload"))
-//        ) {
-//            return 0;
-//        }
-//        this.upPkt += sessionUtils.upPkt;
-//        this.upByte += sessionUtils.upByte;
-//        this.downPkt += sessionUtils.downPkt;
-//        this.downByte += sessionUtils.downByte;
-//        this.extension.putAll(sessionUtils.extension);
-//        return 1;
-//    }
 
 }

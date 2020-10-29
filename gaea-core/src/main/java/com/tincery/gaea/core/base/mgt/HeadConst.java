@@ -296,6 +296,7 @@ public class HeadConst {
     }
 
     public static class PRONAME {
+        public static String SESSION = "SESSION";
         public static String SSL = "SSL";
         public static String OPENVPN = "OPENVPN";
         public static String DNS = "DNS";
@@ -305,6 +306,9 @@ public class HeadConst {
         public static String ISAKMP = "ISAKMP";
         public static String FTP = "FTP";
         public static String TELNET = "TELNET";
+        public static String ESP = "ESP";
+        public static String AH = "AH";
+        public static String MALFORMED = "MALFORMED";
         public static String OTHER = "OTHER";
     }
 

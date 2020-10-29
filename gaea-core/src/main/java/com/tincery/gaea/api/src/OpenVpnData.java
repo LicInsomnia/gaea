@@ -7,6 +7,9 @@ import com.tincery.gaea.api.src.extension.OpenVpnExtension;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @author Insomnia
+ */
 @Setter
 @Getter
 public class OpenVpnData extends SslData {
@@ -31,10 +34,7 @@ public class OpenVpnData extends SslData {
     public void merge(OpenVpnData openVpnData) {
         this.capTime = Math.min(this.capTime, openVpnData.capTime);
         this.duration = Math.max(this.capTime + this.duration, openVpnData.capTime + openVpnData.duration);
-        mergeExtension(openVpnExtension);
+        this.openVpnExtension.merge(openVpnExtension);
     }
 
-    private void mergeExtension(OpenVpnExtension openVpnExtension) {
-
-    }
 }
