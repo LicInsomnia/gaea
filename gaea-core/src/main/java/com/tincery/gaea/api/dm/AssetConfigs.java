@@ -45,15 +45,15 @@ public class AssetConfigs {
             // 境内
             return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
         }
-        if(check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.OVERSEAS)){
+        if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.OVERSEAS)) {
             // 境外
             return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
         }
         // 判断白名单 如果命中则直接返回
-        if(check(assetJson, assetConfig, ListType.WHITE, OutInput.OUT, Border.DOMESTIC)){
+        if (check(assetJson, assetConfig, ListType.WHITE, OutInput.OUT, Border.DOMESTIC)) {
             return null;
         }
-        if(check(assetJson, assetConfig, ListType.WHITE, OutInput.OUT, Border.OVERSEAS)){
+        if (check(assetJson, assetConfig, ListType.WHITE, OutInput.OUT, Border.OVERSEAS)) {
             return null;
         }
         // 白名单没返回 则告警
@@ -67,15 +67,15 @@ public class AssetConfigs {
             // 境内
             return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
         }
-        if(check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.OVERSEAS)){
+        if (check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.OVERSEAS)) {
             // 境外
             return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
         }
         // 判断白名单 如果命中则直接返回
-        if(check(assetJson, assetConfig, ListType.WHITE, OutInput.IN, Border.DOMESTIC)){
+        if (check(assetJson, assetConfig, ListType.WHITE, OutInput.IN, Border.DOMESTIC)) {
             return null;
         }
-        if(check(assetJson, assetConfig, ListType.WHITE, OutInput.IN, Border.OVERSEAS)){
+        if (check(assetJson, assetConfig, ListType.WHITE, OutInput.IN, Border.OVERSEAS)) {
             return null;
         }
         // 白名单没返回 则告警
@@ -85,11 +85,11 @@ public class AssetConfigs {
     public static List<AlarmMaterialData> detectorClientAndServer(JSONObject assetJson, AssetDetector assetDetector) {
         List<AlarmMaterialData> result = new ArrayList<>();
         List<AlarmMaterialData> clientAlarm = detectorClient(assetJson, assetDetector);
-        if(!CollectionUtils.isEmpty(clientAlarm)){
+        if (!CollectionUtils.isEmpty(clientAlarm)) {
             result.addAll(clientAlarm);
         }
         List<AlarmMaterialData> serverAlarm = detectorServer(assetJson, assetDetector);
-        if(!CollectionUtils.isEmpty(serverAlarm)){
+        if (!CollectionUtils.isEmpty(serverAlarm)) {
             result.addAll(serverAlarm);
         }
         return result;
@@ -100,10 +100,9 @@ public class AssetConfigs {
                                 ListType listType, OutInput outInput, Border border) {
         AssetConfigDO.BlackOrWhiteList blackOrWhiteList = listType.function.apply(assetConfig);
         AssetConfigDO.OutInputFilter outInputFilter = outInput.getOutInputFunction.apply(blackOrWhiteList);
-        return border.getHitableFunction.test(assetJson,outInputFilter,outInput.getIpFunction);
+        return border.getHitableFunction.test(assetJson, outInputFilter, outInput.getIpFunction);
 
     }
-
 
 
     public enum ListType {

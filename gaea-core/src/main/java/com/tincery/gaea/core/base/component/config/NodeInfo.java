@@ -37,9 +37,9 @@ import java.util.Map;
  * │   ├── ssl
  * │   └── more...
  * └── cache   # 缓存的json数据，由logstash统一进行入库
- * ├── eventData
- * ├── alarm
- * └── more...
+ *    ├── eventData
+ *    ├── alarm
+ *    └── more...
  * <p>
  * SRC    # 探针输出路径，gaea数据输入起点
  * ├── session

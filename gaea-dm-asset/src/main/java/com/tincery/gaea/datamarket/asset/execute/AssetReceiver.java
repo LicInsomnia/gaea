@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.dm.AssetConfigs;
 import com.tincery.gaea.core.base.component.Receiver;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +41,9 @@ public class AssetReceiver implements Receiver {
 
     private List<AlarmMaterialData> alarmList = new CopyOnWriteArrayList<>();
 
-    private static final int ALARM_WRITE_COUNT = 10000;
+    private static FileWriter fileWriter;
+
+    private static final int ALARM_WRITE_COUNT = 20000;
 
     @Autowired
     private AssetDetector assetDetector;
@@ -76,12 +80,14 @@ public class AssetReceiver implements Receiver {
     private synchronized void alarmAdd(List<AlarmMaterialData> alarmMaterialDataList) {
         this.alarmList.addAll(alarmMaterialDataList);
         if (this.alarmList.size() > ALARM_WRITE_COUNT) {
-           writeAlarm();
+            writeAlarm();
         }
     }
 
     private synchronized void writeAlarm() {
-        try (FileWriter fileWriter = new FileWriter(new File(""),true)) {
+        String fileName = "assetAlarm"+Instant.now().toEpochMilli()+".json";
+        File file = new File(NodeInfo.getAlarmMaterial()+fileName);
+        try (FileWriter fileWriter = new FileWriter(file, true)) {
             for (AlarmMaterialData alarmMaterialData : this.alarmList) {
                 fileWriter.write(alarmMaterialData.toString());
             }
@@ -90,6 +96,7 @@ public class AssetReceiver implements Receiver {
             e.printStackTrace();
         }
     }
+
 
 
     @Override
