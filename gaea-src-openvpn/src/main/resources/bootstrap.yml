@@ -1,9 +1,10 @@
 server:
-  port: 11114
+  port: 11117
 node:
   name: insomnia
 spring:
   application:
+    name: src_openvpn
   cloud:
     nacos:
       config:
@@ -12,4 +13,3 @@ spring:
         file-extension: yml
   profiles:
     active: insomnia
-

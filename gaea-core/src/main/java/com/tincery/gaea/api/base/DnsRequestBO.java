@@ -18,9 +18,8 @@ public class DnsRequestBO implements Comparable<DnsRequestBO> {
     }
 
 
-
     @Override
     public int compareTo(DnsRequestBO o) {
-        return Long.compare(this.capTime,o.capTime);
+        return Long.compare(this.capTime, o.capTime);
     }
 }

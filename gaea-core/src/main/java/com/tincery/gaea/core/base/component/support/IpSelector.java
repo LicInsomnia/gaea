@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,21 +35,38 @@ import java.util.Map;
 @Component
 public class IpSelector implements InitializationRequired {
 
+    private final Map<String, Location> bufferIps = new HashMap<>();
+    private final Map<Pair<Long, Long>, String> reservedIps = new HashMap<>();
     private DatabaseReader regionReader = null;
     private DatabaseReader connectionReader = null;
     private DatabaseReader domainReader = null;
     private DatabaseReader ispReader = null;
     private Location dfLocation = new Location();
-    private final Map<String, Location> bufferIps = new HashMap<>();
-    private final Map<Pair<Long, Long>, String> reservedIps = new HashMap<>();
     @Autowired
     private CloudServerIpSelector cloudServerIpSelector;
 
+    public static String location2Csv(Map<String, Object> location, char separator) {
+        if (null == location || location.isEmpty()) {
+            return "" + separator + separator + separator + separator + separator;
+        }
+        String country = location.getOrDefault("country", "-").toString();
+        String region = location.getOrDefault("region", "-").toString();
+        String city = location.getOrDefault("city", "-").toString();
+        String lng = location.getOrDefault("lng", "0.0").toString();
+        String lat = location.getOrDefault("lat", "0.0").toString();
+        String cloudService = location.getOrDefault("cloud_service", "").toString();
+        return country + separator +
+                region + separator +
+                city + separator +
+                lng + separator +
+                lat + separator +
+                cloudService;
+    }
 
     @Override
     public void init() {
         String path = NodeInfo.getConfig() + "/geo2ip/";
-        this.dfLocation =  new JSONObject((Map) CommonConfig.get("dflocation")).toJavaObject(Location.class);
+        this.dfLocation = new JSONObject((Map) CommonConfig.get("dflocation")).toJavaObject(Location.class);
         File regionDb = new File(path + "/GeoIP2-City.mmdb");
         File connectionDb = new File(path + "/GeoIP2-Connection-Type.mmdb");
         File domainDb = new File(path + "/GeoIP2-Domain.mmdb");
@@ -73,7 +89,6 @@ public class IpSelector implements InitializationRequired {
         }
     }
 
-
     /**
      * 获取ip地理位置信息
      *
@@ -95,8 +110,8 @@ public class IpSelector implements InitializationRequired {
         locationResult.setRegion_zh(region.getOrDefault("zh_CN", "-"));
         locationResult.setCity(city.getOrDefault("zh_CN", "-"));
         locationResult.setCity_zh(city.getOrDefault("zh_CN", "-"));
-        locationResult.setLng(location.getLongitude()==null?-1.0:location.getLongitude());
-        locationResult.setLat(location.getLatitude()==null?-1.0:location.getLatitude());
+        locationResult.setLng(location.getLongitude() == null ? -1.0 : location.getLongitude());
+        locationResult.setLat(location.getLatitude() == null ? -1.0 : location.getLatitude());
         return locationResult;
     }
 
@@ -149,7 +164,7 @@ public class IpSelector implements InitializationRequired {
      * @param ip 待查询ip地址
      * @return key:isp;organization;autonomous_system_Organization
      */
-    private void setIsp(String ip,Location location) throws IOException, GeoIp2Exception {
+    private void setIsp(String ip, Location location) throws IOException, GeoIp2Exception {
         InetAddress ipAddress = InetAddress.getByName(ip);
         IspResponse response = this.ispReader.isp(ipAddress);
         location.setIsp(response.getIsp());
@@ -172,24 +187,6 @@ public class IpSelector implements InitializationRequired {
         return "normal";
     }
 
-    public static String location2Csv(Map<String, Object> location, char separator) {
-        if (null == location || location.isEmpty()) {
-            return "" + separator + separator + separator + separator + separator;
-        }
-        String country = location.getOrDefault("country", "-").toString();
-        String region = location.getOrDefault("region", "-").toString();
-        String city = location.getOrDefault("city", "-").toString();
-        String lng = location.getOrDefault("lng", "0.0").toString();
-        String lat = location.getOrDefault("lat", "0.0").toString();
-        String cloudService = location.getOrDefault("cloud_service", "").toString();
-        return country + separator +
-                region + separator +
-                city + separator +
-                lng + separator +
-                lat + separator +
-                cloudService;
-    }
-
     /**
      * 获取ip通用信息
      *
@@ -208,7 +205,7 @@ public class IpSelector implements InitializationRequired {
         if ("normal".equals(type)) {
             location.setConnectionType(getConnectionType(ip));
             try {
-                this.setIsp(ip,location);
+                this.setIsp(ip, location);
             } catch (IOException | GeoIp2Exception ignore) {
             }
         }

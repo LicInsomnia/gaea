@@ -28,6 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class FlowReceiver extends AbstractSrcReceiver<FlowData> {
 
+    private Map<String, FlowData> flowDataMap = new ConcurrentHashMap<>();
+    private Map<String, FlowData> impFlowDataMap = new ConcurrentHashMap<>();
+
     @Autowired
     public void setAnalysis(FlowLineAnalysis analysis) {
         this.analysis = analysis;
@@ -43,9 +46,6 @@ public class FlowReceiver extends AbstractSrcReceiver<FlowData> {
     public String getHead() {
         return null;
     }
-
-    private Map<String, FlowData> flowDataMap = new ConcurrentHashMap<>();
-    private Map<String, FlowData> impFlowDataMap = new ConcurrentHashMap<>();
 
     @Override
     protected void analysisLine(List<String> lines) {

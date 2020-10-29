@@ -13,4 +13,3 @@ spring:
         file-extension: yml
   profiles:
     active: insomnia
-

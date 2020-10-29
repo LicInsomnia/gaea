@@ -17,7 +17,7 @@ import javax.jms.Queue;
 public class SslJob extends QuartzJobBean {
 
 
-    @Resource (name = QueueNames.SRC_SSL)
+    @Resource(name = QueueNames.SRC_SSL)
     private Queue sslQueue;
     @Autowired
     private SrcProducer srcProducer;
@@ -25,6 +25,6 @@ public class SslJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-            this.srcProducer.producer(this.sslQueue, "ssl", ".txt");
+        this.srcProducer.producer(this.sslQueue, "ssl", ".txt");
     }
 }

@@ -69,7 +69,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
 
     public void set5TupleOuter(String clientIpOuter, String serverIpOuter,
                                String clientPortOuter, String serverPortOuter,
-                               String protocolOuter) throws NumberFormatException{
+                               String protocolOuter) throws NumberFormatException {
         this.setClientIpOuter(clientIpOuter);
         this.setServerIpOuter(serverIpOuter);
         this.setClientPortOuter(Integer.parseInt(clientPortOuter));
@@ -87,7 +87,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
         adjustCompleteSession();
     }
 
-    protected  void adjustEventData(){
+    protected void adjustEventData() {
         this.eventData = ToolUtils.getMD5(this.toString());
     }
 
@@ -107,10 +107,10 @@ public abstract class AbstractSrcData extends AbstractMetaData {
 
     protected void adjustPayload() {
         final String p = "0000000000000000000000000000000000000000";
-        if(p.equals(this.malformedDownPayload)){
+        if (p.equals(this.malformedDownPayload)) {
             this.malformedUpPayload = null;
         }
-        if(p.equals(this.malformedUpPayload)){
+        if (p.equals(this.malformedUpPayload)) {
             this.malformedUpPayload = null;
         }
     }

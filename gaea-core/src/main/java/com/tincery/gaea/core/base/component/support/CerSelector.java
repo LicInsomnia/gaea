@@ -18,10 +18,9 @@ import java.util.*;
 @Component
 public class CerSelector implements InitializationRequired {
 
+    private final Map<String, JSONObject> cache = new HashMap<>();
     @Autowired
     private CertDao certDao;
-
-    private final Map<String, JSONObject> cache = new HashMap<>();
     private String[] cerKeys;
 
     public Map<String, Object> selector(String sha1) {

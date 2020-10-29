@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @SpringBootApplication
-public class GaeaSrcOpenVpnApplication {
+public class GaeaSourceOpenVpnApplication {
     public static void main(String[] args) {
-        SpringApplication.run(GaeaSrcOpenVpnApplication.class, args);
+        SpringApplication.run(GaeaSourceOpenVpnApplication.class, args);
     }
 }

@@ -25,6 +25,7 @@ import java.util.Map;
  * 加载sys.app_rule表中应用信息进行应用检测
  * 注意事项：
  * "exact" : true,表示可以对四级以上域名匹配，如果为false，默认只匹配到三级域名，例如mail.sina.com.cn
+ *
  * @author gongxuanzhang
  */
 
@@ -34,7 +35,7 @@ public class ApplicationCheck implements InitializationRequired {
 
     private final Map<String, ApplicationInformationBO> domain2Category = new HashMap<>();
     private final Map<String, ApplicationInformationBO> exactDomain2Category = new HashMap<>();
-    private boolean hasExact = false;
+    private final boolean hasExact = false;
 
     @Autowired
     private AppRuleDao appRuleDao;
@@ -78,7 +79,7 @@ public class ApplicationCheck implements InitializationRequired {
         }
         Boolean exact = json.getBoolean("exact");
         ApplicationInformationBO applicationInformation = json.toJavaObject(ApplicationInformationBO.class);
-        if (exact!=null && exact) {
+        if (exact != null && exact) {
             this.exactDomain2Category.put(json.getString("_id").toLowerCase(), applicationInformation);
         } else {
             this.domain2Category.put(json.getString("_id").toLowerCase(), applicationInformation);

@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @SpringBootApplication
-public class GaeaSrcSshApplication {
+public class GaeaSourceSshApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GaeaSrcSshApplication.class,args);
+        SpringApplication.run(GaeaSourceSshApplication.class, args);
     }
 }

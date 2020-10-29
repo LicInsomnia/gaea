@@ -1,8 +1,6 @@
 package com.tincery.gaea.core.base.dao;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.tincery.gaea.api.base.AppRule;
 import com.tincery.gaea.api.dm.AssetCondition;
 import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,9 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveTask;
 
 /**
  * @author : gxz
@@ -25,7 +20,6 @@ import java.util.concurrent.RecursiveTask;
 
 @Repository
 public class AssetConditionDao extends SimpleBaseDaoImpl<AssetCondition> {
-
 
 
     @Override
@@ -48,7 +42,7 @@ public class AssetConditionDao extends SimpleBaseDaoImpl<AssetCondition> {
     }
 
 
-    public List<AssetCondition> findActivityData(){
+    public List<AssetCondition> findActivityData() {
         Query query = new Query();
         query.addCriteria(Criteria.where("activity").is(true));
         return findListData(query);

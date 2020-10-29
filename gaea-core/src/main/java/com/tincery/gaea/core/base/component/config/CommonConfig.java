@@ -12,7 +12,7 @@ import java.util.Map;
  **/
 @Slf4j
 public class CommonConfig {
-    private static Map<String, Object> COMMON_CONFIG = new HashMap<>();
+    private static final Map<String, Object> COMMON_CONFIG = new HashMap<>();
 
     public static void put(String key, Object value) {
         COMMON_CONFIG.put(key, value);
@@ -21,6 +21,7 @@ public class CommonConfig {
     public static Object get(String key) {
         return COMMON_CONFIG.get(key);
     }
+
     /*****
      * 把CommonConfig 和RunConfig 合并内容
      * 在已经加载完commonConfig后使用

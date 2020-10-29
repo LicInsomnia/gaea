@@ -27,7 +27,7 @@ public class PayloadDetectorDao extends SimpleBaseDaoImpl<PayloadDetectorDO> {
     }
 
     @Override
-    @Resource(name="sysMongoTemplate")
+    @Resource(name = "sysMongoTemplate")
     protected void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }

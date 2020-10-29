@@ -67,9 +67,9 @@ public class SrcRuleDao extends SimpleBaseDaoImpl<SrcRuleDO> {
     }
 
 
-    public List<SrcRuleDO> getAlarmData(String category){
+    public List<SrcRuleDO> getAlarmData(String category) {
         final String alarm = "alert";
-        Query query = new Query(createCategoryRuleCriteria(category,alarm));
+        Query query = new Query(createCategoryRuleCriteria(category, alarm));
         return findListData(query);
     }
 

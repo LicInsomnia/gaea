@@ -30,12 +30,12 @@ public class ImpTargetSetupDao extends SimpleBaseDaoImpl<ImpTargetSetupDO> {
     }
 
     @Override
-    @Resource(name="sysMongoTemplate")
+    @Resource(name = "sysMongoTemplate")
     protected void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public List<ImpTargetSetupDO> getActivityData(){
+    public List<ImpTargetSetupDO> getActivityData() {
         Query query = new Query();
         query.addCriteria(Criteria.where("activity").is(true));
         return findListData(query);

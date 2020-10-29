@@ -17,7 +17,7 @@ import javax.jms.Queue;
 public class DnsJob extends QuartzJobBean {
 
 
-    @Resource (name = QueueNames.SRC_DNS)
+    @Resource(name = QueueNames.SRC_DNS)
     private Queue dnsQueue;
     @Autowired
     private SrcProducer srcProducer;
@@ -25,6 +25,6 @@ public class DnsJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-            this.srcProducer.producer(this.dnsQueue, "dns", ".txt");
+        this.srcProducer.producer(this.dnsQueue, "dns", ".txt");
     }
 }

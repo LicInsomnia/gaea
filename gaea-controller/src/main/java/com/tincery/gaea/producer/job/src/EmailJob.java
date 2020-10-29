@@ -1,13 +1,10 @@
 package com.tincery.gaea.producer.job.src;
 
 import com.tincery.gaea.api.base.QueueNames;
-import com.tincery.gaea.producer.config.ControllerConfigProperties;
 import com.tincery.gaea.producer.config.SrcProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import javax.annotation.Resource;
@@ -20,7 +17,7 @@ import javax.jms.Queue;
 public class EmailJob extends QuartzJobBean {
 
 
-    @Resource (name = QueueNames.SRC_EMAIL)
+    @Resource(name = QueueNames.SRC_EMAIL)
     private Queue emailQueue;
     @Autowired
     private SrcProducer srcProducer;
@@ -28,6 +25,6 @@ public class EmailJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-            this.srcProducer.producer(this.emailQueue, "email", ".dat");
+        this.srcProducer.producer(this.emailQueue, "email", ".dat");
     }
 }

@@ -35,31 +35,6 @@ import java.util.concurrent.*;
 @Slf4j
 public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements Receiver {
 
-    protected SrcProperties properties;
-    /**
-     * 当前csv输出中缓存的csv记录数
-     */
-    protected int csvCount;
-
-    /***此map存放 用fileName 信息做key  行内容作为value的map*/
-    protected Map<String, List<String>> csvMap = new HashMap<>();
-    /**
-     * 当前csv输出中缓存的csv记录中的最小时间
-     */
-    protected long minTime;
-    /**
-     * 当前csv输出中缓存的csv记录中的最大时间
-     */
-    protected long maxTime;
-
-    public abstract void setProperties(SrcProperties properties);
-
-    protected SrcLineAnalysis<M> analysis;
-
-    protected final Map<String, FileWriter> csvDataHandle = new HashMap<>();
-
-    protected CountDownLatch countDownLatch;
-
     protected static ThreadPoolExecutor executorService;
 
     static {
@@ -73,6 +48,26 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 new ThreadPoolExecutor.AbortPolicy());
     }
 
+    protected final Map<String, FileWriter> csvDataHandle = new HashMap<>();
+    protected SrcProperties properties;
+    /**
+     * 当前csv输出中缓存的csv记录数
+     */
+    protected int csvCount;
+    /***此map存放 用fileName 信息做key  行内容作为value的map*/
+    protected Map<String, List<String>> csvMap = new HashMap<>();
+    /**
+     * 当前csv输出中缓存的csv记录中的最小时间
+     */
+    protected long minTime;
+    /**
+     * 当前csv输出中缓存的csv记录中的最大时间
+     */
+    protected long maxTime;
+    protected SrcLineAnalysis<M> analysis;
+    protected CountDownLatch countDownLatch;
+
+    public abstract void setProperties(SrcProperties properties);
 
     /****
      * 每个执行器都有自己的csv表头

@@ -4,7 +4,6 @@ import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -31,13 +30,12 @@ public class ApplicationInformationBO extends SimpleBaseDO {
 
     private List<String> specialTag;
 
-    @Field (name = "isenc")
+    @Field(name = "isenc")
     private Boolean enc;
 
     private String proName;
 
     private Boolean ignore;
-
 
 
 }

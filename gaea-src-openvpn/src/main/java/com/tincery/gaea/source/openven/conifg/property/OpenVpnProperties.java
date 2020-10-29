@@ -20,5 +20,4 @@ public class OpenVpnProperties extends SrcProperties {
      */
     public static final String PREFIX = "src.openvpn";
 
-
 }

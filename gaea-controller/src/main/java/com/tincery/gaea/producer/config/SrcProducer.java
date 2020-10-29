@@ -21,7 +21,7 @@ public class SrcProducer {
 
     @Autowired
     JmsMessagingTemplate jmsMessagingTemplate;
-    @Value ("${node.src-path}")
+    @Value("${node.src-path}")
     private String srcPath;
 
     public void producer(Queue queue, String category, String extension) {

@@ -26,8 +26,8 @@ import static com.tincery.gaea.core.base.mgt.CommonConst.*;
  * 工具类
  *
  * @author Insomnia
- * @date 2018/12/29
  * @version 1.0.1
+ * @date 2018/12/29
  */
 public class ToolUtils {
 
@@ -68,12 +68,12 @@ public class ToolUtils {
      * @see Date & TimeStamp
      */
     public static String stamp2Date(long ts, String datePattern) {
-            if (null == datePattern) {
-                datePattern = "yyyy-MM-dd HH:mm:ss";
-            }
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
-            Date date = new Date(ts);
-            return simpleDateFormat.format(date);
+        if (null == datePattern) {
+            datePattern = "yyyy-MM-dd HH:mm:ss";
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        Date date = new Date(ts);
+        return simpleDateFormat.format(date);
     }
 
 
@@ -705,7 +705,6 @@ public class ToolUtils {
         }
         return value + exp + unit;
     }
-
 
 
     /**

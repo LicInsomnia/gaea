@@ -97,6 +97,7 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
 
     /**
      * 解析文件 并在输出之前进行文件整理
+     *
      * @param file 一个输入dat文件
      */
     @Override
@@ -166,9 +167,10 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
 
     /**
      * 装载httpData的两个Location数据
+     *
      * @param httpData 一条数据
      */
-    private void fixHttpDataLocation(HttpData httpData){
+    private void fixHttpDataLocation(HttpData httpData) {
         httpData.setServerLocation(this.httpLineSupport.getLocation(httpData.getServerIp()));
         httpData.setClientLocation(this.httpLineSupport.getLocation(httpData.getClientIp()));
     }

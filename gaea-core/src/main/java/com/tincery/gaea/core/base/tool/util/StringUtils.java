@@ -49,12 +49,12 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @see StringUtils#checkStr(String, String, String, String)
      * @author gxz
      **/
-    public static boolean checkStr(String str,String prefix, String extension){
-        return checkStr(str,prefix,"",extension);
+    public static boolean checkStr(String str, String prefix, String extension) {
+        return checkStr(str, prefix, "", extension);
     }
 
-    public static String[] FileLineSplit(String line){
-            return line.split(DEFAULT_SEP,-1);
+    public static String[] FileLineSplit(String line) {
+        return line.split(DEFAULT_SEP, -1);
     }
 
 

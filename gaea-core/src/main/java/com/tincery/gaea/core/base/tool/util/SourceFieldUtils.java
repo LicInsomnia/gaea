@@ -14,6 +14,7 @@ public class SourceFieldUtils {
 
     /**
      * 实体中部分String字段赋值时，若txt中该值为0则代表null
+     *
      * @param str txt中字符串
      * @return 返回值
      */
@@ -26,11 +27,12 @@ public class SourceFieldUtils {
 
     /**
      * 实体中部分string字段赋值时，若txt中该值为empty"" 则强制赋值为null
+     *
      * @param str txt中字符串
      * @return 返回值
      */
-    public static String parseStringStrEmptyToNull(String str){
-        if (StringUtils.isEmpty(str)){
+    public static String parseStringStrEmptyToNull(String str) {
+        if (StringUtils.isEmpty(str)) {
             return null;
         }
         return str;
@@ -38,6 +40,7 @@ public class SourceFieldUtils {
 
     /**
      * 实体中部分Boolean字段赋值时，对应txt中int值：1 -> TRUE; 0 -> FALSE; other -> null
+     *
      * @param intStr txt中字符串
      * @return 返回值
      */
@@ -89,12 +92,16 @@ public class SourceFieldUtils {
         return formatCollection(collection, ";");
     }
 
-    public static String formatStringBuilder(StringBuilder stringBuilder,String splitChar){
-        if (stringBuilder!=null && stringBuilder.length()!=0){
+    public static String formatStringBuilder(StringBuilder stringBuilder, String splitChar) {
+        if (stringBuilder != null && stringBuilder.length() != 0) {
             List<String> collection = Arrays.asList(stringBuilder.toString().split(","));
-            return formatCollection(collection,splitChar);
+            return formatCollection(collection, splitChar);
         }
         return null;
+    }
+
+    public static Object mergeField(Object obj1, Object obj2) {
+        return null == obj1 ? obj2 : obj1;
     }
 
 

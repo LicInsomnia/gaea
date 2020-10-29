@@ -34,8 +34,8 @@ public class AssetFactory {
 
     */
 /****
-     * 将一个资产json 的时间取整
-     **//*
+ * 将一个资产json 的时间取整
+ **//*
 
     private static long clearCaptime(JSONObject jsonObject){
         Long capTime = jsonObject.getLong(HeadConst.CSV.CAPTIME);

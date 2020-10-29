@@ -16,7 +16,7 @@ import javax.jms.Queue;
 @Slf4j
 public class ReorganizationJob extends QuartzJobBean {
 
-    @Resource (name = QueueNames.DW_REORGANIZATION)
+    @Resource(name = QueueNames.DW_REORGANIZATION)
     Queue reorganizationQueue;
 
     @Autowired

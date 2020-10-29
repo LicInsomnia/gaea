@@ -21,9 +21,9 @@ public class NetUtil extends cn.hutool.core.net.NetUtil {
      * 通过IP段字符串 返回long值ip范围
      * @author gxz
      * @param ip "127.0.0.1/15"
-     * @return javafx.util.Pair<java.lang.Long,java.lang.Long>
+     * @return javafx.util.Pair<java.lang.Long, java.lang.Long>
      **/
-    public static Pair<Long,Long> getRange(String ip){
+    public static Pair<Long, Long> getRange(String ip) {
         long ipN = ToolUtils.IP2long(ip.split("/")[0]);
         int tag = (int) Math.pow(2.0, (32 - Double.parseDouble(ip.split("/")[1])));
         return new Pair<>(ipN, ipN + tag - 1);

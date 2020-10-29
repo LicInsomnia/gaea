@@ -14,13 +14,12 @@ import org.springframework.context.annotation.Configuration;
 public class DwQuartzConfig {
 
 
-   @Autowired
-   private ControllerConfigProperties controllerConfigProperties;
-
     private static final String PREFIX = "controller.model.datawarehouse";
+    @Autowired
+    private ControllerConfigProperties controllerConfigProperties;
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "reorganization")
+    @ConditionalOnProperty(prefix = PREFIX, name = "reorganization")
     public JobDetail reorganizationJob() {
         return JobBuilder.newJob(ReorganizationJob.class)
                 .withIdentity("reorganizationJob")
@@ -30,9 +29,9 @@ public class DwQuartzConfig {
 
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX,name = "reorganization")
+    @ConditionalOnProperty(prefix = PREFIX, name = "reorganization")
     public Trigger dataWarehouseJobTrigger() {
-        String cron = controllerConfigProperties.getDatawarehouse().getReorganization();
+        String cron = controllerConfigProperties.getDataWarehouse().getReorganization();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(reorganizationJob())

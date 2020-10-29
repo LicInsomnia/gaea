@@ -3,7 +3,7 @@ package com.tincery.gaea.core.base.component;
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-public interface LineMultiAnalysis<INPUT,OUTPUT> {
+public interface LineMultiAnalysis<INPUT, OUTPUT> {
 
     /****
      * 将输入包装成多个输出

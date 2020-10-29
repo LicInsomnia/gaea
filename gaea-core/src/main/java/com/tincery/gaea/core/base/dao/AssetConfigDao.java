@@ -26,13 +26,13 @@ public class AssetConfigDao extends SimpleBaseDaoImpl<AssetConfigDO> {
     }
 
     @Override
-    @Value ("asset_config")
+    @Value("asset_config")
     public void setDbName(String dbName) {
         this.dbName = dbName;
     }
 
     @Override
-    @Resource(name="sysMongoTemplate")
+    @Resource(name = "sysMongoTemplate")
     protected void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }

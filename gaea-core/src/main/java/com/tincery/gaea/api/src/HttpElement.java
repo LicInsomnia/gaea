@@ -18,19 +18,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HttpElement extends AbstractSrcData {
-    /**
-     * 用来保存上下行数据
-     */
-    private String contentLength;
-
-    private Boolean isResponse;
-    private Location serverLocation;
-    private Location clientLocation;
-    private String host;
-    private String method;
-    private String urlRoot;
-    private String userAgent;
-    private String payload;
     public String url;
     public String sld;
     public String tld;
@@ -53,11 +40,21 @@ public class HttpElement extends AbstractSrcData {
     public String request;
     public String response;
     public String content;
-
     public Boolean isTrash;
+    /**
+     * 用来保存上下行数据
+     */
+    private String contentLength;
+    private Boolean isResponse;
+    private Location serverLocation;
+    private Location clientLocation;
+    private String host;
+    private String method;
+    private String urlRoot;
+    private String userAgent;
+    private String payload;
 
-
-    public void init(HttpData httpData, HttpMeta httpMeta){
+    public void init(HttpData httpData, HttpMeta httpMeta) {
         this.setSource(httpData.getSource())
                 .setCapTime(httpData.getCapTime())
                 .setUserId(httpData.getUserId())
@@ -125,9 +122,9 @@ public class HttpElement extends AbstractSrcData {
         this.setClientLocation(httpData.getClientLocation())
                 .setServerLocation(httpData.getServerLocation());
 
-        if (CollectionUtils.isEmpty(httpData.getCaseTags())){
+        if (CollectionUtils.isEmpty(httpData.getCaseTags())) {
             this.setIsTrash(false);
-        }else {
+        } else {
             this.setIsTrash(httpData.getCaseTags().contains("垃圾"));
         }
         this.setContent(httpMeta.getContent());

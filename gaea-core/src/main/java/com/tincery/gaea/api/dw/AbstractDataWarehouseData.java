@@ -5,6 +5,7 @@ import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.DnsRequestBO;
 import com.tincery.gaea.api.base.Location;
+import com.tincery.gaea.api.src.extension.*;
 import com.tincery.gaea.core.dw.MergeAble;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,13 +33,26 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
     private Set<String> appCheckModes;
     private String checkMode;
     /**
+     * 会话标签，标记协议名或malformed
+     */
+    private String extensionFlag;
+    /**
+     * 各协议不同的拓展信息
+     */
+    private SessionExtension sessionExtension;
+    private SslExtension sslExtension;
+    private OpenVpnExtension openVpnExtension;
+    private DnsExtension dnsExtension;
+    private SshExtension sshExtension;
+    private HttpExtension httpExtension;
+    private IsakmpExtension isakmpExtension;
+    private FtpAndTelnetExtension ftpAndTelnetExtension;
+    private EspAndAhExtension espAndAhExtension;
+    private MalformedExtension malformedExtension;
+    /**
      * 键值参考sys.common_config.reorganization.value.cerkeys
      */
     private JSONObject cer;
-    /**
-     * 键值参考sys.common_config.reorganization.value.extensionkeys
-     */
-    private Map<String, Object> extension;
     private DnsRequestBO dnsRequestBO;
     /**
      * 标签信息根据属性抽象
@@ -54,13 +68,18 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
      * "general"}） 4.未知应用（{"label.apptype" : "unknown"}） 5.其它应用（{"label.apptype" : "other"}）
      */
     private String applicationType;
-    /** 会话加密标识(null:未知;false:非加密;true:加密) */
+    /**
+     * 会话加密标识(null:未知;false:非加密;true:加密)
+     */
     private Boolean enc;
-    /** 资产标识(0:无资产;1:client为资产;2:server为资产;3:双方均为资产) */
+    /**
+     * 资产标识(0:无资产;1:client为资产;2:server为资产;3:双方均为资产)
+     */
     private Integer assetFlag;
 
-    /** 拓展标识 */
-//    private Map<String, Object> extLabel = new HashMap<>();
+    /**
+     * 拓展标识
+     */
     @Override
     public void adjust() {
         this.applicationType = "unknown";

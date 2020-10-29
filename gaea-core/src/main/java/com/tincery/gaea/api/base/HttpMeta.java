@@ -60,7 +60,7 @@ public class HttpMeta {
 
     public void setContent(String content, boolean isResponse) {
         StringBuilder subContent;
-        if(content.length() > 4096) {
+        if (content.length() > 4096) {
             subContent = new StringBuilder(content.substring(0, 4096));
             subContent.append("...");
         } else {
@@ -75,7 +75,7 @@ public class HttpMeta {
 
     public void addMethod(String method, boolean before) {
         StringBuilder methodBuilder = new StringBuilder(method);
-        if (Objects.isNull(this.method)){
+        if (Objects.isNull(this.method)) {
             this.method = new StringBuilder();
         }
         if (before) {
@@ -87,7 +87,7 @@ public class HttpMeta {
 
     private StringBuilder connectBuilder(StringBuilder request, StringBuilder response) {
         StringBuilder result = new StringBuilder();
-        if(!request.toString().equals("null")) {
+        if (!request.toString().equals("null")) {
             appendBuilder(result, request.toString());
         }
         appendBuilder(result, response.toString());
@@ -127,17 +127,18 @@ public class HttpMeta {
     /**
      * 请求响应一方为空时执行的方法
      */
-    public void fixContentByHalfEmpty(){
-        this.content = StringUtils.isEmpty(this.request)? this.response:this.request;
+    public void fixContentByHalfEmpty() {
+        this.content = StringUtils.isEmpty(this.request) ? this.response : this.request;
     }
 
     /**
      * 请求和响应合并字段的方法
+     *
      * @param response 响应参数
      */
     public HttpMeta fixContentAndOther(HttpMeta response) {
 
-        this.content = this.getRequest() + "\r\n" + HeadConst.GORGEOUS_DIVIDING_LINE +"\r\n"+ response.getResponse();
+        this.content = this.getRequest() + "\r\n" + HeadConst.GORGEOUS_DIVIDING_LINE + "\r\n" + response.getResponse();
         this.repHeaders = response.repHeaders;
         this.method.append(">>").append(response.method);
         return this;
@@ -166,6 +167,7 @@ public class HttpMeta {
             this.urlRoot = url;
         }
     }
+
     public void setHost(String host) {
         this.host = host.toLowerCase();
         this.sld = LevelDomainUtils.SLD(this.host);

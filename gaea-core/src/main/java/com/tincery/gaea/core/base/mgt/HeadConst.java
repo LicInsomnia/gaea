@@ -10,6 +10,7 @@ public class HeadConst {
 
     /* 分割线 http分割请求响应用 */
     public static final String GORGEOUS_DIVIDING_LINE = "|------------------------------------------------------------------------------|";
+
     /* 通用csv文件头 */
     private final static String BASE_COMMON_HEADER = CSV.GROUP_NAME + CSV_SEPARATOR +
             CSV.TARGET_NAME + CSV_SEPARATOR +
@@ -42,21 +43,7 @@ public class HeadConst {
             CSV.MSISDN + CSV_SEPARATOR +
             CSV.CASE_TAGS + CSV_SEPARATOR +
             CSV.FOREIGN + CSV_SEPARATOR;
-    /* session csv文件头 */
-    public final static String SESSION_HEADER = BASE_COMMON_HEADER +
-            CSV.DURATION + CSV_SEPARATOR +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.DOWN_PAYLOAD;
-    /* dns csv文件头 */
-    public final static String DNS_HEADER = BASE_COMMON_HEADER +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.DOMAIN + CSV_SEPARATOR +
-            CSV.CNAMES + CSV_SEPARATOR +
-            CSV.IPS + CSV_SEPARATOR +
-            CSV.EXTENSION;
+
     /* ssl csv文件头 */
     public final static String SSL_HEADER = BASE_COMMON_HEADER +
             CSV.DURATION + CSV_SEPARATOR +
@@ -64,10 +51,10 @@ public class HeadConst {
             CSV.FIN_FLAG + CSV_SEPARATOR +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            CSV.DAUL_AUTH + CSV_SEPARATOR +
             CSV.HANDSHAKE + CSV_SEPARATOR +
             CSV.HAS_APPLICATION_DATA + CSV_SEPARATOR +
             CSV.SERVER_NAME + CSV_SEPARATOR +
-            CSV.DAUL_AUTH + CSV_SEPARATOR +
             CSV.VERSION + CSV_SEPARATOR +
             CSV.CIPHER_SUITES + CSV_SEPARATOR +
             CSV.KEY_EXCHANGE_ALGORITHM + CSV_SEPARATOR +
@@ -86,11 +73,29 @@ public class HeadConst {
             CSV.SERVER_ECDH_NAMED_CURVE + CSV_SEPARATOR +
             CSV.SERVER_ECDH_PUBLIC_KEY_DATA + CSV_SEPARATOR +
             CSV.SERVER_SIGNATURE_ALGORITHM + CSV_SEPARATOR +
-            CSV.SERVER_ECDH_SIGNATURE_DATA;
+            CSV.SERVER_ECDH_SIGNATURE_DATA +
+            CSV.EXTENSION;
+    /* session csv文件头 */
+    public final static String SESSION_HEADER = BASE_COMMON_HEADER +
+            CSV.DURATION + CSV_SEPARATOR +
+            CSV.SYN_FLAG + CSV_SEPARATOR +
+            CSV.FIN_FLAG + CSV_SEPARATOR +
+            CSV.UP_PAYLOAD + CSV_SEPARATOR +
+            CSV.DOWN_PAYLOAD +
+            CSV.EXTENSION;
+    /* dns csv文件头 */
+    public final static String DNS_HEADER = BASE_COMMON_HEADER +
+            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            CSV.DOMAIN + CSV_SEPARATOR +
+            CSV.CNAMES + CSV_SEPARATOR +
+            CSV.IPS + CSV_SEPARATOR +
+            CSV.EXTENSION;
     /* openvpn csv文件头 */
     public final static String OPENVPN_HEADER = SSL_HEADER;
     /* ssh csv文件头 */
     public final static String SSH_HEADER = BASE_COMMON_HEADER +
+            CSV.DURATION + CSV_SEPARATOR +
             CSV.SYN_FLAG + CSV_SEPARATOR +
             CSV.FIN_FLAG + CSV_SEPARATOR +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
@@ -120,7 +125,8 @@ public class HeadConst {
             CSV.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
             CSV.SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
             CSV.CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT;
+            CSV.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT +
+            CSV.EXTENSION;
     /* isakmp csv文件头 */
     public final static String ISAKMP_HEADER = BASE_COMMON_HEADER +
             CSV.SYN_FLAG + CSV_SEPARATOR +
@@ -290,6 +296,7 @@ public class HeadConst {
     }
 
     public static class PRONAME {
+        public static String SESSION = "SESSION";
         public static String SSL = "SSL";
         public static String OPENVPN = "OPENVPN";
         public static String DNS = "DNS";
@@ -299,6 +306,9 @@ public class HeadConst {
         public static String ISAKMP = "ISAKMP";
         public static String FTP = "FTP";
         public static String TELNET = "TELNET";
+        public static String ESP = "ESP";
+        public static String AH = "AH";
+        public static String MALFORMED = "MALFORMED";
         public static String OTHER = "OTHER";
     }
 

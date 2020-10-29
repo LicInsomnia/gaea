@@ -28,7 +28,7 @@ public class ApplicationProtocolDao extends SimpleBaseDaoImpl<ApplicationInforma
     }
 
     @Override
-    @Resource(name="sysMongoTemplate")
+    @Resource(name = "sysMongoTemplate")
     protected void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }

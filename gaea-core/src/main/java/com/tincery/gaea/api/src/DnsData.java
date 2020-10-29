@@ -23,10 +23,12 @@ public class DnsData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar),
+        Object[] join = new Object[]{
+                super.toCsv(splitChar),
                 this.malformedUpPayload, this.malformedDownPayload,
                 this.dnsExtension.toCsv(splitChar),
-                JSONObject.toJSONString(this.dnsExtension)};
+                JSONObject.toJSONString(this.dnsExtension)
+        };
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 

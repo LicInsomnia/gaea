@@ -10,6 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class GaeaAssetApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GaeaAssetApplication.class,args);
+        SpringApplication.run(GaeaAssetApplication.class, args);
     }
 }

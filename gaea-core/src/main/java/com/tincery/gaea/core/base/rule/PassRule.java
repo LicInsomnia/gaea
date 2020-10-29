@@ -22,11 +22,10 @@ import java.util.Set;
 public class PassRule extends BaseSimpleRule {
 
 
-    @Autowired
-    private SrcRuleDao srcRuleDao;
-
     /***session 只需要匹配相应value */
     private final Set<String> passValues = new HashSet<>();
+    @Autowired
+    private SrcRuleDao srcRuleDao;
 
     @Override
     public boolean matchOrStop(AbstractSrcData abstractSrcData) {
@@ -35,7 +34,6 @@ public class PassRule extends BaseSimpleRule {
         }
         return super.matchOrStop(abstractSrcData);
     }
-
 
 
     /**

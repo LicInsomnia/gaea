@@ -2,6 +2,7 @@ package com.tincery.gaea.source.session.execute;
 
 
 import com.tincery.gaea.api.src.SessionData;
+import com.tincery.gaea.api.src.extension.SessionExtension;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
@@ -66,9 +67,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 .setServerId(element[26])
                 .setSyn(SourceFieldUtils.parseBooleanStr(element[0]))
                 .setFin(SourceFieldUtils.parseBooleanStr(element[1]));
-        sessionData.setUpPayLoad(SourceFieldUtils.parseStringStr(element[28]))
-                .setDownPayLoad(SourceFieldUtils.parseStringStr(element[29]))
-                .setMacOuter(SourceFieldUtils.parseBooleanStr(element[27]));
+        sessionData.setMacOuter(SourceFieldUtils.parseBooleanStr(element[27]));
         this.srcLineSupport.set5TupleOuter(
                 element[20],
                 element[21],
@@ -78,6 +77,10 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 sessionData
         );
         sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
+        SessionExtension sessionExtension = new SessionExtension();
+        sessionExtension.setUpPayLoad(SourceFieldUtils.parseStringStr(element[28]));
+        sessionExtension.setDownPayLoad(SourceFieldUtils.parseStringStr(element[29]));
+        sessionData.setSessionExtension(sessionExtension);
     }
 
     /****

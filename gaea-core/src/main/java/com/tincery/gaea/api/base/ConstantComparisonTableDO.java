@@ -19,7 +19,7 @@ public class ConstantComparisonTableDO extends SimpleBaseDO {
 
     @Setter
     @Getter
-    public static class Contrast{
+    public static class Contrast {
         private String key;
         private List<String> code;
     }

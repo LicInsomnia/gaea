@@ -17,45 +17,36 @@ import java.util.Map;
  * @date 2019/12/10
  **/
 public class DateUtils {
-    private DateUtils() {
-        throw new RuntimeException("can't new instance");
-    }
-
     public final static ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
-
     public final static Map<String, DateTimeFormatter> FORMATTER_MAP = new HashMap<>();
     public final static DateTimeFormatter DEFAULT_DATE_PATTERN = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static final DateTimeFormatter PATTERN_YYYYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
     public static final DateTimeFormatter CN_DATE = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
     public final static DateTimeFormatter HOUR_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
     public final static DateTimeFormatter LINK_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-
-
-    /***如果long值超过了这个值一定是微秒 */
-    private static final long MICROSECOND = 1000000000000000L;
-
-    /***公司创建时间 如果毫秒值低过了这个数字 那说明这个数字是错误的*/
-    private static final long CREATE_COMPANY = 1420041600000L;
-
-
-
     public final static int SECOND = 1000;
     public final static int MINUTE = 60 * SECOND;
     public final static int HOUR = 60 * MINUTE;
     public final static long DAY = 24L * HOUR;
     public final static long WEEK = 7 * DAY;
+    /***如果long值超过了这个值一定是微秒 */
+    private static final long MICROSECOND = 1000000000000000L;
+    /***公司创建时间 如果毫秒值低过了这个数字 那说明这个数字是错误的*/
+    private static final long CREATE_COMPANY = 1420041600000L;
 
-
-    static{
-        FORMATTER_MAP.put("yyyy-MM-dd HH:mm:ss",DEFAULT_DATE_PATTERN);
-        FORMATTER_MAP.put("yyyyMMdd",PATTERN_YYYYMMDD);
-        FORMATTER_MAP.put("yyyy年MM月dd日",CN_DATE);
-        FORMATTER_MAP.put("yyyy-MM-dd HH",HOUR_FORMATTER);
+    static {
+        FORMATTER_MAP.put("yyyy-MM-dd HH:mm:ss", DEFAULT_DATE_PATTERN);
+        FORMATTER_MAP.put("yyyyMMdd", PATTERN_YYYYMMDD);
+        FORMATTER_MAP.put("yyyy年MM月dd日", CN_DATE);
+        FORMATTER_MAP.put("yyyy-MM-dd HH", HOUR_FORMATTER);
         FORMATTER_MAP.put("yyyyMMddHHmm", LINK_FORMATTER);
 
     }
 
 
+    private DateUtils() {
+        throw new RuntimeException("can't new instance");
+    }
 
     /**
      * 获取当前时间字符串
@@ -66,6 +57,7 @@ public class DateUtils {
 
     /**
      * 返回两个时间中靠后的时间
+     *
      * @param time1 第一个时间
      * @param time2 第二个时间
      * @param big   true返回靠后的  false 返回靠前的
@@ -121,11 +113,12 @@ public class DateUtils {
         return time;
     }
 
-    public static LocalDateTime Date2LocalDateTime(Date date){
+    public static LocalDateTime Date2LocalDateTime(Date date) {
         Instant instant = date.toInstant();
-        return LocalDateTime.ofInstant(instant,ZoneId.systemDefault());
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
     }
-    public static long LocalDateTime2Long(LocalDateTime localDateTime){
+
+    public static long LocalDateTime2Long(LocalDateTime localDateTime) {
         return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 

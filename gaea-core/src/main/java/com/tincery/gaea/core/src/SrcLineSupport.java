@@ -18,16 +18,13 @@ import org.springframework.stereotype.Component;
 public class SrcLineSupport {
 
     @Autowired
+    public IpChecker ipChecker;
+    @Autowired
     private ApplicationProtocol applicationProtocol;
-
     @Autowired
     private PayloadDetector payloadDetector;
-
     @Autowired
     private GroupGetter groupGetter;
-
-    @Autowired
-    public IpChecker ipChecker;
 
     /**
      * 通过查询application_protocol表获取协议名

@@ -1,6 +1,5 @@
 package com.tincery.gaea.source.ssh.execute;
 
-import com.tincery.gaea.api.src.SessionData;
 import com.tincery.gaea.api.src.SshData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -76,7 +75,6 @@ public class SshReceiver extends AbstractSrcReceiver<SshData> {
     public void registryRules(Rule rule) {
         RuleRegistry.getInstance().putRule(rule);
     }
-
 
 
 }

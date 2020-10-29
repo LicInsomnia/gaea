@@ -28,10 +28,10 @@ public class CommonConfigInit implements ApplicationListener<ContextRefreshedEve
     public void onApplicationEvent(ContextRefreshedEvent event) {
         log.info("开始加载通用配置");
         Query query = new Query(Criteria.where("_id").is(NodeInfo.getNodeName()));
-        List<JSONObject> commonConfigs = sysMongoTemplate.findAll(JSONObject.class,"common_config");
-        JSONObject runConfig = sysMongoTemplate.findOne(query,JSONObject.class,"run_config");
+        List<JSONObject> commonConfigs = sysMongoTemplate.findAll(JSONObject.class, "common_config");
+        JSONObject runConfig = sysMongoTemplate.findOne(query, JSONObject.class, "run_config");
         commonConfigs.forEach((commonConfig) -> CommonConfig.put(commonConfig.getString("_id"), commonConfig.get("value")));
-        if(runConfig!=null){
+        if (runConfig != null) {
             runConfig.forEach(CommonConfig::mergeCommonRun);
         }
         CommonConfig.validatorCommonConfig();

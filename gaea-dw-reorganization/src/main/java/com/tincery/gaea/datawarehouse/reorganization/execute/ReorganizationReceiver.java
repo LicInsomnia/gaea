@@ -23,10 +23,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
 
-    private final AssetCsvFilter assetCsvFilter;
-    private final ReorganizationFactory reorganizationFactory;
-    private FileWriter impSessionFileWriter;
-    private FileWriter assetFileWriter;
     private static final String[] sesssionCategorys = {
             "session",
             "ssl",
@@ -41,6 +37,10 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     };
     private static int impSessionCount = 0;
     private static int assetCount = 0;
+    private final AssetCsvFilter assetCsvFilter;
+    private final ReorganizationFactory reorganizationFactory;
+    private FileWriter impSessionFileWriter;
+    private FileWriter assetFileWriter;
 
     public ReorganizationReceiver(AssetCsvFilter assetCsvFilter, ReorganizationFactory reorganizationFactory) {
         this.assetCsvFilter = assetCsvFilter;

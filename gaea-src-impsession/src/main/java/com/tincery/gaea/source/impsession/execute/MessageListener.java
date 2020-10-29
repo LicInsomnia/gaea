@@ -14,7 +14,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener (destination = "src_impsession")
+    @JmsListener(destination = "src_impsession")
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println("接收到了内容");
         receiver.receive(textMessage);

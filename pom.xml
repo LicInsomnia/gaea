@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,6 +11,7 @@
 
     <modules>
         <module>gaea-core</module>
+        <module>gaea-plug-pack</module>
         <module>gaea-controller</module>
         <module>gaea-src-session</module>
         <module>gaea-src-ssl</module>
@@ -22,10 +23,10 @@
         <module>gaea-src-openvpn</module>
         <module>gaea-src-isakmp</module>
         <module>gaea-src-flow</module>
-        <module>gaea-dw-reorganization</module>
         <module>gaea-src-dns</module>
-        <module>gaea-plug-pack</module>
         <module>gaea-src-http</module>
+        <module>gaea-dw-reorganization</module>
+<!--        <module>gaea-dm-asset</module>-->
     </modules>
 
 

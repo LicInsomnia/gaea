@@ -38,6 +38,22 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
     public SslData pack(String line) throws Exception {
         SslData sslData = new SslData();
         String[] elements = StringUtils.FileLineSplit(line);
+        setFixProperties(elements, sslData);
+        SslExtension sslExtension = new SslExtension();
+        if (sslData.getDataType() == -1) {
+            this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
+        } else {
+            if (elements[29].contains("malformed")) {
+                sslData.setDataType(-2);
+            } else {
+                addSslExtension(elements, sslExtension, sslData);
+            }
+        }
+        sslData.setSslExtension(sslExtension);
+        return sslData;
+    }
+
+    private void setFixProperties(String[] elements, SslData sslData) {
         sslData.setSource(elements[16]);
         sslData.setCapTime(Long.parseLong(elements[2]));
         sslData.setDuration((Long.parseLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
@@ -57,18 +73,6 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
         this.sslLineSupport.setMobileElements(elements[18], elements[19], elements[20], sslData);
         this.sslLineSupport.setPartiesId(elements[26], elements[27], sslData);
         sslData.setForeign(this.sslLineSupport.isForeign(sslData.getServerIp()));
-        SslExtension sslExtension = new SslExtension();
-        if (sslData.getDataType() == -1) {
-            this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
-        } else {
-            if (elements[29].contains("malformed")) {
-                sslData.setDataType(-2);
-            } else {
-                addSslExtension(elements, sslExtension, sslData);
-            }
-        }
-        sslData.setSslExtension(sslExtension);
-        return sslData;
     }
 
     private void addSslExtension(String[] elements, SslExtension sslExtension, SslData sslData) throws Exception {

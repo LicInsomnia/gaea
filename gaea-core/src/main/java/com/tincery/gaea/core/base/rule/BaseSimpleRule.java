@@ -1,6 +1,5 @@
 package com.tincery.gaea.core.base.rule;
 
-import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.src.AbstractSrcData;
 
 import java.util.ArrayList;
