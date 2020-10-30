@@ -64,4 +64,9 @@ public class ActiveMqConfig {
     public Queue getSrcSsh() {
         return new ActiveMQQueue(QueueNames.SRC_SSH);
     }
+
+    @Bean(name = QueueNames.SRC_PPTPANDL2TP)
+    public Queue getPptpandl2tp() {
+        return new ActiveMQQueue(QueueNames.SRC_PPTPANDL2TP);
+    }
 }

@@ -15,4 +15,5 @@ public class QueueNames {
     public final static String DM_ASSET = "dm_asset";
 
 
+    public static final String SRC_PPTPANDL2TP = "src_pptpandl2tp";
 }

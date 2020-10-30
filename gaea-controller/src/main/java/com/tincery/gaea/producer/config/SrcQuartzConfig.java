@@ -206,4 +206,25 @@ public class SrcQuartzConfig {
                 .withSchedule(cronScheduleBuilder)
                 .build();
     }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "pptpandl2tp")
+    public JobDetail pptpandl2tpJob() {
+        return JobBuilder.newJob(Pptpandl2tpJob.class)
+                .withIdentity("pptpandl2tpJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "pptpandl2tp")
+    public Trigger pptpandl2tpJobTrigger() {
+        String cron = controllerConfigProperties.getSource().getPptpandl2tp();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(pptpandl2tpJob())
+                .withIdentity("pptpandl2tpJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
 }
