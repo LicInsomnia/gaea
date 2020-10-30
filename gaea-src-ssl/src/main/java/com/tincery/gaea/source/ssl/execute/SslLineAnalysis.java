@@ -55,8 +55,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
 
     private void setFixProperties(String[] elements, SslData sslData) {
         sslData.setSource(elements[16]);
-        sslData.setCapTime(Long.parseLong(elements[2]));
-        sslData.setDuration((Long.parseLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
+        this.sslLineSupport.setTime(Long.parseLong(elements[2]), Long.parseLong(elements[3]), sslData);
         sslData.setDataType(Integer.parseInt(elements[8]));
         sslData.setSyn("1".equals(elements[0]));
         sslData.setFin("1".equals(elements[1]));

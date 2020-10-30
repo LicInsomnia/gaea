@@ -8,6 +8,7 @@ import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.GroupGetter;
 import com.tincery.gaea.core.base.component.support.IpChecker;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
+import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.starter.base.util.NetworkUtil;
@@ -85,6 +86,11 @@ public class SrcLineSupport {
      */
     public void setGroupName(AbstractMetaData data) {
         data.setGroupName(this.groupGetter.getGroupName(data.getTargetName()));
+    }
+
+    public void setTime(Long capTimeN, Long endTimeN, AbstractSrcData data) {
+        data.setCapTime(DateUtils.validateTime(capTimeN));
+        data.setDuration(endTimeN - capTimeN);
     }
 
     /**

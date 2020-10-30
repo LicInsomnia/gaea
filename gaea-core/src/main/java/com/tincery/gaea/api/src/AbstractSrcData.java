@@ -4,15 +4,12 @@ package com.tincery.gaea.api.src;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.core.base.tool.ToolUtils;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
-import com.tincery.starter.base.util.NetworkUtil;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,47 +32,9 @@ public abstract class AbstractSrcData extends AbstractMetaData {
      */
     protected Boolean macOuter;
     /**
-     * 特殊不可控字段，含预留信息
-     */
-    protected Map<String, Object> extension;
-    /**
      * 会话是否完整
      */
     protected Boolean completeSession;
-
-    @Override
-    public AbstractMetaData setCapTime(Long capTime) {
-        this.capTime = DateUtils.validateTime(capTime);
-        return this;
-    }
-
-    public void set5TupleAndFlow(String protocol, String serverMac, String clientMac,
-                                 String serverIpN, String clientIpN, String serverPort,
-                                 String clientPort, String proName, String upPkt, String upByte,
-                                 String downPkt, String downByte) throws NumberFormatException {
-        this.setProtocol(Integer.parseInt(protocol));
-        this.setClientMac(clientMac);
-        this.setServerMac(serverMac);
-        this.setClientPort(Integer.parseInt(clientPort));
-        this.setServerPort(Integer.parseInt(serverPort));
-        this.setClientIp(NetworkUtil.arrangeIp(clientIpN));
-        this.setServerIp(NetworkUtil.arrangeIp(serverIpN));
-        this.setProName(proName);
-        this.setUpPkt(Long.parseLong(upPkt));
-        this.setUpByte(Long.parseLong(upByte));
-        this.setDownPkt(Long.parseLong(downPkt));
-        this.setDownByte(Long.parseLong(downByte));
-    }
-
-    public void set5TupleOuter(String clientIpOuter, String serverIpOuter,
-                               String clientPortOuter, String serverPortOuter,
-                               String protocolOuter) throws NumberFormatException {
-        this.setClientIpOuter(clientIpOuter);
-        this.setServerIpOuter(serverIpOuter);
-        this.setClientPortOuter(Integer.parseInt(clientPortOuter));
-        this.setServerPortOuter(Integer.parseInt(serverPortOuter));
-        this.setProtocolOuter(Integer.parseInt(protocolOuter));
-    }
 
     @Override
     public void adjust() {

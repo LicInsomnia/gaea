@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @SpringBootApplication
-public class GaeaSrcIsakmpApplication {
+public class GaeaSourceIsakmpApplication {
     public static void main(String[] args) {
-        SpringApplication.run(GaeaSrcIsakmpApplication.class, args);
+        SpringApplication.run(GaeaSourceIsakmpApplication.class, args);
     }
 }

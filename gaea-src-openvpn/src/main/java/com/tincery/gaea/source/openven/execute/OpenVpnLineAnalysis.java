@@ -55,8 +55,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
 
     private void setFixProperties(String[] elements, OpenVpnData openVpnData) {
         openVpnData.setSource(elements[16]);
-        openVpnData.setCapTime(Long.parseLong(elements[2]));
-        openVpnData.setDuration((Long.parseLong(elements[3])) - Long.parseUnsignedLong(elements[2]));
+        this.openVpnLineSupport.setTime(Long.parseLong(elements[2]), Long.parseLong(elements[3]), openVpnData);
         openVpnData.setDataType(Integer.parseInt(elements[8]));
         openVpnData.setSyn("1".equals(elements[0]));
         openVpnData.setFin("1".equals(elements[1]));

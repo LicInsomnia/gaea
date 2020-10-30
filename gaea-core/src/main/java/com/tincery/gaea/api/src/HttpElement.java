@@ -91,8 +91,7 @@ public class HttpElement extends AbstractSrcData {
                 .setForeign(httpData.getForeign())
                 .setCaseTags(httpData.getCaseTags());
 
-        this.setMacOuter(httpData.getMacOuter())
-                .setExtension(httpData.getExtension());
+        this.setMacOuter(httpData.getMacOuter());
 //                .setCompleteSession(httpData.getCompleteSession());
 
 

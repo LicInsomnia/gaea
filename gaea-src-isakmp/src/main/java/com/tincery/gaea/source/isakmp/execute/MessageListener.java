@@ -1,6 +1,5 @@
-package com.tincery.gaea.source.openven.execute;
+package com.tincery.gaea.source.isakmp.execute;
 
-import com.tincery.gaea.api.base.QueueNames;
 import com.tincery.gaea.core.base.component.Receiver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
@@ -15,7 +14,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener(destination = QueueNames.SRC_OPENVPN)
+    @JmsListener(destination = "src_impsession")
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println("接收到了内容");
         receiver.receive(textMessage);

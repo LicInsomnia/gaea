@@ -7,7 +7,6 @@ import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.bson.Document;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashSet;
@@ -153,8 +152,14 @@ public final class AlarmMaterialData {
     private String description;
     private Integer pattern;
     private String publisher;
+    /**
+     * 告警资产信息相关
+     */
+    private String assetUnit;
     private String assetIp;
-    private Document assetInfo;
+    private String assetName;
+    private Integer assetLevel;
+    private String assetType;
     /**
      * 证书告警专用
      */
