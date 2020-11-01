@@ -2,23 +2,14 @@ package com.tincery.gaea.source.pptpandl2tp.execute;
 
 
 import com.tincery.gaea.api.src.Pptpandl2tpData;
-import com.tincery.gaea.api.src.SshData;
-import com.tincery.gaea.api.src.extension.SshExtension;
+import com.tincery.gaea.api.src.extension.PptpAndL2tpExtension;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
-import javax.tools.Tool;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -50,30 +41,30 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
     public Pptpandl2tpData pack(String line) {
         Pptpandl2tpData pptpandl2tpData = new Pptpandl2tpData();
         String[] elements = StringUtils.FileLineSplit(line);
-
-        fixCommon(elements,pptpandl2tpData);
+        PptpAndL2tpExtension pptpAndL2tpExtension = new PptpAndL2tpExtension();
+        fixCommon(elements, pptpandl2tpData);
         Integer dataType = pptpandl2tpData.getDataType();
-        if (dataType!= -1){
-            fixPptpAndL2tp(elements,pptpandl2tpData);
-        }else{
-            fixMalformed(elements,pptpandl2tpData);
+        if (dataType != -1) {
+            fixPptpAndL2tp(elements, pptpAndL2tpExtension);
+        } else {
+            fixMalformed(elements, pptpandl2tpData);
         }
-
+        pptpandl2tpData.setPptpAndL2tpExtension(pptpAndL2tpExtension);
         return pptpandl2tpData;
     }
 
     /**
      * 填装malformed
      */
-    public void fixMalformed(String[] elements,Pptpandl2tpData data){
+    public void fixMalformed(String[] elements, Pptpandl2tpData data) {
         srcLineSupport.setMalformedPayload(elements[29], elements[30], data);
     }
 
     /**
      * 装填pptp 和 l2tp
      */
-    public void fixPptpAndL2tp(String[] elements,Pptpandl2tpData data){
-        data.setResponse(elements[29])
+    public void fixPptpAndL2tp(String[] elements, PptpAndL2tpExtension pptpAndL2tpExtension) {
+        pptpAndL2tpExtension.setResponse(elements[29])
                 .setChallenge(elements[30])
                 .setResponseName(elements[31])
                 .setChallengeName(elements[32])
@@ -82,17 +73,19 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
                 .setSuccessMesg(elements[35])
                 .setEncAlog(elements[36]);
     }
+
     /**
      * 装填common
+     *
      * @param elements
-     * @param pptp
+     * @param pptpandl2tpData
      */
-    public void fixCommon(String[] elements,Pptpandl2tpData pptp){
-        pptp.setSyn(SourceFieldUtils.parseBooleanStr(elements[0]))
+    public void fixCommon(String[] elements, Pptpandl2tpData pptpandl2tpData) {
+        pptpandl2tpData.setSyn(SourceFieldUtils.parseBooleanStr(elements[0]))
                 .setFin(SourceFieldUtils.parseBooleanStr(elements[1]));
-        this.srcLineSupport.setTime(Long.parseLong(elements[2]),Long.parseLong(elements[3]),pptp);
-        this.srcLineSupport.setFlow(elements[4], elements[5], elements[6], elements[7], pptp);
-        pptp.setDataType(Integer.parseInt(elements[8]));
+        this.srcLineSupport.setTime(Long.parseLong(elements[2]), Long.parseLong(elements[3]), pptpandl2tpData);
+        this.srcLineSupport.setFlow(elements[4], elements[5], elements[6], elements[7], pptpandl2tpData);
+        pptpandl2tpData.setDataType(Integer.parseInt(elements[8]));
         this.srcLineSupport.set7Tuple(elements[10],
                 elements[11],
                 elements[12],
@@ -102,20 +95,19 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
                 elements[9],
                 // proName 赋默认值  如果匹配到了相关application 会替换掉proName
                 HeadConst.PRONAME.PPTPANDL2TP,
-                pptp
+                pptpandl2tpData
         );
-        pptp.setSource(elements[16]);
-        this.srcLineSupport.setTargetName(elements[17], pptp);
-        this.srcLineSupport.setGroupName(pptp);
-        pptp.setImsi(elements[18])
+        pptpandl2tpData.setSource(elements[16]);
+        this.srcLineSupport.setTargetName(elements[17], pptpandl2tpData);
+        this.srcLineSupport.setGroupName(pptpandl2tpData);
+        pptpandl2tpData.setImsi(elements[18])
                 .setImei(elements[19])
                 .setMsisdn(elements[20]);
-        srcLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], pptp);
-        pptp.setUserId(elements[26])
+        srcLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], pptpandl2tpData);
+        pptpandl2tpData.setUserId(elements[26])
                 .setServerId(elements[27]);
-        pptp.setMacOuter("1".equals(elements[28]));
+        pptpandl2tpData.setMacOuter("1".equals(elements[28]));
     }
-
 
 
 }
