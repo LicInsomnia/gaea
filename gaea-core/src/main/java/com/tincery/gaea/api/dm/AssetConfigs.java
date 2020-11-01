@@ -1,12 +1,18 @@
 package com.tincery.gaea.api.dm;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.ThPredicate;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.tool.ToolUtils;
 import org.springframework.util.CollectionUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,6 +88,7 @@ public class AssetConfigs {
         return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
     }
 
+
     public static List<AlarmMaterialData> detectorClientAndServer(JSONObject assetJson, AssetDetector assetDetector) {
         List<AlarmMaterialData> result = new ArrayList<>();
         List<AlarmMaterialData> clientAlarm = detectorClient(assetJson, assetDetector);
@@ -94,6 +101,21 @@ public class AssetConfigs {
         }
         return result;
 
+    }
+
+    public static void main(String[] args) throws Exception {
+        File file = new File("/Users/gongxuanzhang/Downloads/asset_1602654519220(2).json");
+        FileWriter fileWriter = new FileWriter(new File("aaaa.json"));
+        FileReader fileReader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line;
+        while ((line = bufferedReader.readLine())!=null){
+            JSONObject parse = (JSONObject)JSON.parse(line);
+            parse.put(HeadConst.CSV.CLIENT_IP_N, ToolUtils.IP2long(parse.getString("clientIp")));
+            parse.put(HeadConst.CSV.SERVER_IP_N, ToolUtils.IP2long(parse.getString("serverIp")));
+            fileWriter.write(parse.toString()+"\n");
+            fileWriter.flush();
+        }
     }
 
     public static boolean check(JSONObject assetJson, AssetConfigDO assetConfig,
@@ -147,18 +169,29 @@ public class AssetConfigs {
 
     private static boolean overseasHit(JSONObject assetJson, AssetConfigDO.OutInputFilter outInputFilter,
                                        Function<JSONObject, Long> getIp) {
-        return outInputFilter.getOverseas().hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
+        AssetConfigDO.OverseasFilter overseas = outInputFilter.getOverseas();
+        if(overseas==null){
+            return false;
+        }
+        return overseas.hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
                 getPort.apply(assetJson));
     }
 
     private static boolean domesticHit(JSONObject assetJson, AssetConfigDO.OutInputFilter outInputFilter,
                                        Function<JSONObject, Long> getIp) {
-        return outInputFilter.getDomestic()
-                .stream().anyMatch(domesticFilter ->
+        List<AssetConfigDO.DomesticFilter> domestic = outInputFilter.getDomestic();
+        if(CollectionUtils.isEmpty(domestic)){
+            return false;
+        }
+        return domestic.stream().anyMatch(domesticFilter ->
                         domesticFilter.hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
                                 getPort.apply(assetJson)));
 
     }
+
+
+
+
 
 
 }
