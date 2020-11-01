@@ -57,5 +57,21 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return line.split(DEFAULT_SEP, -1);
     }
 
+    public static String fillString(String format,Object... fillStr){
+        StringBuilder stringBuilder = new StringBuilder();
+        char[] chars = format.toCharArray();
+        int index = 0;
+        for (char aChar : chars) {
+            if (aChar == '{') {
+                stringBuilder.append(fillStr[index].toString());
+            } else if (aChar == '}') {
+                index++;
+            } else {
+                stringBuilder.append(aChar);
+            }
+        }
+        return stringBuilder.toString();
+    }
+
 
 }

@@ -1,7 +1,7 @@
 server:
   port: 11112
 node:
-  name: test
+  name: gxz
 spring:
   application:
     name: dm_asset
@@ -12,4 +12,4 @@ spring:
         name: gaea
         file-extension: yml
   profiles:
-    active: ${node.name}
+    active: gxz

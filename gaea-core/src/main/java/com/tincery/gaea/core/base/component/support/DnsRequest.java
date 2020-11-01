@@ -13,6 +13,7 @@ import com.tincery.starter.base.InitializationRequired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,7 +49,13 @@ public class DnsRequest implements InitializationRequired {
     public void init() {
         JSONObject jsonObject = new JSONObject((Map) CommonConfig.get("reorganization"));
         Date startTime = jsonObject.getDate("starttime");
-        long startTimeLong = startTime.getTime() - (15 * DateUtils.MINUTE);
+        long startTimeLong;
+        if(startTime == null){
+            startTimeLong = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
+        }else{
+            startTimeLong = startTime.getTime() - (15 * DateUtils.MINUTE);
+        }
+
         String category = "impdnsrequest";
         String impDnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(category);
         List<File> files = FileUtils.searchFiles(impDnsRequestPath, category, null, null, 0);
