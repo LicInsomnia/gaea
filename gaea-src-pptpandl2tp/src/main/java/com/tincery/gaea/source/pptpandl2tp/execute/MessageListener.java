@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.openven.execute;
+package com.tincery.gaea.source.pptpandl2tp.execute;
 
 import com.tincery.gaea.api.base.QueueNames;
 import com.tincery.gaea.core.base.component.Receiver;
@@ -15,9 +15,8 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener(destination = QueueNames.SRC_OPENVPN)
+    @JmsListener(destination = QueueNames.SRC_PPTPANDL2TP)
     public void receive(TextMessage textMessage) throws JMSException {
-        System.out.println("接收到了内容");
         receiver.receive(textMessage);
     }
 }

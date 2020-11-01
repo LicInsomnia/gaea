@@ -27,6 +27,7 @@ public class ControllerConfigProperties {
         private String http;
         private String dns;
         private String ssh;
+        private String pptpandl2tp;
     }
 
     @Setter

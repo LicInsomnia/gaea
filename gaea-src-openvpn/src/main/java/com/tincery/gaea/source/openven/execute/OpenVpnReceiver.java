@@ -40,6 +40,7 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
         this.analysis = analysis;
     }
 
+    @Autowired
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;

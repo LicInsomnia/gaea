@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.base.Location;
+import com.tincery.gaea.api.src.extension.HttpExtension;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import lombok.Getter;
@@ -26,14 +27,10 @@ import java.util.stream.Collectors;
 public class HttpData extends AbstractSrcData {
 
     public List<HttpMeta> metas;
-    private List<String> host;
-    private List<String> method;
-    private List<String> urlRoot;
-    private List<String> userAgent;
-    private Integer contentLength;
-    private Boolean isResponse;
+    private HttpExtension httpExtension;
     private Location serverLocation;
     private Location clientLocation;
+    private Boolean isResponse;
     /**
      * 用来保存上下行数据
      */
@@ -58,17 +55,12 @@ public class HttpData extends AbstractSrcData {
         if (Objects.isNull(this.metas)) {
             return;
         }
-        this.host = this.metas.stream().map(HttpMeta::getHost).collect(Collectors.toList());
-        this.host = fixCollection(this.host);
-        this.method = this.metas.stream().filter(item -> item.getMethod().toString().contains(">>"))
-                .map(HttpMeta::getMethod).map(Object::toString).collect(Collectors.toList());
-        this.method = fixCollection(this.method);
-        this.urlRoot = this.metas.stream().map(HttpMeta::getUrlRoot).collect(Collectors.toList());
-        this.urlRoot = fixCollection(this.urlRoot);
-        this.userAgent = this.metas.stream().map(HttpMeta::getUserAgent).collect(Collectors.toList());
-        this.userAgent = fixCollection(this.userAgent);
-
-        this.contentLength = this.metas.stream().mapToInt(httpMeta -> {
+        this.httpExtension.setHost(this.metas.stream().map(HttpMeta::getHost).collect(Collectors.toList()));
+        this.httpExtension.setMethod(this.metas.stream().filter(item -> item.getMethod().toString().contains(">>"))
+                .map(HttpMeta::getMethod).map(Object::toString).collect(Collectors.toList()));
+        this.httpExtension.setUrlRoot(this.metas.stream().map(HttpMeta::getUrlRoot).collect(Collectors.toList()));
+        this.httpExtension.setUserAgent(this.metas.stream().map(HttpMeta::getUserAgent).collect(Collectors.toList()));
+        this.httpExtension.setContentLength(this.metas.stream().mapToInt(httpMeta -> {
             if (httpMeta.getResponseContentLength() != null && httpMeta.getResponseContentLength() != 0) {
                 return httpMeta.getResponseContentLength();
             } else if (httpMeta.getRequestContentLength() != null && httpMeta.getRequestContentLength() != 0) {
@@ -76,8 +68,7 @@ public class HttpData extends AbstractSrcData {
             } else {
                 return 0;
             }
-        }).sum();
-
+        }).sum());
     }
 
     /**
@@ -140,11 +131,9 @@ public class HttpData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{super.toCsv(splitChar), this.getSyn(), this.getFin(),
-                SourceFieldUtils.formatCollection(this.host), SourceFieldUtils.formatCollection(this.method),
-                SourceFieldUtils.formatCollection(this.urlRoot), SourceFieldUtils.formatCollection(this.userAgent),
-                this.contentLength,
+                this.httpExtension.toCsv(splitChar),
                 this.malformedUpPayload, this.malformedDownPayload, SourceFieldUtils.formatCollection(httpMetaToJsonString(this.metas)),
-                this.extension};
+                JSONObject.toJSONString(this.httpExtension)};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
@@ -196,13 +185,6 @@ public class HttpData extends AbstractSrcData {
             result.add(jsonObject);
         }
         return result;
-    }
-
-    private List<String> fixCollection(List<String> collection) {
-        if (CollectionUtils.isEmpty(collection)) {
-            collection = new ArrayList<>();
-        }
-        return collection;
     }
 
 }

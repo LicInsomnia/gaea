@@ -4,7 +4,6 @@ package com.tincery.gaea.source.http.execute;
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.src.HttpData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -172,40 +171,37 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      * @param httpData 一条数据
      */
     private void fixHttpData(HttpData httpData, String subName) {
-        String[] element = subName.split(StringUtils.DEFAULT_SEP, -1);
-        httpData.setSyn(SourceFieldUtils.parseBooleanStr(element[0]));
-        httpData.setFin(SourceFieldUtils.parseBooleanStr(element[1]));
-        long captimeN = Long.parseLong(element[2]);
-        httpData.setCapTime(DateUtils.validateTime(captimeN));
-        long endTimeN = Long.parseLong(element[3]);
-        httpData.setDuration(endTimeN - captimeN);
+        String[] elements = subName.split(StringUtils.DEFAULT_SEP, -1);
+        httpData.setSyn(SourceFieldUtils.parseBooleanStr(elements[0]));
+        httpData.setFin(SourceFieldUtils.parseBooleanStr(elements[1]));
+        this.httpLineSupport.setTime(Long.parseLong(elements[2]), Long.parseLong(elements[3]), httpData);
         this.httpLineSupport.set7Tuple(null,
                 null,
-                element[8],
-                element[9],
-                element[10],
-                element[11],
+                elements[8],
+                elements[9],
+                elements[10],
+                elements[11],
                 "6",
                 HeadConst.PRONAME.HTTP,
                 httpData
         );
-        this.httpLineSupport.setFlow(element[4],
-                element[5],
-                element[6],
-                element[7],
+        this.httpLineSupport.setFlow(elements[4],
+                elements[5],
+                elements[6],
+                elements[7],
                 httpData
         );
 
-        httpData.setSource(element[12]);
-        this.httpLineSupport.setTargetName(element[13], httpData);
+        httpData.setSource(elements[12]);
+        this.httpLineSupport.setTargetName(elements[13], httpData);
         this.httpLineSupport.setGroupName(httpData);
-        httpData.setImsi(element[14])
-                .setImei(element[15])
-                .setMsisdn(element[16]);
-        this.httpLineSupport.set5TupleOuter(element[17], element[18], element[19], element[20], element[21], httpData);
-        httpData.setUserId(element[22])
-                .setServerId(element[23]);
-        httpData.setIsResponse("1".equals(element[25].substring(0, 1)));
+        httpData.setImsi(elements[14])
+                .setImei(elements[15])
+                .setMsisdn(elements[16]);
+        this.httpLineSupport.set5TupleOuter(elements[17], elements[18], elements[19], elements[20], elements[21], httpData);
+        httpData.setUserId(elements[22])
+                .setServerId(elements[23]);
+        httpData.setIsResponse("1".equals(elements[25].substring(0, 1)));
         httpData.setKey(subName.substring(0, subName.lastIndexOf(StringUtils.DEFAULT_SEP)));
         this.httpLineSupport.isForeign(httpData.getServerIp());
     }

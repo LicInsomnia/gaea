@@ -172,6 +172,23 @@ public class HeadConst {
             CSV.META_LIST + CSV_SEPARATOR +
             CSV.EXTENSION;
 
+    /* pptpandl2tp csv文件头 */
+    public final static String PPTPANDL2TP_HEADER = BASE_COMMON_HEADER +
+            CSV.DURATION + CSV_SEPARATOR +
+            CSV.SYN_FLAG + CSV_SEPARATOR +
+            CSV.FIN_FLAG + CSV_SEPARATOR +
+            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            CSV.RESPONSE + CSV_SEPARATOR +
+            CSV.CHALLENGE+ CSV_SEPARATOR +
+            CSV.RESPONSE_NAME+ CSV_SEPARATOR +
+            CSV.CHALLENGE_NAME+ CSV_SEPARATOR +
+            CSV.AUTH_PROTOCOL+ CSV_SEPARATOR +
+            CSV.AUTH_ALGO+ CSV_SEPARATOR +
+            CSV.SUCCESS_MESG+ CSV_SEPARATOR +
+            CSV.ENC_ALOG+ CSV_SEPARATOR +
+            CSV.EXTENSION;
+
     private HeadConst() {
         throw new RuntimeException();
     }
@@ -293,6 +310,15 @@ public class HeadConst {
         public static String RESPONDER_INFORMATION = "responderInformation";
         public static String INITIATOR_VIDS = "initiatorVid";
         public static String RESPONDER_VID = "responderVid";
+        /*pptpandl2tp*/
+        public static String RESPONSE = "response";
+        public static String CHALLENGE = "challenge";
+        public static String RESPONSE_NAME = "responseName";
+        public static String CHALLENGE_NAME = "challengeName";
+        public static String AUTH_PROTOCOL = "authProtocol";
+        public static String AUTH_ALGO = "authAlgo";
+        public static String SUCCESS_MESG = "successMesg";
+        public static String ENC_ALOG = "encAlog";
     }
 
     public static class PRONAME {
@@ -310,6 +336,7 @@ public class HeadConst {
         public static String AH = "AH";
         public static String MALFORMED = "MALFORMED";
         public static String OTHER = "OTHER";
+        public static String PPTPANDL2TP = "PPTPANDL2TP";
     }
 
     public static class MONGO {

@@ -30,7 +30,7 @@ public class ReorganizationFactory implements InitializationRequired {
     }
 
     public void sessionFactoryInit() {
-        this.sessionFactory = new SessionFactory(this.ipSelector, this.cerSelector, this.applicationProtocol, this.dnsRequest);
+        this.sessionFactory = new SessionFactory();
     }
 
     @Override

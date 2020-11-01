@@ -30,13 +30,13 @@ public class AssetConfigDO extends SimpleBaseDO {
     private String unit;
     private String name;
     private Integer level;
+    private String type;
     private String remark;
 
     private String address;
     private List<String> pids;
 
     private Boolean activity;
-    private String type;
     private List<Long> ips;
     private List<IpRange> ipRanges;
 
