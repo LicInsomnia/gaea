@@ -44,7 +44,7 @@ import java.util.function.BiFunction;
 public class AssetReceiver implements Receiver {
 
 
-    private List<AlarmMaterialData> alarmList = new CopyOnWriteArrayList<>();
+    private final List<AlarmMaterialData> alarmList = new CopyOnWriteArrayList<>();
 
     private static final int ALARM_WRITE_COUNT = 20000;
 
@@ -85,24 +85,32 @@ public class AssetReceiver implements Receiver {
     private void free(List<JSONObject> clientAssetList, List<JSONObject> serverAssetList) {
         List<JSONObject> allAsset = new ArrayList<>(clientAssetList);
         allAsset.addAll(serverAssetList);
-        // 单位分组
+        // 分组
         List<AssetDataDTO> unitList = AssetGroupSupport.getSaveDataByAll(allAsset, AssetGroupSupport::unitDataFrom);
+        AssetGroupSupport.rechecking(assetUnitDao,unitList);
+         unitList.forEach(assetUnitDao::saveOrUpdate);
 
         List<AssetDataDTO> ipList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList
                 , AssetGroupSupport::clientIpDataFrom, serverAssetList, AssetGroupSupport::serverIpDataFrom);
+        AssetGroupSupport.rechecking(assetIpDao,ipList);
+         ipList.forEach(assetIpDao::saveOrUpdate);
 
         List<AssetDataDTO> protocolList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList,
                 AssetGroupSupport::clientProtocolDataFrom, serverAssetList, AssetGroupSupport::serverProtocolDataFrom);
+        assetProtocolDao.insert(protocolList);
 
         List<AssetDataDTO> portData = AssetGroupSupport.getSaveDataByAll(serverAssetList, AssetGroupSupport::portDataFrom);
+        assetPortDao.insert(portData);
 
         writeAlarm();
     }
+
 
     private synchronized void alarmAdd(List<AlarmMaterialData> alarmMaterialDataList) {
         if (CollectionUtils.isEmpty(alarmMaterialDataList)) {
             return;
         }
+        this.alarmList.addAll(alarmMaterialDataList);
         if (this.alarmList.size() > ALARM_WRITE_COUNT) {
             writeAlarm();
         }
@@ -113,7 +121,7 @@ public class AssetReceiver implements Receiver {
         File file = new File(NodeInfo.getAlarmMaterial() + fileName);
         try (FileWriter fileWriter = new FileWriter(file, true)) {
             for (AlarmMaterialData alarmMaterialData : this.alarmList) {
-                fileWriter.write(alarmMaterialData.toString());
+                fileWriter.write(alarmMaterialData.toString()+"\n");
             }
             this.alarmList.clear();
         } catch (IOException e) {
@@ -134,9 +142,9 @@ public class AssetReceiver implements Receiver {
         SERVER_ASSET(2, AssetConfigs::detectorServer),
         SERVER_AND_CLIENT_ASSET(3, AssetConfigs::detectorClientAndServer);
 
-        private int flag;
+        private final int flag;
 
-        private BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function;
+        private final BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function;
 
         AssetFlag(int flag, BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function) {
             this.flag = flag;
@@ -155,9 +163,9 @@ public class AssetReceiver implements Receiver {
 
         public static void fillAndAdd(JSONObject assetJson, AssetDetector assetDetector, List<JSONObject> clientList,
                                       List<JSONObject> serverList) {
-            long clientIp = assetJson.getLong(HeadConst.CSV.CLIENT_IP_N);
+            long clientIp = assetJson.getLong(HeadConst.FIELD.CLIENT_IP_N);
             AssetConfigDO clientConfig = assetDetector.getAsset(clientIp);
-            long serverIp = assetJson.getLong(HeadConst.CSV.SERVER_IP_N);
+            long serverIp = assetJson.getLong(HeadConst.FIELD.SERVER_IP_N);
             AssetConfigDO serverConfig = assetDetector.getAsset(serverIp);
             switch (findByFlag(assetJson.getIntValue("assetFlag"))) {
                 case CLIENT_ASSET:

@@ -21,17 +21,17 @@ public class AssetCsvFilter implements CsvFilter {
         if (!CsvUtils.hasPayload(csvRow)) {
             return false;
         }
-        int protocol = csvRow.getIntegerOrDefault(HeadConst.CSV.PROTOCOL, 0);
+        int protocol = csvRow.getIntegerOrDefault(HeadConst.FIELD.PROTOCOL, 0);
         /* 剔除无SYN TCP会话 */
-        boolean syn = csvRow.getBoolean(HeadConst.CSV.SYN_FLAG);
+        boolean syn = csvRow.getBoolean(HeadConst.FIELD.SYN_FLAG);
         if (protocol == 6 && !syn) {
             return false;
         }
-        int assetFlag = this.assetDetector.getAssetFlag(csvRow.get(HeadConst.CSV.CLIENT_IP), csvRow.get(HeadConst.CSV.SERVER_IP));
+        int assetFlag = this.assetDetector.getAssetFlag(csvRow.get(HeadConst.FIELD.CLIENT_IP), csvRow.get(HeadConst.FIELD.SERVER_IP));
         if (assetFlag == 0) {
             return false;
         }
-        csvRow.putExtension(HeadConst.CSV.ASSET_FLAG, assetFlag);
+        csvRow.putExtension(HeadConst.FIELD.ASSET_FLAG, assetFlag);
         return true;
     }
 }
