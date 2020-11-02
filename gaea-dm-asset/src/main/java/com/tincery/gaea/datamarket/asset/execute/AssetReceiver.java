@@ -3,12 +3,18 @@ package com.tincery.gaea.datamarket.asset.execute;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
+import com.tincery.gaea.api.dm.AssetConfigDO;
 import com.tincery.gaea.api.dm.AssetConfigs;
+import com.tincery.gaea.api.dm.AssetDataDTO;
+import com.tincery.gaea.api.dm.AssetGroupSupport;
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
-import lombok.Getter;
-import lombok.Setter;
+import com.tincery.gaea.core.base.dao.AssetIpDao;
+import com.tincery.gaea.core.base.dao.AssetPortDao;
+import com.tincery.gaea.core.base.dao.AssetProtocolDao;
+import com.tincery.gaea.core.base.dao.AssetUnitDao;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,64 +35,82 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiFunction;
 
+
 /**
  * @author gxz
  */
 @Slf4j
-@Setter
-@Getter
 @Service
 public class AssetReceiver implements Receiver {
 
 
     private List<AlarmMaterialData> alarmList = new CopyOnWriteArrayList<>();
 
-    private static FileWriter fileWriter;
-
     private static final int ALARM_WRITE_COUNT = 20000;
 
     @Autowired
     private AssetDetector assetDetector;
 
+    @Autowired
+    private AssetUnitDao assetUnitDao;
+
+    @Autowired
+    private AssetIpDao assetIpDao;
+
+    @Autowired
+    private AssetProtocolDao assetProtocolDao;
+
+    @Autowired
+    private AssetPortDao assetPortDao;
+
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         File file = new File(textMessage.getText());
-        List<JSONObject> allAssetJson = new ArrayList<>();
+        List<JSONObject> clientAssetList = new CopyOnWriteArrayList<>();
+        List<JSONObject> serverAssetList = new CopyOnWriteArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 JSONObject assetJson = JSON.parseObject(line);
-                int assetFlag = assetJson.getIntValue("assetFlag");
-                List<AlarmMaterialData> alarmMaterialDataList = AssetFlag.jsonRun(assetFlag, assetJson, assetDetector);
-                if (!CollectionUtils.isEmpty(alarmMaterialDataList)) {
-                    alarmAdd(alarmMaterialDataList);
-                }
-                allAssetJson.add(assetJson);
+                alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector));
+                AssetFlag.fillAndAdd(assetJson, assetDetector, clientAssetList, serverAssetList);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        free(allAssetJson);
+        free(clientAssetList, serverAssetList);
     }
 
 
-    private void free(List<JSONObject> allAssetJson) {
-        // 这里还得分类
+    private void free(List<JSONObject> clientAssetList, List<JSONObject> serverAssetList) {
+        List<JSONObject> allAsset = new ArrayList<>(clientAssetList);
+        allAsset.addAll(serverAssetList);
+        // 单位分组
+        List<AssetDataDTO> unitList = AssetGroupSupport.getSaveDataByAll(allAsset, AssetGroupSupport::unitDataFrom);
 
+        List<AssetDataDTO> ipList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList
+                , AssetGroupSupport::clientIpDataFrom, serverAssetList, AssetGroupSupport::serverIpDataFrom);
+
+        List<AssetDataDTO> protocolList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList,
+                AssetGroupSupport::clientProtocolDataFrom, serverAssetList, AssetGroupSupport::serverProtocolDataFrom);
+
+        List<AssetDataDTO> portData = AssetGroupSupport.getSaveDataByAll(serverAssetList, AssetGroupSupport::portDataFrom);
 
         writeAlarm();
     }
 
     private synchronized void alarmAdd(List<AlarmMaterialData> alarmMaterialDataList) {
-        this.alarmList.addAll(alarmMaterialDataList);
+        if (CollectionUtils.isEmpty(alarmMaterialDataList)) {
+            return;
+        }
         if (this.alarmList.size() > ALARM_WRITE_COUNT) {
             writeAlarm();
         }
     }
 
     private synchronized void writeAlarm() {
-        String fileName = "assetAlarm"+Instant.now().toEpochMilli()+".json";
-        File file = new File(NodeInfo.getAlarmMaterial()+fileName);
+        String fileName = "assetAlarm" + Instant.now().toEpochMilli() + ".json";
+        File file = new File(NodeInfo.getAlarmMaterial() + fileName);
         try (FileWriter fileWriter = new FileWriter(file, true)) {
             for (AlarmMaterialData alarmMaterialData : this.alarmList) {
                 fileWriter.write(alarmMaterialData.toString());
@@ -96,7 +120,6 @@ public class AssetReceiver implements Receiver {
             e.printStackTrace();
         }
     }
-
 
 
     @Override
@@ -125,9 +148,43 @@ public class AssetReceiver implements Receiver {
             return first.orElse(null);
         }
 
-        public static List<AlarmMaterialData> jsonRun(int flag, JSONObject assetJson, AssetDetector assetDetector) {
+        public static List<AlarmMaterialData> jsonRun(JSONObject assetJson, AssetDetector assetDetector) {
+            int flag = assetJson.getIntValue("assetFlag");
             return findByFlag(flag).function.apply(assetJson, assetDetector);
         }
+
+        public static void fillAndAdd(JSONObject assetJson, AssetDetector assetDetector, List<JSONObject> clientList,
+                                      List<JSONObject> serverList) {
+            long clientIp = assetJson.getLong(HeadConst.CSV.CLIENT_IP_N);
+            AssetConfigDO clientConfig = assetDetector.getAsset(clientIp);
+            long serverIp = assetJson.getLong(HeadConst.CSV.SERVER_IP_N);
+            AssetConfigDO serverConfig = assetDetector.getAsset(serverIp);
+            switch (findByFlag(assetJson.getIntValue("assetFlag"))) {
+                case CLIENT_ASSET:
+                    fillAsset(assetJson, clientConfig, clientIp);
+                    clientList.add(assetJson);
+                    break;
+                case SERVER_ASSET:
+                    fillAsset(assetJson, serverConfig, serverIp);
+                    serverList.add(assetJson);
+                    break;
+                case SERVER_AND_CLIENT_ASSET:
+                    fillAsset(assetJson, clientConfig, clientIp);
+                    JSONObject clone = (JSONObject) assetJson.clone();
+                    fillAsset(clone, serverConfig, serverIp);
+                    clientList.add(assetJson);
+                    serverList.add(clone);
+                default:
+                    break;
+            }
+        }
+
+        private static void fillAsset(JSONObject assetJson, AssetConfigDO config, long targetIp) {
+            assetJson.put("ip", targetIp);
+            assetJson.put("unit", config.getUnit());
+            assetJson.put("name", config.getName());
+        }
     }
+
 
 }

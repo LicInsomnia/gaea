@@ -47,7 +47,7 @@ public class ApplicationInfo {
     public static void lock() {
         if (lock) {
             log.error("上锁之后又被锁定");
-            throw new RuntimeException("已经上锁");
+          //  throw new RuntimeException("已经上锁");
         } else {
             APPLICATION_MAP = Collections.unmodifiableMap(GLOBAL_MAP);
             log.info("初始化完成 节点信息锁定");

@@ -347,6 +347,8 @@ public class HeadConst {
         public static String OTHER = "OTHER";
         public static String PPTPANDL2TP = "PPTPANDL2TP";
         public static String WECHAT = "WECHAT";
+        public static String PPTP = "PPTP";
+        public static String L2TP = "L2TP";
     }
 
     public static class MONGO {

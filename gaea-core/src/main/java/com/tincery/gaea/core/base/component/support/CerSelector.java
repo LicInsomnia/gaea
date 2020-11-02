@@ -41,6 +41,10 @@ public class CerSelector implements InitializationRequired {
     @SuppressWarnings("unchecked")
     public void init() {
         Map<String, Object> configs = (Map<String, Object>) CommonConfig.get("cerKeys");
+        if(configs == null){
+            this.cerKeys = new String[0];
+            return;
+        }
         List<Map<String, Object>> fields = (List<Map<String, Object>>) configs.get("fields");
         Set<String> cerKeys = new HashSet<>();
         for (Map<String, Object> field : fields) {
