@@ -30,8 +30,12 @@ public class CommonConfig {
      **/
     public static void mergeCommonRun(String runKey, Object runValue) {
         if (COMMON_CONFIG.containsKey(runKey)) {
-            JSONObject commonValue = new JSONObject((Map) COMMON_CONFIG.get(runKey));
-            commonValue.putAll(new JSONObject((Map) runValue));
+            try {
+                JSONObject commonValue = new JSONObject((Map) COMMON_CONFIG.get(runKey));
+                commonValue.putAll(new JSONObject((Map) runValue));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             COMMON_CONFIG.put(runKey, runValue);
         }

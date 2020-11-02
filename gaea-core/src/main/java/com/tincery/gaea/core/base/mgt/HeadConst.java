@@ -12,196 +12,234 @@ public class HeadConst {
     public static final String GORGEOUS_DIVIDING_LINE = "|------------------------------------------------------------------------------|";
 
     /* 通用csv文件头 */
-    private final static String BASE_COMMON_HEADER = CSV.GROUP_NAME + CSV_SEPARATOR +
-            CSV.TARGET_NAME + CSV_SEPARATOR +
-            CSV.USER_ID + CSV_SEPARATOR +
-            CSV.SERVER_ID + CSV_SEPARATOR +
-            CSV.SOURCE + CSV_SEPARATOR +
-            CSV.CAPTIME + CSV_SEPARATOR +
-            CSV.CLIENT_MAC + CSV_SEPARATOR +
-            CSV.SERVER_MAC + CSV_SEPARATOR +
-            CSV.PROTOCOL + CSV_SEPARATOR +
-            CSV.PRONAME + CSV_SEPARATOR +
-            CSV.CLIENT_IP + CSV_SEPARATOR +
-            CSV.CLIENT_IP_N + CSV_SEPARATOR +
-            CSV.SERVER_IP + CSV_SEPARATOR +
-            CSV.SERVER_IP_N + CSV_SEPARATOR +
-            CSV.CLIENT_PORT + CSV_SEPARATOR +
-            CSV.SERVER_PORT + CSV_SEPARATOR +
-            CSV.CLIENT_IP_OUTER + CSV_SEPARATOR +
-            CSV.SERVER_IP_OUTER + CSV_SEPARATOR +
-            CSV.CLIENT_PORT_OUTER + CSV_SEPARATOR +
-            CSV.SERVER_PORT_OUTER + CSV_SEPARATOR +
-            CSV.PROTOCOL_OUTER + CSV_SEPARATOR +
-            CSV.UP_PKT + CSV_SEPARATOR +
-            CSV.UP_BYTE + CSV_SEPARATOR +
-            CSV.DOWN_PKT + CSV_SEPARATOR +
-            CSV.DOWN_BYTE + CSV_SEPARATOR +
-            CSV.DATA_TYPE + CSV_SEPARATOR +
-            CSV.IMSI + CSV_SEPARATOR +
-            CSV.IMEI + CSV_SEPARATOR +
-            CSV.MSISDN + CSV_SEPARATOR +
-            CSV.CASE_TAGS + CSV_SEPARATOR +
-            CSV.FOREIGN + CSV_SEPARATOR;
+    private final static String BASE_COMMON_HEADER = FIELD.GROUP_NAME + CSV_SEPARATOR +
+            FIELD.TARGET_NAME + CSV_SEPARATOR +
+            FIELD.USER_ID + CSV_SEPARATOR +
+            FIELD.SERVER_ID + CSV_SEPARATOR +
+            FIELD.SOURCE + CSV_SEPARATOR +
+            FIELD.CAPTIME + CSV_SEPARATOR +
+            FIELD.CLIENT_MAC + CSV_SEPARATOR +
+            FIELD.SERVER_MAC + CSV_SEPARATOR +
+            FIELD.PROTOCOL + CSV_SEPARATOR +
+            FIELD.PRONAME + CSV_SEPARATOR +
+            FIELD.CLIENT_IP + CSV_SEPARATOR +
+            FIELD.CLIENT_IP_N + CSV_SEPARATOR +
+            FIELD.SERVER_IP + CSV_SEPARATOR +
+            FIELD.SERVER_IP_N + CSV_SEPARATOR +
+            FIELD.CLIENT_PORT + CSV_SEPARATOR +
+            FIELD.SERVER_PORT + CSV_SEPARATOR +
+            FIELD.CLIENT_IP_OUTER + CSV_SEPARATOR +
+            FIELD.SERVER_IP_OUTER + CSV_SEPARATOR +
+            FIELD.CLIENT_PORT_OUTER + CSV_SEPARATOR +
+            FIELD.SERVER_PORT_OUTER + CSV_SEPARATOR +
+            FIELD.PROTOCOL_OUTER + CSV_SEPARATOR +
+            FIELD.UP_PKT + CSV_SEPARATOR +
+            FIELD.UP_BYTE + CSV_SEPARATOR +
+            FIELD.DOWN_PKT + CSV_SEPARATOR +
+            FIELD.DOWN_BYTE + CSV_SEPARATOR +
+            FIELD.DATA_TYPE + CSV_SEPARATOR +
+            FIELD.IMSI + CSV_SEPARATOR +
+            FIELD.IMEI + CSV_SEPARATOR +
+            FIELD.MSISDN + CSV_SEPARATOR +
+            FIELD.CASE_TAGS + CSV_SEPARATOR +
+            FIELD.FOREIGN + CSV_SEPARATOR;
 
     /* ssl csv文件头 */
     public final static String SSL_HEADER = BASE_COMMON_HEADER +
-            CSV.DURATION + CSV_SEPARATOR +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.DAUL_AUTH + CSV_SEPARATOR +
-            CSV.HANDSHAKE + CSV_SEPARATOR +
-            CSV.HAS_APPLICATION_DATA + CSV_SEPARATOR +
-            CSV.SERVER_NAME + CSV_SEPARATOR +
-            CSV.VERSION + CSV_SEPARATOR +
-            CSV.CIPHER_SUITES + CSV_SEPARATOR +
-            CSV.KEY_EXCHANGE_ALGORITHM + CSV_SEPARATOR +
-            CSV.AUTHENTICATION_ALGORITHM + CSV_SEPARATOR +
-            CSV.ENCRYPTION_ALGORITHM + CSV_SEPARATOR +
-            CSV.MESSAGE_AUTHENTICATION_CODES_ALGORITHM + CSV_SEPARATOR +
-            CSV.SHA1 + CSV_SEPARATOR +
-            CSV.CLIENT_CER_CHAIN + CSV_SEPARATOR +
-            CSV.CLIENT_JA3 + CSV_SEPARATOR +
-            CSV.CLIENT_FINGER_PRINT + CSV_SEPARATOR +
-            CSV.CLIENT_CIPHER_SUITES + CSV_SEPARATOR +
-            CSV.CLIENT_HASH_ALGORITHMS + CSV_SEPARATOR +
-            CSV.SERVER_CER_CHAIN + CSV_SEPARATOR +
-            CSV.SERVER_JA3 + CSV_SEPARATOR +
-            CSV.SERVER_FINGER_PRINT + CSV_SEPARATOR +
-            CSV.SERVER_ECDH_NAMED_CURVE + CSV_SEPARATOR +
-            CSV.SERVER_ECDH_PUBLIC_KEY_DATA + CSV_SEPARATOR +
-            CSV.SERVER_SIGNATURE_ALGORITHM + CSV_SEPARATOR +
-            CSV.SERVER_ECDH_SIGNATURE_DATA +
-            CSV.EXTENSION;
+            FIELD.DURATION + CSV_SEPARATOR +
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.DAUL_AUTH + CSV_SEPARATOR +
+            FIELD.HANDSHAKE + CSV_SEPARATOR +
+            FIELD.HAS_APPLICATION_DATA + CSV_SEPARATOR +
+            FIELD.SERVER_NAME + CSV_SEPARATOR +
+            FIELD.VERSION + CSV_SEPARATOR +
+            FIELD.CIPHER_SUITES + CSV_SEPARATOR +
+            FIELD.KEY_EXCHANGE_ALGORITHM + CSV_SEPARATOR +
+            FIELD.AUTHENTICATION_ALGORITHM + CSV_SEPARATOR +
+            FIELD.ENCRYPTION_ALGORITHM + CSV_SEPARATOR +
+            FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM + CSV_SEPARATOR +
+            FIELD.SHA1 + CSV_SEPARATOR +
+            FIELD.CLIENT_CER_CHAIN + CSV_SEPARATOR +
+            FIELD.CLIENT_JA3 + CSV_SEPARATOR +
+            FIELD.CLIENT_FINGER_PRINT + CSV_SEPARATOR +
+            FIELD.CLIENT_CIPHER_SUITES + CSV_SEPARATOR +
+            FIELD.CLIENT_HASH_ALGORITHMS + CSV_SEPARATOR +
+            FIELD.SERVER_CER_CHAIN + CSV_SEPARATOR +
+            FIELD.SERVER_JA3 + CSV_SEPARATOR +
+            FIELD.SERVER_FINGER_PRINT + CSV_SEPARATOR +
+            FIELD.SERVER_ECDH_NAMED_CURVE + CSV_SEPARATOR +
+            FIELD.SERVER_ECDH_PUBLIC_KEY_DATA + CSV_SEPARATOR +
+            FIELD.SERVER_SIGNATURE_ALGORITHM + CSV_SEPARATOR +
+            FIELD.SERVER_ECDH_SIGNATURE_DATA +
+            FIELD.EXTENSION;
     /* session csv文件头 */
     public final static String SESSION_HEADER = BASE_COMMON_HEADER +
-            CSV.DURATION + CSV_SEPARATOR +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.DOWN_PAYLOAD +
-            CSV.EXTENSION;
+            FIELD.DURATION + CSV_SEPARATOR +
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.DOWN_PAYLOAD +
+            FIELD.EXTENSION;
     /* dns csv文件头 */
     public final static String DNS_HEADER = BASE_COMMON_HEADER +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.DOMAIN + CSV_SEPARATOR +
-            CSV.CNAMES + CSV_SEPARATOR +
-            CSV.IPS + CSV_SEPARATOR +
-            CSV.EXTENSION;
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.DOMAIN + CSV_SEPARATOR +
+            FIELD.CNAMES + CSV_SEPARATOR +
+            FIELD.IPS + CSV_SEPARATOR +
+            FIELD.EXTENSION;
     /* openvpn csv文件头 */
     public final static String OPENVPN_HEADER = SSL_HEADER;
     /* ssh csv文件头 */
     public final static String SSH_HEADER = BASE_COMMON_HEADER +
-            CSV.DURATION + CSV_SEPARATOR +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.CLIENT_PROTOCOL + CSV_SEPARATOR +
-            CSV.SERVER_PROTOCOL + CSV_SEPARATOR +
-            CSV.CLIENT_KEX_ALGORITHMS + CSV_SEPARATOR +
-            CSV.SERVER_KEX_ALGORITHMS + CSV_SEPARATOR +
-            CSV.FINAL_KEX_ALGORITHMS + CSV_SEPARATOR +
-            CSV.CLIENT_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
-            CSV.SERVER_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
-            CSV.FINAL_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
-            CSV.CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            CSV.SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT +
-            CSV.EXTENSION;
+            FIELD.DURATION + CSV_SEPARATOR +
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.CLIENT_PROTOCOL + CSV_SEPARATOR +
+            FIELD.SERVER_PROTOCOL + CSV_SEPARATOR +
+            FIELD.CLIENT_KEX_ALGORITHMS + CSV_SEPARATOR +
+            FIELD.SERVER_KEX_ALGORITHMS + CSV_SEPARATOR +
+            FIELD.FINAL_KEX_ALGORITHMS + CSV_SEPARATOR +
+            FIELD.CLIENT_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
+            FIELD.SERVER_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
+            FIELD.FINAL_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
+            FIELD.CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
+            FIELD.SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT +
+            FIELD.EXTENSION;
     /* isakmp csv文件头 */
     public final static String ISAKMP_HEADER = BASE_COMMON_HEADER +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.MESSAGE_LIST + CSV_SEPARATOR +
-            CSV.INITIATOR_INFORMATION + CSV_SEPARATOR +
-            CSV.RESPONDER_INFORMATION + CSV_SEPARATOR +
-            CSV.INITIATOR_VIDS + CSV_SEPARATOR +
-            CSV.RESPONDER_VID + CSV_SEPARATOR +
-            CSV.EXTENSION;
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MESSAGE_LIST + CSV_SEPARATOR +
+            FIELD.INITIATOR_INFORMATION + CSV_SEPARATOR +
+            FIELD.RESPONDER_INFORMATION + CSV_SEPARATOR +
+            FIELD.INITIATOR_VIDS + CSV_SEPARATOR +
+            FIELD.RESPONDER_VID + CSV_SEPARATOR +
+            FIELD.EXTENSION;
     /* ftpandtelnet csv文件头 */
     public final static String FTPANDTELNET_HEADER = BASE_COMMON_HEADER +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.EXTENSION;
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.EXTENSION;
     /* email csv文件头 */
     public final static String EMAIL_HEADER = BASE_COMMON_HEADER +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.EXTENSION;
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.EXTENSION;
     /* ESP&AH csv文件头 */
     public final static String ESPANDAH_HEADER = BASE_COMMON_HEADER +
-            CSV.SPI + CSV_SEPARATOR +
-            CSV.UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.DOWN_PAYLOAD;
+            FIELD.SPI + CSV_SEPARATOR +
+            FIELD.UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.DOWN_PAYLOAD;
     /* http csv文件头 */
     public final static String HTTP_HEADER = BASE_COMMON_HEADER +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.HOST + CSV_SEPARATOR +
-            CSV.METHOD + CSV_SEPARATOR +
-            CSV.URL_ROOT + CSV_SEPARATOR +
-            CSV.USER_AGENT + CSV_SEPARATOR +
-            CSV.CONTENT_LENGTH + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.META_LIST + CSV_SEPARATOR +
-            CSV.EXTENSION;
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.HOST + CSV_SEPARATOR +
+            FIELD.METHOD + CSV_SEPARATOR +
+            FIELD.URL_ROOT + CSV_SEPARATOR +
+            FIELD.USER_AGENT + CSV_SEPARATOR +
+            FIELD.CONTENT_LENGTH + CSV_SEPARATOR +
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.META_LIST + CSV_SEPARATOR +
+            FIELD.EXTENSION;
 
     /* pptpandl2tp csv文件头 */
     public final static String PPTPANDL2TP_HEADER = BASE_COMMON_HEADER +
-            CSV.DURATION + CSV_SEPARATOR +
-            CSV.SYN_FLAG + CSV_SEPARATOR +
-            CSV.FIN_FLAG + CSV_SEPARATOR +
-            CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
-            CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.RESPONSE + CSV_SEPARATOR +
-            CSV.CHALLENGE+ CSV_SEPARATOR +
-            CSV.RESPONSE_NAME+ CSV_SEPARATOR +
-            CSV.CHALLENGE_NAME+ CSV_SEPARATOR +
-            CSV.AUTH_PROTOCOL+ CSV_SEPARATOR +
-            CSV.AUTH_ALGO+ CSV_SEPARATOR +
-            CSV.SUCCESS_MESG+ CSV_SEPARATOR +
-            CSV.ENC_ALOG+ CSV_SEPARATOR +
-            CSV.EXTENSION;
+            FIELD.DURATION + CSV_SEPARATOR +
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.RESPONSE + CSV_SEPARATOR +
+            FIELD.CHALLENGE + CSV_SEPARATOR +
+            FIELD.RESPONSE_NAME + CSV_SEPARATOR +
+            FIELD.CHALLENGE_NAME + CSV_SEPARATOR +
+            FIELD.AUTH_PROTOCOL + CSV_SEPARATOR +
+            FIELD.AUTH_ALGO + CSV_SEPARATOR +
+            FIELD.SUCCESS_MESG + CSV_SEPARATOR +
+            FIELD.ENC_ALOG + CSV_SEPARATOR +
+            FIELD.EXTENSION;
     /* wechat csv文件头 */
     public final static String WECHAT_HEADER = BASE_COMMON_HEADER +
-            CSV.WXNUM + CSV_SEPARATOR +
-            CSV.VERSION + CSV_SEPARATOR +
-            CSV.OSTYPE ;
+            FIELD.WXNUM + CSV_SEPARATOR +
+            FIELD.VERSION + CSV_SEPARATOR +
+            FIELD.OSTYPE;
 
 
     private HeadConst() {
         throw new RuntimeException();
     }
 
-    public static class CSV {
+    public static class FIELD {
+        /* COMMON */
+        public final static String GROUP_NAME = "groupName";
+        public final static String TARGET_NAME = "targetName";
+        public final static String USER_ID = "userId";
+        public final static String SERVER_ID = "serverId";
+        public final static String SOURCE = "source";
+        public final static String CAPTIME = "capTime";
+        public final static String CLIENT_MAC = "clientMac";
+        public final static String SERVER_MAC = "serverMac";
+        public final static String PROTOCOL = "protocol";
+        public final static String PRONAME = "proName";
+        public final static String CLIENT_IP = "clientIp";
+        public final static String CLIENT_IP_N = "clientIp_n";
+        public final static String SERVER_IP = "serverIp";
+        public final static String SERVER_IP_N = "serverIp_n";
+        public final static String CLIENT_PORT = "clientPort";
+        public final static String SERVER_PORT = "serverPort";
+        public final static String CLIENT_IP_OUTER = "clientIpOuter";
+        public final static String SERVER_IP_OUTER = "serverIpOuter";
+        public final static String CLIENT_PORT_OUTER = "clientPortOuter";
+        public final static String SERVER_PORT_OUTER = "serverPortOuter";
+        public final static String PROTOCOL_OUTER = "protocolOuter";
+        public final static String UP_PKT = "upPkt";
+        public final static String UP_BYTE = "upByte";
+        public final static String DOWN_PKT = "downPkt";
+        public final static String DOWN_BYTE = "downByte";
+        public final static String DATA_TYPE = "dataType";
+        public final static String IMSI = "imsi";
+        public final static String IMEI = "imei";
+        public final static String MSISDN = "msisdn";
+        public final static String CASE_TAGS = "caseTags";
+        public final static String FOREIGN = "foreign";
         public final static String MALFORMED_UP_PAYLOAD = "malformedUpPayload";
         public final static String MALFORMED_DOWN_PAYLOAD = "malformedDownPayload";
+        /* EXTENSION */
+        public final static String EXTENSION = "extension";
+        /* TCP */
+        public final static String DURATION = "duration";
+        public final static String SYN_FLAG = "synFlag";
+        public final static String FIN_FLAG = "finFlag";
         /* DNS */
         public final static String KEY = "key";
         public final static String IPS = "ips";
@@ -231,6 +269,41 @@ public class HeadConst {
         public final static String SERVER_ECDH_PUBLIC_KEY_DATA = "serverECDHPublicKeyData";
         public final static String SERVER_SIGNATURE_ALGORITHM = "serverECDHSignatureAlgorithm";
         public final static String SERVER_ECDH_SIGNATURE_DATA = "serverECDHSignatureData";
+        /* ASSET */
+        public final static String ASSET_FLAG = "assetFlag";
+        /* SESSION */
+        public final static String UP_PAYLOAD = "upPayload";
+        public final static String DOWN_PAYLOAD = "downPayload";
+        /* HTTP */
+        public final static String HOST = "hostList";
+        public final static String URL_ROOT = "urlRootList";
+        public final static String METHOD = "methodList";
+        public final static String USER_AGENT = "userAgentList";
+        public final static String CONTENT_LENGTH = "contentLengthList";
+        public final static String META_LIST = "metaList";
+        /* ESP&AH */
+        public final static String SPI = "spi";
+        /* ISAKMP */
+        public final static String MESSAGE_LIST = "messageList";
+        public final static String INITIATOR_INFORMATION = "initiatorInformation";
+        public final static String RESPONDER_INFORMATION = "responderInformation";
+        public final static String INITIATOR_VIDS = "initiatorVid";
+        public final static String RESPONDER_VID = "responderVid";
+        /* PPTPANDL2TP */
+        public final static String RESPONSE = "response";
+        public final static String CHALLENGE = "challenge";
+        public final static String RESPONSE_NAME = "responseName";
+        public final static String CHALLENGE_NAME = "challengeName";
+        public final static String AUTH_PROTOCOL = "authProtocol";
+        public final static String AUTH_ALGO = "authAlgo";
+        public final static String SUCCESS_MESG = "successMesg";
+        public final static String ENC_ALOG = "encAlog";
+        /* WECHAT */
+        public final static String WXNUM = "wxNum";
+        public final static String OSTYPE = "osType";
+        /* LOCATION */
+        public final static String CLIENT_LOCATION = "clientLocation";
+        public final static String SERVER_LOCATION = "serverLocation";
         /* SSH */
         private final static String CLIENT_PROTOCOL = "clientProtocol";
         private final static String SERVER_PROTOCOL = "serverProtocol";
@@ -258,156 +331,44 @@ public class HeadConst {
         private final static String SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "serverCompressionAlgorithmsServerToClient";
         private final static String CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "clientCompressionAlgorithmsServerToClient";
         private final static String FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "finalCompressionAlgorithmsServerToClient";
-        /* COMMON */
-        public static String GROUP_NAME = "groupName";
-        public static String TARGET_NAME = "targetName";
-        public static String USER_ID = "userId";
-        public static String SERVER_ID = "serverId";
-        public static String SOURCE = "source";
-        public static String CAPTIME = "capTime";
-        public static String CLIENT_MAC = "clientMac";
-        public static String SERVER_MAC = "serverMac";
-        public static String PROTOCOL = "protocol";
-        public static String PRONAME = "proName";
-        public static String CLIENT_IP = "clientIp";
-        public static String CLIENT_IP_N = "clientIp_n";
-        public static String SERVER_IP = "serverIp";
-        public static String SERVER_IP_N = "serverIp_n";
-        public static String CLIENT_PORT = "clientPort";
-        public static String SERVER_PORT = "serverPort";
-        public static String CLIENT_IP_OUTER = "clientIpOuter";
-        public static String SERVER_IP_OUTER = "serverIpOuter";
-        public static String CLIENT_PORT_OUTER = "clientPortOuter";
-        public static String SERVER_PORT_OUTER = "serverPortOuter";
-        public static String PROTOCOL_OUTER = "protocolOuter";
-        public static String UP_PKT = "upPkt";
-        public static String UP_BYTE = "upByte";
-        public static String DOWN_PKT = "downPkt";
-        public static String DOWN_BYTE = "downByte";
-        public static String DATA_TYPE = "dataType";
-        public static String IMSI = "imsi";
-        public static String IMEI = "imei";
-        public static String MSISDN = "msisdn";
-        public static String CASE_TAGS = "caseTags";
-        public static String FOREIGN = "foreign";
-        /* TCP */
-        public static String DURATION = "duration";
-        public static String SYN_FLAG = "synFlag";
-        public static String FIN_FLAG = "finFlag";
-        /* EXTENSION */
-        public static String EXTENSION = "extension";
-        /* ASSET */
-        public static String ASSET_FLAG = "assetFlag";
-        /* SESSION */
-        public static String UP_PAYLOAD = "upPayload";
-        public static String DOWN_PAYLOAD = "downPayload";
-        /* HTTP */
-        public static String HOST = "hostList";
-        public static String URL_ROOT = "urlRootList";
-        public static String METHOD = "methodList";
-        public static String USER_AGENT = "userAgentList";
-        public static String CONTENT_LENGTH = "contentLengthList";
-        public static String META_LIST = "metaList";
-        /* ESP&AH */
-        public static String SPI = "spi";
-        /* ISAKMP */
-        public static String MESSAGE_LIST = "messageList";
-        public static String INITIATOR_INFORMATION = "initiatorInformation";
-        public static String RESPONDER_INFORMATION = "responderInformation";
-        public static String INITIATOR_VIDS = "initiatorVid";
-        public static String RESPONDER_VID = "responderVid";
-        /*pptpandl2tp*/
-        public static String RESPONSE = "response";
-        public static String CHALLENGE = "challenge";
-        public static String RESPONSE_NAME = "responseName";
-        public static String CHALLENGE_NAME = "challengeName";
-        public static String AUTH_PROTOCOL = "authProtocol";
-        public static String AUTH_ALGO = "authAlgo";
-        public static String SUCCESS_MESG = "successMesg";
-        public static String ENC_ALOG = "encAlog";
-        /* wechat */
-        public static String WXNUM = "wxNum";
-        public static String OSTYPE = "osType";
     }
 
     public static class PRONAME {
-        public static String SESSION = "SESSION";
-        public static String SSL = "SSL";
-        public static String OPENVPN = "OPENVPN";
-        public static String DNS = "DNS";
-        public static String HTTP = "HTTP";
-        public static String EMAIL = "EMAIL";
-        public static String SSH = "SSH";
-        public static String ISAKMP = "ISAKMP";
-        public static String FTP = "FTP";
-        public static String TELNET = "TELNET";
-        public static String ESP = "ESP";
-        public static String AH = "AH";
-        public static String MALFORMED = "MALFORMED";
-        public static String OTHER = "OTHER";
-        public static String PPTPANDL2TP = "PPTPANDL2TP";
-        public static String WECHAT = "WECHAT";
-        public static String PPTP = "PPTP";
-        public static String L2TP = "L2TP";
+        public final static String SESSION = "SESSION";
+        public final static String SSL = "SSL";
+        public final static String OPENVPN = "OPENVPN";
+        public final static String DNS = "DNS";
+        public final static String HTTP = "HTTP";
+        public final static String EMAIL = "EMAIL";
+        public final static String SSH = "SSH";
+        public final static String ISAKMP = "ISAKMP";
+        public final static String FTP = "FTP";
+        public final static String TELNET = "TELNET";
+        public final static String ESP = "ESP";
+        public final static String AH = "AH";
+        public final static String MALFORMED = "MALFORMED";
+        public final static String OTHER = "OTHER";
+        public final static String PPTPANDL2TP = "PPTPANDL2TP";
+        public final static String WECHAT = "WECHAT";
+        public final static String PPTP = "PPTP";
+        public final static String L2TP = "L2TP";
     }
 
-    public static class MONGO {
-
-        /* ABSTRUCT_DATAWAREHOUSE_SESSION_EXTENSION */
-        public static String UP_PAYLOAD_STRING = "upPayload";
-        public static String DOWN_PAYLOAD_STRING = "downPayload";
-        public static String MALFORMED_UPPAYLOAD = "malformedUpPayload";
-        public static String MALFORMED_DOWNPAYLOAD = "malformedDownPayload";
-        public static String VERSION_STRING = "version";
-        public static String CIPHER_SUITES_STRING = "cipherSuites";
-        public static String HAND_SHAKE_STRING = "handShake";
-        public static String CERCHAIN_STRING = "cerChain";
-        public static String CLIENT_CERCHAIN_STRING = "clientCerChain";
-        public static String IS_DOUBLE_STRING = "isDouble";
-        public static String CLIENT_CIPHER_SUITE_STRING = "clientCipherSuite";
-        public static String SERVER_NAME_STRING = "serverName";
-        public static String RANDOM_STRING = "random";
-        /* DNS */
-        public static String DOMAIN_STRING = "domain";
-        public static String IPS = "ips";
-        /* HTTP */
-        public static String HOST_STRING = "host";
-        public static String PARAMETER_STRING = "parameter";
-        public static String TLD_STRING = "tld";
-        public static String HEADERS_LIST = "headers";
-        public static String URL_ROOT_STRING = "urlRoot";
-        public static String USER_AGENT_STRING = "userAgent";
-        /* EMAIL */
-        public static String EMAIL_KEY_STRING = "key";
-        public static String MESSAGE_ID_STRING = "messageId";
-        public static String RCPT_STRING = "rcpt";
-        public static String SUBJECT_STRING = "subject";
-        public static String RECEIVED_STRING = "received";
-        public static String CHARSET_STRING = "charset";
-        public static String CHARSET_OUT_STRING = "charsetOut";
-        public static String CONTENT_STRING = "content";
-        public static String CONTENT_TXT_STRING = "contentTxt";
-        public static String CONTENT_LENGTH_STRING = "contentLength";
-        public static String DATE_STRING = "date";
-        public static String FROM_STRING = "from";
-        public static String TO_STRING = "to";
-        public static String CC_STRING = "cc";
-        public static String BCC_STRING = "bcc";
-        public static String MAIL_ADDRESS_STRING = "mailAddress";
-        public static String ATTACH_LIST = "attach";
-        public static String ATTACH_NUM_STRING = "attachNum";
-        public static String PRIORITY_STRING = "priority";
-        public static String DOMAIN_TAG_STRING = "domainTag";
-        public static String FILENAME_STRING = "fileName";
-        public static String MAIL_LENGTH_STRING = "mailLength";
-        public static String TRANSMITTER_STRING = "transmitter";
-        public static String LANGUAGE_LIST = "language";
-        public static String IS_READ_BOOLEAN = "isread";
-        /* CER */
-        public static String CER_DOCUMENT = "cer";
-        public static String SUBJECT_CN_STRING = "subject_cn";
-        public static String SPI_STRING = "spi";
-
+    public static class LOCATION {
+        public static String COUNTRY = "country";
+        public static String COUNTRY_ZH = "country_zh";
+        public static String REGION = "region";
+        public static String REGION_ZH = "region_zh";
+        public static String CITY = "city";
+        public static String CITY_ZH = "city_zh";
+        public static String LNG = "lng";
+        public static String LAT = "lat";
+        public static String ORGANIZATION = "organization";
+        public static String CONNECTION_TYPE = "connectionType";
+        public static String ISP = "isp";
+        public static String TYPE = "type";
+        public static String AUTONOMOUS_SYSTEM_ORGANIZATION = "autonomousSystemOrganization";
+        public static String CLOUD_SERVICE = "cloudService";
     }
 
 }

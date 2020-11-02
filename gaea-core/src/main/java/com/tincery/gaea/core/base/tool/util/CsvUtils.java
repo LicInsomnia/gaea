@@ -13,9 +13,9 @@ public class CsvUtils {
      * 判别会话数据载荷形式，只保留TCP双方都有载荷、UCP至少单方有载荷的或其它传输层协议的会话数据
      */
     public static boolean hasPayload(CsvRow csvRow) {
-        int protocol = csvRow.getIntegerOrDefault(HeadConst.CSV.PROTOCOL, 0);
-        long upByte = csvRow.getLongOrDefault(HeadConst.CSV.UP_BYTE, 0L);
-        long downByte = csvRow.getLongOrDefault(HeadConst.CSV.DOWN_BYTE, 0L);
+        int protocol = csvRow.getIntegerOrDefault(HeadConst.FIELD.PROTOCOL, 0);
+        long upByte = csvRow.getLongOrDefault(HeadConst.FIELD.UP_BYTE, 0L);
+        long downByte = csvRow.getLongOrDefault(HeadConst.FIELD.DOWN_BYTE, 0L);
         switch (protocol) {
             // TCP
             case 6:

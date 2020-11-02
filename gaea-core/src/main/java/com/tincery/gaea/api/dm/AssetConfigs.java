@@ -25,16 +25,16 @@ import java.util.function.Function;
  **/
 public class AssetConfigs {
 
-    private static BiFunction<JSONObject, AssetConfigDO, AlarmMaterialData> createAlarm;
+    private static final BiFunction<JSONObject, AssetConfigDO, AlarmMaterialData> createAlarm;
 
-    private static Function<JSONObject, Integer> getProtocol;
+    private static final Function<JSONObject, Integer> getProtocol;
 
-    private static Function<JSONObject, Integer> getPort;
+    private static final Function<JSONObject, Integer> getPort;
 
     static {
         createAlarm = (jsonObject, assetConfigDO) -> new AlarmMaterialData();
-        getProtocol = jsonObject -> jsonObject.getIntValue(HeadConst.CSV.PROTOCOL);
-        getPort = jsonObject -> jsonObject.getIntValue(HeadConst.CSV.SERVER_PORT);
+        getProtocol = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.PROTOCOL);
+        getPort = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
     }
 
     /****
@@ -45,7 +45,7 @@ public class AssetConfigs {
      * @return 产生的报警报告内容
      **/
     public static List<AlarmMaterialData> detectorClient(JSONObject assetJson, AssetDetector assetDetector) {
-        AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.CSV.CLIENT_IP_N));
+        AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.CLIENT_IP_N));
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.DOMESTIC)) {
             // 境内
@@ -67,7 +67,7 @@ public class AssetConfigs {
     }
 
     public static List<AlarmMaterialData> detectorServer(JSONObject assetJson, AssetDetector assetDetector) {
-        AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.CSV.SERVER_IP_N));
+        AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.SERVER_IP_N));
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.DOMESTIC)) {
             // 境内
@@ -109,11 +109,11 @@ public class AssetConfigs {
         FileReader fileReader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line;
-        while ((line = bufferedReader.readLine())!=null){
-            JSONObject parse = (JSONObject)JSON.parse(line);
-            parse.put(HeadConst.CSV.CLIENT_IP_N, ToolUtils.IP2long(parse.getString("clientIp")));
-            parse.put(HeadConst.CSV.SERVER_IP_N, ToolUtils.IP2long(parse.getString("serverIp")));
-            fileWriter.write(parse.toString()+"\n");
+        while ((line = bufferedReader.readLine()) != null) {
+            JSONObject parse = (JSONObject) JSON.parse(line);
+            parse.put(HeadConst.FIELD.CLIENT_IP_N, ToolUtils.IP2long(parse.getString("clientIp")));
+            parse.put(HeadConst.FIELD.SERVER_IP_N, ToolUtils.IP2long(parse.getString("serverIp")));
+            fileWriter.write(parse.toString() + "\n");
             fileWriter.flush();
         }
     }
@@ -131,7 +131,7 @@ public class AssetConfigs {
         BLACK(AssetConfigDO::getBlackList),
         WHITE(AssetConfigDO::getWhiteList);
 
-        private Function<AssetConfigDO, AssetConfigDO.BlackOrWhiteList> function;
+        private final Function<AssetConfigDO, AssetConfigDO.BlackOrWhiteList> function;
 
         ListType(Function<AssetConfigDO, AssetConfigDO.BlackOrWhiteList> function) {
             this.function = function;
@@ -139,12 +139,12 @@ public class AssetConfigs {
     }
 
     public enum OutInput {
-        OUT(AssetConfigDO.BlackOrWhiteList::getOut, (asset) -> asset.getLong(HeadConst.CSV.SERVER_IP_N)),
-        IN(AssetConfigDO.BlackOrWhiteList::getIn, (asset) -> asset.getLong(HeadConst.CSV.CLIENT_IP_N));
+        OUT(AssetConfigDO.BlackOrWhiteList::getOut, (asset) -> asset.getLong(HeadConst.FIELD.SERVER_IP_N)),
+        IN(AssetConfigDO.BlackOrWhiteList::getIn, (asset) -> asset.getLong(HeadConst.FIELD.CLIENT_IP_N));
 
-        private Function<AssetConfigDO.BlackOrWhiteList, AssetConfigDO.OutInputFilter> getOutInputFunction;
+        private final Function<AssetConfigDO.BlackOrWhiteList, AssetConfigDO.OutInputFilter> getOutInputFunction;
 
-        private Function<JSONObject, Long> getIpFunction;
+        private final Function<JSONObject, Long> getIpFunction;
 
 
         OutInput(Function<AssetConfigDO.BlackOrWhiteList, AssetConfigDO.OutInputFilter> getOutInputFunction,

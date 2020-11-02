@@ -18,6 +18,6 @@ public class ImpSessionCsvFilter implements CsvFilter {
     }
 
     private boolean isImpSession(CsvRow csvRow) {
-        return StringUtils.isNotEmpty(csvRow.get(HeadConst.CSV.TARGET_NAME));
+        return StringUtils.isNotEmpty(csvRow.get(HeadConst.FIELD.TARGET_NAME));
     }
 }

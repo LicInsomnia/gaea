@@ -81,43 +81,43 @@ public class SessionFactory {
 
     private AbstractDataWarehouseData appendBaseAndAttach(String category, CsvRow csvRow) {
         AbstractDataWarehouseData data = new AbstractDataWarehouseData();
-        data.setTargetName(csvRow.getEmptyNull(HeadConst.CSV.TARGET_NAME))
-                .setGroupName(csvRow.getEmptyNull(HeadConst.CSV.GROUP_NAME))
-                .setUserId(csvRow.getEmptyNull(HeadConst.CSV.USER_ID))
-                .setServerId(csvRow.getEmptyNull(HeadConst.CSV.SERVER_ID))
-                .setSource(csvRow.getEmptyNull(HeadConst.CSV.SOURCE))
-                .setCapTime(csvRow.getLong(HeadConst.CSV.CAPTIME))
-                .setDuration(csvRow.getLongOrDefault(HeadConst.CSV.DURATION, 0L))
-                .setProtocol(csvRow.getIntegerOrDefault(HeadConst.CSV.PROTOCOL, 0))
-                .setProName(csvRow.get(HeadConst.CSV.PRONAME))
-                .setClientMac(csvRow.getEmptyNull(HeadConst.CSV.CLIENT_MAC))
-                .setServerMac(csvRow.getEmptyNull(HeadConst.CSV.SERVER_MAC))
-                .setClientIp(csvRow.getEmptyNull(HeadConst.CSV.CLIENT_IP))
-                .setServerIp(csvRow.getEmptyNull(HeadConst.CSV.SERVER_IP))
-                .setClientPort(csvRow.getIntegerOrDefault(HeadConst.CSV.CLIENT_PORT, 0))
-                .setServerPort(csvRow.getIntegerOrDefault(HeadConst.CSV.SERVER_PORT, 0))
-                .setClientIpOuter(csvRow.getEmptyNull(HeadConst.CSV.CLIENT_IP_OUTER))
-                .setServerIpOuter(csvRow.getEmptyNull(HeadConst.CSV.SERVER_IP_OUTER))
-                .setClientPortOuter(csvRow.getIntegerOrDefault(HeadConst.CSV.CLIENT_PORT_OUTER, 0))
-                .setServerPortOuter(csvRow.getIntegerOrDefault(HeadConst.CSV.SERVER_PORT_OUTER, 0))
-                .setProtocolOuter(csvRow.getIntegerOrDefault(HeadConst.CSV.PROTOCOL_OUTER, 0))
-                .setImsi(csvRow.getEmptyNull(HeadConst.CSV.IMSI))
-                .setImei(csvRow.getEmptyNull(HeadConst.CSV.IMEI))
-                .setMsisdn(csvRow.getEmptyNull(HeadConst.CSV.MSISDN))
-                .setDataType(csvRow.getInteger(HeadConst.CSV.DATA_TYPE))
-                .setUpPkt(csvRow.getLongOrDefault(HeadConst.CSV.UP_PKT, 0L))
-                .setDownPkt(csvRow.getLongOrDefault(HeadConst.CSV.DOWN_PKT, 0L))
-                .setUpByte(csvRow.getLongOrDefault(HeadConst.CSV.UP_BYTE, 0L))
-                .setDownByte(csvRow.getLongOrDefault(HeadConst.CSV.DOWN_BYTE, 0L))
-                .setServerPortOuter(csvRow.getIntegerOrDefault(HeadConst.CSV.SERVER_PORT, 0));
+        data.setTargetName(csvRow.getEmptyNull(HeadConst.FIELD.TARGET_NAME))
+                .setGroupName(csvRow.getEmptyNull(HeadConst.FIELD.GROUP_NAME))
+                .setUserId(csvRow.getEmptyNull(HeadConst.FIELD.USER_ID))
+                .setServerId(csvRow.getEmptyNull(HeadConst.FIELD.SERVER_ID))
+                .setSource(csvRow.getEmptyNull(HeadConst.FIELD.SOURCE))
+                .setCapTime(csvRow.getLong(HeadConst.FIELD.CAPTIME))
+                .setDuration(csvRow.getLongOrDefault(HeadConst.FIELD.DURATION, 0L))
+                .setProtocol(csvRow.getIntegerOrDefault(HeadConst.FIELD.PROTOCOL, 0))
+                .setProName(csvRow.get(HeadConst.FIELD.PRONAME))
+                .setClientMac(csvRow.getEmptyNull(HeadConst.FIELD.CLIENT_MAC))
+                .setServerMac(csvRow.getEmptyNull(HeadConst.FIELD.SERVER_MAC))
+                .setClientIp(csvRow.getEmptyNull(HeadConst.FIELD.CLIENT_IP))
+                .setServerIp(csvRow.getEmptyNull(HeadConst.FIELD.SERVER_IP))
+                .setClientPort(csvRow.getIntegerOrDefault(HeadConst.FIELD.CLIENT_PORT, 0))
+                .setServerPort(csvRow.getIntegerOrDefault(HeadConst.FIELD.SERVER_PORT, 0))
+                .setClientIpOuter(csvRow.getEmptyNull(HeadConst.FIELD.CLIENT_IP_OUTER))
+                .setServerIpOuter(csvRow.getEmptyNull(HeadConst.FIELD.SERVER_IP_OUTER))
+                .setClientPortOuter(csvRow.getIntegerOrDefault(HeadConst.FIELD.CLIENT_PORT_OUTER, 0))
+                .setServerPortOuter(csvRow.getIntegerOrDefault(HeadConst.FIELD.SERVER_PORT_OUTER, 0))
+                .setProtocolOuter(csvRow.getIntegerOrDefault(HeadConst.FIELD.PROTOCOL_OUTER, 0))
+                .setImsi(csvRow.getEmptyNull(HeadConst.FIELD.IMSI))
+                .setImei(csvRow.getEmptyNull(HeadConst.FIELD.IMEI))
+                .setMsisdn(csvRow.getEmptyNull(HeadConst.FIELD.MSISDN))
+                .setDataType(csvRow.getInteger(HeadConst.FIELD.DATA_TYPE))
+                .setUpPkt(csvRow.getLongOrDefault(HeadConst.FIELD.UP_PKT, 0L))
+                .setDownPkt(csvRow.getLongOrDefault(HeadConst.FIELD.DOWN_PKT, 0L))
+                .setUpByte(csvRow.getLongOrDefault(HeadConst.FIELD.UP_BYTE, 0L))
+                .setDownByte(csvRow.getLongOrDefault(HeadConst.FIELD.DOWN_BYTE, 0L))
+                .setServerPortOuter(csvRow.getIntegerOrDefault(HeadConst.FIELD.SERVER_PORT, 0));
         data.setClientLocation(this.ipSelector.getCommonInformation(data.getClientIp()))
                 .setServerLocation(this.ipSelector.getCommonInformation(data.getServerIp()))
                 .setDataSource(category);
-        String caseTags = csvRow.get(HeadConst.CSV.CASE_TAGS);
+        String caseTags = csvRow.get(HeadConst.FIELD.CASE_TAGS);
         if (null != caseTags) {
             data.setCaseTags(new HashSet<>(Arrays.asList(caseTags.split(";"))));
         }
-        data.setAssetFlag((Integer) csvRow.getExtensionValue(HeadConst.CSV.ASSET_FLAG));
+        data.setAssetFlag((Integer) csvRow.getExtensionValue(HeadConst.FIELD.ASSET_FLAG));
         String id = Joiner.on("_").useForNull("").join(new Object[]{
                 data.getTargetName(),
                 data.getProtocol(),
@@ -180,19 +180,19 @@ public class SessionFactory {
 
     private void append4Malformed(CsvRow csvRow, AbstractDataWarehouseData data) {
         MalformedExtension malformedExtension = new MalformedExtension();
-        malformedExtension.setMalformedUpPayload(csvRow.getEmptyNull(HeadConst.CSV.MALFORMED_UP_PAYLOAD));
-        malformedExtension.setMalformedDownPayload(csvRow.getEmptyNull(HeadConst.CSV.MALFORMED_DOWN_PAYLOAD));
+        malformedExtension.setMalformedUpPayload(csvRow.getEmptyNull(HeadConst.FIELD.MALFORMED_UP_PAYLOAD));
+        malformedExtension.setMalformedDownPayload(csvRow.getEmptyNull(HeadConst.FIELD.MALFORMED_DOWN_PAYLOAD));
         data.setMalformedExtension(malformedExtension);
     }
 
     private void append4Session(CsvRow csvRow, AbstractDataWarehouseData data) {
-        SessionExtension sessionExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), SessionExtension.class);
+        SessionExtension sessionExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SessionExtension.class);
         data.setSessionExtension(sessionExtension);
         data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4Ssl(CsvRow csvRow, AbstractDataWarehouseData data) {
-        SslExtension sslExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), SslExtension.class);
+        SslExtension sslExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SslExtension.class);
         data.setSslExtension(sslExtension);
         data.setExtensionFlag(data.getDataSource());
         data.setKeyWord(sslExtension.getServerName());
@@ -201,13 +201,13 @@ public class SessionFactory {
             sha1 = sha1.split("_")[0];
             Map<String, Object> cer = this.cerSelector.selector(sha1);
             if (null == data.getKeyWord() && null != cer) {
-                data.setKeyWord(cer.get(HeadConst.MONGO.SUBJECT_CN_STRING).toString());
+                data.setKeyWord(cer.get("subject_cn").toString());
             }
         }
     }
 
     private void append4OpenVpn(CsvRow csvRow, AbstractDataWarehouseData data) {
-        OpenVpnExtension openVpnExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), OpenVpnExtension.class);
+        OpenVpnExtension openVpnExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), OpenVpnExtension.class);
         data.setOpenVpnExtension(openVpnExtension);
         data.setExtensionFlag(data.getDataSource());
         data.setKeyWord(openVpnExtension.getServerName());
@@ -216,13 +216,13 @@ public class SessionFactory {
             sha1 = sha1.split("_")[0];
             Map<String, Object> cer = this.cerSelector.selector(sha1);
             if (null == data.getKeyWord() && null != cer) {
-                data.setKeyWord(cer.get(HeadConst.MONGO.SUBJECT_CN_STRING).toString());
+                data.setKeyWord(cer.get("subject_cn").toString());
             }
         }
     }
 
     private void append4Dns(CsvRow csvRow, AbstractDataWarehouseData data) {
-        DnsExtension dnsExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), DnsExtension.class);
+        DnsExtension dnsExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), DnsExtension.class);
         data.setDnsExtension(dnsExtension);
         data.setExtensionFlag(data.getDataSource());
         data.setKeyWord(dnsExtension.getDomain());
@@ -235,25 +235,25 @@ public class SessionFactory {
     }
 
     private void append4Ssh(CsvRow csvRow, AbstractDataWarehouseData data) {
-        SshExtension sshExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), SshExtension.class);
+        SshExtension sshExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SshExtension.class);
         data.setSshExtension(sshExtension);
         data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4FtpAndTelnet(CsvRow csvRow, AbstractDataWarehouseData data) {
-        FtpAndTelnetExtension ftpAndTelnetExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), FtpAndTelnetExtension.class);
+        FtpAndTelnetExtension ftpAndTelnetExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), FtpAndTelnetExtension.class);
         data.setFtpAndTelnetExtension(ftpAndTelnetExtension);
         data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4EspAndAh(CsvRow csvRow, AbstractDataWarehouseData data) {
-        EspAndAhExtension espAndAhExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), EspAndAhExtension.class);
+        EspAndAhExtension espAndAhExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), EspAndAhExtension.class);
         data.setEspAndAhExtension(espAndAhExtension);
         data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4Isakmp(CsvRow csvRow, AbstractDataWarehouseData data) {
-        IsakmpExtension isakmpExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.CSV.EXTENSION), IsakmpExtension.class);
+        IsakmpExtension isakmpExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), IsakmpExtension.class);
         data.setIsakmpExtension(isakmpExtension);
         data.setExtensionFlag(data.getDataSource());
     }

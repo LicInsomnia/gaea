@@ -113,7 +113,7 @@ public class AssetGroupSupport {
         AssetDataDTO assetDataDTO = serverProtocolDataFrom(jsonObject);
         String key = assetDataDTO.getKey();
         int i = key.lastIndexOf("_");
-        key = key.substring(0,1)+"_"+jsonObject.getIntValue(HeadConst.CSV.SERVER_PORT)+"_"+key.substring(i);
+        key = key.charAt(0) + "_" + jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT) + "_" + key.substring(i);
         assetDataDTO.setKey(key);
         // TODO: 2020/11/1 这里有一个clients的内容
         return assetDataDTO;
@@ -161,11 +161,11 @@ public class AssetGroupSupport {
 
 
     private static Function<JSONObject, String> getClientIp() {
-        return (json) -> json.getString(HeadConst.CSV.CLIENT_IP);
+        return (json) -> json.getString(HeadConst.FIELD.CLIENT_IP);
     }
 
     private static Function<JSONObject, String> getServerIp() {
-        return (json) -> json.getString(HeadConst.CSV.SERVER_IP);
+        return (json) -> json.getString(HeadConst.FIELD.SERVER_IP);
     }
 
     private static String formatProtocol(int value) {

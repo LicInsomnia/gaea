@@ -22,11 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +40,7 @@ import java.util.function.BiFunction;
 public class AssetReceiver implements Receiver {
 
 
-    private List<AlarmMaterialData> alarmList = new CopyOnWriteArrayList<>();
+    private final List<AlarmMaterialData> alarmList = new CopyOnWriteArrayList<>();
 
     private static final int ALARM_WRITE_COUNT = 20000;
 
@@ -134,9 +130,9 @@ public class AssetReceiver implements Receiver {
         SERVER_ASSET(2, AssetConfigs::detectorServer),
         SERVER_AND_CLIENT_ASSET(3, AssetConfigs::detectorClientAndServer);
 
-        private int flag;
+        private final int flag;
 
-        private BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function;
+        private final BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function;
 
         AssetFlag(int flag, BiFunction<JSONObject, AssetDetector, List<AlarmMaterialData>> function) {
             this.flag = flag;
@@ -155,9 +151,9 @@ public class AssetReceiver implements Receiver {
 
         public static void fillAndAdd(JSONObject assetJson, AssetDetector assetDetector, List<JSONObject> clientList,
                                       List<JSONObject> serverList) {
-            long clientIp = assetJson.getLong(HeadConst.CSV.CLIENT_IP_N);
+            long clientIp = assetJson.getLong(HeadConst.FIELD.CLIENT_IP_N);
             AssetConfigDO clientConfig = assetDetector.getAsset(clientIp);
-            long serverIp = assetJson.getLong(HeadConst.CSV.SERVER_IP_N);
+            long serverIp = assetJson.getLong(HeadConst.FIELD.SERVER_IP_N);
             AssetConfigDO serverConfig = assetDetector.getAsset(serverIp);
             switch (findByFlag(assetJson.getIntValue("assetFlag"))) {
                 case CLIENT_ASSET:
