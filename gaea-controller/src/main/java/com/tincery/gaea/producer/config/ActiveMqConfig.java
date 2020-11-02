@@ -74,4 +74,9 @@ public class ActiveMqConfig {
     public Queue getWeChat() {
         return new ActiveMQQueue(QueueNames.SRC_WECHAT);
     }
+
+    @Bean(name = QueueNames.SRC_FTPANDTELNET)
+    public Queue getFtpandtelnet() {
+        return new ActiveMQQueue(QueueNames.SRC_FTPANDTELNET);
+    }
 }

@@ -248,4 +248,25 @@ public class SrcQuartzConfig {
                 .withSchedule(cronScheduleBuilder)
                 .build();
     }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "ftpandtelnet")
+    public JobDetail ftpandtelnetJob() {
+        return JobBuilder.newJob(FtpandtelentJob.class)
+                .withIdentity("ftpandtelnetJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "ftpandtelnet")
+    public Trigger ftpandtelnetJobTrigger() {
+        String cron = controllerConfigProperties.getSource().getFtpandtelnet();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(weChatJob())
+                .withIdentity("ftpandtelnetJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
 }

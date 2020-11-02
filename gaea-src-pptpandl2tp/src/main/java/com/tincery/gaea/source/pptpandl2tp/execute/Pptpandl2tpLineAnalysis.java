@@ -47,6 +47,8 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
         } else {
             fixMalformed(elements, pptpandl2tpData);
         }
+        //设置foreign
+        pptpandl2tpData.setForeign(pptpAndL2TPLineSupport.isForeign(pptpandl2tpData.getServerIp()));
         pptpandl2tpData.setPptpAndL2tpExtension(pptpAndL2tpExtension);
         return pptpandl2tpData;
     }
