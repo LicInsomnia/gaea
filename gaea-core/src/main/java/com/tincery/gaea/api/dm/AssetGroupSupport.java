@@ -5,6 +5,10 @@ import com.tincery.gaea.api.base.ProtocolType;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
+import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -22,30 +26,26 @@ import java.util.stream.Collectors;
 public class AssetGroupSupport {
 
 
-
-
     /****
      * 把jsonList 解析成最终直接插入数据的内容
      * @author gxz
      **/
-    public static List<AssetDataDTO> getSaveDataByAll(List<JSONObject> allData,Function<JSONObject,AssetDataDTO> map){
+    public static List<AssetDataDTO> getSaveDataByAll(List<JSONObject> allData,
+                                                      Function<JSONObject, AssetDataDTO> map) {
         Map<String, List<AssetDataDTO>> allGroup =
                 allData.stream().map(map).collect(Collectors.groupingBy(AssetDataDTO::getKey));
         return mergeAllData(allGroup);
     }
 
-    public static List<AssetDataDTO> getSaveDataByServerAndClient(List<JSONObject> clientData,Function<JSONObject,AssetDataDTO> clientMap,
-                                                                  List<JSONObject> serverData,Function<JSONObject,AssetDataDTO> serverMap){
+    public static List<AssetDataDTO> getSaveDataByServerAndClient(List<JSONObject> clientData, Function<JSONObject,
+            AssetDataDTO> clientMap, List<JSONObject> serverData, Function<JSONObject,
+            AssetDataDTO> serverMap) {
         Map<String, List<AssetDataDTO>> clientGroup =
                 clientData.stream().map(clientMap).collect(Collectors.groupingBy(AssetDataDTO::getKey));
         Map<String, List<AssetDataDTO>> serverGroup =
                 serverData.stream().map(serverMap).collect(Collectors.groupingBy(AssetDataDTO::getKey));
-        return mergeClientServer(clientGroup,serverGroup);
+        return mergeClientServer(clientGroup, serverGroup);
     }
-
-
-
-
 
 
     /**
@@ -113,10 +113,10 @@ public class AssetGroupSupport {
         AssetDataDTO assetDataDTO = serverProtocolDataFrom(jsonObject);
         String key = assetDataDTO.getKey();
         int i = key.lastIndexOf("_");
-        key = key.charAt(0) + "_" + jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT) + "_" + key.substring(i);
+        key = key.substring(0, i) + "_" + jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT) + "_" + key.substring(i);
         assetDataDTO.setKey(key);
-        // TODO: 2020/11/1 这里有一个clients的内容
-        return assetDataDTO;
+        assetDataDTO.setClients(serverIpGetClient(jsonObject));
+        return assetDataDTO.setId(null);
     }
 
 
@@ -151,8 +151,6 @@ public class AssetGroupSupport {
     }
 
 
-
-
     /**
      * ******************************************
      * support                                  *
@@ -181,10 +179,48 @@ public class AssetGroupSupport {
         long capTime = jsonObject.getLongValue("capTime") / DateUtils.HOUR * DateUtils.HOUR;
         assetDataDTO.setTimeTag(LocalDateTime.ofInstant(Instant.ofEpochMilli(capTime), ZoneOffset.systemDefault()));
         String key = StringUtils.fillString("{}_{}_{}_{}", assetDataDTO.getUnit(), assetDataDTO.getName(),
-                assetDataDTO.getProname(),
-                capTime);
-        return assetDataDTO.setKey(key);
+                assetDataDTO.getProname(), capTime);
+        return assetDataDTO.setKey(key).setId(null);
     }
 
+    /****
+     * 针对作为服务端的资产    将客户端信息封装成client内容
+     **/
+    private static List<AssetDataDTO.AssetClient> serverIpGetClient(JSONObject jsonObject) {
+        List<AssetDataDTO.AssetClient> clients = new ArrayList<>();
+        String clientIp = jsonObject.getString(HeadConst.FIELD.CLIENT_IP);
+        AssetDataDTO.AssetClient client = new AssetDataDTO.AssetClient();
+        JSONObject location = jsonObject.getJSONObject(HeadConst.FIELD.CLIENT_LOCATION);
+        if (location == null) {
+            client.setCountry("-").setForeign(false);
+        } else {
+            String country = location.getString("country");
+            client.setForeign(!"China".equals(country));
+        }
+        client.setClientIp(clientIp).setValue(1L);
+        clients.add(client);
+        return clients;
+    }
+
+    /****
+     * 复查  如果数据库中有相同ID的信息 整合更新
+     * @param assetUnitDao 相应的dao层实体
+     * @param list  已经计算好的数据
+     **/
+    public static void rechecking(SimpleBaseDaoImpl<AssetDataDTO> assetUnitDao, List<AssetDataDTO> list) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").in(list.stream().map(AssetDataDTO::getId).collect(Collectors.toList())));
+        List<AssetDataDTO> mongoData = assetUnitDao.findListData(query);
+        if (!CollectionUtils.isEmpty(mongoData)) {
+            list.forEach(asset -> {
+                for (AssetDataDTO mongoUnitData : mongoData) {
+                    if (mongoUnitData.getId().equals(asset.getId())) {
+                        asset.merge(mongoUnitData);
+                        break;
+                    }
+                }
+            });
+        }
+    }
 
 }

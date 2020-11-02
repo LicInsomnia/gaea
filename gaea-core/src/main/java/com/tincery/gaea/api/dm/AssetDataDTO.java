@@ -6,10 +6,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
@@ -40,7 +43,7 @@ public class AssetDataDTO extends SimpleBaseDO {
 
     @Setter
     @Getter
-    private static class AssetClient {
+    public static class AssetClient {
         private String clientIp;
         private String country;
         private boolean foreign;
@@ -53,17 +56,14 @@ public class AssetDataDTO extends SimpleBaseDO {
      **/
     public AssetDataDTO merge(AssetDataDTO that) {
         this.byteNum = NumberUtils.sum(that.byteNum, this.byteNum);
-        this.alarm = this.alarm || that.alarm;
+        this.alarm = (this.alarm != null && this.alarm) || (that.alarm != null && that.alarm);
         this.downByte = NumberUtils.sum(that.downByte, this.downByte);
         this.downPkt = NumberUtils.sum(that.downPkt, this.downPkt);
         this.pkt = NumberUtils.sum(this.pkt, that.pkt);
         this.sessionCount = NumberUtils.sum(this.sessionCount, that.sessionCount);
         this.upPkt = NumberUtils.sum(this.upPkt, that.upPkt);
         this.upByte = NumberUtils.sum(this.upByte, that.upByte);
-        /*if(CollectionUtils.isEmpty(this.clients) && CollectionUtils.isEmpty(that.clients)){
-            return this;
-        }
-*/
+        this.setClients(mergeClients(this.clients,that.clients));
         return this;
     }
 
@@ -78,5 +78,22 @@ public class AssetDataDTO extends SimpleBaseDO {
         return this;
     }
 
+    private static List<AssetClient> mergeClients(List<AssetClient> thisClients, List<AssetClient> thatClients) {
+        if (CollectionUtils.isEmpty(thisClients)) {
+            return thatClients;
+        }
+        if (CollectionUtils.isEmpty(thatClients)) {
+            return thisClients;
+        }
+        List<AssetClient> allClients = new ArrayList<>(thisClients);
+        List<AssetClient> result = new ArrayList<>();
+        allClients.addAll(thatClients);
+        allClients.stream().collect(Collectors.groupingBy(AssetClient::getClientIp)).forEach((clientIp, list) -> {
+            AssetClient assetClient = list.get(0);
+            long sessionCount = list.stream().mapToLong(c -> c.value).sum();
+            result.add(assetClient.setValue(sessionCount));
+        });
+        return result;
+    }
 
 }

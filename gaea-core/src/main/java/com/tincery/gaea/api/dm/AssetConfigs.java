@@ -1,18 +1,12 @@
 package com.tincery.gaea.api.dm;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.ThPredicate;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.ToolUtils;
 import org.springframework.util.CollectionUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,10 +26,22 @@ public class AssetConfigs {
     private static final Function<JSONObject, Integer> getPort;
 
     static {
-        createAlarm = (jsonObject, assetConfigDO) -> new AlarmMaterialData();
+        createAlarm = (jsonObject, assetConfigDO) -> {
+            // 首先将元数据alarm置为true
+            jsonObject.put("alarm", true);
+            return new AlarmMaterialData();
+        };
         getProtocol = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.PROTOCOL);
         getPort = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
     }
+
+
+    /***
+     * ***********************************************************
+     * ***********          各种检测                          ******
+     * ***********************************************************
+     **/
+
 
     /****
      * 作为客户端是一条资产的时候调用此方法  此方法将返回方法所检测的所有告警素材
@@ -103,28 +109,48 @@ public class AssetConfigs {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        File file = new File("/Users/gongxuanzhang/Downloads/asset_1602654519220(2).json");
-        FileWriter fileWriter = new FileWriter(new File("aaaa.json"));
-        FileReader fileReader = new FileReader(file);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            JSONObject parse = (JSONObject) JSON.parse(line);
-            parse.put(HeadConst.FIELD.CLIENT_IP_N, ToolUtils.IP2long(parse.getString("clientIp")));
-            parse.put(HeadConst.FIELD.SERVER_IP_N, ToolUtils.IP2long(parse.getString("serverIp")));
-            fileWriter.write(parse.toString() + "\n");
-            fileWriter.flush();
-        }
-    }
+    /**
+     * ***********************************************************
+     * ***********          support                          ******
+     * ***********************************************************
+     **/
 
-    public static boolean check(JSONObject assetJson, AssetConfigDO assetConfig,
-                                ListType listType, OutInput outInput, Border border) {
+    private static boolean check(JSONObject assetJson, AssetConfigDO assetConfig,
+                                 ListType listType, OutInput outInput, Border border) {
         AssetConfigDO.BlackOrWhiteList blackOrWhiteList = listType.function.apply(assetConfig);
         AssetConfigDO.OutInputFilter outInputFilter = outInput.getOutInputFunction.apply(blackOrWhiteList);
         return border.getHitableFunction.test(assetJson, outInputFilter, outInput.getIpFunction);
 
     }
+
+    private static boolean overseasHit(JSONObject assetJson, AssetConfigDO.OutInputFilter outInputFilter,
+                                       Function<JSONObject, Long> getIp) {
+        AssetConfigDO.OverseasFilter overseas = outInputFilter.getOverseas();
+        if (overseas == null) {
+            return false;
+        }
+        return overseas.hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
+                getPort.apply(assetJson));
+    }
+
+    private static boolean domesticHit(JSONObject assetJson, AssetConfigDO.OutInputFilter outInputFilter,
+                                       Function<JSONObject, Long> getIp) {
+        List<AssetConfigDO.DomesticFilter> domestic = outInputFilter.getDomestic();
+        if (CollectionUtils.isEmpty(domestic)) {
+            return false;
+        }
+        return domestic.stream().anyMatch(domesticFilter ->
+                domesticFilter.hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
+                        getPort.apply(assetJson)));
+
+    }
+
+
+    /**
+     * ***********************************************************
+     * ***********          enum                          ******
+     * ***********************************************************
+     **/
 
 
     public enum ListType {
@@ -166,32 +192,6 @@ public class AssetConfigs {
             this.getHitableFunction = getHitableFunction;
         }
     }
-
-    private static boolean overseasHit(JSONObject assetJson, AssetConfigDO.OutInputFilter outInputFilter,
-                                       Function<JSONObject, Long> getIp) {
-        AssetConfigDO.OverseasFilter overseas = outInputFilter.getOverseas();
-        if(overseas==null){
-            return false;
-        }
-        return overseas.hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
-                getPort.apply(assetJson));
-    }
-
-    private static boolean domesticHit(JSONObject assetJson, AssetConfigDO.OutInputFilter outInputFilter,
-                                       Function<JSONObject, Long> getIp) {
-        List<AssetConfigDO.DomesticFilter> domestic = outInputFilter.getDomestic();
-        if(CollectionUtils.isEmpty(domestic)){
-            return false;
-        }
-        return domestic.stream().anyMatch(domesticFilter ->
-                        domesticFilter.hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
-                                getPort.apply(assetJson)));
-
-    }
-
-
-
-
 
 
 }

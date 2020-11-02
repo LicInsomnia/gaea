@@ -22,7 +22,11 @@ import org.springframework.util.CollectionUtils;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,24 +85,32 @@ public class AssetReceiver implements Receiver {
     private void free(List<JSONObject> clientAssetList, List<JSONObject> serverAssetList) {
         List<JSONObject> allAsset = new ArrayList<>(clientAssetList);
         allAsset.addAll(serverAssetList);
-        // 单位分组
+        // 分组
         List<AssetDataDTO> unitList = AssetGroupSupport.getSaveDataByAll(allAsset, AssetGroupSupport::unitDataFrom);
+        AssetGroupSupport.rechecking(assetUnitDao,unitList);
+         unitList.forEach(assetUnitDao::saveOrUpdate);
 
         List<AssetDataDTO> ipList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList
                 , AssetGroupSupport::clientIpDataFrom, serverAssetList, AssetGroupSupport::serverIpDataFrom);
+        AssetGroupSupport.rechecking(assetIpDao,ipList);
+         ipList.forEach(assetIpDao::saveOrUpdate);
 
         List<AssetDataDTO> protocolList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList,
                 AssetGroupSupport::clientProtocolDataFrom, serverAssetList, AssetGroupSupport::serverProtocolDataFrom);
+        assetProtocolDao.insert(protocolList);
 
         List<AssetDataDTO> portData = AssetGroupSupport.getSaveDataByAll(serverAssetList, AssetGroupSupport::portDataFrom);
+        assetPortDao.insert(portData);
 
         writeAlarm();
     }
+
 
     private synchronized void alarmAdd(List<AlarmMaterialData> alarmMaterialDataList) {
         if (CollectionUtils.isEmpty(alarmMaterialDataList)) {
             return;
         }
+        this.alarmList.addAll(alarmMaterialDataList);
         if (this.alarmList.size() > ALARM_WRITE_COUNT) {
             writeAlarm();
         }
@@ -109,7 +121,7 @@ public class AssetReceiver implements Receiver {
         File file = new File(NodeInfo.getAlarmMaterial() + fileName);
         try (FileWriter fileWriter = new FileWriter(file, true)) {
             for (AlarmMaterialData alarmMaterialData : this.alarmList) {
-                fileWriter.write(alarmMaterialData.toString());
+                fileWriter.write(alarmMaterialData.toString()+"\n");
             }
             this.alarmList.clear();
         } catch (IOException e) {
