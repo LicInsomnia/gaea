@@ -14,6 +14,18 @@ public class App {
     private static final String[] MODELS = {
             "gaea-controller",
             "gaea-src-session",
+            "gaea-src-impsession",
+            "gaea-src-ssl",
+            "gaea-src-dns",
+            "gaea-src-ssh",
+            "gaea-src-http",
+            "gaea-src-openvpn",
+            "gaea-src-flow",
+            "gaea-src-isakmp",
+            "gaea-src-pptpandl2tp",
+            "gaea-src-ftpandtelent",
+            "gaea-src-wechat",
+            "gaea-src-qq",
             "gaea-dw-reorganization"
     };
     private static String gaeaPath;

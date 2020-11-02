@@ -55,31 +55,31 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
      * 这是固定的属性  无论匹配到了server 还是client 都不会变的属性
      * @author gxz
      **/
-    private void setFixProperties(String[] element, SessionData sessionData) {
-        long capTimeN = Long.parseLong(element[2]);
+    private void setFixProperties(String[] elements, SessionData sessionData) {
+        long capTimeN = Long.parseLong(elements[2]);
         sessionData.setCapTime(capTimeN)
-                .setDuration((Long.parseLong(element[3]) - capTimeN) / 1000)
-                .setSource(element[15])
-                .setImsi(SourceFieldUtils.parseStringStr(element[17]))
-                .setImei(SourceFieldUtils.parseStringStr(element[18]))
-                .setMsisdn(SourceFieldUtils.parseStringStr(element[19]))
-                .setUserId(element[25])
-                .setServerId(element[26])
-                .setSyn(SourceFieldUtils.parseBooleanStr(element[0]))
-                .setFin(SourceFieldUtils.parseBooleanStr(element[1]));
-        sessionData.setMacOuter(SourceFieldUtils.parseBooleanStr(element[27]));
+                .setDuration((Long.parseLong(elements[3]) - capTimeN) / 1000)
+                .setSource(elements[15])
+                .setImsi(SourceFieldUtils.parseStringStr(elements[17]))
+                .setImei(SourceFieldUtils.parseStringStr(elements[18]))
+                .setMsisdn(SourceFieldUtils.parseStringStr(elements[19]))
+                .setUserId(elements[25])
+                .setServerId(elements[26])
+                .setSyn(SourceFieldUtils.parseBooleanStr(elements[0]))
+                .setFin(SourceFieldUtils.parseBooleanStr(elements[1]));
+        sessionData.setMacOuter(SourceFieldUtils.parseBooleanStr(elements[27]));
         this.srcLineSupport.set5TupleOuter(
-                element[20],
-                element[21],
-                element[22],
-                element[23],
-                element[24],
+                elements[20],
+                elements[21],
+                elements[22],
+                elements[23],
+                elements[24],
                 sessionData
         );
         sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
         SessionExtension sessionExtension = new SessionExtension();
-        sessionExtension.setUpPayLoad(SourceFieldUtils.parseStringStr(element[28]));
-        sessionExtension.setDownPayLoad(SourceFieldUtils.parseStringStr(element[29]));
+        sessionExtension.setUpPayLoad(SourceFieldUtils.parseStringStr(elements[28]));
+        sessionExtension.setDownPayLoad(SourceFieldUtils.parseStringStr(elements[29]));
         sessionData.setSessionExtension(sessionExtension);
     }
 

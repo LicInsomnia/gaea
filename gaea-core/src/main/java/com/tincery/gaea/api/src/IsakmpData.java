@@ -15,10 +15,10 @@ public class IsakmpData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{super.toCsv(splitChar),
-                this.getDuration(),
-                this.getSyn(), this.getFin(),
+                this.getDuration(), this.getSyn(), this.getFin(),
+                this.malformedUpPayload, this.malformedDownPayload,
                 this.isakmpExtension.toCsv(splitChar),
-                JSONObject.toJSONString(this.isakmpExtension)
+                JSONObject.toJSONString(this.isakmpExtension.getExtension())
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }
