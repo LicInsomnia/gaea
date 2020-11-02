@@ -28,6 +28,7 @@ public class ControllerConfigProperties {
         private String dns;
         private String ssh;
         private String pptpandl2tp;
+        private String wechat;
     }
 
     @Setter

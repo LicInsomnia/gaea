@@ -16,4 +16,5 @@ public class QueueNames {
 
 
     public static final String SRC_PPTPANDL2TP = "src_pptpandl2tp";
+    public static final String SRC_WECHAT = "src_wechat";
 }

@@ -227,4 +227,25 @@ public class SrcQuartzConfig {
                 .withSchedule(cronScheduleBuilder)
                 .build();
     }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "wechat")
+    public JobDetail weChatJob() {
+        return JobBuilder.newJob(WeChatJob.class)
+                .withIdentity("weChatJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "wechat")
+    public Trigger weChatJobTrigger() {
+        String cron = controllerConfigProperties.getSource().getWechat();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(weChatJob())
+                .withIdentity("weChatJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
 }

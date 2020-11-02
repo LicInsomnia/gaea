@@ -69,4 +69,9 @@ public class ActiveMqConfig {
     public Queue getPptpandl2tp() {
         return new ActiveMQQueue(QueueNames.SRC_PPTPANDL2TP);
     }
+
+    @Bean(name = QueueNames.SRC_WECHAT)
+    public Queue getWeChat() {
+        return new ActiveMQQueue(QueueNames.SRC_WECHAT);
+    }
 }

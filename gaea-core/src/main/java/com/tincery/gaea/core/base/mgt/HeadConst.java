@@ -188,6 +188,12 @@ public class HeadConst {
             CSV.SUCCESS_MESG+ CSV_SEPARATOR +
             CSV.ENC_ALOG+ CSV_SEPARATOR +
             CSV.EXTENSION;
+    /* wechat csv文件头 */
+    public final static String WECHAT_HEADER = BASE_COMMON_HEADER +
+            CSV.WXNUM + CSV_SEPARATOR +
+            CSV.VERSION + CSV_SEPARATOR +
+            CSV.OSTYPE ;
+
 
     private HeadConst() {
         throw new RuntimeException();
@@ -319,6 +325,9 @@ public class HeadConst {
         public static String AUTH_ALGO = "authAlgo";
         public static String SUCCESS_MESG = "successMesg";
         public static String ENC_ALOG = "encAlog";
+        /* wechat */
+        public static String WXNUM = "wxNum";
+        public static String OSTYPE = "osType";
     }
 
     public static class PRONAME {
@@ -337,6 +346,7 @@ public class HeadConst {
         public static String MALFORMED = "MALFORMED";
         public static String OTHER = "OTHER";
         public static String PPTPANDL2TP = "PPTPANDL2TP";
+        public static String WECHAT = "WECHAT";
     }
 
     public static class MONGO {

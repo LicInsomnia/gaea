@@ -11,5 +11,12 @@
 
     <artifactId>gaea-src-wechat</artifactId>
 
+    <dependencies>
+        <dependency>
+            <artifactId>gaea-core</artifactId>
+            <groupId>com.tincery</groupId>
+            <version>5.0.0</version>
+        </dependency>
+    </dependencies>
 
 </project>
