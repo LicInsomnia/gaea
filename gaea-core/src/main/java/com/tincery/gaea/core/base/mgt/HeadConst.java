@@ -125,7 +125,7 @@ public class HeadConst {
             CSV.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
             CSV.SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
             CSV.CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            CSV.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT +
+            CSV.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
             CSV.EXTENSION;
     /* isakmp csv文件头 */
     public final static String ISAKMP_HEADER = BASE_COMMON_HEADER +
@@ -141,6 +141,7 @@ public class HeadConst {
             CSV.EXTENSION;
     /* ftpandtelnet csv文件头 */
     public final static String FTPANDTELNET_HEADER = BASE_COMMON_HEADER +
+            CSV.DURATION + CSV_SEPARATOR +
             CSV.SYN_FLAG + CSV_SEPARATOR +
             CSV.FIN_FLAG + CSV_SEPARATOR +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
@@ -179,10 +180,10 @@ public class HeadConst {
             CSV.FIN_FLAG + CSV_SEPARATOR +
             CSV.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             CSV.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            CSV.RESPONSE + CSV_SEPARATOR +
             CSV.CHALLENGE+ CSV_SEPARATOR +
-            CSV.RESPONSE_NAME+ CSV_SEPARATOR +
             CSV.CHALLENGE_NAME+ CSV_SEPARATOR +
+            CSV.RESPONSE + CSV_SEPARATOR +
+            CSV.RESPONSE_NAME+ CSV_SEPARATOR +
             CSV.AUTH_PROTOCOL+ CSV_SEPARATOR +
             CSV.AUTH_ALGO+ CSV_SEPARATOR +
             CSV.SUCCESS_MESG+ CSV_SEPARATOR +
@@ -193,6 +194,9 @@ public class HeadConst {
             CSV.WXNUM + CSV_SEPARATOR +
             CSV.VERSION + CSV_SEPARATOR +
             CSV.OSTYPE ;
+    /* QQ csv 文件头 */
+    public final static String QQ_HEADER = BASE_COMMON_HEADER +
+            CSV.QQ;
 
 
     private HeadConst() {
@@ -328,6 +332,8 @@ public class HeadConst {
         /* wechat */
         public static String WXNUM = "wxNum";
         public static String OSTYPE = "osType";
+        /* qq */
+        public static String QQ = "qq";
     }
 
     public static class PRONAME {
