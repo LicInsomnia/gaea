@@ -3,9 +3,14 @@ package com.tincery.gaea.api.src;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
+import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.src.extension.SshExtension;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -34,6 +39,10 @@ public class WeChatData extends AbstractSrcData {
                 super.toCsv(splitChar), this.wxNum,this.version,this.osType
         };
         return Joiner.on(splitChar).useForNull("").join(join);
+    }
+
+    public JSONObject toJsonObjects() {
+        return (JSONObject) JSONObject.toJSON(this);
     }
 
 }

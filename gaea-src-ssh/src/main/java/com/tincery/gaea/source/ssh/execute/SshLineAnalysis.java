@@ -80,8 +80,7 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
                 .setSource(elements[16]);
         this.srcLineSupport.setTargetName(elements[17], sshData);
         this.srcLineSupport.setGroupName(sshData);
-        sshData.setCapTime(Long.parseLong(elements[2]));
-        sshData.setDuration(Long.parseLong(elements[3]) - sshData.getCapTime());
+        this.srcLineSupport.setTime(Long.parseLong(elements[2]),Long.parseLong(elements[3]),sshData);
         sshData.setImsi(elements[18])
                 .setImei(elements[19])
                 .setMsisdn(elements[20]);
@@ -187,6 +186,11 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
         sshExtension.setClientCompressionAlgorithmsServerToClient(c_compression_algorithms_server_to_client)
                 .setServerCompressionAlgorithmsServerToClient(s_compression_algorithms_server_to_client)
                 .setFinalCompressionAlgorithmsServerToClient(getFinalAlgorithm(c_compression_algorithms_server_to_client, s_compression_algorithms_server_to_client));
+        List<String> c_publicKey_dh_e = extension.getOrDefault("c_publicKey_dh_e",new ArrayList<>());
+        List<String> s_publicKey_df_f = extension.getOrDefault("s_publicKey_df_f",new ArrayList<>());
+        sshExtension.setClientPublicKey(c_publicKey_dh_e)
+                .setServerPublicKey(s_publicKey_df_f)
+                .setFinalPublicKeyAlgorithms(getFinalAlgorithm(c_publicKey_dh_e,s_publicKey_df_f));
     }
 
 

@@ -91,7 +91,7 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
     @Override
     protected List<String> getLines(File file) {
         return FileUtils.readByteArray(file).entrySet().stream().map(entry -> entry.getKey() +
-                HttpConstant.HTTP_CONSTANT + +entry.getValue().getKey() +
+                HttpConstant.HTTP_CONSTANT + entry.getValue().getKey() +
                 HttpConstant.HTTP_CONSTANT + new String(entry.getValue().getValue())).collect(Collectors.toList());
     }
 

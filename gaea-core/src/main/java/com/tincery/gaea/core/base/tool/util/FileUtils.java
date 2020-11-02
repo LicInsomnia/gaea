@@ -131,6 +131,12 @@ public class FileUtils {
         return readLine(new File(fileName));
     }
 
+    /**
+     * 字节读取文件的方法
+     * @param file 文件
+     * @return 文件数据  行。 key为前面的（new String(byte[])）字节数组 数据对应common等需要装载的属性
+     * value 为content 是比较大的byte[] 内容
+     */
     public static Map<String, Pair<Integer, byte[]>> readByteArray(File file) {
         Map<String, Pair<Integer, byte[]>> mapContent = new LinkedHashMap<>();
         if (null == file || (!file.exists()) || file.isDirectory()) {
@@ -158,6 +164,57 @@ public class FileUtils {
                 }
                 System.arraycopy(records, i, bufferKey, 0, 256);
                 i += 256;
+                if (size - i < targetLength) {
+                    break;
+                }
+                byte[] bufferValue = new byte[targetLength];
+                System.arraycopy(records, i, bufferValue, 0, targetLength);
+                i += targetLength;
+                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index, bufferValue));
+                index++;
+            }
+            return mapContent.isEmpty() ? null : mapContent;
+        } catch (IOException e) {
+            log.error("解析文件 {}是时出错", file.getName());
+            e.printStackTrace();
+            return new HashMap<>();
+        }
+    }
+
+    /**
+     * 字节读取文件的方法 （重载）
+     * @param file 文件
+     * @param commonLength common属性的长度  ex：512
+     * @param contentLength 几个字节代表content的长度，一版在文件开头 ex：4
+     * @return 文件数据
+     */
+    public static Map<String, Pair<Integer, byte[]>> readByteArray(File file,Integer commonLength,Integer contentLength) {
+        Map<String, Pair<Integer, byte[]>> mapContent = new LinkedHashMap<>();
+        if (null == file || (!file.exists()) || file.isDirectory()) {
+            return new HashMap<>();
+        }
+        try {
+            byte[] records = Files.toByteArray(file);
+            if (null == records) {
+                return null;
+            }
+            int size = records.length;
+            int index = 0;
+            int i = 0;
+            while (i < size) {
+                byte[] bufferLength = new byte[contentLength];
+                if (size - i < contentLength) {
+                    break;
+                }
+                System.arraycopy(records, i, bufferLength, 0, contentLength);
+                int targetLength = byteArray2Int(bufferLength, contentLength);
+                i += contentLength;
+                byte[] bufferKey = new byte[commonLength];
+                if (size - i < commonLength) {
+                    break;
+                }
+                System.arraycopy(records, i, bufferKey, 0, commonLength);
+                i += commonLength;
                 if (size - i < targetLength) {
                     break;
                 }

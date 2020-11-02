@@ -39,6 +39,9 @@ public class SshExtension {
     private List<String> serverCompressionAlgorithmsServerToClient;
     private List<String> clientCompressionAlgorithmsServerToClient;
     private List<String> finalCompressionAlgorithmsServerToClient;
+    private List<String> clientPublicKey;
+    private List<String> serverPublicKey;
+    private List<String> finalPublicKeyAlgorithms;
 
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{SourceFieldUtils.formatCollection(this.clientProtocol),
@@ -57,5 +60,6 @@ public class SshExtension {
                 SourceFieldUtils.formatCollection(this.finalCompressionAlgorithmsServerToClient)};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
+
 
 }
