@@ -76,7 +76,12 @@ public class ActiveMqConfig {
     }
 
     @Bean(name = QueueNames.SRC_FTPANDTELNET)
-    public Queue getFtpandtelnet() {
+    public Queue getFtpAndTelnet() {
         return new ActiveMQQueue(QueueNames.SRC_FTPANDTELNET);
+    }
+
+    @Bean(name = QueueNames.SRC_ESPANDAH)
+    public Queue getEspAndAh() {
+        return new ActiveMQQueue(QueueNames.SRC_ESPANDAH);
     }
 }

@@ -229,6 +229,27 @@ public class SrcQuartzConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "espandah")
+    public JobDetail espAndAhJob() {
+        return JobBuilder.newJob(EspAndAhJob.class)
+                .withIdentity("espandahJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "espandah")
+    public Trigger espAndAhJobTrigger() {
+        String cron = controllerConfigProperties.getSource().getEspandah();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(espAndAhJob())
+                .withIdentity("espandahJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
+
+    @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "wechat")
     public JobDetail weChatJob() {
         return JobBuilder.newJob(WeChatJob.class)

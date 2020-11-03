@@ -30,6 +30,7 @@ public class ControllerConfigProperties {
         private String pptpandl2tp;
         private String wechat;
         private String ftpandtelnet;
+        private String espandah;
     }
 
     @Setter
