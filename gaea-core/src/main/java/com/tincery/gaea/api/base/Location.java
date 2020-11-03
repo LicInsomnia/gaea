@@ -10,11 +10,11 @@ import lombok.Setter;
 @Getter
 public class Location {
     private String country;
-    private String country_zh;
+    private String countryZh;
     private String region;
-    private String region_zh;
+    private String regionZh;
     private String city;
-    private String city_zh;
+    private String cityZh;
     private Double lng;
     private Double lat;
     private String organization;
