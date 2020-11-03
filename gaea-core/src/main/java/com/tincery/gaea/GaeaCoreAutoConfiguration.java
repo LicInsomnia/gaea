@@ -1,7 +1,7 @@
 package com.tincery.gaea;
 
-import com.tincery.gaea.core.base.component.support.CommonConfigInit;
 import com.tincery.gaea.core.base.component.support.GaeaPropertiesInit;
+import com.tincery.gaea.core.base.component.support.RunConfigInit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
@@ -22,8 +22,8 @@ public class GaeaCoreAutoConfiguration {
     }
 
     @Bean
-    public CommonConfigInit getCommonConfigInit() {
-        return new CommonConfigInit();
+    public RunConfigInit getCommonConfigInit() {
+        return new RunConfigInit();
     }
 
 }

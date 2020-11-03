@@ -1,6 +1,5 @@
 package com.tincery.gaea.source.email.execute;
 
-import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.src.EmailData;
 import com.tincery.gaea.core.base.component.config.CommonConfig;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -33,6 +32,8 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
 
     @Autowired
     private AlarmRule alarmRule;
+    @Autowired
+    private CommonConfig commonConfig;
 
     @Autowired
     private PassRule passRule;
@@ -62,8 +63,7 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
         RuleRegistry ruleRegistry = RuleRegistry.getInstance();
         ruleRegistry.putRule(passRule);
         // 如果这里需要告警 才加入  ruleRegistry.putRule(alarmRule);
-        JSONObject emailInfo = (JSONObject) JSONObject.toJSON(CommonConfig.get("email"));
-        this.emailSuffixAlarm = emailInfo.getBoolean("activity");
+        CommonConfig.EmailConfig emailInfo = commonConfig.getEmail();
         // TODO: 2020/9/11 如果emailSuffixAlarm这个为true 还需要加载一个信息
     }
 

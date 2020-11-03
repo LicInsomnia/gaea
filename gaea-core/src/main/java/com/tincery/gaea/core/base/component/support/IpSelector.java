@@ -1,7 +1,6 @@
 package com.tincery.gaea.core.base.component.support;
 
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
@@ -41,9 +40,10 @@ public class IpSelector implements InitializationRequired {
     private DatabaseReader connectionReader = null;
     private DatabaseReader domainReader = null;
     private DatabaseReader ispReader = null;
-    private Location dfLocation = new Location();
     @Autowired
     private CloudServerIpSelector cloudServerIpSelector;
+    @Autowired
+    private CommonConfig commonConfig;
 
     public static String location2Csv(Map<String, Object> location, char separator) {
         if (null == location || location.isEmpty()) {
@@ -66,7 +66,6 @@ public class IpSelector implements InitializationRequired {
     @Override
     public void init() {
         String path = NodeInfo.getConfig() + "/geo2ip/";
-        this.dfLocation = new JSONObject((Map) CommonConfig.get("dflocation")).toJavaObject(Location.class);
         File regionDb = new File(path + "/GeoIP2-City.mmdb");
         File connectionDb = new File(path + "/GeoIP2-Connection-Type.mmdb");
         File domainDb = new File(path + "/GeoIP2-Domain.mmdb");
@@ -198,7 +197,7 @@ public class IpSelector implements InitializationRequired {
         try {
             location = this.getRegion(ip);
         } catch (IOException | GeoIp2Exception e) {
-            location = dfLocation;
+            location = this.commonConfig.getDflocation();
         }
         String type = getIpType(ToolUtils.IP2long(ip));
         location.setType(type);

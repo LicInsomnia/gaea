@@ -1,10 +1,9 @@
 package com.tincery.gaea.core.base.component.support;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.DnsRequestBO;
-import com.tincery.gaea.core.base.component.config.CommonConfig;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
+import com.tincery.gaea.core.base.component.config.RunConfig;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
@@ -47,12 +46,14 @@ public class DnsRequest implements InitializationRequired {
     @Override
     @SuppressWarnings("unchecked")
     public void init() {
-        JSONObject jsonObject = new JSONObject((Map) CommonConfig.get("reorganization"));
-        Date startTime = jsonObject.getDate("starttime");
+        if (RunConfig.isEmpty()) {
+            return;
+        }
+        Date startTime = RunConfig.get((key, json) -> json.getDate(key), "starttime");
         long startTimeLong;
-        if(startTime == null){
+        if (startTime == null) {
             startTimeLong = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
-        }else{
+        } else {
             startTimeLong = startTime.getTime() - (15 * DateUtils.MINUTE);
         }
 
