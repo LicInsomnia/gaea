@@ -49,7 +49,7 @@ public class DnsRequest implements InitializationRequired {
         if (RunConfig.isEmpty()) {
             return;
         }
-        Date startTime = RunConfig.get((key, json) -> json.getDate(key), "starttime");
+        Date startTime = RunConfig.getDate("starttime");
         long startTimeLong;
         if (startTime == null) {
             startTimeLong = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
