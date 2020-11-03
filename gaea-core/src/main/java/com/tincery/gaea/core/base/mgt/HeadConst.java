@@ -141,6 +141,7 @@ public class HeadConst {
             FIELD.EXTENSION;
     /* ftpandtelnet csv文件头 */
     public final static String FTPANDTELNET_HEADER = BASE_COMMON_HEADER +
+            FIELD.DURATION + CSV_SEPARATOR +
             FIELD.SYN_FLAG + CSV_SEPARATOR +
             FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +

@@ -29,6 +29,7 @@ public class ControllerConfigProperties {
         private String ssh;
         private String pptpandl2tp;
         private String wechat;
+        private String ftpandtelnet;
     }
 
     @Setter

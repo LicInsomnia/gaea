@@ -49,7 +49,7 @@ public class PptpAndL2tpExtension {
 
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{
-                this.response, this.challenge, this.responseName, this.challengeName, this.authProtocol, this.authAlgo, this.successMesg, this.encAlog
+                this.challenge,this.challengeName, this.response,  this.responseName,  this.authProtocol, this.authAlgo, this.successMesg, this.encAlog
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }
