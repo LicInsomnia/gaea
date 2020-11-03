@@ -4,6 +4,7 @@ package com.tincery.gaea.source.wechat.execute;
 import com.tincery.gaea.api.src.WeChatData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
@@ -37,11 +38,8 @@ public class WeChatLineAnalysis implements SrcLineAnalysis<WeChatData> {
     @Override
     public WeChatData pack(String line) {
         WeChatData weChatData = new WeChatData();
-
         String[] elements = StringUtils.FileLineSplit(line);
-
         weChatData.setCapTime(DateUtils.validateTime(Long.parseLong(elements[0])));
-
         this.srcLineSupport.set7Tuple(elements[2],
                 elements[3],
                 elements[4],
@@ -53,22 +51,28 @@ public class WeChatLineAnalysis implements SrcLineAnalysis<WeChatData> {
                 HeadConst.PRONAME.WECHAT,
                 weChatData
         );
-        weChatData.setSource(elements[8]);
+        weChatData.setSource(SourceFieldUtils.parseStringStrEmptyToNull(elements[8]));
         this.srcLineSupport.setTargetName(elements[9], weChatData);
         this.srcLineSupport.setGroupName(weChatData);
-        weChatData.setImsi(elements[10])
-                .setImei(elements[11])
-                .setMsisdn(elements[12]);
-
+        weChatData.setImsi(SourceFieldUtils.parseStringStrEmptyToNull(elements[10]))
+                .setImei(SourceFieldUtils.parseStringStrEmptyToNull(elements[11]))
+                .setMsisdn(SourceFieldUtils.parseStringStrEmptyToNull(elements[12]));
         srcLineSupport.set5TupleOuter(elements[13], elements[14], elements[15], elements[16], elements[17], weChatData);
-
         weChatData.setUserId(elements[18])
                 .setServerId(elements[19]);
-        weChatData.setMacOuter("1".equals(elements[20]));
-        weChatData.setWxNum(elements[21])
-                .setVersion(elements[22])
-                .setOsType(elements[23]);
+        weChatData.setWxNum(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[21])))
+                .setVersion(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[22])))
+                .setOsType(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[23])));
         return weChatData;
+    }
+
+    public String paramSplit(String param){
+        if (!StringUtils.isEmpty(param)) {
+            if (param.contains(":")) {
+                return param.split(":")[1];
+            }
+        }
+        return null;
     }
 
 

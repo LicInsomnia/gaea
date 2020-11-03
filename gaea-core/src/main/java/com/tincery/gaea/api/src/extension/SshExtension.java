@@ -13,51 +13,53 @@ public class SshExtension {
 
     private List<String> messageList;
 
-    private List<String> clientProtocol;
-    private List<String> serverProtocol;
-    private List<String> clientKexAlgorithms;
-    private List<String> serverKexAlgorithms;
-    private List<String> finalKexAlgorithms;
-    private List<String> clientServerHostKeyAlgorithms;
-    private List<String> serverServerHostKeyAlgorithms;
-    private List<String> finalServerHostKeyAlgorithms;
-    private List<String> clientEncryptionAlgorithmsClientToServer;
-    private List<String> serverEncryptionAlgorithmsClientToServer;
-    private List<String> finalEncryptionAlgorithmsClientToServer;
-    private List<String> clientEncryptionAlgorithmsServerToClient;
-    private List<String> serverEncryptionAlgorithmsServerToClient;
-    private List<String> finalEncryptionAlgorithmsServerToClient;
-    private List<String> clientMacAlgorithmsClientToServer;
-    private List<String> serverMacAlgorithmsClientToServer;
-    private List<String> finalMacAlgorithmsClientToServer;
-    private List<String> clientMacAlgorithmsServerToClient;
-    private List<String> serverMacAlgorithmsServerToClient;
-    private List<String> finalMacAlgorithmsServerToClient;
-    private List<String> clientCompressionAlgorithmsClientToServer;
-    private List<String> serverCompressionAlgorithmsClientToServer;
-    private List<String> finalCompressionAlgorithmsClientToServer;
-    private List<String> serverCompressionAlgorithmsServerToClient;
-    private List<String> clientCompressionAlgorithmsServerToClient;
-    private List<String> finalCompressionAlgorithmsServerToClient;
-    private List<String> clientPublicKey;
-    private List<String> serverPublicKey;
-    private List<String> finalPublicKeyAlgorithms;
+    private String clientProtocol;
+    private String serverProtocol;
+    private String clientKexAlgorithms;
+    private String serverKexAlgorithms;
+    private String finalKexAlgorithms;
+    private String clientServerHostKeyAlgorithms;
+    private String serverServerHostKeyAlgorithms;
+    private String finalServerHostKeyAlgorithms;
+    private String clientEncryptionAlgorithmsClientToServer;
+    private String serverEncryptionAlgorithmsClientToServer;
+    private String finalEncryptionAlgorithmsClientToServer;
+    private String clientEncryptionAlgorithmsServerToClient;
+    private String serverEncryptionAlgorithmsServerToClient;
+    private String finalEncryptionAlgorithmsServerToClient;
+    private String clientMacAlgorithmsClientToServer;
+    private String serverMacAlgorithmsClientToServer;
+    private String finalMacAlgorithmsClientToServer;
+    private String clientMacAlgorithmsServerToClient;
+    private String serverMacAlgorithmsServerToClient;
+    private String finalMacAlgorithmsServerToClient;
+    private String clientCompressionAlgorithmsClientToServer;
+    private String serverCompressionAlgorithmsClientToServer;
+    private String finalCompressionAlgorithmsClientToServer;
+    private String serverCompressionAlgorithmsServerToClient;
+    private String clientCompressionAlgorithmsServerToClient;
+    private String finalCompressionAlgorithmsServerToClient;
+    private String clientPublicKey;
+    private String serverPublicKey;
+    private String finalPublicKeyAlgorithms;
 
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{SourceFieldUtils.formatCollection(this.clientProtocol),
-                SourceFieldUtils.formatCollection(this.serverProtocol), SourceFieldUtils.formatCollection(this.clientKexAlgorithms),
-                SourceFieldUtils.formatCollection(this.serverKexAlgorithms), SourceFieldUtils.formatCollection(this.finalKexAlgorithms),
-                SourceFieldUtils.formatCollection(this.clientServerHostKeyAlgorithms), SourceFieldUtils.formatCollection(this.serverServerHostKeyAlgorithms),
-                SourceFieldUtils.formatCollection(this.finalServerHostKeyAlgorithms), SourceFieldUtils.formatCollection(this.clientEncryptionAlgorithmsClientToServer),
-                SourceFieldUtils.formatCollection(this.serverEncryptionAlgorithmsClientToServer), SourceFieldUtils.formatCollection(this.finalEncryptionAlgorithmsClientToServer),
-                SourceFieldUtils.formatCollection(this.clientEncryptionAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.serverEncryptionAlgorithmsServerToClient),
-                SourceFieldUtils.formatCollection(this.finalEncryptionAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.clientMacAlgorithmsClientToServer),
-                SourceFieldUtils.formatCollection(this.serverMacAlgorithmsClientToServer), SourceFieldUtils.formatCollection(this.finalMacAlgorithmsClientToServer),
-                SourceFieldUtils.formatCollection(this.clientMacAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.serverMacAlgorithmsServerToClient),
-                SourceFieldUtils.formatCollection(this.finalMacAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.clientCompressionAlgorithmsClientToServer),
-                SourceFieldUtils.formatCollection(this.serverCompressionAlgorithmsClientToServer), SourceFieldUtils.formatCollection(this.finalCompressionAlgorithmsClientToServer),
-                SourceFieldUtils.formatCollection(this.serverCompressionAlgorithmsServerToClient), SourceFieldUtils.formatCollection(this.clientCompressionAlgorithmsServerToClient),
-                SourceFieldUtils.formatCollection(this.finalCompressionAlgorithmsServerToClient)};
+        Object[] join = new Object[]{SourceFieldUtils.parseStringStrEmptyToNull(this.clientProtocol),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.serverProtocol),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.clientKexAlgorithms),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.serverKexAlgorithms), SourceFieldUtils.parseStringStrEmptyToNull(this.finalKexAlgorithms),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.clientServerHostKeyAlgorithms), SourceFieldUtils.parseStringStrEmptyToNull(this.serverServerHostKeyAlgorithms),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.finalServerHostKeyAlgorithms), SourceFieldUtils.parseStringStrEmptyToNull(this.clientEncryptionAlgorithmsClientToServer),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.serverEncryptionAlgorithmsClientToServer), SourceFieldUtils.parseStringStrEmptyToNull(this.finalEncryptionAlgorithmsClientToServer),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.clientEncryptionAlgorithmsServerToClient), SourceFieldUtils.parseStringStrEmptyToNull(this.serverEncryptionAlgorithmsServerToClient),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.finalEncryptionAlgorithmsServerToClient), SourceFieldUtils.parseStringStrEmptyToNull(this.clientMacAlgorithmsClientToServer),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.serverMacAlgorithmsClientToServer), SourceFieldUtils.parseStringStrEmptyToNull(this.finalMacAlgorithmsClientToServer),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.clientMacAlgorithmsServerToClient), SourceFieldUtils.parseStringStrEmptyToNull(this.serverMacAlgorithmsServerToClient),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.finalMacAlgorithmsServerToClient), SourceFieldUtils.parseStringStrEmptyToNull(this.clientCompressionAlgorithmsClientToServer),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.serverCompressionAlgorithmsClientToServer), SourceFieldUtils.parseStringStrEmptyToNull(this.finalCompressionAlgorithmsClientToServer),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.serverCompressionAlgorithmsServerToClient), SourceFieldUtils.parseStringStrEmptyToNull(this.clientCompressionAlgorithmsServerToClient),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.finalCompressionAlgorithmsServerToClient),SourceFieldUtils.parseStringStrEmptyToNull(this.clientPublicKey),
+                SourceFieldUtils.parseStringStrEmptyToNull(this.serverPublicKey),SourceFieldUtils.parseStringStrEmptyToNull(this.finalPublicKeyAlgorithms)};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 

@@ -92,20 +92,20 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
 
     private void setExtension(String[] element, SshExtension sshExtension) {
         Boolean isClient = null;
-        Map<String, List<String>> extension = new HashMap<>();
+        Map<String, String> extension = new HashMap<>();
         List<String> messageList = new ArrayList<>();
-        List<String> serverProtocol = new ArrayList<>();
-        List<String> clientProtocol = new ArrayList<>();
+        String serverProtocol = "";
+        String clientProtocol = "";
         for (int i = 29; i < element.length; i++) {
             String msg = element[i];
             if (msg.isEmpty()) {
                 continue;
             }
             if (msg.startsWith("Server:Protocol ")) {
-                serverProtocol.add(msg.substring(16));
+                serverProtocol = msg.substring(16);
                 isClient = false;
             } else if (msg.startsWith("Client:Protocol ")) {
-                clientProtocol.add(msg.substring(16));
+                clientProtocol = msg.substring(16);
                 isClient = true;
             } else if (msg.contains("(Message Code)")) {
                 if (msg.startsWith("Server:")) {
@@ -123,12 +123,12 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
                 if (kv.length != 2) {
                     continue;
                 }
-                List<String> fieldArray = extension.getOrDefault(prefix + kv[0], new ArrayList<>());
+                String fieldArray = extension.getOrDefault(prefix + kv[0], "");
                 /*特殊处理 将kv1中的，全部换成；*/
                 if (StringUtils.isNotEmpty(kv[1])) {
                     kv[1] = kv[1].replace(",", ";");
                 }
-                fieldArray.add(kv[1]);
+                fieldArray += kv[1];
                 extension.put(prefix + kv[0], fieldArray);
             }
         }
@@ -145,71 +145,69 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
      * @param extension    拓展属性
      * @param sshExtension 源数据
      */
-    private void fixExtensionData(Map<String, List<String>> extension, SshExtension sshExtension) {
-        List<String> c_kex_algorithms = extension.getOrDefault("c_kex_algorithms", new ArrayList<>());
-        List<String> s_kex_algorithms = extension.getOrDefault("s_kex_algorithms", new ArrayList<>());
+    private void fixExtensionData(Map<String, String> extension, SshExtension sshExtension) {
+        String c_kex_algorithms = extension.getOrDefault("c_kex_algorithms", "");
+        String s_kex_algorithms = extension.getOrDefault("s_kex_algorithms", "");
         sshExtension.setClientKexAlgorithms(c_kex_algorithms)
                 .setServerKexAlgorithms(s_kex_algorithms)
                 .setFinalKexAlgorithms(getFinalAlgorithm(c_kex_algorithms, s_kex_algorithms));
-        List<String> c_encryption_algorithms_server_to_client = extension.getOrDefault("c_encryption_algorithms_server_to_client", new ArrayList<>());
-        List<String> s_encryption_algorithms_server_to_client = extension.getOrDefault("s_encryption_algorithms_server_to_client", new ArrayList<>());
+        String c_encryption_algorithms_server_to_client = extension.getOrDefault("c_encryption_algorithms_server_to_client", "");
+        String s_encryption_algorithms_server_to_client = extension.getOrDefault("s_encryption_algorithms_server_to_client", "");
         sshExtension.setClientEncryptionAlgorithmsServerToClient(c_encryption_algorithms_server_to_client)
                 .setServerEncryptionAlgorithmsServerToClient(s_encryption_algorithms_server_to_client)
                 .setFinalEncryptionAlgorithmsServerToClient(getFinalAlgorithm(c_encryption_algorithms_server_to_client, s_encryption_algorithms_server_to_client));
-        List<String> c_encryption_algorithms_client_to_server = extension.getOrDefault("c_encryption_algorithms_client_to_server", new ArrayList<>());
-        List<String> s_encryption_algorithms_client_to_server = extension.getOrDefault("s_encryption_algorithms_client_to_server", new ArrayList<>());
+        String c_encryption_algorithms_client_to_server = extension.getOrDefault("c_encryption_algorithms_client_to_server", "");
+        String s_encryption_algorithms_client_to_server = extension.getOrDefault("s_encryption_algorithms_client_to_server", "");
         sshExtension.setClientEncryptionAlgorithmsClientToServer(c_encryption_algorithms_client_to_server)
                 .setServerEncryptionAlgorithmsClientToServer(s_encryption_algorithms_client_to_server)
                 .setFinalEncryptionAlgorithmsClientToServer(getFinalAlgorithm(c_encryption_algorithms_client_to_server, s_encryption_algorithms_client_to_server));
-        List<String> c_mac_algorithms_client_to_server = extension.getOrDefault("c_mac_algorithms_client_to_server", new ArrayList<>());
-        List<String> s_mac_algorithms_client_to_server = extension.getOrDefault("s_mac_algorithms_client_to_server", new ArrayList<>());
+        String c_mac_algorithms_client_to_server = extension.getOrDefault("c_mac_algorithms_client_to_server", "");
+        String s_mac_algorithms_client_to_server = extension.getOrDefault("s_mac_algorithms_client_to_server", "");
         sshExtension.setClientMacAlgorithmsClientToServer(c_mac_algorithms_client_to_server)
                 .setServerMacAlgorithmsClientToServer(s_mac_algorithms_client_to_server)
                 .setFinalMacAlgorithmsClientToServer(getFinalAlgorithm(c_mac_algorithms_client_to_server, s_mac_algorithms_client_to_server));
-        List<String> c_mac_algorithms_server_to_client = extension.getOrDefault("c_mac_algorithms_server_to_client", new ArrayList<>());
-        List<String> s_mac_algorithms_server_to_client = extension.getOrDefault("s_mac_algorithms_server_to_client", new ArrayList<>());
+        String c_mac_algorithms_server_to_client = extension.getOrDefault("c_mac_algorithms_server_to_client", "");
+        String s_mac_algorithms_server_to_client = extension.getOrDefault("s_mac_algorithms_server_to_client", "");
         sshExtension.setClientMacAlgorithmsServerToClient(c_mac_algorithms_server_to_client)
                 .setServerMacAlgorithmsServerToClient(s_mac_algorithms_server_to_client)
                 .setFinalMacAlgorithmsServerToClient(getFinalAlgorithm(c_mac_algorithms_server_to_client, s_mac_algorithms_server_to_client));
-        List<String> c_server_host_key_algorithms = extension.getOrDefault("c_server_host_key_algorithms", new ArrayList<>());
-        List<String> s_server_host_key_algorithms = extension.getOrDefault("s_server_host_key_algorithms", new ArrayList<>());
+        String c_server_host_key_algorithms = extension.getOrDefault("c_server_host_key_algorithms", "");
+        String s_server_host_key_algorithms = extension.getOrDefault("s_server_host_key_algorithms", "");
         sshExtension.setClientServerHostKeyAlgorithms(c_server_host_key_algorithms)
                 .setServerServerHostKeyAlgorithms(s_server_host_key_algorithms)
                 .setFinalServerHostKeyAlgorithms(getFinalAlgorithm(c_server_host_key_algorithms, s_server_host_key_algorithms));
-        List<String> c_compression_algorithms_client_to_server = extension.getOrDefault("c_compression_algorithms_client_to_server", new ArrayList<>());
-        List<String> s_compression_algorithms_client_to_server = extension.getOrDefault("s_compression_algorithms_client_to_server", new ArrayList<>());
+        String c_compression_algorithms_client_to_server = extension.getOrDefault("c_compression_algorithms_client_to_server", "");
+        String s_compression_algorithms_client_to_server = extension.getOrDefault("s_compression_algorithms_client_to_server", "");
         sshExtension.setClientCompressionAlgorithmsClientToServer(c_compression_algorithms_client_to_server)
                 .setServerCompressionAlgorithmsClientToServer(s_compression_algorithms_client_to_server)
                 .setFinalCompressionAlgorithmsClientToServer(getFinalAlgorithm(c_compression_algorithms_client_to_server, s_compression_algorithms_client_to_server));
-        List<String> c_compression_algorithms_server_to_client = extension.getOrDefault("c_compression_algorithms_server_to_client", new ArrayList<>());
-        List<String> s_compression_algorithms_server_to_client = extension.getOrDefault("s_compression_algorithms_server_to_client", new ArrayList<>());
+        String c_compression_algorithms_server_to_client = extension.getOrDefault("c_compression_algorithms_server_to_client", "");
+        String s_compression_algorithms_server_to_client = extension.getOrDefault("s_compression_algorithms_server_to_client", "");
         sshExtension.setClientCompressionAlgorithmsServerToClient(c_compression_algorithms_server_to_client)
                 .setServerCompressionAlgorithmsServerToClient(s_compression_algorithms_server_to_client)
                 .setFinalCompressionAlgorithmsServerToClient(getFinalAlgorithm(c_compression_algorithms_server_to_client, s_compression_algorithms_server_to_client));
-        List<String> c_publicKey_dh_e = extension.getOrDefault("c_publicKey_dh_e",new ArrayList<>());
-        List<String> s_publicKey_df_f = extension.getOrDefault("s_publicKey_df_f",new ArrayList<>());
+        String c_publicKey_dh_e = extension.getOrDefault("c_publicKey_dh_e", "");
+        String s_publicKey_df_f = extension.getOrDefault("s_publicKey_df_f", "");
         sshExtension.setClientPublicKey(c_publicKey_dh_e)
                 .setServerPublicKey(s_publicKey_df_f)
                 .setFinalPublicKeyAlgorithms(getFinalAlgorithm(c_publicKey_dh_e,s_publicKey_df_f));
     }
 
 
-    private List<String> getFinalAlgorithm(List<String> clientAlgorithmStr, List<String> serverAlgorithmStr) {
-        ArrayList<String> finalAlgorithm = new ArrayList<>();
-        if (CollectionUtils.isEmpty(clientAlgorithmStr) || CollectionUtils.isEmpty(serverAlgorithmStr)) {
-            finalAlgorithm.add("no match");
+    private String getFinalAlgorithm(String clientAlgorithmStr, String serverAlgorithmStr) {
+        String finalAlgorithm = "";
+        if (StringUtils.isEmpty(clientAlgorithmStr) || StringUtils.isEmpty(serverAlgorithmStr)) {
+            finalAlgorithm ="no match";
             return finalAlgorithm;
         }
-        String clientAlgorithm = clientAlgorithmStr.get(0);
-        String serverAlgorithm = serverAlgorithmStr.get(0);
-        String[] clientAlgorithmArray = clientAlgorithm.split(";");
+        String[] clientAlgorithmArray = clientAlgorithmStr.split(";");
         for (String clientItem : clientAlgorithmArray) {
-            if (serverAlgorithm.contains(clientItem)) {
-                finalAlgorithm.add(clientItem);
+            if (serverAlgorithmStr.contains(clientItem)) {
+                finalAlgorithm = clientItem;
                 return finalAlgorithm;
             }
         }
-        finalAlgorithm.add("no match");
+        finalAlgorithm = "no match";
         return finalAlgorithm;
     }
 

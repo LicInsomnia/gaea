@@ -103,7 +103,7 @@ public class SslExtension {
                 this.clientJA3, this.clientFingerPrint, this.clientCipherSuites, this.clientHashAlgorithms,
                 SourceFieldUtils.formatCollection(this.serverCerChain),
                 this.serverJA3, this.serverFingerPrint, this.serverECDHNamedCurve, this.serverECDHPublicKeyData,
-                this.serverECDHSignatureAlgorithm, this.serverECDHSignatureData
+                this.serverECDHSignatureAlgorithm, this.serverECDHSignatureData,
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

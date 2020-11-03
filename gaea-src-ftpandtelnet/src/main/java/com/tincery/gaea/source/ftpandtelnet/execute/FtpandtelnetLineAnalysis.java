@@ -49,14 +49,14 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
         String[] split = line.split(FtpandtelnetConstant.FTPANDTELNET_CONSTANT);
         String common =  split[0];
 //        String index = split[1];
-        String content = split[2];
         String[] elements = StringUtils.FileLineSplit(common);
         fixCommon(elements,ftpandtelnetData);
         if (-1 == ftpandtelnetData.getDataType()){
             fixMalformed(elements, ftpandtelnetData);
         }else{
             fixFtpAndTelnet(elements,ftpAndTelnetExtension);
-            ftpAndTelnetExtension.setContent(content.replaceAll("\r\n",""));
+            String content = split[2];
+            ftpAndTelnetExtension.setContent(content.replaceAll("\r\n","<br/>"));
         }
         ftpandtelnetData.setFtpAndTelnetExtension(ftpAndTelnetExtension);
         return ftpandtelnetData;

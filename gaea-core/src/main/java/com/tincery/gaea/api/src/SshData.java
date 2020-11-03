@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 public class SshData extends AbstractSrcData {
 
-    SshExtension sshExtension;
+    private SshExtension sshExtension;
 
     @Override
     public void adjust() {

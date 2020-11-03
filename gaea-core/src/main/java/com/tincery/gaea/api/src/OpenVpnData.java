@@ -19,10 +19,7 @@ public class OpenVpnData extends SslData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{
-                super.toCsv(splitChar), this.duration, this.syn, this.fin,
-                this.malformedUpPayload, this.malformedDownPayload,
-                this.openVpnExtension.toCsv(splitChar),
-                JSONObject.toJSONString(this.openVpnExtension)
+                super.toCsv(splitChar),
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

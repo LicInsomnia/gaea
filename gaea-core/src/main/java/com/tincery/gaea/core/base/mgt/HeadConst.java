@@ -1,5 +1,7 @@
 package com.tincery.gaea.core.base.mgt;
 
+import java.lang.reflect.Field;
+
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
@@ -51,16 +53,12 @@ public class HeadConst {
             FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            FIELD.DAUL_AUTH + CSV_SEPARATOR +
+            FIELD.COMPLETE_SESSION + CSV_SEPARATOR +
             FIELD.HANDSHAKE + CSV_SEPARATOR +
             FIELD.HAS_APPLICATION_DATA + CSV_SEPARATOR +
             FIELD.SERVER_NAME + CSV_SEPARATOR +
             FIELD.VERSION + CSV_SEPARATOR +
             FIELD.CIPHER_SUITES + CSV_SEPARATOR +
-            FIELD.KEY_EXCHANGE_ALGORITHM + CSV_SEPARATOR +
-            FIELD.AUTHENTICATION_ALGORITHM + CSV_SEPARATOR +
-            FIELD.ENCRYPTION_ALGORITHM + CSV_SEPARATOR +
-            FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM + CSV_SEPARATOR +
             FIELD.SHA1 + CSV_SEPARATOR +
             FIELD.CLIENT_CER_CHAIN + CSV_SEPARATOR +
             FIELD.CLIENT_JA3 + CSV_SEPARATOR +
@@ -73,7 +71,12 @@ public class HeadConst {
             FIELD.SERVER_ECDH_NAMED_CURVE + CSV_SEPARATOR +
             FIELD.SERVER_ECDH_PUBLIC_KEY_DATA + CSV_SEPARATOR +
             FIELD.SERVER_SIGNATURE_ALGORITHM + CSV_SEPARATOR +
-            FIELD.SERVER_ECDH_SIGNATURE_DATA +
+            FIELD.SERVER_ECDH_SIGNATURE_DATA + CSV_SEPARATOR +
+           /* FIELD.DAUL_AUTH + CSV_SEPARATOR +
+            FIELD.KEY_EXCHANGE_ALGORITHM + CSV_SEPARATOR +
+            FIELD.AUTHENTICATION_ALGORITHM + CSV_SEPARATOR +
+            FIELD.ENCRYPTION_ALGORITHM + CSV_SEPARATOR +
+            FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM + CSV_SEPARATOR +*/
             FIELD.EXTENSION;
     /* session csv文件头 */
     public final static String SESSION_HEADER = BASE_COMMON_HEADER +
@@ -125,7 +128,10 @@ public class HeadConst {
             FIELD.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
             FIELD.SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
             FIELD.CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT +
+            FIELD.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
+            FIELD.SERVER_PUBLIC_KEY + CSV_SEPARATOR +
+            FIELD.CLIENT_PUBLIC_KEY + CSV_SEPARATOR +
+            FIELD.FINAL_PUBLIC_KEY_ALGORITHMS + CSV_SEPARATOR +
             FIELD.EXTENSION;
     /* isakmp csv文件头 */
     public final static String ISAKMP_HEADER = BASE_COMMON_HEADER +
@@ -248,6 +254,7 @@ public class HeadConst {
         public final static String CNAMES = "cname";
         /* SSL */
         public final static String HANDSHAKE = "handshake";
+        public final static String COMPLETE_SESSION = "completeSession";
         public final static String HAS_APPLICATION_DATA = "hasApplicationData";
         public final static String SERVER_NAME = "serverName";
         public final static String DAUL_AUTH = "daulAuth";
@@ -305,6 +312,7 @@ public class HeadConst {
         /* LOCATION */
         public final static String CLIENT_LOCATION = "clientLocation";
         public final static String SERVER_LOCATION = "serverLocation";
+
         /* SSH */
         private final static String CLIENT_PROTOCOL = "clientProtocol";
         private final static String SERVER_PROTOCOL = "serverProtocol";
@@ -332,6 +340,9 @@ public class HeadConst {
         private final static String SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "serverCompressionAlgorithmsServerToClient";
         private final static String CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "clientCompressionAlgorithmsServerToClient";
         private final static String FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "finalCompressionAlgorithmsServerToClient";
+        private final static String SERVER_PUBLIC_KEY = "clientPublicKey";
+        private final static String CLIENT_PUBLIC_KEY = "serverPublicKey";
+        private final static String FINAL_PUBLIC_KEY_ALGORITHMS = "finalPublicKeyAlgorithms";
     }
 
     public static class PRONAME {
