@@ -63,6 +63,8 @@ public class AssetReceiver implements Receiver {
     @Autowired
     private AssetPortDao assetPortDao;
 
+
+
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         File file = new File(textMessage.getText());

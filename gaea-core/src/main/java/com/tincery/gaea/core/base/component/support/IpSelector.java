@@ -105,11 +105,11 @@ public class IpSelector implements InitializationRequired {
         com.maxmind.geoip2.record.Location location = response.getLocation();
         Map<String, String> city = response.getCity().getNames();
         locationResult.setCountry(country.getOrDefault("en", "-"));
-        locationResult.setCountry_zh(country.getOrDefault("zh-CN", "-"));
+        locationResult.setCountryZh(country.getOrDefault("zh-CN", "-"));
         locationResult.setRegion(region.getOrDefault("en", "-"));
-        locationResult.setRegion_zh(region.getOrDefault("zh_CN", "-"));
+        locationResult.setRegionZh(region.getOrDefault("zh_CN", "-"));
         locationResult.setCity(city.getOrDefault("zh_CN", "-"));
-        locationResult.setCity_zh(city.getOrDefault("zh_CN", "-"));
+        locationResult.setCityZh(city.getOrDefault("zh_CN", "-"));
         locationResult.setLng(location.getLongitude() == null ? -1.0 : location.getLongitude());
         locationResult.setLat(location.getLatitude() == null ? -1.0 : location.getLatitude());
         return locationResult;

@@ -11,5 +11,6 @@ spring:
         server-addr: 172.16.1.102:8848
         name: gaea
         file-extension: yml
+        group: GAEA_GROUP
   profiles:
     active: insomnia
