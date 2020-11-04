@@ -27,7 +27,7 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
      *
      * 0.syn 1.fin 2.startTime 3.endTime 4.uppkt
      * 5.upbyte 6.downpkt 7.downbyte
-     * 8.datatype(1正常/2没有下行数据/-1malformed)
+     * 8.datatype(0。FTP/1.TELNET/-1malformed)
      * 9.protocol 10.serverMac 11.clientMac 12.serverIp_n
      * 13.clientIp_n 14.serverPort 15.clientPort 16.source
      * 17.runleName 18.imsi 19.imei 20.msisdn 21.outclientip
@@ -54,6 +54,11 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
         if (-1 == ftpandtelnetData.getDataType()){
             fixMalformed(elements, ftpandtelnetData);
         }else{
+            if (0 == ftpandtelnetData.getDataType()){
+                ftpandtelnetData.setProName("FTP");
+            }else{
+                ftpandtelnetData.setProName("TELNET");
+            }
             fixFtpAndTelnet(elements,ftpAndTelnetExtension);
             String content = split[2];
             ftpAndTelnetExtension.setContent(content.replaceAll("\r\n","<br/>"));
@@ -116,6 +121,7 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
         ftpandtelnetData.setUserId(elements[26])
                 .setServerId(elements[27]);
         ftpandtelnetData.setMacOuter("1".equals(elements[28]));
+        ftpandtelnetData.setForeign(srcLineSupport.isForeign(ftpandtelnetData.getServerIp()));
     }
 
 
