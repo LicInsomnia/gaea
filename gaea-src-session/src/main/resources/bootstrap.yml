@@ -1,12 +1,10 @@
 server:
   port: 11112
-node:
-  name: insomnia
 spring:
   application:
     name: src_session
   profiles:
-    active: insomnia
+    active: sparrow
   cloud:
     nacos:
       config:
@@ -15,10 +13,10 @@ spring:
         file-extension: yml
         group: GAEA_GROUP
         extension-configs:
-          - dataId: gaea_environment.yml
-            group: GAEA_GROUP
           - dataId: common_config.yml
             group: GAEA_GROUP
+node:
+  name: sparrow
 logging:
   level:
     root: info

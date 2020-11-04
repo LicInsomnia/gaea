@@ -34,12 +34,12 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
         String[] elements = StringUtils.FileLineSplit(line);
         long capTime = Long.parseLong(elements[2]);
         long endTime = Long.parseLong(elements[3]);
+        srcLineSupport.setTime(capTime,endTime,impSessionData);
         impSessionData.setSource(elements[16])
                 .setSyn("1".equals(elements[0]))
                 .setFin("1".equals(elements[1]))
-                .setDataType(Integer.parseInt(elements[8]))
-                .setCapTime(capTime)
-                .setDuration(endTime - capTime);
+                .setDataType(Integer.parseInt(elements[8]));
+
         this.srcLineSupport.setMobileElements(elements[18], elements[19], elements[20], impSessionData);
         this.srcLineSupport.setPartiesId(elements[26], elements[27], impSessionData);
         this.srcLineSupport.setTargetName(elements[17], impSessionData);
