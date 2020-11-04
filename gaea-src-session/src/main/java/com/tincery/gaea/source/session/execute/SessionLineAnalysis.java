@@ -75,7 +75,6 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 elements[24],
                 sessionData
         );
-
         SessionExtension sessionExtension = new SessionExtension();
         sessionExtension.setUpPayLoad(SourceFieldUtils.parseStringStr(elements[28]));
         sessionExtension.setDownPayLoad(SourceFieldUtils.parseStringStr(elements[29]));
