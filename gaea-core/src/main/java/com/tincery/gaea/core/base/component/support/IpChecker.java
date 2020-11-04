@@ -66,7 +66,7 @@ public class IpChecker implements InitializationRequired {
                 return false;
             }
         }
-        return true;
+        return !isInner(ip);
     }
 
     public Boolean isForeign(String ip) {

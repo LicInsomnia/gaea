@@ -1,5 +1,5 @@
+import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.source.flow.GaeaSourceFlowApplication;
-import com.tincery.gaea.source.flow.execute.MessageListener;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +9,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class FlowTest {
 
     @Autowired
-    private MessageListener messageListener;
+    private Receiver receiver;
 
     @Test
-    public void flowTest() {
+    public void Test() {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
         try {
-            activeMQTextMessage.setText("D:\\data5\\src\\flow\\flow_tzjw_1601750411326926.txt");
-            messageListener.receive(activeMQTextMessage);
+            activeMQTextMessage.setText("D:\\data5\\src\\flow\\flow_0.txt");
+            receiver.receive(activeMQTextMessage);
         } catch (Exception e) {
             e.printStackTrace();
         }

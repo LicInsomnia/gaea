@@ -24,24 +24,13 @@ public class FlowStatistic {
 
     List<FlowProtocolDetails> flowProtocolDetailsList;
 
-    public FlowStatistic(String source, Long pktNum, Long byteNum, Long capTime, Boolean imp, Boolean asset, FlowProtocolDetails flowProtocolDetails) {
-        this.source = source;
-        this.pktNum = pktNum;
-        this.byteNum = byteNum;
-        this.capTime = capTime;
-        this.imp = imp;
-        this.asset = asset;
-        this.flowProtocolDetailsMap = new ConcurrentHashMap<>();
-        this.flowProtocolDetailsMap.put(flowProtocolDetails.getKey(), flowProtocolDetails);
-    }
-
-    public FlowStatistic(String source, Long capTime, Boolean imp, Boolean asset, FlowProtocolDetails flowProtocolDetails) {
+    public FlowStatistic(String source, Long capTime, Boolean imp, FlowProtocolDetails flowProtocolDetails) {
         this.source = source;
         this.pktNum = 0L;
         this.byteNum = 0L;
         this.capTime = capTime;
         this.imp = imp;
-        this.asset = asset;
+        this.asset = false;
         this.flowProtocolDetailsMap = new ConcurrentHashMap<>();
         this.flowProtocolDetailsMap.put(flowProtocolDetails.getKey(), flowProtocolDetails);
     }
@@ -68,6 +57,15 @@ public class FlowStatistic {
                 buffer.merge(entry.getValue());
             } else {
                 this.flowProtocolDetailsMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    public void adjust() {
+        for (FlowProtocolDetails flowProtocolDetails : this.flowProtocolDetailsList) {
+            if (flowProtocolDetails.getType() != 3) {
+                this.pktNum += flowProtocolDetails.getPktNum();
+                this.byteNum += flowProtocolDetails.getByteNum();
             }
         }
     }

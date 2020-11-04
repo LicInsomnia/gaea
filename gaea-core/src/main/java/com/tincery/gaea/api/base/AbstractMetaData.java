@@ -133,5 +133,4 @@ public abstract class AbstractMetaData extends GaeaData {
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
-
 }

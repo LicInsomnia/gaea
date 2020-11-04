@@ -30,6 +30,7 @@ public class FlowData extends AbstractSrcData {
     public void adjust() {
         List<FlowProtocolDetails> flowProtocolDetailsList = new ArrayList<>(this.flowStatistic.getFlowProtocolDetailsMap().values());
         this.flowStatistic.setFlowProtocolDetailsList(flowProtocolDetailsList);
+        this.flowStatistic.adjust();
     }
 
 }

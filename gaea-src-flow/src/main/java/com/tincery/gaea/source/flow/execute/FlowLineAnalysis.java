@@ -34,18 +34,7 @@ public class FlowLineAnalysis implements SrcLineAnalysis<FlowData> {
         String proName = elements[2];
         Long capTime = DateUtils.validateTime(Long.parseLong(elements[5])) / DateUtils.HOUR * DateUtils.HOUR;
         FlowProtocolDetails flowProtocolDetails = new FlowProtocolDetails(type, proName, pktNum, byteNum);
-        FlowStatistic flowStatistic = null;
-        switch (type) {
-            case 3:
-                flowStatistic = new FlowStatistic(source, pktNum, byteNum, capTime, false, false, flowProtocolDetails);
-                break;
-            case 5:
-                flowStatistic = new FlowStatistic(source, capTime, true, false, flowProtocolDetails);
-                break;
-            default:
-                flowStatistic = new FlowStatistic(source, capTime, false, false, flowProtocolDetails);
-                break;
-        }
+        FlowStatistic flowStatistic = new FlowStatistic(source, capTime, type == 5, flowProtocolDetails);
         flowData.setFlowStatistic(flowStatistic);
         return flowData;
     }
