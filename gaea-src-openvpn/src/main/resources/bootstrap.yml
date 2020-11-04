@@ -1,15 +1,24 @@
 server:
-  port: 11117
+  port: 11112
 node:
   name: insomnia
 spring:
   application:
     name: src_openvpn
+  profiles:
+    active: insomnia
   cloud:
     nacos:
       config:
         server-addr: 172.16.1.102:8848
         name: gaea
         file-extension: yml
-  profiles:
-    active: insomnia
+        group: GAEA_GROUP
+        extension-configs:
+          - dataId: gaea_environment.yml
+            group: GAEA_GROUP
+          - dataId: common_config.yml
+            group: GAEA_GROUP
+logging:
+  level:
+    root: info

@@ -1,10 +1,12 @@
 server:
-  port: 11110
+  port: 11112
 node:
   name: insomnia
 spring:
   application:
     name: core_controller
+  profiles:
+    active: insomnia
   cloud:
     nacos:
       config:
@@ -12,5 +14,11 @@ spring:
         name: gaea
         file-extension: yml
         group: GAEA_GROUP
-  profiles:
-    active: insomnia
+        extension-configs:
+          - dataId: gaea_environment.yml
+            group: GAEA_GROUP
+          - dataId: common_config.yml
+            group: GAEA_GROUP
+logging:
+  level:
+    root: info

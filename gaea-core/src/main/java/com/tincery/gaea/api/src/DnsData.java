@@ -32,5 +32,4 @@ public class DnsData extends AbstractSrcData {
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
-
 }

@@ -1,7 +1,7 @@
 server:
   port: 11112
 node:
-  name: gxz
+  name: insomnia
 spring:
   application:
     name: dm_asset
@@ -19,7 +19,7 @@ spring:
                  group: GAEA_GROUP
 
   profiles:
-    active: gxz
+    active: insomnia
 logging:
   level:
     root: info
