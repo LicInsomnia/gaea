@@ -6,7 +6,7 @@ spring:
   application:
     name: src_isakmp
   profiles:
-    active: insomnia
+    active: sparrow
   cloud:
     nacos:
       config:

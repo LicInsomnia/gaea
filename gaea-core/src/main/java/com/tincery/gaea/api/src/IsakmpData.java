@@ -6,6 +6,8 @@ import com.tincery.gaea.api.src.extension.IsakmpExtension;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 public class IsakmpData extends AbstractSrcData {
@@ -17,8 +19,8 @@ public class IsakmpData extends AbstractSrcData {
         Object[] join = new Object[]{super.toCsv(splitChar),
                 this.getDuration(), this.getSyn(), this.getFin(),
                 this.malformedUpPayload, this.malformedDownPayload,
-                this.isakmpExtension.toCsv(splitChar),
-                JSONObject.toJSONString(this.isakmpExtension.getExtension())
+                Objects.isNull(this.isakmpExtension)? null : this.isakmpExtension.toCsv(splitChar),
+                Objects.isNull(this.isakmpExtension)? null : JSONObject.toJSONString(this.isakmpExtension.getExtension())
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }
