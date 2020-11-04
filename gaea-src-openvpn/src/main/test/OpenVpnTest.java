@@ -15,7 +15,7 @@ public class OpenVpnTest {
     public void Test() {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
         try {
-            activeMQTextMessage.setText("D:\\data5\\src\\openvpn\\openvpn_0.txt");
+            activeMQTextMessage.setText("D:\\gaeaData\\openvpn_0.dat");
             messageListener.receive(activeMQTextMessage);
         } catch (Exception e) {
             e.printStackTrace();
