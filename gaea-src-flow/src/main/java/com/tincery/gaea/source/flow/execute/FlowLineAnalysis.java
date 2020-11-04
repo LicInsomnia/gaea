@@ -18,21 +18,21 @@ public class FlowLineAnalysis implements SrcLineAnalysis<FlowData> {
 
     /**
      * 将一条记录包装成实体类
-     * 0.type  1.proname 2.pktnum    3.bytenum   4.captime_n(us)
+     * 0.source 1.type  2.proname 3.pktnum    4.bytenum   5.captime_n(us)
      */
     @Override
     public FlowData pack(String line) {
         FlowData flowData = new FlowData();
         String[] elements = StringUtils.FileLineSplit(line);
-        long pktNum = Long.parseLong(elements[2]);
+        long pktNum = Long.parseLong(elements[3]);
         if (pktNum == 0) {
             return null;
         }
-        long byteNum = Long.parseLong(elements[3]);
-        String source = null;
-        int type = Integer.parseInt(elements[0]);
-        String proName = elements[1];
-        Long capTime = DateUtils.validateTime(Long.parseLong(elements[4])) / DateUtils.HOUR * DateUtils.HOUR;
+        long byteNum = Long.parseLong(elements[4]);
+        String source = elements[0];
+        int type = Integer.parseInt(elements[1]);
+        String proName = elements[2];
+        Long capTime = DateUtils.validateTime(Long.parseLong(elements[5])) / DateUtils.HOUR * DateUtils.HOUR;
         FlowProtocolDetails flowProtocolDetails = new FlowProtocolDetails(type, proName, pktNum, byteNum);
         FlowStatistic flowStatistic = null;
         switch (type) {

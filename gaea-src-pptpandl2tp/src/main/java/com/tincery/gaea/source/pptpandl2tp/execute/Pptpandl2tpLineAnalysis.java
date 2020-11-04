@@ -30,7 +30,7 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
      * 21.outclientip 22.outserverip 23.outclientport
      * 24.outserverport 25.outproto 26.userid 27.serverid 28.ismac2outer
      * ----------------------------以下是datatype！=-1的值------------------------------------
-     * 29.response 30.challenge 31.responseName 32.challengeName
+     * 29.challenge 30.response   31.challengeName 32.responseName
      * 33.authProtocol 34.authAlgo 35.successMesg 36.EncAlog
      * -----------------------------datatype = -1 ----------------------------------
      * 29.upPayload 30.downPayload
@@ -64,10 +64,10 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
      * 装填pptp 和 l2tp
      */
     public void fixPptpAndL2tp(String[] elements, PptpAndL2tpExtension pptpAndL2tpExtension) {
-        pptpAndL2tpExtension.setResponse(elements[29])
-                .setChallenge(elements[30])
-                .setResponseName(elements[31])
-                .setChallengeName(elements[32])
+        pptpAndL2tpExtension.setResponse(elements[30])
+                .setChallenge(elements[29])
+                .setResponseName(elements[32])
+                .setChallengeName(elements[31])
                 .setAuthProtocol(elements[33])
                 .setAuthAlgo(elements[34])
                 .setSuccessMesg(elements[35])

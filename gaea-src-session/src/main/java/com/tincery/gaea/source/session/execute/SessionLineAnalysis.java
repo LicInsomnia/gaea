@@ -56,10 +56,9 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
      * @author gxz
      **/
     private void setFixProperties(String[] elements, SessionData sessionData) {
-        long capTimeN = Long.parseLong(elements[2]);
-        sessionData.setCapTime(capTimeN)
-                .setDuration((Long.parseLong(elements[3]) - capTimeN) / 1000)
-                .setSource(elements[15])
+
+    srcLineSupport.setTime(Long.parseLong(elements[2]),Long.parseLong(elements[3]),sessionData);
+    sessionData.setSource(elements[15])
                 .setImsi(SourceFieldUtils.parseStringStr(elements[17]))
                 .setImei(SourceFieldUtils.parseStringStr(elements[18]))
                 .setMsisdn(SourceFieldUtils.parseStringStr(elements[19]))
@@ -76,7 +75,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 elements[24],
                 sessionData
         );
-        sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
+
         SessionExtension sessionExtension = new SessionExtension();
         sessionExtension.setUpPayLoad(SourceFieldUtils.parseStringStr(elements[28]));
         sessionExtension.setDownPayLoad(SourceFieldUtils.parseStringStr(elements[29]));
@@ -101,6 +100,8 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 element[8],
                 HeadConst.PRONAME.OTHER,
                 sessionData);
+        //设置境内外要在设置7元组之后、、要不然没有serverIp
+        sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
         this.srcLineSupport.setFlow(element[4], element[5], element[6], element[7], sessionData);
         String serverKey = element[8] + "_" + element[13];
         return this.srcLineSupport.setProName(serverKey, sessionData);

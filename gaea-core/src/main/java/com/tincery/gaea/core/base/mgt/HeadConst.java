@@ -84,7 +84,7 @@ public class HeadConst {
             FIELD.SYN_FLAG + CSV_SEPARATOR +
             FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.UP_PAYLOAD + CSV_SEPARATOR +
-            FIELD.DOWN_PAYLOAD +
+            FIELD.DOWN_PAYLOAD + CSV_SEPARATOR +
             FIELD.EXTENSION;
     /* dns csv文件头 */
     public final static String DNS_HEADER = BASE_COMMON_HEADER +
