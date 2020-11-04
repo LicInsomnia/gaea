@@ -24,6 +24,7 @@ public class CerSelector implements InitializationRequired {
     @Autowired
     private CommonConfig commonConfig;
 
+
     @Autowired
     private CertDao certDao;
     private String[] cerKeys;

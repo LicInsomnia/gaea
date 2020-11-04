@@ -1,8 +1,10 @@
 package com.tincery.gaea.api.base;
 
 import com.tincery.gaea.core.base.tool.ToolUtils;
+import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -12,7 +14,9 @@ import java.util.Set;
  */
 @Getter
 @Setter
-public class TargetAttribute {
+public class TargetAttribute extends SimpleBaseDO {
+    @Id
+    private String id;
 
     /**
      * 数据中会话时间
@@ -46,5 +50,6 @@ public class TargetAttribute {
     public String getKey() {
         return ToolUtils.getMD5(this.targetName + this.userId + this.source + this.title + this.urlRoot + this.information.toString());
     }
+
 
 }
