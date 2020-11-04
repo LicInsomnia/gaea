@@ -1,10 +1,10 @@
 server:
   port: 11112
 node:
-  name: insomnia
+  name: gxz
 spring:
   application:
-    name: ods_matchhttp
+    name: ods_httpanalysis
   cloud:
     nacos:
       config:
@@ -19,7 +19,7 @@ spring:
             group: GAEA_GROUP
 
   profiles:
-    active: insomnia
+    active: gxz
 logging:
   level:
     root: info

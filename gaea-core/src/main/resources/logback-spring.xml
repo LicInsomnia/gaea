@@ -17,7 +17,7 @@
     <!--龙湖标准 pattern layout-->
     <!-- appID | module |  dateTime | level | requestID | traceID | requestIP | userIP | serverIP | serverPort | processID | thread | location | detailInfo-->
     <property name="CONSOLE_LOG_PATTERN"
-              value="${nodeHome}|${nodeName}|%clr(${applicationName}){blue}|%clr(%d{ISO8601}){faint}|%clr(%p)|%clr(%.40logger{39}){cyan}.%clr(%method){cyan}:%L|%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+              value="${nodeName}|%clr(${applicationName}){blue}|%clr(%d{ISO8601}){faint}|%clr(%p)|%clr(%.40logger{39}){cyan}.%clr(%method){cyan}:%L|%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
 
     <property name="FILE_LOG_PATTERN"
               value="${nodeName}|${applicationName}|%d{ISO8601}|%p|%t|%.40logger{39}.%method:%L|%m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
