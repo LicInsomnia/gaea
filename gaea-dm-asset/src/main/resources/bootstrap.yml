@@ -17,7 +17,6 @@ spring:
                  group: GAEA_GROUP
                - dataId: common_config.yml
                  group: GAEA_GROUP
-
   profiles:
     active: insomnia
 logging:
