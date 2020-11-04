@@ -50,7 +50,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             throw new Exception("Is_first字段标记错误");
         }
         if (elements[30].endsWith("0")) {
-            return isakmpData;
+            return null;
         }
         if ("D2S".equals(elements[29])) {
             s2dFlag = false;
