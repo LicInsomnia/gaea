@@ -55,12 +55,13 @@ public class HttpData extends AbstractSrcData {
         if (Objects.isNull(this.metas)) {
             return;
         }
-        this.httpExtension.setHost(this.metas.stream().map(HttpMeta::getHost).collect(Collectors.toList()));
-        this.httpExtension.setMethod(this.metas.stream().filter(item -> item.getMethod().toString().contains(">>"))
+        HttpExtension httpExtension = new HttpExtension();
+        httpExtension.setHost(this.metas.stream().map(HttpMeta::getHost).collect(Collectors.toList()));
+        httpExtension.setMethod(this.metas.stream().filter(item -> item.getMethod().toString().contains(">>"))
                 .map(HttpMeta::getMethod).map(Object::toString).collect(Collectors.toList()));
-        this.httpExtension.setUrlRoot(this.metas.stream().map(HttpMeta::getUrlRoot).collect(Collectors.toList()));
-        this.httpExtension.setUserAgent(this.metas.stream().map(HttpMeta::getUserAgent).collect(Collectors.toList()));
-        this.httpExtension.setContentLength(this.metas.stream().mapToInt(httpMeta -> {
+        httpExtension.setUrlRoot(this.metas.stream().map(HttpMeta::getUrlRoot).collect(Collectors.toList()));
+        httpExtension.setUserAgent(this.metas.stream().map(HttpMeta::getUserAgent).collect(Collectors.toList()));
+        httpExtension.setContentLength(this.metas.stream().mapToInt(httpMeta -> {
             if (httpMeta.getResponseContentLength() != null && httpMeta.getResponseContentLength() != 0) {
                 return httpMeta.getResponseContentLength();
             } else if (httpMeta.getRequestContentLength() != null && httpMeta.getRequestContentLength() != 0) {
@@ -69,6 +70,7 @@ public class HttpData extends AbstractSrcData {
                 return 0;
             }
         }).sum());
+        this.httpExtension = httpExtension;
     }
 
     /**
