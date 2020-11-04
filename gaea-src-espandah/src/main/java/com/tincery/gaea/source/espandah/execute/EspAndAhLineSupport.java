@@ -3,7 +3,9 @@ package com.tincery.gaea.source.espandah.execute;
 import com.tincery.gaea.api.src.EspAndAhData;
 import com.tincery.gaea.api.src.extension.EspAndAhExtension;
 import com.tincery.gaea.core.src.SrcLineSupport;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EspAndAhLineSupport extends SrcLineSupport {
 
     public void setCommon(String sMac,

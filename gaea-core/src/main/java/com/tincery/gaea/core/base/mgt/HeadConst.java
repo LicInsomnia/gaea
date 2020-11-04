@@ -1,7 +1,5 @@
 package com.tincery.gaea.core.base.mgt;
 
-import java.lang.reflect.Field;
-
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
@@ -59,6 +57,10 @@ public class HeadConst {
             FIELD.SERVER_NAME + CSV_SEPARATOR +
             FIELD.VERSION + CSV_SEPARATOR +
             FIELD.CIPHER_SUITES + CSV_SEPARATOR +
+            FIELD.KEY_EXCHANGE_ALGORITHM + CSV_SEPARATOR +
+            FIELD.AUTHENTICATION_ALGORITHM + CSV_SEPARATOR +
+            FIELD.ENCRYPTION_ALGORITHM + CSV_SEPARATOR +
+            FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM + CSV_SEPARATOR +
             FIELD.SHA1 + CSV_SEPARATOR +
             FIELD.CLIENT_CER_CHAIN + CSV_SEPARATOR +
             FIELD.CLIENT_JA3 + CSV_SEPARATOR +
@@ -72,11 +74,6 @@ public class HeadConst {
             FIELD.SERVER_ECDH_PUBLIC_KEY_DATA + CSV_SEPARATOR +
             FIELD.SERVER_SIGNATURE_ALGORITHM + CSV_SEPARATOR +
             FIELD.SERVER_ECDH_SIGNATURE_DATA + CSV_SEPARATOR +
-           /* FIELD.DAUL_AUTH + CSV_SEPARATOR +
-            FIELD.KEY_EXCHANGE_ALGORITHM + CSV_SEPARATOR +
-            FIELD.AUTHENTICATION_ALGORITHM + CSV_SEPARATOR +
-            FIELD.ENCRYPTION_ALGORITHM + CSV_SEPARATOR +
-            FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM + CSV_SEPARATOR +*/
             FIELD.EXTENSION;
     /* session csv文件头 */
     public final static String SESSION_HEADER = BASE_COMMON_HEADER +
