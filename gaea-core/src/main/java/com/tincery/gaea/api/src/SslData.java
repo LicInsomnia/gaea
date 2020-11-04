@@ -45,7 +45,7 @@ public class SslData extends AbstractSrcData {
         if (null == this.sslExtension.getServerCerChain()) {
             return;
         }
-        this.sslExtension.setSha1(this.sslExtension.getServerCerChain().get(0));
+        this.sslExtension.setSha1(this.sslExtension.getServerCerChain().get(0).split("_")[0]);
     }
 
     @Override

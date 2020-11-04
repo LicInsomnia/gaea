@@ -46,7 +46,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
             if (elements[29].contains("malformed")) {
                 openVpnData.setDataType(-2);
             } else {
-                addSslExtension(elements, openVpnExtension, openVpnData);
+                addOpenVpnExtension(elements, openVpnExtension, openVpnData);
             }
         }
         openVpnData.setSslExtension(openVpnExtension);
@@ -74,7 +74,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         openVpnData.setForeign(this.openVpnLineSupport.isForeign(openVpnData.getServerIp()));
     }
 
-    private void addSslExtension(String[] elements, OpenVpnExtension openVpnExtension, OpenVpnData openVpnData) throws Exception {
+    private void addOpenVpnExtension(String[] elements, OpenVpnExtension openVpnExtension, OpenVpnData openVpnData) throws Exception {
         if (openVpnData.getDataType() == -1) {
             this.openVpnLineSupport.setMalformedPayload(elements[29], elements[30], openVpnData);
         } else {
