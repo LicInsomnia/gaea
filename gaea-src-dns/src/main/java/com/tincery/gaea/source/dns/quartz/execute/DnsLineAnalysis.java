@@ -4,6 +4,7 @@ package com.tincery.gaea.source.dns.quartz.execute;
 import com.tincery.gaea.api.src.DnsData;
 import com.tincery.gaea.api.src.extension.DnsExtension;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
@@ -41,8 +42,8 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         String[] elements = StringUtils.FileLineSplit(line);
         dnsData.setDataType(Integer.parseInt(elements[25]))
                 .setSource(elements[11])
-                .setDuration(0)
-                .setCapTime(Long.parseLong(elements[13]))
+                .setDuration(0L)
+                .setCapTime(DateUtils.validateTime(Long.parseLong(elements[13])))
                 .setSyn(false)
                 .setFin(false);
         this.srcLineSupport.setTargetName(elements[12], dnsData);

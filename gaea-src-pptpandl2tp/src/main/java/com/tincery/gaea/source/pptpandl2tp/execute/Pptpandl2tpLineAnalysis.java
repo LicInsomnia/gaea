@@ -3,6 +3,7 @@ package com.tincery.gaea.source.pptpandl2tp.execute;
 
 import com.tincery.gaea.api.src.Pptpandl2tpData;
 import com.tincery.gaea.api.src.extension.PptpAndL2tpExtension;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -44,8 +45,14 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
         Integer dataType = pptpandl2tpData.getDataType();
         if (dataType != -1) {
             fixPptpAndL2tp(elements, pptpAndL2tpExtension);
+            if (dataType == 0){
+                pptpandl2tpData.setProName(HeadConst.PRONAME.PPTP);
+            }else {
+                pptpandl2tpData.setProName(HeadConst.PRONAME.L2TP);
+            }
         } else {
             fixMalformed(elements, pptpandl2tpData);
+            pptpandl2tpData.setProName(HeadConst.PRONAME.OTHER);
         }
         //设置foreign
         pptpandl2tpData.setForeign(pptpAndL2TPLineSupport.isForeign(pptpandl2tpData.getServerIp()));

@@ -15,7 +15,7 @@ public class ImpSessionTest {
     public void Test() {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
         try {
-            activeMQTextMessage.setText("D:\\data5\\src\\impsession\\impsession_1.txt");
+            activeMQTextMessage.setText("D:\\data5\\src\\impsession\\impsession_0.txt");
             messageListener.receive(activeMQTextMessage);
         } catch (Exception e) {
             e.printStackTrace();

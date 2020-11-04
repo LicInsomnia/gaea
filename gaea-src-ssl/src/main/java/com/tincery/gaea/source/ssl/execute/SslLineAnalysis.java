@@ -112,64 +112,64 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
      */
     private boolean addHandshake(String element, SslExtension sslExtension, Handshake handshake) throws Exception {
         String[] kv = element.split(":");
-        if (kv.length != 3) {
+        if (kv.length != 2) {
             throw new Exception("握手会话数据格式有误...");
         }
         boolean isServer;
-        switch (kv[0]) {
-            case "C":
+        switch (kv[0].charAt(0)) {
+            case 'C':
                 isServer = false;
                 break;
-            case "S":
+            case 'S':
                 isServer = true;
                 break;
             default:
                 throw new Exception("握手会话数据格式有误...");
         }
-        String handshakeKeyword = kv[0].trim() + "." + kv[1].trim();
-        int length = Integer.parseInt(kv[2].trim());
+        String handshakeKeyword = kv[0].trim();
+        int length = Integer.parseInt(kv[1].trim());
         switch (handshakeKeyword) {
-            case "C.Client Hello":
+            case "C Client Hello":
                 handshake.setClientHello(length);
                 break;
-            case "S.Server Hello":
+            case "S Server Hello":
                 handshake.setServerHello(length);
                 break;
-            case "S.Certificate":
+            case "S Certificate":
                 handshake.setServerCertificate(length);
                 break;
-            case "S.Server Key Exchange":
+            case "S Server Key Exchange":
                 handshake.setServerKeyExchange(length);
                 break;
-            case "S.Certificate Request":
+            case "S Certificate Request":
                 handshake.setServerCertificateRequest(length);
                 break;
-            case "S.Server Hello Done":
+            case "S Server Hello Done":
                 handshake.setServerHelloDone(length);
                 break;
-            case "C.Certificate":
+            case "C Certificate":
                 handshake.setClientCertificate(length);
                 break;
-            case "C.Client Key Exchange":
+            case "C Client Key Exchange":
                 handshake.setClientKeyExchange(length);
                 break;
-            case "C.Certificate Verify":
+            case "C Certificate Verify":
                 handshake.setClientCertificateVerify(length);
                 break;
-            case "C.Finished":
+            case "C Finished":
                 handshake.setClientFinished(length);
                 break;
-            case "S.Finished":
+            case "S Finished":
                 handshake.setServerFinished(length);
                 break;
-            case "C.Change Cipher Spec":
+            case "C Change Cipher Spec":
                 handshake.setClientChangeCipherSpec(length);
                 break;
-            case "S.Change Cipher Spec":
+            case "S Change Cipher Spec":
                 handshake.setServerChangeCipherSpec(length);
                 break;
-            case "C.Application Data":
-            case "S.Application Data":
+            case "C Application Data":
+            case "S Application Data":
                 sslExtension.setHasApplicationData(true);
                 break;
             default:

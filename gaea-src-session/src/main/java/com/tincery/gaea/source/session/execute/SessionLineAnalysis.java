@@ -75,7 +75,6 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 elements[24],
                 sessionData
         );
-
         SessionExtension sessionExtension = new SessionExtension();
         sessionExtension.setUpPayLoad(SourceFieldUtils.parseStringStr(elements[28]));
         sessionExtension.setDownPayLoad(SourceFieldUtils.parseStringStr(elements[29]));
@@ -100,28 +99,31 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 element[8],
                 HeadConst.PRONAME.OTHER,
                 sessionData);
-        //设置境内外要在设置7元组之后、、要不然没有serverIp
+        //设置境内外要在设置7元组之后,要不然没有serverIp
         sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
         this.srcLineSupport.setFlow(element[4], element[5], element[6], element[7], sessionData);
         String serverKey = element[8] + "_" + element[13];
         return this.srcLineSupport.setProName(serverKey, sessionData);
     }
 
-    private boolean tryGetClientProName(String[] element, SessionData sessionData) {
-        this.srcLineSupport.set7Tuple(
-                element[10],
-                element[9],
-                element[12],
-                element[11],
-                element[14],
-                element[13],
-                element[8],
-                HeadConst.PRONAME.OTHER,
-                sessionData
-        );
-        this.srcLineSupport.setFlow(element[6], element[7], element[4], element[5], sessionData);
+    private void tryGetClientProName(String[] element, SessionData sessionData) {
         String clientKey = element[8] + "_" + element[14];
-        return this.srcLineSupport.setProName(clientKey, sessionData);
+        if (this.srcLineSupport.setProName(clientKey, sessionData)) {
+            this.srcLineSupport.set7Tuple(
+                    element[10],
+                    element[9],
+                    element[12],
+                    element[11],
+                    element[14],
+                    element[13],
+                    element[8],
+                    HeadConst.PRONAME.OTHER,
+                    sessionData
+            );
+            this.srcLineSupport.setFlow(element[6], element[7], element[4], element[5], sessionData);
+            //设置境内外要在设置7元组之后,要不然没有serverIp
+            sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
+        }
     }
 
 }

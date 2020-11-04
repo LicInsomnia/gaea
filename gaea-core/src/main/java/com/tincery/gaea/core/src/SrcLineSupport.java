@@ -35,11 +35,11 @@ public class SrcLineSupport {
      * @return 是否查询到ProName
      */
     public boolean setProName(String key, AbstractMetaData data) {
-        ApplicationInformationBO clientApplication = this.applicationProtocol.getApplication(key);
-        if (clientApplication == null) {
+        ApplicationInformationBO application = this.applicationProtocol.getApplication(key);
+        if (application == null) {
             return false;
         }
-        String proName = clientApplication.getProName();
+        String proName = application.getProName();
         if (StringUtils.isNotEmpty(proName)) {
             data.setProName(proName);
             return true;

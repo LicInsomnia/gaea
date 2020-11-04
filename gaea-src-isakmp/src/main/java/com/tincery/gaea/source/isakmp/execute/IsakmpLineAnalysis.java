@@ -42,6 +42,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             this.isakmpLineSupport.set7TupleAndFlow(s2dFlag, elements[10], elements[11], elements[12], elements[13],
                     elements[14], elements[15], elements[4], elements[5], elements[6], elements[7], isakmpData
             );
+            isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
             this.isakmpLineSupport.setMalformedPayload(elements[29], elements[30], isakmpData);
             return isakmpData;
         }
@@ -49,7 +50,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             throw new Exception("Is_first字段标记错误");
         }
         if (elements[30].endsWith("0")) {
-            return isakmpData;
+            return null;
         }
         if ("D2S".equals(elements[29])) {
             s2dFlag = false;
@@ -57,6 +58,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         this.isakmpLineSupport.set7TupleAndFlow(s2dFlag, elements[10], elements[11], elements[12], elements[13],
                 elements[14], elements[15], elements[4], elements[5], elements[6], elements[7], isakmpData
         );
+        isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
         IsakmpExtension isakmpExtension = new IsakmpExtension();
         int version = Integer.parseInt(elements[33].split(":")[1].trim());
         switch (version) {
@@ -78,9 +80,8 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         long capTimeN = Long.parseLong(elements[2]);
         this.isakmpLineSupport.setTargetName(elements[17], isakmpData);
         this.isakmpLineSupport.setGroupName(isakmpData);
-        isakmpData.setCapTime(capTimeN)
-                .setDuration((Long.parseLong(elements[3]) - capTimeN) / 1000)
-                .setSource(elements[16])
+        isakmpLineSupport.setTime(capTimeN,Long.parseLong(elements[3]),isakmpData);
+        isakmpData.setSource(elements[16])
                 .setImsi(SourceFieldUtils.parseStringStr(elements[18]))
                 .setImei(SourceFieldUtils.parseStringStr(elements[19]))
                 .setMsisdn(SourceFieldUtils.parseStringStr(elements[20]))
@@ -90,7 +91,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                 .setFin(SourceFieldUtils.parseBooleanStr(elements[1]));
         isakmpData.setMacOuter(SourceFieldUtils.parseBooleanStr(elements[28]));
         this.isakmpLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], isakmpData);
-        isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
+
     }
 
     private void setVersion1(String[] elements, IsakmpExtension isakmpExtension) {
