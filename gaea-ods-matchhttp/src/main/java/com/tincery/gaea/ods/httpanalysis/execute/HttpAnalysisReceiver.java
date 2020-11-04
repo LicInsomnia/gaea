@@ -8,6 +8,7 @@ import com.tincery.gaea.api.base.TargetAttribute;
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.MatchHttpDao;
+import com.tincery.gaea.core.base.dao.TargetAttributeDao;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,10 @@ public class HttpAnalysisReceiver implements Receiver {
     @Autowired
     private MatchHttpDao matchHttpDao;
 
+    @Autowired
+    private TargetAttributeDao targetAttributeDao;
+
+
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         File file = new File(textMessage.getText());
@@ -90,10 +95,10 @@ public class HttpAnalysisReceiver implements Receiver {
             }
         }
         try {
-            free();
+            free(file);
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("写入文件发生错误");
+            log.error("解析{}时,写入文件发生错误",file.getPath());
         }
     }
 
@@ -120,14 +125,15 @@ public class HttpAnalysisReceiver implements Receiver {
         successList.add(httpJson);
     }
 
-    private void free() throws IOException {
+    private void free(File file) throws IOException {
         String fileFile = "/"+ Instant.now().toEpochMilli()+".json";
         writeFile(this.noHostList,this.httpAnalysisNoHostPath+ fileFile);
         writeFile(this.noMatchStrList,this.httpAnalysisNoMatchStrPath+ fileFile);
         writeFile(this.noHitList,this.httpAnalysisNoHitPath+ fileFile);
         List<TargetAttribute> successData =
                 this.successList.stream().map(jsonObject -> jsonObject.toJavaObject(TargetAttribute.class)).collect(Collectors.toList());
-        System.out.println(1);
+        targetAttributeDao.insert(successData);
+        file.delete();
     }
 
     private void writeFile(List<JSONObject> jsons, String path) throws IOException {
