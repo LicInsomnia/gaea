@@ -31,4 +31,5 @@ public class FlowData extends AbstractSrcData {
         List<FlowProtocolDetails> flowProtocolDetailsList = new ArrayList<>(this.flowStatistic.getFlowProtocolDetailsMap().values());
         this.flowStatistic.setFlowProtocolDetailsList(flowProtocolDetailsList);
     }
+
 }

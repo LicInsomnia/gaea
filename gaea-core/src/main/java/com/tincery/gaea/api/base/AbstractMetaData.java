@@ -92,14 +92,14 @@ public abstract class AbstractMetaData extends GaeaData {
     /**
      * 流量相关
      */
-    protected long upPkt;
-    protected long upByte;
-    protected long downPkt;
-    protected long downByte;
+    protected Long upPkt;
+    protected Long upByte;
+    protected Long downPkt;
+    protected Long downByte;
     /**
      * 会话持续时间（默认为0，仅在TCP时有可能会大于0）
      */
-    protected long duration;
+    protected Long duration;
     /**
      * SYN标识（TCP协议会话建联标识）
      */
