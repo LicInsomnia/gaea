@@ -41,7 +41,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         String[] elements = StringUtils.FileLineSplit(line);
         dnsData.setDataType(Integer.parseInt(elements[25]))
                 .setSource(elements[11])
-                .setDuration(0)
+                .setDuration(0L)
                 .setCapTime(Long.parseLong(elements[13]))
                 .setSyn(false)
                 .setFin(false);
