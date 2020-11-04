@@ -31,7 +31,8 @@ public class OpenVpnData extends SslData {
     public void merge(OpenVpnData openVpnData) {
         this.capTime = Math.min(this.capTime, openVpnData.capTime);
         this.duration = Math.max(this.capTime + this.duration, openVpnData.capTime + openVpnData.duration);
-        this.openVpnExtension.merge(openVpnExtension);
+        this.openVpnExtension = (OpenVpnExtension)this.getSslExtension();
+        this.openVpnExtension.merge((OpenVpnExtension) openVpnData.getSslExtension());
     }
 
 }

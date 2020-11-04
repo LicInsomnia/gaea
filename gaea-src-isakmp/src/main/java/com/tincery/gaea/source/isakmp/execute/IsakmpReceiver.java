@@ -4,6 +4,7 @@ import com.tincery.gaea.api.src.IsakmpData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
 import lombok.Getter;
@@ -11,6 +12,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -54,6 +58,39 @@ public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
                 impSessionData.toCsv(HeadConst.CSV_SEPARATOR),
                 impSessionData.capTime);
     }
+
+    /****
+     * 解析一行记录 填充到相应的容器中
+     * @author gxz
+     * @param lines 多条记录
+     **/
+    @Override
+    protected void analysisLine(List<String> lines) {
+        for (String line : lines) {
+            if (StringUtils.isEmpty(line)) {
+                continue;
+            }
+            IsakmpData isakmpData;
+            try {
+                isakmpData = this.analysis.pack(line);
+                if (Objects.isNull(isakmpData)){
+                    continue;
+                }
+                isakmpData.adjust();
+            } catch (Exception e) {
+                log.error("解析实体出现了问题{}", line);
+                // TODO: 2020/9/8 实体解析有问题告警
+                e.printStackTrace();
+                continue;
+            }
+            this.putCsvMap(isakmpData);
+        }
+        if (this.countDownLatch != null) {
+            this.countDownLatch.countDown();
+        }
+    }
+
+
 
     @Override
     public void init() {
