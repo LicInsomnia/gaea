@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ControllerConfigProperties {
 
-    private SourceConfig source;
+    private SourceConfig src;
     private DataWarehouseConfig dataWarehouse;
 
     @Setter

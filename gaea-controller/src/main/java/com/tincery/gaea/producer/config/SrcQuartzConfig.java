@@ -30,7 +30,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "flow")
     public Trigger flowJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getFlow();
+        String cron = controllerConfigProperties.getSrc().getFlow();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sessionJob())
@@ -51,7 +51,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "session")
     public Trigger sessionJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getSession();
+        String cron = controllerConfigProperties.getSrc().getSession();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sessionJob())
@@ -72,7 +72,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "impsession")
     public Trigger impsessionJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getImpSession();
+        String cron = controllerConfigProperties.getSrc().getImpSession();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(impsessionJob())
@@ -93,7 +93,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "http")
     public Trigger httpJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getHttp();
+        String cron = controllerConfigProperties.getSrc().getHttp();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(httpJob())
@@ -114,7 +114,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "dns")
     public Trigger dnsJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getDns();
+        String cron = controllerConfigProperties.getSrc().getDns();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(dnsJob())
@@ -135,7 +135,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "ssl")
     public Trigger sslJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getSsl();
+        String cron = controllerConfigProperties.getSrc().getSsl();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sslJob())
@@ -156,7 +156,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "openVpn")
     public Trigger openVpnJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getOpenVpn();
+        String cron = controllerConfigProperties.getSrc().getOpenVpn();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sslJob())
@@ -177,7 +177,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "email")
     public Trigger emailJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getEmail();
+        String cron = controllerConfigProperties.getSrc().getEmail();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(emailJob())
@@ -198,7 +198,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "ssh")
     public Trigger sshJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getSsh();
+        String cron = controllerConfigProperties.getSrc().getSsh();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(sshJob())
@@ -219,7 +219,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "pptpandl2tp")
     public Trigger pptpandl2tpJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getPptpandl2tp();
+        String cron = controllerConfigProperties.getSrc().getPptpandl2tp();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(pptpandl2tpJob())
@@ -240,7 +240,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "espandah")
     public Trigger espAndAhJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getEspandah();
+        String cron = controllerConfigProperties.getSrc().getEspandah();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(espAndAhJob())
@@ -261,7 +261,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "wechat")
     public Trigger weChatJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getWechat();
+        String cron = controllerConfigProperties.getSrc().getWechat();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(weChatJob())
@@ -282,7 +282,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "ftpandtelnet")
     public Trigger ftpandtelnetJobTrigger() {
-        String cron = controllerConfigProperties.getSource().getFtpandtelnet();
+        String cron = controllerConfigProperties.getSrc().getFtpandtelnet();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
                 .forJob(weChatJob())

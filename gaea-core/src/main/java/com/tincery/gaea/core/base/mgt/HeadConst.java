@@ -159,9 +159,12 @@ public class HeadConst {
             FIELD.EXTENSION;
     /* ESP&AH csv文件头 */
     public final static String ESPANDAH_HEADER = BASE_COMMON_HEADER +
-            FIELD.SPI + CSV_SEPARATOR +
+            FIELD.DURATION + CSV_SEPARATOR +
+            FIELD.C2S_SPI + CSV_SEPARATOR +
+            FIELD.S2C_SPI + CSV_SEPARATOR +
             FIELD.UP_PAYLOAD + CSV_SEPARATOR +
-            FIELD.DOWN_PAYLOAD;
+            FIELD.DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.EXTENSION;
     /* http csv文件头 */
     public final static String HTTP_HEADER = BASE_COMMON_HEADER +
             FIELD.SYN_FLAG + CSV_SEPARATOR +
@@ -287,7 +290,8 @@ public class HeadConst {
         public final static String CONTENT_LENGTH = "contentLengthList";
         public final static String META_LIST = "metaList";
         /* ESP&AH */
-        public final static String SPI = "spi";
+        public final static String C2S_SPI = "c2sSpi";
+        public final static String S2C_SPI = "s2cSpi";
         /* ISAKMP */
         public final static String MESSAGE_LIST = "messageList";
         public final static String INITIATOR_INFORMATION = "initiatorInformation";

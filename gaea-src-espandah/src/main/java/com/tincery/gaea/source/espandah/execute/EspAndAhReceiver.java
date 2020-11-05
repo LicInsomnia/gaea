@@ -1,33 +1,27 @@
 package com.tincery.gaea.source.espandah.execute;
 
 import com.tincery.gaea.api.src.EspAndAhData;
-import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
  * @author gongxuanzhang
  */
 @Component
-@Setter
-@Getter
 @Slf4j
 public class EspAndAhReceiver extends AbstractSrcReceiver<EspAndAhData> {
 
-    private final Map<String, EspAndAhData> espAndAhDataMap = new ConcurrentHashMap<>();
+    private final List<EspAndAhData> espAndAhDataList = new CopyOnWriteArrayList<>();
 
     @Autowired
     @Override
@@ -53,11 +47,12 @@ public class EspAndAhReceiver extends AbstractSrcReceiver<EspAndAhData> {
     @Override
     protected void analysisFile(File file) {
         super.analysisFile(file);
-        if (this.espAndAhDataMap.isEmpty()) {
+        if (this.espAndAhDataList.isEmpty()) {
             return;
         }
-        for (EspAndAhData espAndAhData : this.espAndAhDataMap.values()) {
-            putCsvMap(espAndAhData);
+        for (EspAndAhData data : this.espAndAhDataList) {
+            data.adjust();
+            putCsvMap(data);
         }
     }
 
@@ -73,7 +68,7 @@ public class EspAndAhReceiver extends AbstractSrcReceiver<EspAndAhData> {
                 EspAndAhData espAndAhData;
                 try {
                     espAndAhData = this.analysis.pack(line);
-                    espAndAhData.adjust();
+                    merge(espAndAhData);
                 } catch (Exception e) {
                     log.error("解析实体出现了问题{}", line);
                     // TODO: 2020/9/8 实体解析有问题告警
@@ -84,9 +79,22 @@ public class EspAndAhReceiver extends AbstractSrcReceiver<EspAndAhData> {
         }
     }
 
-    @Override
-    protected String getDataWarehouseCsvPath() {
-        return NodeInfo.getDataWarehouseCsvPathByCategory("session");
+    private void merge(EspAndAhData espAndAhData) {
+        for (EspAndAhData data : this.espAndAhDataList) {
+            if (espAndAhData.getKey().equals(data.getKey())) {
+                if (espAndAhData.getC2sSpi().equals(data.getC2sSpi()) ||
+                        espAndAhData.getS2cSpi().equals(data.getS2cSpi()) ||
+                        ("".equals(espAndAhData.getC2sSpi()) && !"".equals(data.getC2sSpi())) ||
+                        ("".equals(espAndAhData.getS2cSpi()) && !"".equals(data.getS2cSpi()))) {
+                    data.merge(espAndAhData);
+                    return;
+                } else {
+                    this.espAndAhDataList.add(espAndAhData);
+                    return;
+                }
+            }
+        }
+        this.espAndAhDataList.add(espAndAhData);
     }
 
     @Override

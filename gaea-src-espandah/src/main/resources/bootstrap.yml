@@ -6,7 +6,7 @@ spring:
   application:
     name: src_espandah
   profiles:
-    active: sparrow
+    active: insomnia
   cloud:
     nacos:
       config:
@@ -21,4 +21,4 @@ spring:
             group: GAEA_GROUP
 logging:
   level:
-    root: info
+    root: debug

@@ -16,7 +16,6 @@ public class EspAndAhLineAnalysis implements SrcLineAnalysis<EspAndAhData> {
     @Autowired
     private EspAndAhLineSupport espAndAhLineSupport;
 
-
     /**
      * 0.timestamp      1.prococol      2.smac      3.dmac      4.sip_n
      * 5.dip_n          6.sport         7.dport     8.source	9.rulename
@@ -34,20 +33,21 @@ public class EspAndAhLineAnalysis implements SrcLineAnalysis<EspAndAhData> {
     }
 
     private void fixCommon(String[] elements, EspAndAhData data) {
-        this.espAndAhLineSupport.setCommon(elements[2], elements[3], elements[4], elements[5],
-                elements[6], elements[7], elements[1], "", elements[21], elements[22], elements[25], data);
+        this.espAndAhLineSupport.setCommon(elements, data);
         data.setCapTime(DateUtils.validateTime(Long.parseLong(elements[0])))
                 .setSource(elements[8])
                 .setImsi(elements[10])
                 .setImei(elements[11])
                 .setMsisdn(elements[12])
                 .setUserId(elements[18])
-                .setServerId(elements[19]);
-
+                .setServerId(elements[19])
+                .setFin(false)
+                .setSyn(true);
+        data.setMacOuter("1".equals(elements[20]));
+        data.setEndTime(data.getCapTime());
         this.espAndAhLineSupport.setTargetName(elements[9], data);
         this.espAndAhLineSupport.setGroupName(data);
-//        data.setOuterFromMac(elements[20]);
-//        data.checkIsForeign(ipCheckUtils);
+        data.setForeign(this.espAndAhLineSupport.isForeign(data.getServerIp()));
     }
 
 }

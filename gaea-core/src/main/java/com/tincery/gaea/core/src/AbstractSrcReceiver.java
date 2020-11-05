@@ -188,9 +188,11 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         }
         String category = ApplicationInfo.getCategory();
         String fileName = data.getDateSetFileName(category);
-        this.appendCsvData(fileName,
+        this.appendCsvData(
+                fileName,
                 data.toCsv(HeadConst.CSV_SEPARATOR),
-                data.capTime);
+                data.capTime
+        );
     }
 
 
@@ -216,6 +218,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             String srcPath = file.getAbsolutePath();
             bakPathDir += ("/" + file.getName());
             FileUtils.fileMove(srcPath, bakPathDir);
+            log.info("备份文件[{}]至[{}]]", srcPath, bakPathDir);
         }
     }
 

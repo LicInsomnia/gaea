@@ -13,19 +13,23 @@ public class App {
     private static final String NODE_NAME = "TINCERY_101";
     private static final String[] MODELS = {
             "gaea-controller",
+            "gaea-src-flow",
             "gaea-src-session",
             "gaea-src-impsession",
             "gaea-src-ssl",
             "gaea-src-dns",
-            "gaea-src-ssh",
             "gaea-src-http",
-            "gaea-src-openvpn",
-            "gaea-src-flow",
-            "gaea-src-isakmp",
+            "gaea-src-ftpandtelnet",
             "gaea-src-pptpandl2tp",
-            "gaea-src-ftpandtelent",
+            "gaea-src-ssh",
+/*
+            "gaea-src-openvpn",
+
+            "gaea-src-isakmp",
+
+
             "gaea-src-wechat",
-            "gaea-src-qq",
+            "gaea-src-qq",*/
             "gaea-dw-reorganization"
     };
     private static String gaeaPath;
@@ -58,6 +62,12 @@ public class App {
                 "        server-addr: " + NACOS_ADDR + "\n" +
                 "        name: gaea\n" +
                 "        file-extension: yml\n" +
+                "        group: GAEA_GROUP\n" +
+                "        extension-configs:\n" +
+                "          - dataId: gaea_environment.yml\n" +
+                "            group: GAEA_GROUP\n" +
+                "          - dataId: common_config.yml\n" +
+                "            group: GAEA_GROUP\n" +
                 "  profiles:\n" +
                 "    active: " + NODE_NAME;
     }
