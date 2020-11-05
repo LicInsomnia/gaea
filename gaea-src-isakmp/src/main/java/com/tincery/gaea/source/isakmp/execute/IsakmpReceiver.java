@@ -3,6 +3,9 @@ package com.tincery.gaea.source.isakmp.execute;
 import com.tincery.gaea.api.src.IsakmpData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.rule.AlarmRule;
+import com.tincery.gaea.core.base.rule.PassRule;
+import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
@@ -25,6 +28,12 @@ import java.util.Objects;
 @Getter
 @Slf4j
 public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
+
+    @Autowired
+    private PassRule passRule;
+
+    @Autowired
+    private AlarmRule alarmRule;
 
     @Autowired
     @Override
@@ -90,10 +99,15 @@ public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
         }
     }
 
-
-
     @Override
     public void init() {
-
+        registryRules(passRule);
+        registryRules(alarmRule);
     }
+
+    public void registryRules(Rule rule) {
+        RuleRegistry.getInstance().putRule(rule);
+    }
+
+
 }

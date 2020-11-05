@@ -4,7 +4,9 @@ import com.tincery.gaea.api.src.DnsData;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
+import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -30,7 +32,10 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
     private ImpTargetSetupDao impTargetSetupDao;
 
     @Autowired
-    private PassRule passrule;
+    private PassRule passRule;
+
+    @Autowired
+    private AlarmRule alarmRule;
 
     @Autowired
     private PayloadDetector payloadDetector;
@@ -55,10 +60,11 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
     @Override
     public void init() {
         // loadGroup();
-        registryRules(passrule);
+        registryRules(passRule);
+        registryRules(alarmRule);
     }
 
-    public void registryRules(PassRule rule) {
+    public void registryRules(Rule rule) {
         RuleRegistry.getInstance().putRule(rule);
     }
 

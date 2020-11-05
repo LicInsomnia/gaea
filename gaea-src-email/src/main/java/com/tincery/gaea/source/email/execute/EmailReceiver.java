@@ -5,6 +5,7 @@ import com.tincery.gaea.core.base.component.config.CommonConfig;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
+import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -59,12 +60,14 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
 
     @Override
     public void init() {
-        // TODO: 2020/9/2  初始化有一个IP内容
-        RuleRegistry ruleRegistry = RuleRegistry.getInstance();
-        ruleRegistry.putRule(passRule);
-        // 如果这里需要告警 才加入  ruleRegistry.putRule(alarmRule);
+        // loadGroup();
+        registryRules(passRule);
+        registryRules(alarmRule);
         CommonConfig.EmailConfig emailInfo = commonConfig.getEmail();
-        // TODO: 2020/9/11 如果emailSuffixAlarm这个为true 还需要加载一个信息
+    }
+
+    public void registryRules(Rule rule) {
+        RuleRegistry.getInstance().putRule(rule);
     }
 
 }

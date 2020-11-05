@@ -2,6 +2,10 @@ package com.tincery.gaea.source.espandah.execute;
 
 import com.tincery.gaea.api.src.EspAndAhData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.rule.AlarmRule;
+import com.tincery.gaea.core.base.rule.PassRule;
+import com.tincery.gaea.core.base.rule.Rule;
+import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -22,6 +26,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class EspAndAhReceiver extends AbstractSrcReceiver<EspAndAhData> {
 
     private final List<EspAndAhData> espAndAhDataList = new CopyOnWriteArrayList<>();
+
+    @Autowired
+    private PassRule passRule;
+
+    @Autowired
+    private AlarmRule alarmRule;
 
     @Autowired
     @Override
@@ -99,6 +109,13 @@ public class EspAndAhReceiver extends AbstractSrcReceiver<EspAndAhData> {
 
     @Override
     public void init() {
-
+        // loadGroup();
+        registryRules(passRule);
+        registryRules(alarmRule);
     }
+
+    public void registryRules(Rule rule) {
+        RuleRegistry.getInstance().putRule(rule);
+    }
+
 }

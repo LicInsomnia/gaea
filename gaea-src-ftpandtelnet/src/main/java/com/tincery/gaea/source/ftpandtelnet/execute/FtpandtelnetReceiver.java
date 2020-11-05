@@ -1,7 +1,6 @@
 package com.tincery.gaea.source.ftpandtelnet.execute;
 
 import com.tincery.gaea.api.src.FtpandtelnetData;
-import com.tincery.gaea.api.src.Pptpandl2tpData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
@@ -34,10 +33,9 @@ import java.util.stream.Collectors;
 public class FtpandtelnetReceiver extends AbstractSrcReceiver<FtpandtelnetData> {
 
     @Autowired
-    private PassRule passrule;
+    private PassRule passRule;
     @Autowired
     private AlarmRule alarmRule;
-
 
     @Autowired
     public void setAnalysis(FtpandtelnetLineAnalysis analysis) {
@@ -82,7 +80,7 @@ public class FtpandtelnetReceiver extends AbstractSrcReceiver<FtpandtelnetData> 
 
     @Override
     public void init() {
-        registryRules(passrule);
+        registryRules(passRule);
         registryRules(alarmRule);
     }
 

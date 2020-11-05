@@ -84,4 +84,10 @@ public class ActiveMqConfig {
     public Queue getEspAndAh() {
         return new ActiveMQQueue(QueueNames.SRC_ESPANDAH);
     }
+
+    @Bean(name = QueueNames.SRC_ISAKMP)
+    public Queue getIsakmp() {
+        return new ActiveMQQueue(QueueNames.SRC_ISAKMP);
+    }
+
 }
