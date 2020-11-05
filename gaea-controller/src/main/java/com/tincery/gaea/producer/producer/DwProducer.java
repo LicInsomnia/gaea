@@ -1,4 +1,4 @@
-package com.tincery.gaea.producer.config;
+package com.tincery.gaea.producer.producer;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.tincery.gaea.producer.config;
+package com.tincery.gaea.producer.producer;
 
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import lombok.Setter;
@@ -17,15 +17,15 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 @Setter
-public class SrcProducer {
+public class HttpAnalysisProducer {
 
     @Autowired
     JmsMessagingTemplate jmsMessagingTemplate;
-    @Value("${node.src-path}")
-    private String srcPath;
+    @Value("${node.data-path}")
+    private String dataPath;
 
-    public void producer(Queue queue, String category, String extension) {
-        File path = new File(srcPath + "/" + category + "/");
+    public void producer(Queue queue,String category,String extension) {
+        File path = new File(dataPath + "/cache/"+category);
         if (!path.exists()) {
             return;
         }
@@ -41,6 +41,7 @@ public class SrcProducer {
             this.jmsMessagingTemplate.convertAndSend(queue, file);
         }
         log.info("本次处理从[{}]目录中共获取{} SRC文件{}个，并全部生产", path, category, files.size());
+
     }
 
 }

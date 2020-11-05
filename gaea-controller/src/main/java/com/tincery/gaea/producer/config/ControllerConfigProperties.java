@@ -14,6 +14,7 @@ public class ControllerConfigProperties {
 
     private SourceConfig src;
     private DataWarehouseConfig dataWarehouse;
+    private OdsConfig ods;
 
     @Setter
     @Getter
@@ -38,6 +39,12 @@ public class ControllerConfigProperties {
     @Getter
     public static class DataWarehouseConfig {
         private String reorganization;
+    }
+
+    @Setter
+    @Getter
+    public static class OdsConfig{
+        private String httpanalysis;
     }
 
 }

@@ -2,7 +2,11 @@ package com.tincery.gaea.producer.config;
 
 import com.tincery.gaea.producer.job.datawarehouse.ReorganizationJob;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.*;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -13,32 +17,32 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 @Slf4j
-public class DwQuartzConfig {
+public class OdsQuartzConfig {
 
 
-    private static final String PREFIX = "controller.model.datawarehouse";
+    private static final String PREFIX = "controller.model.ods";
     @Autowired
     private ControllerConfigProperties controllerConfigProperties;
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX, name = "reorganization")
-    public JobDetail reorganizationJob() {
-        log.info("控制器此次分发reorganization任务");
+    @ConditionalOnProperty(prefix = PREFIX, name = "httpanalysis")
+    public JobDetail httpAnalysisJob() {
+        log.info("控制器此次分发httpanalysis任务");
         return JobBuilder.newJob(ReorganizationJob.class)
-                .withIdentity("reorganizationJob")
+                .withIdentity("httpanalysisJob")
                 .storeDurably()
                 .build();
     }
 
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX, name = "reorganization")
+    @ConditionalOnProperty(prefix = PREFIX, name = "httpanalysis")
     public Trigger dataWarehouseJobTrigger() {
-        String cron = controllerConfigProperties.getDataWarehouse().getReorganization();
+        String cron = controllerConfigProperties.getOds().getHttpanalysis();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
-                .forJob(reorganizationJob())
-                .withIdentity("reorganizationJob")
+                .forJob(httpAnalysisJob())
+                .withIdentity("httpanalysisJob")
                 .withSchedule(cronScheduleBuilder)
                 .build();
     }

@@ -29,7 +29,7 @@
         <module>gaea-src-pptpandl2tp</module>
         <module>gaea-src-ftpandtelnet</module>
         <module>gaea-src-espandah</module>
-        <module>gaea-ods-matchhttp</module>
+        <module>gaea-ods-httpanalysis</module>
         <!--        <module>gaea-dm-asset</module>-->
     </modules>
 

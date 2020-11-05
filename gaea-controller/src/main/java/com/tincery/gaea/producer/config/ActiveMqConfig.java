@@ -90,4 +90,9 @@ public class ActiveMqConfig {
         return new ActiveMQQueue(QueueNames.SRC_ISAKMP);
     }
 
+    @Bean(name = QueueNames.ODS_HTTPANALYSIS)
+    public Queue getHttpAnalysis() {
+        return new ActiveMQQueue(QueueNames.ODS_HTTPANALYSIS);
+    }
+
 }

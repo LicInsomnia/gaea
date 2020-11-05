@@ -1,7 +1,7 @@
-package com.tincery.gaea.producer.job.src;
+package com.tincery.gaea.producer.job.ods;
 
 import com.tincery.gaea.api.base.QueueNames;
-import com.tincery.gaea.producer.producer.SrcProducer;
+import com.tincery.gaea.producer.producer.HttpAnalysisProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +14,17 @@ import javax.jms.Queue;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Slf4j
-public class SessionJob extends QuartzJobBean {
+public class HttpAnalysisJob extends QuartzJobBean {
 
 
-    @Resource(name = QueueNames.SRC_SESSION)
-    private Queue sessionQueue;
+    @Resource(name = QueueNames.ODS_HTTPANALYSIS)
+    private Queue httpAnalysisQueue;
     @Autowired
-    private SrcProducer srcProducer;
+    private HttpAnalysisProducer httpAnalysisProducer;
 
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        this.srcProducer.producer(this.sessionQueue, "session", ".txt");
+        this.httpAnalysisProducer.producer(this.httpAnalysisQueue, "http", ".json");
     }
 }

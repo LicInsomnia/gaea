@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>gaea-ods-matchhttp</artifactId>
+    <artifactId>gaea-ods-httpanalysis</artifactId>
     <groupId>com.tincery</groupId>
     <version>5.0.0</version>
 
@@ -26,5 +26,14 @@
             <version>2.2.4.RELEASE</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
