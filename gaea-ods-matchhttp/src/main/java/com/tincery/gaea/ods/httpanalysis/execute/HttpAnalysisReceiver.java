@@ -98,7 +98,7 @@ public class HttpAnalysisReceiver implements Receiver {
             free(file);
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("解析{}时,写入文件发生错误",file.getPath());
+            log.error("解析{}时,写入文件发生错误", file.getPath());
         }
     }
 
@@ -126,10 +126,10 @@ public class HttpAnalysisReceiver implements Receiver {
     }
 
     private void free(File file) throws IOException {
-        String fileFile = "/"+ Instant.now().toEpochMilli()+".json";
-        writeFile(this.noHostList,this.httpAnalysisNoHostPath+ fileFile);
-        writeFile(this.noMatchStrList,this.httpAnalysisNoMatchStrPath+ fileFile);
-        writeFile(this.noHitList,this.httpAnalysisNoHitPath+ fileFile);
+        String fileFile = "/" + Instant.now().toEpochMilli() + ".json";
+        writeFile(this.noHostList, this.httpAnalysisNoHostPath + fileFile);
+        writeFile(this.noMatchStrList, this.httpAnalysisNoMatchStrPath + fileFile);
+        writeFile(this.noHitList, this.httpAnalysisNoHitPath + fileFile);
         List<TargetAttribute> successData =
                 this.successList.stream().map(jsonObject -> jsonObject.toJavaObject(TargetAttribute.class)).collect(Collectors.toList());
         targetAttributeDao.insert(successData);
@@ -137,7 +137,7 @@ public class HttpAnalysisReceiver implements Receiver {
     }
 
     private void writeFile(List<JSONObject> jsons, String path) throws IOException {
-        if(CollectionUtils.isEmpty(jsons)){
+        if (CollectionUtils.isEmpty(jsons)) {
             return;
         }
         try (FileWriter noHitFileWriter = new FileWriter(new File(path))) {
@@ -150,7 +150,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
 
     private List<MatchHttpConfig.Extract> selectExtract(JSONObject httpJson) {
-        if(!httpJson.containsKey("host")){
+        if (!httpJson.containsKey("host")) {
             return null;
         }
         String host = httpJson.getString("host");
@@ -163,7 +163,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
     private List<List<MatchHttpConfig.Match>> selectMatch(List<MatchHttpConfig.Extract> extracts, JSONObject httpJson) {
         String url = httpJson.getString("url");
-        if(url == null){
+        if (url == null) {
             return null;
         }
         for (MatchHttpConfig.Extract extract : extracts) {
