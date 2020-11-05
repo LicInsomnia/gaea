@@ -32,8 +32,8 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
             "email",
             "isakmp",
             "ssh",
-            "ftp_telnet",
-            "esp_ah"
+            "ftpandtelnet",
+            "espandah"
     };
     private static int impSessionCount = 0;
     private static int assetCount = 0;

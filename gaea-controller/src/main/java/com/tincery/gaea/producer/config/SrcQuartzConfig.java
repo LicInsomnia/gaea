@@ -211,7 +211,7 @@ public class SrcQuartzConfig {
     @ConditionalOnProperty(prefix = PREFIX, name = "isakmp")
     public JobDetail isakmpJob() {
         return JobBuilder.newJob(IsakmpJob.class)
-                .withIdentity("iaskmpJob")
+                .withIdentity("isakmpJob")
                 .storeDurably()
                 .build();
     }
@@ -294,7 +294,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "ftpandtelnet")
     public JobDetail ftpandtelnetJob() {
-        return JobBuilder.newJob(FtpandtelentJob.class)
+        return JobBuilder.newJob(FtpandtelnetJob.class)
                 .withIdentity("ftpandtelnetJob")
                 .storeDurably()
                 .build();

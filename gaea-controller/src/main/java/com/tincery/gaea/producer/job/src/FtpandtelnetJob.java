@@ -14,17 +14,17 @@ import javax.jms.Queue;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Slf4j
-public class FtpandtelentJob extends QuartzJobBean {
+public class FtpandtelnetJob extends QuartzJobBean {
 
 
     @Resource(name = QueueNames.SRC_FTPANDTELNET)
-    private Queue ftpandtelentQueue;
+    private Queue ftpandtelnetQueue;
     @Autowired
     private SrcProducer srcProducer;
 
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        this.srcProducer.producer(this.ftpandtelentQueue, "ftpandtelnet", ".dat");
+        this.srcProducer.producer(this.ftpandtelnetQueue, "ftpandtelnet", ".dat");
     }
 }
