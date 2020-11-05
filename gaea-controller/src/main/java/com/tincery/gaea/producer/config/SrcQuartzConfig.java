@@ -84,7 +84,7 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "http")
     public JobDetail httpJob() {
-        return JobBuilder.newJob(SessionJob.class)
+        return JobBuilder.newJob(HttpJob.class)
                 .withIdentity("httpJob")
                 .storeDurably()
                 .build();
@@ -285,7 +285,7 @@ public class SrcQuartzConfig {
         String cron = controllerConfigProperties.getSrc().getFtpandtelnet();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
-                .forJob(weChatJob())
+                .forJob(ftpandtelnetJob())
                 .withIdentity("ftpandtelnetJob")
                 .withSchedule(cronScheduleBuilder)
                 .build();
