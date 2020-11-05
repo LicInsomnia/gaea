@@ -1,12 +1,9 @@
 package com.tincery.gaea.producer.config;
 
-import com.tincery.gaea.producer.job.datawarehouse.ReorganizationJob;
+
+import com.tincery.gaea.producer.job.ods.HttpAnalysisJob;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +25,7 @@ public class OdsQuartzConfig {
     @ConditionalOnProperty(prefix = PREFIX, name = "httpanalysis")
     public JobDetail httpAnalysisJob() {
         log.info("控制器此次分发httpanalysis任务");
-        return JobBuilder.newJob(ReorganizationJob.class)
+        return JobBuilder.newJob(HttpAnalysisJob.class)
                 .withIdentity("httpanalysisJob")
                 .storeDurably()
                 .build();
@@ -37,7 +34,7 @@ public class OdsQuartzConfig {
 
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "httpanalysis")
-    public Trigger dataWarehouseJobTrigger() {
+    public Trigger httpAnalysisTrigger() {
         String cron = controllerConfigProperties.getOds().getHttpanalysis();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()

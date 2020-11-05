@@ -21,15 +21,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,10 +38,10 @@ public class HttpAnalysisReceiver implements Receiver {
 
     private Map<String, MatchHttpConfig> matchMap;
 
-    private List<JSONObject> noHostList = new CopyOnWriteArrayList<>();
-    private List<JSONObject> noMatchStrList = new CopyOnWriteArrayList<>();
-    private List<JSONObject> noHitList = new CopyOnWriteArrayList<>();
-    private List<JSONObject> successList = new CopyOnWriteArrayList<>();
+    private static final ThreadPoolExecutor executorService;
+    private final List<JSONObject> noHostList = new CopyOnWriteArrayList<>();
+    private final List<JSONObject> noMatchStrList = new CopyOnWriteArrayList<>();
+    private final List<JSONObject> noHitList = new CopyOnWriteArrayList<>();
 
     private String httpAnalysisNoHostPath;
     private String httpAnalysisNoMatchStrPath;
@@ -53,8 +49,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
 
     private static final int executorCount = 4;
-
-    private static ThreadPoolExecutor executorService;
+    private final List<JSONObject> successList = new CopyOnWriteArrayList<>();
 
     static {
         executorService = new ThreadPoolExecutor(
@@ -73,10 +68,10 @@ public class HttpAnalysisReceiver implements Receiver {
     @Autowired
     private TargetAttributeDao targetAttributeDao;
 
-
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         File file = new File(textMessage.getText());
+        log.info("开始解析文件{}", file.getPath());
         List<String> lines = FileUtils.readLine(file);
         if (lines.size() <= executorCount) {
             for (String line : lines) {
@@ -126,14 +121,29 @@ public class HttpAnalysisReceiver implements Receiver {
     }
 
     private void free(File file) throws IOException {
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        int monthValue = now.getMonthValue();
+        int dayOfMonth = now.getDayOfMonth();
+        String dirName = "/" + year + "-" + monthValue + "-" + dayOfMonth;
+        String httpAnalysisNoHitPath = this.httpAnalysisNoHitPath + dirName;
+        String httpAnalysisNoHostPath = this.httpAnalysisNoHostPath + dirName;
+        String httpAnalysisNoMathStrPath = this.httpAnalysisNoMatchStrPath + dirName;
+        FileUtils.checkPath(httpAnalysisNoHitPath, httpAnalysisNoHostPath, httpAnalysisNoMathStrPath);
         String fileFile = "/" + Instant.now().toEpochMilli() + ".json";
-        writeFile(this.noHostList, this.httpAnalysisNoHostPath + fileFile);
-        writeFile(this.noMatchStrList, this.httpAnalysisNoMatchStrPath + fileFile);
-        writeFile(this.noHitList, this.httpAnalysisNoHitPath + fileFile);
         List<TargetAttribute> successData =
                 this.successList.stream().map(jsonObject -> jsonObject.toJavaObject(TargetAttribute.class)).collect(Collectors.toList());
         targetAttributeDao.insert(successData);
-        file.delete();
+        log.info("输出未匹配Host记录：{}条,未匹配URL记录：{}条,未命中规则记录：{}条，入库：{}条", this.noHostList.size(), this.noMatchStrList.size(), this.noHitList.size(), successData.size());
+        writeFile(this.noHostList, httpAnalysisNoHostPath + fileFile);
+        writeFile(this.noMatchStrList, httpAnalysisNoMatchStrPath + fileFile);
+        writeFile(this.noHitList, httpAnalysisNoHitPath + fileFile);
+        this.noHitList.clear();
+        this.noMatchStrList.clear();
+        this.noHostList.clear();
+        boolean delete = file.delete();
+        log.info("删除{}{}", file.getPath(), delete ? "成功" : "失败");
+
     }
 
     private void writeFile(List<JSONObject> jsons, String path) throws IOException {

@@ -17,16 +17,21 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 @Setter
-public class HttpAnalysisProducer {
+public class OdsProducer {
 
     @Autowired
     JmsMessagingTemplate jmsMessagingTemplate;
     @Value("${node.data-path}")
     private String dataPath;
 
-    public void producer(Queue queue,String category,String extension) {
-        File path = new File(dataPath + "/cache/"+category);
+    public static void main(String[] args) {
+
+    }
+
+    public void producer(Queue queue, String category, String extension) {
+        File path = new File(dataPath + "/cache/" + category);
         if (!path.exists()) {
+            log.info("扫描路径{}不存在", path.getAbsoluteFile());
             return;
         }
         List<String> files = FileUtils.searchFiles(path.getAbsolutePath(),
@@ -40,7 +45,7 @@ public class HttpAnalysisProducer {
         for (String file : files) {
             this.jmsMessagingTemplate.convertAndSend(queue, file);
         }
-        log.info("本次处理从[{}]目录中共获取{} SRC文件{}个，并全部生产", path, category, files.size());
+        log.info("本次处理从[{}]目录中共获取{}文件{}个，并全部生产", path, category, files.size());
 
     }
 

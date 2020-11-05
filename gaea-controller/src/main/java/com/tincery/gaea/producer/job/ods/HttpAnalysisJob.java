@@ -1,7 +1,7 @@
 package com.tincery.gaea.producer.job.ods;
 
 import com.tincery.gaea.api.base.QueueNames;
-import com.tincery.gaea.producer.producer.HttpAnalysisProducer;
+import com.tincery.gaea.producer.producer.OdsProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,11 @@ public class HttpAnalysisJob extends QuartzJobBean {
     @Resource(name = QueueNames.ODS_HTTPANALYSIS)
     private Queue httpAnalysisQueue;
     @Autowired
-    private HttpAnalysisProducer httpAnalysisProducer;
+    private OdsProducer odsProducer;
 
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        this.httpAnalysisProducer.producer(this.httpAnalysisQueue, "http", ".json");
+        this.odsProducer.producer(this.httpAnalysisQueue, "http", ".json");
     }
 }
