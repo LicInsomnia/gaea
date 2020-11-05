@@ -17,19 +17,16 @@ public class App {
             "gaea-src-session",
             "gaea-src-impsession",
             "gaea-src-ssl",
+            "gaea-src-openvpn",
             "gaea-src-dns",
             "gaea-src-http",
+            "gaea-src-ssh",
             "gaea-src-ftpandtelnet",
             "gaea-src-pptpandl2tp",
-            "gaea-src-ssh",
-/*
-            "gaea-src-openvpn",
-
             "gaea-src-isakmp",
-
-
+            "gaea-src-espandah",
             "gaea-src-wechat",
-            "gaea-src-qq",*/
+//            "gaea-src-qq",
             "gaea-dw-reorganization"
     };
     private static String gaeaPath;
@@ -56,6 +53,8 @@ public class App {
                 "spring:\n" +
                 "  application:\n" +
                 "    name: " + applicationName + "\n" +
+                "  profiles:\n" +
+                "    active: " + NODE_NAME + "\n" +
                 "  cloud:\n" +
                 "    nacos:\n" +
                 "      config:\n" +
@@ -68,8 +67,9 @@ public class App {
                 "            group: GAEA_GROUP\n" +
                 "          - dataId: common_config.yml\n" +
                 "            group: GAEA_GROUP\n" +
-                "  profiles:\n" +
-                "    active: " + NODE_NAME;
+                "logging:\n" +
+                "  level:\n" +
+                "    root: info\n";
     }
 
     private static String getJar(String modelName) {

@@ -25,6 +25,6 @@ public class FtpandtelentJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        this.srcProducer.producer(this.ftpandtelentQueue, "ftpandtelent", ".txt");
+        this.srcProducer.producer(this.ftpandtelentQueue, "ftpandtelnet", ".dat");
     }
 }

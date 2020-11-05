@@ -33,7 +33,7 @@ public class SrcQuartzConfig {
         String cron = controllerConfigProperties.getSrc().getFlow();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
-                .forJob(sessionJob())
+                .forJob(flowJob())
                 .withIdentity("flowJob")
                 .withSchedule(cronScheduleBuilder)
                 .build();
@@ -154,12 +154,12 @@ public class SrcQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX, name = "openVpn")
+    @ConditionalOnProperty(prefix = PREFIX, name = "openvpn")
     public Trigger openVpnJobTrigger() {
         String cron = controllerConfigProperties.getSrc().getOpenVpn();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
-                .forJob(sslJob())
+                .forJob(openVpnJob())
                 .withIdentity("openVpnJob")
                 .withSchedule(cronScheduleBuilder)
                 .build();
@@ -203,6 +203,27 @@ public class SrcQuartzConfig {
         return TriggerBuilder.newTrigger()
                 .forJob(sshJob())
                 .withIdentity("sshJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "isakmp")
+    public JobDetail isakmpJob() {
+        return JobBuilder.newJob(IsakmpJob.class)
+                .withIdentity("iaskmpJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "isakmp")
+    public Trigger isakmpJobTrigger() {
+        String cron = controllerConfigProperties.getSrc().getIsakmp();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(isakmpJob())
+                .withIdentity("isakmpJob")
                 .withSchedule(cronScheduleBuilder)
                 .build();
     }

@@ -3,13 +3,15 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>gaea</artifactId>
-        <groupId>com.tincery</groupId>
-        <version>5.0.0</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.4.RELEASE</version>
+        <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>gaea-src-isakmp</artifactId>
+
     <dependencies>
         <dependency>
             <artifactId>gaea-core</artifactId>
@@ -25,5 +27,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

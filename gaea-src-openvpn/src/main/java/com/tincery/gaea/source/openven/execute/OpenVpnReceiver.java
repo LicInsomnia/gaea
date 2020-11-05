@@ -58,6 +58,7 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
             return;
         }
         for (OpenVpnData openVpnData : this.openVpnMap.values()) {
+            openVpnData.adjust();
             putCsvMap(openVpnData);
         }
     }

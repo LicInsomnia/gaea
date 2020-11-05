@@ -31,6 +31,7 @@ public class ControllerConfigProperties {
         private String wechat;
         private String ftpandtelnet;
         private String espandah;
+        private String isakmp;
     }
 
     @Setter

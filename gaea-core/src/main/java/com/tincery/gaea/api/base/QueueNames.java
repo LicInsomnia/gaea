@@ -11,6 +11,7 @@ public class QueueNames {
     public final static String SRC_HTTP = "src_http";
     public final static String SRC_EMAIL = "src_email";
     public final static String SRC_SSH = "src_ssh";
+    public final static String SRC_ISAKMP = "src_isakmp";
     public final static String SRC_ESPANDAH = "src_espandah";
     public final static String SRC_FTPANDTELNET = "src_ftpandtelnet";
     public static final String SRC_PPTPANDL2TP = "src_pptpandl2tp";

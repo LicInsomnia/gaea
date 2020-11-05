@@ -14,17 +14,17 @@ import javax.jms.Queue;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Slf4j
-public class HttpJob extends QuartzJobBean {
+public class IsakmpJob extends QuartzJobBean {
 
 
-    @Resource(name = QueueNames.SRC_HTTP)
-    private Queue httpQueue;
+    @Resource(name = QueueNames.SRC_ISAKMP)
+    private Queue isakmpQueue;
     @Autowired
     private SrcProducer srcProducer;
 
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        this.srcProducer.producer(this.httpQueue, "http", ".dat");
+        this.srcProducer.producer(this.isakmpQueue, "isakmp", ".txt");
     }
 }
