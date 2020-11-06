@@ -52,10 +52,11 @@ public class HttpData extends AbstractSrcData {
     }
 
     private void adjustHttpData() {
+        HttpExtension httpExtension = new HttpExtension();
         if (Objects.isNull(this.metas)) {
+            this.httpExtension = httpExtension;
             return;
         }
-        HttpExtension httpExtension = new HttpExtension();
         httpExtension.setHost(this.metas.stream().map(HttpMeta::getHost).collect(Collectors.toList()));
         httpExtension.setMethod(this.metas.stream().filter(item -> item.getMethod().toString().contains(">>"))
                 .map(HttpMeta::getMethod).map(Object::toString).collect(Collectors.toList()));
