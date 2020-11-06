@@ -153,7 +153,7 @@ public class HttpData extends AbstractSrcData {
     /**
      * 合并两个httpData的数据
      */
-    public void merge(HttpData httpData) {
+    public synchronized void merge(HttpData httpData) {
         List<HttpMeta> newMetas = this.getMetas();
         if (CollectionUtils.isEmpty(newMetas)) {
             newMetas = new ArrayList<>();

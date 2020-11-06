@@ -60,8 +60,8 @@ public class HttpMeta {
 
     public void setContent(String content, boolean isResponse) {
         StringBuilder subContent;
-        if (content.length() > 4096) {
-            subContent = new StringBuilder(content.substring(0, 4096));
+        if (content.length() > 8192) {
+            subContent = new StringBuilder(content.substring(0, 8192));
             subContent.append("...");
         } else {
             subContent = new StringBuilder(content);

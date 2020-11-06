@@ -2,12 +2,14 @@ package com.tincery.gaea.api.base;
 
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.dm.AssetConfigDO;
+import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -113,6 +115,10 @@ public final class AlarmMaterialData {
      */
     protected long durationTime;
     /**
+     * 这次会话的结束时间（对比与第一条数据的结束时间）。告警合并用
+     */
+    protected long durationEndTime;
+    /**
      * 标签
      */
     protected Set<String> caseTags;
@@ -200,6 +206,8 @@ public final class AlarmMaterialData {
         this.source = metaData.getSource();
     }
 
+
+
     public AlarmMaterialData(AbstractMetaData metaData, SrcRuleDO alarmRule, String context, IpSelector ipSelector) {
         this.targetName = metaData.getTargetName();
         this.groupName = metaData.getGroupName();
@@ -252,6 +260,7 @@ public final class AlarmMaterialData {
         this.serverLocationOuter = ipSelector.getCommonInformation(this.serverIpOuter);
         this.clientLocationOuter = ipSelector.getCommonInformation(this.clientIpOuter);
     }
+
 
 
     private void setKey() {

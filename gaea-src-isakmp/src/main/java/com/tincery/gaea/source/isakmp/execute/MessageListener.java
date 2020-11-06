@@ -7,7 +7,6 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 import javax.jms.JMSException;
-import javax.jms.Queue;
 import javax.jms.TextMessage;
 
 @Component
