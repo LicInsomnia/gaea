@@ -42,6 +42,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
         SslExtension sslExtension = new SslExtension();
         if (sslData.getDataType() == -1) {
             this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
+            return sslData;
         } else {
             if (elements[29].contains("malformed")) {
                 sslData.setDataType(-2);

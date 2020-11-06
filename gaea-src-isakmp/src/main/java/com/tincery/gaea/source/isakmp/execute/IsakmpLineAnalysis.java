@@ -91,7 +91,6 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                 .setFin(SourceFieldUtils.parseBooleanStr(elements[1]));
         isakmpData.setMacOuter(SourceFieldUtils.parseBooleanStr(elements[28]));
         this.isakmpLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], isakmpData);
-
     }
 
     private void setVersion1(String[] elements, IsakmpExtension isakmpExtension) {

@@ -18,11 +18,16 @@ public class OpenVpnData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
+        String extensionElements = null;
+        String extension = null;
+        if (null != this.openVpnExtension) {
+            extensionElements = this.openVpnExtension.toCsv(splitChar);
+            extension = JSONObject.toJSONString(this.openVpnExtension);
+        }
         Object[] join = new Object[]{
                 super.toCsv(splitChar), this.completeSession,
                 this.malformedUpPayload, this.malformedDownPayload,
-                this.openVpnExtension.toCsv(splitChar),
-                JSONObject.toJSONString(this.openVpnExtension)
+                extensionElements, extension
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

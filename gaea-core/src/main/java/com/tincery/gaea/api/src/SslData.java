@@ -50,11 +50,16 @@ public class SslData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
+        String extensionElements = null;
+        String extension = null;
+        if (null != this.sslExtension) {
+            extensionElements = this.sslExtension.toCsv(splitChar);
+            extension = JSONObject.toJSONString(this.sslExtension);
+        }
         Object[] join = new Object[]{
                 super.toCsv(splitChar), this.completeSession,
                 this.malformedUpPayload, this.malformedDownPayload,
-                this.sslExtension.toCsv(splitChar),
-                JSONObject.toJSONString(this.sslExtension)
+                extensionElements, extension
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

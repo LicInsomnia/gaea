@@ -1,7 +1,6 @@
 package com.tincery.gaea.api.src.extension;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Joiner;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,17 +73,6 @@ public class IsakmpExtension {
             stringBuilder.setLength(stringBuilder.length() - 1);
             this.responderVidStr = stringBuilder.toString();
         }
-    }
-
-    public String toCsv(char splitChar) {
-        Object[] join = new Object[]{
-                messageListStr,
-                initiatorInformationStr,
-                responderInformationStr,
-                initiatorVidStr,
-                responderVidStr
-        };
-        return Joiner.on(splitChar).useForNull("").join(join);
     }
 
 }
