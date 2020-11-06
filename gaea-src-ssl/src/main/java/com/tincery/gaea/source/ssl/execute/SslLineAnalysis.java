@@ -184,7 +184,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
         }
         String[] kv = element.substring(1, element.length() - 1).split(":");
         if (kv.length != 2) {
-            throw new Exception("握手会话数据格式有误...");
+            return;
         }
         String key = kv[0].trim();
         String value = kv[1].trim();

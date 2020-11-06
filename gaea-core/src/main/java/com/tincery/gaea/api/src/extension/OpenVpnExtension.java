@@ -13,6 +13,9 @@ public class OpenVpnExtension extends SslExtension {
 
     @SuppressWarnings("unchecked")
     public void merge(OpenVpnExtension openVpnExtension) {
+        if (null == openVpnExtension) {
+            return;
+        }
         this.handshake.merge(openVpnExtension.handshake);
         this.hasApplicationData = this.hasApplicationData || openVpnExtension.hasApplicationData;
         this.serverName = (String) SourceFieldUtils.mergeField(this.serverName, openVpnExtension.serverName);

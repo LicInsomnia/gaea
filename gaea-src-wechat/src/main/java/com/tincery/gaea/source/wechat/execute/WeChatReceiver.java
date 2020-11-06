@@ -1,8 +1,6 @@
 package com.tincery.gaea.source.wechat.execute;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
-import com.tincery.gaea.api.src.HttpData;
 import com.tincery.gaea.api.src.WeChatData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -54,26 +52,6 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
     @Override
     public String getHead() {
         return HeadConst.WECHAT_HEADER;
-    }
-
-    /**
-     * @param weChatData 单一session信息
-     * @author gxz 处理单条session记录
-     */
-    @Override
-    protected void putCsvMap(WeChatData weChatData) {
-        if (RuleRegistry.getInstance().matchLoop(weChatData)) {
-            // 过滤过滤
-            return;
-        }
-        String category = ApplicationInfo.getCategory();
-        if (weChatData.getDownByte() == 0) {
-            category += "_down_payload_zero";
-        }
-        String fileName = weChatData.getDateSetFileName(category);
-        this.appendCsvData(fileName,
-                weChatData.toCsv(HeadConst.CSV_SEPARATOR),
-                weChatData.capTime);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class EspAndAhData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.duration,
+        Object[] join = new Object[]{super.toCsv(splitChar),
                 this.espAndAhExtension.toCsv(splitChar), JSONObject.toJSONString(this.espAndAhExtension)
         };
         return Joiner.on(splitChar).useForNull("").join(join);

@@ -24,7 +24,7 @@ public class Pptpandl2tpData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{
-                super.toCsv(splitChar), this.duration, this.getSyn(), this.getFin(),
+                super.toCsv(splitChar),
                 this.malformedUpPayload, this.malformedDownPayload,
                 this.pptpAndL2tpExtension.toCsv(splitChar),
                 JSONObject.toJSONString(this.pptpAndL2tpExtension)

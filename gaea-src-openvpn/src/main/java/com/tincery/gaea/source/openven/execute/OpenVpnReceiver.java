@@ -1,10 +1,10 @@
 package com.tincery.gaea.source.openven.execute;
 
 import com.tincery.gaea.api.src.OpenVpnData;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
+import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
@@ -100,21 +100,13 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
     }
 
     @Override
-    protected void putCsvMap(OpenVpnData openVpnData) {
-        if (RuleRegistry.getInstance().matchLoop(openVpnData)) {
-            // 过滤规则  其中alarm规则是有同步块的
-            return;
-        }
-        appendCsvData(openVpnData.getDateSetFileName(ApplicationInfo.getCategory()),
-                openVpnData.toCsv(HeadConst.CSV_SEPARATOR),
-                openVpnData.getCapTime()
-        );
+    public void init() {
+        registryRules(passRule);
+        registryRules(alarmRule);
     }
 
-    @Override
-    public void init() {
-        // TODO: 2020/9/2  初始化有一个IP内容
-        RuleRegistry.getInstance().putRule(alarmRule).putRule(passRule);
+    public void registryRules(Rule rule) {
+        RuleRegistry.getInstance().putRule(rule);
     }
 
 

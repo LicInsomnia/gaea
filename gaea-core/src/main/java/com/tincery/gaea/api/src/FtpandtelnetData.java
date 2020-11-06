@@ -19,7 +19,7 @@ public class FtpandtelnetData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar),this.duration,this.getSyn(), this.getFin(),
+        Object[] join = new Object[]{super.toCsv(splitChar),
                 this.malformedUpPayload, this.malformedDownPayload,
                 JSONObject.toJSONString(this.ftpAndTelnetExtension)};
         return Joiner.on(splitChar).useForNull("").join(join);

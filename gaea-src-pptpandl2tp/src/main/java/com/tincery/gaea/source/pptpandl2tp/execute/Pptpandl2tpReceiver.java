@@ -1,8 +1,6 @@
 package com.tincery.gaea.source.pptpandl2tp.execute;
 
 import com.tincery.gaea.api.src.Pptpandl2tpData;
-import com.tincery.gaea.api.src.SshData;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
@@ -45,22 +43,6 @@ public class Pptpandl2tpReceiver extends AbstractSrcReceiver<Pptpandl2tpData> {
     @Override
     public String getHead() {
         return HeadConst.PPTPANDL2TP_HEADER;
-    }
-
-    @Override
-    protected void putCsvMap(Pptpandl2tpData pptpandl2tpData) {
-        if (RuleRegistry.getInstance().matchLoop(pptpandl2tpData)) {
-            // 过滤过滤
-            return;
-        }
-        String category = ApplicationInfo.getCategory();
-        if (pptpandl2tpData.getDownByte() == 0) {
-            category += "_down_payload_zero";
-        }
-        String fileName = pptpandl2tpData.getDateSetFileName(category);
-        this.appendCsvData(fileName,
-                pptpandl2tpData.toCsv(HeadConst.CSV_SEPARATOR),
-                pptpandl2tpData.capTime);
     }
 
     @Override

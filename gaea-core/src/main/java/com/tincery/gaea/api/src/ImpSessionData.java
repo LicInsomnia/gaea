@@ -21,8 +21,6 @@ public class ImpSessionData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{super.toCsv(splitChar),
-                this.getDuration(),
-                this.getSyn(), this.getFin(),
                 this.sessionExtension.toCsv(splitChar),
                 JSONObject.toJSONString(this.sessionExtension)
         };

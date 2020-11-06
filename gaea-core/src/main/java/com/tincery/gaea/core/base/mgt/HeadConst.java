@@ -42,16 +42,16 @@ public class HeadConst {
             FIELD.IMEI + CSV_SEPARATOR +
             FIELD.MSISDN + CSV_SEPARATOR +
             FIELD.CASE_TAGS + CSV_SEPARATOR +
-            FIELD.FOREIGN + CSV_SEPARATOR;
+            FIELD.FOREIGN + CSV_SEPARATOR +
+            FIELD.DURATION + CSV_SEPARATOR +
+            FIELD.SYN_FLAG + CSV_SEPARATOR +
+            FIELD.FIN_FLAG;
 
     /* ssl csv文件头 */
     public final static String SSL_HEADER = BASE_COMMON_HEADER +
-            FIELD.DURATION + CSV_SEPARATOR +
-            FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG + CSV_SEPARATOR +
+            FIELD.COMPLETE_SESSION + CSV_SEPARATOR +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            FIELD.COMPLETE_SESSION + CSV_SEPARATOR +
             FIELD.HANDSHAKE + CSV_SEPARATOR +
             FIELD.HAS_APPLICATION_DATA + CSV_SEPARATOR +
             FIELD.SERVER_NAME + CSV_SEPARATOR +
@@ -77,9 +77,6 @@ public class HeadConst {
             FIELD.EXTENSION;
     /* session csv文件头 */
     public final static String SESSION_HEADER = BASE_COMMON_HEADER +
-            FIELD.DURATION + CSV_SEPARATOR +
-            FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.DOWN_PAYLOAD + CSV_SEPARATOR +
             FIELD.EXTENSION;
@@ -95,9 +92,6 @@ public class HeadConst {
     public final static String OPENVPN_HEADER = SSL_HEADER;
     /* ssh csv文件头 */
     public final static String SSH_HEADER = BASE_COMMON_HEADER +
-            FIELD.DURATION + CSV_SEPARATOR +
-            FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             FIELD.CLIENT_PROTOCOL + CSV_SEPARATOR +
@@ -132,8 +126,6 @@ public class HeadConst {
             FIELD.EXTENSION;
     /* isakmp csv文件头 */
     public final static String ISAKMP_HEADER = BASE_COMMON_HEADER +
-            FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             FIELD.MESSAGE_LIST + CSV_SEPARATOR +
@@ -144,22 +136,16 @@ public class HeadConst {
             FIELD.EXTENSION;
     /* ftpandtelnet csv文件头 */
     public final static String FTPANDTELNET_HEADER = BASE_COMMON_HEADER +
-            FIELD.DURATION + CSV_SEPARATOR +
-            FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             FIELD.EXTENSION;
     /* email csv文件头 */
     public final static String EMAIL_HEADER = BASE_COMMON_HEADER +
-            FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             FIELD.EXTENSION;
     /* ESP&AH csv文件头 */
     public final static String ESPANDAH_HEADER = BASE_COMMON_HEADER +
-            FIELD.DURATION + CSV_SEPARATOR +
             FIELD.C2S_SPI + CSV_SEPARATOR +
             FIELD.S2C_SPI + CSV_SEPARATOR +
             FIELD.UP_PAYLOAD + CSV_SEPARATOR +
@@ -167,8 +153,6 @@ public class HeadConst {
             FIELD.EXTENSION;
     /* http csv文件头 */
     public final static String HTTP_HEADER = BASE_COMMON_HEADER +
-            FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.HOST + CSV_SEPARATOR +
             FIELD.METHOD + CSV_SEPARATOR +
             FIELD.URL_ROOT + CSV_SEPARATOR +
@@ -181,9 +165,6 @@ public class HeadConst {
 
     /* pptpandl2tp csv文件头 */
     public final static String PPTPANDL2TP_HEADER = BASE_COMMON_HEADER +
-            FIELD.DURATION + CSV_SEPARATOR +
-            FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG + CSV_SEPARATOR +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
             FIELD.RESPONSE + CSV_SEPARATOR +

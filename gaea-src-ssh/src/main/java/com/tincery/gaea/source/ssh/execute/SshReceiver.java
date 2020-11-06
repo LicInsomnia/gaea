@@ -1,7 +1,6 @@
 package com.tincery.gaea.source.ssh.execute;
 
 import com.tincery.gaea.api.src.SshData;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class SshReceiver extends AbstractSrcReceiver<SshData> {
 
     @Autowired
-    private PassRule passrule;
+    private PassRule passRule;
     @Autowired
     private AlarmRule alarmRule;
 
@@ -46,29 +45,9 @@ public class SshReceiver extends AbstractSrcReceiver<SshData> {
         return HeadConst.SSH_HEADER;
     }
 
-    /**
-     * @param sshData 单一session信息
-     * @author gxz 处理单条session记录
-     */
-    @Override
-    protected void putCsvMap(SshData sshData) {
-        if (RuleRegistry.getInstance().matchLoop(sshData)) {
-            // 过滤过滤
-            return;
-        }
-        String category = ApplicationInfo.getCategory();
-        if (sshData.getDownByte() == 0) {
-            category += "_down_payload_zero";
-        }
-        String fileName = sshData.getDateSetFileName(category);
-        this.appendCsvData(fileName,
-                sshData.toCsv(HeadConst.CSV_SEPARATOR),
-                sshData.capTime);
-    }
-
     @Override
     public void init() {
-        registryRules(passrule);
+        registryRules(passRule);
         registryRules(alarmRule);
     }
 

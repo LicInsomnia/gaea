@@ -60,7 +60,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
                 this.serverIp, serverIpN, this.clientPort, this.serverPort, this.clientIpOuter,
                 this.serverIpOuter, this.clientPortOuter, this.serverPortOuter, this.protocolOuter, this.upPkt,
                 this.upByte, this.downPkt, this.downByte, this.dataType, this.imsi, this.imei, this.msisdn,
-                SourceFieldUtils.formatCollection(caseTags), this.foreign};
+                SourceFieldUtils.formatCollection(caseTags), this.foreign, this.duration, this.syn, this.fin};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 

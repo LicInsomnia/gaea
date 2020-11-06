@@ -81,35 +81,37 @@ public class SessionFactory {
 
     private AbstractDataWarehouseData appendBaseAndAttach(String category, CsvRow csvRow) {
         AbstractDataWarehouseData data = new AbstractDataWarehouseData();
-        data.setTargetName(csvRow.getEmptyNull(HeadConst.FIELD.TARGET_NAME))
-                .setGroupName(csvRow.getEmptyNull(HeadConst.FIELD.GROUP_NAME))
+        data.setGroupName(csvRow.getEmptyNull(HeadConst.FIELD.GROUP_NAME))
+                .setTargetName(csvRow.getEmptyNull(HeadConst.FIELD.TARGET_NAME))
                 .setUserId(csvRow.getEmptyNull(HeadConst.FIELD.USER_ID))
                 .setServerId(csvRow.getEmptyNull(HeadConst.FIELD.SERVER_ID))
                 .setSource(csvRow.getEmptyNull(HeadConst.FIELD.SOURCE))
                 .setCapTime(csvRow.getLong(HeadConst.FIELD.CAPTIME))
-                .setDuration(csvRow.getLongOrDefault(HeadConst.FIELD.DURATION, 0L))
-                .setProtocol(csvRow.getIntegerOrDefault(HeadConst.FIELD.PROTOCOL, 0))
-                .setProName(csvRow.get(HeadConst.FIELD.PRONAME))
                 .setClientMac(csvRow.getEmptyNull(HeadConst.FIELD.CLIENT_MAC))
                 .setServerMac(csvRow.getEmptyNull(HeadConst.FIELD.SERVER_MAC))
+                .setProtocol(csvRow.getInteger(HeadConst.FIELD.PROTOCOL))
+                .setProName(csvRow.getEmptyNull(HeadConst.FIELD.PRONAME))
                 .setClientIp(csvRow.getEmptyNull(HeadConst.FIELD.CLIENT_IP))
                 .setServerIp(csvRow.getEmptyNull(HeadConst.FIELD.SERVER_IP))
-                .setClientPort(csvRow.getIntegerOrDefault(HeadConst.FIELD.CLIENT_PORT, 0))
-                .setServerPort(csvRow.getIntegerOrDefault(HeadConst.FIELD.SERVER_PORT, 0))
+                .setClientPort(csvRow.getInteger(HeadConst.FIELD.CLIENT_PORT))
+                .setServerPort(csvRow.getInteger(HeadConst.FIELD.SERVER_PORT))
                 .setClientIpOuter(csvRow.getEmptyNull(HeadConst.FIELD.CLIENT_IP_OUTER))
                 .setServerIpOuter(csvRow.getEmptyNull(HeadConst.FIELD.SERVER_IP_OUTER))
-                .setClientPortOuter(csvRow.getIntegerOrDefault(HeadConst.FIELD.CLIENT_PORT_OUTER, 0))
-                .setServerPortOuter(csvRow.getIntegerOrDefault(HeadConst.FIELD.SERVER_PORT_OUTER, 0))
-                .setProtocolOuter(csvRow.getIntegerOrDefault(HeadConst.FIELD.PROTOCOL_OUTER, 0))
+                .setClientPortOuter(csvRow.getInteger(HeadConst.FIELD.CLIENT_PORT_OUTER))
+                .setServerPortOuter(csvRow.getInteger(HeadConst.FIELD.SERVER_PORT_OUTER))
+                .setProtocolOuter(csvRow.getInteger(HeadConst.FIELD.PROTOCOL_OUTER))
+                .setUpPkt(csvRow.getLong(HeadConst.FIELD.UP_PKT))
+                .setUpByte(csvRow.getLong(HeadConst.FIELD.UP_BYTE))
+                .setDownPkt(csvRow.getLong(HeadConst.FIELD.DOWN_PKT))
+                .setDownByte(csvRow.getLong(HeadConst.FIELD.DOWN_BYTE))
+                .setDataType(csvRow.getInteger(HeadConst.FIELD.DATA_TYPE))
                 .setImsi(csvRow.getEmptyNull(HeadConst.FIELD.IMSI))
                 .setImei(csvRow.getEmptyNull(HeadConst.FIELD.IMEI))
                 .setMsisdn(csvRow.getEmptyNull(HeadConst.FIELD.MSISDN))
-                .setDataType(csvRow.getInteger(HeadConst.FIELD.DATA_TYPE))
-                .setUpPkt(csvRow.getLongOrDefault(HeadConst.FIELD.UP_PKT, 0L))
-                .setDownPkt(csvRow.getLongOrDefault(HeadConst.FIELD.DOWN_PKT, 0L))
-                .setUpByte(csvRow.getLongOrDefault(HeadConst.FIELD.UP_BYTE, 0L))
-                .setDownByte(csvRow.getLongOrDefault(HeadConst.FIELD.DOWN_BYTE, 0L))
-                .setServerPortOuter(csvRow.getIntegerOrDefault(HeadConst.FIELD.SERVER_PORT, 0));
+                .setForeign(csvRow.getBoolean(HeadConst.FIELD.FOREIGN))
+                .setDuration(csvRow.getLong(HeadConst.FIELD.DURATION))
+                .setSyn(csvRow.getBoolean(HeadConst.FIELD.SYN_FLAG))
+                .setFin(csvRow.getBoolean(HeadConst.FIELD.FIN_FLAG));
         data.setClientLocation(this.ipSelector.getCommonInformation(data.getClientIp()))
                 .setServerLocation(this.ipSelector.getCommonInformation(data.getServerIp()))
                 .setDataSource(category);
@@ -229,9 +231,14 @@ public class SessionFactory {
     }
 
     private void append4Http(CsvRow csvRow, AbstractDataWarehouseData data) {
+        HttpExtension httpExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), HttpExtension.class);
+        data.setHttpExtension(httpExtension);
+        data.setExtensionFlag(data.getDataSource());
+        data.setKeyWord(httpExtension.getHost().get(0));
     }
 
     private void append4Email(CsvRow csvRow, AbstractDataWarehouseData data) {
+        data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4Ssh(CsvRow csvRow, AbstractDataWarehouseData data) {

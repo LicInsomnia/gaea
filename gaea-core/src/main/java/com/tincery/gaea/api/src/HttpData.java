@@ -132,7 +132,7 @@ public class HttpData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{super.toCsv(splitChar), this.getSyn(), this.getFin(),
+        Object[] join = new Object[]{super.toCsv(splitChar),
                 this.httpExtension.toCsv(splitChar),
                 this.malformedUpPayload, this.malformedDownPayload, SourceFieldUtils.formatCollection(httpMetaToJsonString(this.metas)),
                 JSONObject.toJSONString(this.httpExtension)};

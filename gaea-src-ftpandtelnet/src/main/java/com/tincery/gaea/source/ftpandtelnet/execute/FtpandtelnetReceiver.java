@@ -1,7 +1,6 @@
 package com.tincery.gaea.source.ftpandtelnet.execute;
 
 import com.tincery.gaea.api.src.FtpandtelnetData;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
@@ -51,22 +50,6 @@ public class FtpandtelnetReceiver extends AbstractSrcReceiver<FtpandtelnetData> 
     @Override
     public String getHead() {
         return HeadConst.FTPANDTELNET_HEADER;
-    }
-
-    @Override
-    protected void putCsvMap(FtpandtelnetData ftpandtelnetData) {
-        if (RuleRegistry.getInstance().matchLoop(ftpandtelnetData)) {
-            // 过滤过滤
-            return;
-        }
-        String category = ApplicationInfo.getCategory();
-        if (ftpandtelnetData.getDownByte() == 0) {
-            category += "_down_payload_zero";
-        }
-        String fileName = ftpandtelnetData.getDateSetFileName(category);
-        this.appendCsvData(fileName,
-                ftpandtelnetData.toCsv(HeadConst.CSV_SEPARATOR),
-                ftpandtelnetData.capTime);
     }
 
     @Override

@@ -61,23 +61,6 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
         return HeadConst.HTTP_HEADER;
     }
 
-    /**
-     * @param httpData 单一httpData信息
-     * @author gxz 处理单条httpData记录
-     */
-    @Override
-    protected void putCsvMap(HttpData httpData) {
-        if (RuleRegistry.getInstance().matchLoop(httpData)) {
-            // 过滤过滤
-            return;
-        }
-        String category = ApplicationInfo.getCategory();
-        String fileName = httpData.getDateSetFileName(category);
-        this.appendCsvData(fileName,
-                httpData.toCsv(HeadConst.CSV_SEPARATOR),
-                httpData.capTime);
-    }
-
     @Override
     public void init() {
         registryRules(passrule);

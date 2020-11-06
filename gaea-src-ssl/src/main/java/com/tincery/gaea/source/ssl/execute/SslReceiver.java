@@ -1,10 +1,10 @@
 package com.tincery.gaea.source.ssl.execute;
 
 import com.tincery.gaea.api.src.SslData;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
+import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -46,23 +46,14 @@ public class SslReceiver extends AbstractSrcReceiver<SslData> {
         return HeadConst.SSL_HEADER;
     }
 
-
-    @Override
-    protected void putCsvMap(SslData sslData) {
-        if (RuleRegistry.getInstance().matchLoop(sslData)) {
-            // 过滤规则  其中alarm规则是有同步块的
-            return;
-        }
-        appendCsvData(sslData.getDateSetFileName(ApplicationInfo.getCategory()),
-                sslData.toCsv(HeadConst.CSV_SEPARATOR),
-                sslData.getCapTime()
-        );
-    }
-
     @Override
     public void init() {
-        // TODO: 2020/9/2  初始化有一个IP内容
-        RuleRegistry.getInstance().putRule(alarmRule).putRule(passRule);
+        registryRules(passRule);
+        registryRules(alarmRule);
+    }
+
+    public void registryRules(Rule rule) {
+        RuleRegistry.getInstance().putRule(rule);
     }
 
 }

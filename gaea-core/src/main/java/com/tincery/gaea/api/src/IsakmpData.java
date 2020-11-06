@@ -17,7 +17,6 @@ public class IsakmpData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{super.toCsv(splitChar),
-                this.getDuration(), this.getSyn(), this.getFin(),
                 this.malformedUpPayload, this.malformedDownPayload,
                 Objects.isNull(this.isakmpExtension)? null : this.isakmpExtension.toCsv(splitChar),
                 Objects.isNull(this.isakmpExtension)? null : JSONObject.toJSONString(this.isakmpExtension.getExtension())
