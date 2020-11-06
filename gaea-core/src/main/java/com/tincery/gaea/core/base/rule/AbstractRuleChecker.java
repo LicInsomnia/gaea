@@ -1,15 +1,14 @@
 package com.tincery.gaea.core.base.rule;
 
 
-import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.api.base.GaeaData;
 import com.tincery.gaea.api.base.SrcRuleDO;
 import com.tincery.gaea.api.src.AbstractSrcData;
-import com.tincery.gaea.api.src.SshData;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,16 +35,6 @@ public abstract class AbstractRuleChecker {
         this.range = srcRuleDO.getRange();
     }
 
-    public static void main(String[] args) throws Exception {
-        Class<?> clazz = SshData.class;
-        Class<?> srcDataClass = SshData.class;
-        while (srcDataClass != AbstractMetaData.class) {
-            srcDataClass = srcDataClass.getSuperclass();
-        }
-        Field targetName = srcDataClass.getDeclaredField("targetName");
-
-        System.out.println(targetName);
-    }
 
     /****
      * 匹配和终止
@@ -57,22 +46,11 @@ public abstract class AbstractRuleChecker {
 
     public boolean checkAndStop(AbstractSrcData data) {
         Class<?> clazz = data.getClass();
-        Class<?> srcDataClass = data.getClass();
-        while (srcDataClass != AbstractMetaData.class) {
-            srcDataClass = srcDataClass.getSuperclass();
+        String targetName = data.getTargetName();
+        // 获取targetName 属性 如果符合条件直接返回
+        if (null == targetName && this.range.equals(1)) {
+            return false;
         }
-        try {
-            // 获取targetName 属性 如果符合条件直接返回
-            Field targetNameField = srcDataClass.getDeclaredField("targetName");
-            targetNameField.setAccessible(true);
-            Object targetName = targetNameField.get(data);
-            if (null == targetName && this.range.equals(1)) {
-                return false;
-            }
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-
         // 将所有属性放到set中 最后按配置的规则匹配
         Set<Field> fields = new HashSet<>();
         while (clazz != GaeaData.class) {
@@ -80,18 +58,52 @@ public abstract class AbstractRuleChecker {
             clazz = clazz.getSuperclass();
         }
         String matchValue = null;
-        Optional<Field> matchFieldOptional = fields.stream().filter(field -> field.getName().equals(this.matchField)).findFirst();
-        if (matchFieldOptional.isPresent()) {
-            Field matchField = matchFieldOptional.get();
-            matchField.setAccessible(true);
-            try {
-                Object matchValueObject = matchField.get(data);
-                if (matchValueObject == null) {
+        if (this.matchField.contains(".")) {
+            // 如果包含 。 说明是级联嵌套内容 需要另外的查询方式
+            String[] split = this.matchField.split(".");
+            String rooFieldName = split[0];
+            Optional<Field> rootFieldOptional =
+                    fields.stream().filter(field -> field.getName().equals(rooFieldName)).findFirst();
+            if (rootFieldOptional.isPresent()) {
+                Field rootField = rootFieldOptional.get();
+                rootField.setAccessible(true);
+                Object rootValue = null;
+                try {
+                    rootValue = rootField.get(data);
+                    if (rootValue == null) {
+                        return false;
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 1; i < split.length; i++) {
+                    rootValue = getDepthValue(rootValue, split[i]);
+                    if (rootValue == null) {
+                        return false;
+                    }
+                }
+                matchValue = rootValue.toString();
+            } else {
+                return false;
+            }
+
+        } else {
+            // 如果不包含点 直接判断是否存在即可
+            Optional<Field> matchFieldOptional =
+                    fields.stream().filter(field -> field.getName().equals(this.matchField)).findFirst();
+            if (matchFieldOptional.isPresent()) {
+                Field matchField = matchFieldOptional.get();
+                matchField.setAccessible(true);
+                Object value = null;
+                try {
+                    value = matchField.get(data);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                if (value == null) {
                     return false;
                 }
-                matchValue = matchValueObject.toString().toLowerCase();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                matchValue = value.toString();
             }
         }
         if (matchValue == null) {
@@ -108,6 +120,29 @@ public abstract class AbstractRuleChecker {
                 return matchValue.endsWith(this.ruleValue.toLowerCase());
             default:
                 return false;
+        }
+
+    }
+
+    public Object getDepthValue(Object rootValue, String fieldName) {
+        if (rootValue instanceof Map) {
+            return ((Map) rootValue).get(fieldName);
+        } else {
+            Field[] declaredFields = rootValue.getClass().getDeclaredFields();
+            Optional<Field> matchField =
+                    Arrays.stream(declaredFields).filter(field -> field.getName().equals(fieldName)).findFirst();
+            if (matchField.isPresent()) {
+                Field field = matchField.get();
+                field.setAccessible(true);
+                try {
+                    return field.get(rootValue);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else {
+                return null;
+            }
         }
 
     }

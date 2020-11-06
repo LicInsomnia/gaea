@@ -40,6 +40,7 @@ public class MatchHttpConfig extends SimpleBaseDO {
     public static class Extract {
         private String description;
         private String matchStr;
+        private boolean trash;
         private List<List<Match>> items;
     }
 
