@@ -86,12 +86,8 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
     @Override
     protected void analysisFile(File file) {
         super.analysisFile(file);
-        String cacheJsonFile = ApplicationInfo.getCachePathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
-                System.currentTimeMillis() + ".json";
-        FileWriter cacheJsonFileWriter = new FileWriter(cacheJsonFile);
-        String dataWarehouseJsonFile = ApplicationInfo.getDataWarehouseJsonPathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
-                System.currentTimeMillis() + ".json";
-        FileWriter dataWarehouseJsonFileWriter = new FileWriter(dataWarehouseJsonFile);
+        FileWriter cacheJsonFileWriter = getCacheFileWriter();
+        FileWriter dataWarehouseJsonFileWriter = getDataWareHorseFileWriter();
         for (HttpData httpData : this.httpMap.values()) {
             httpData.adjust();
             // 装载Location
@@ -119,6 +115,23 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
         for (JSONObject jsonObject : jsonObjects) {
             fileWriter.write(JSONObject.toJSONString(jsonObject));
         }
+    }
+
+    /**
+     * 加锁获得fileWriter
+     */
+    private synchronized FileWriter getCacheFileWriter(){
+        String cacheJsonFile = ApplicationInfo.getCachePathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
+                System.currentTimeMillis() + ".json";
+        return new FileWriter(cacheJsonFile);
+    }
+    /**
+     * 加锁获得fileWriter
+     */
+    private synchronized FileWriter getDataWareHorseFileWriter(){
+        String dataWarehouseJsonFile =  ApplicationInfo.getDataWarehouseJsonPathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
+                System.currentTimeMillis() + ".json";
+        return new FileWriter(dataWarehouseJsonFile);
     }
 
     @Override

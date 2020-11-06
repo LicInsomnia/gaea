@@ -231,7 +231,6 @@ public class SrcQuartzConfig {
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "isakmp")
     public Trigger isakmpJobTrigger() {
-
         String cron = controllerConfigProperties.getSrc().getIsakmp();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
         return TriggerBuilder.newTrigger()
