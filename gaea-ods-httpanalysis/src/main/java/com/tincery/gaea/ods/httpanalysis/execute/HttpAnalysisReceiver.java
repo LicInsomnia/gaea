@@ -25,7 +25,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,10 +47,12 @@ public class HttpAnalysisReceiver implements Receiver {
     private final List<JSONObject> noHostList = new CopyOnWriteArrayList<>();
     private final List<JSONObject> noMatchStrList = new CopyOnWriteArrayList<>();
     private final List<JSONObject> noHitList = new CopyOnWriteArrayList<>();
+    private final List<JSONObject> trashList = new CopyOnWriteArrayList<>();
 
     private String httpAnalysisNoHostPath;
     private String httpAnalysisNoMatchStrPath;
     private String httpAnalysisNoHitPath;
+    private String httpAnalysisTrashPath;
 
 
     private static final int executorCount = 4;
@@ -102,13 +109,11 @@ public class HttpAnalysisReceiver implements Receiver {
         List<MatchHttpConfig.Extract> extracts = selectExtract(httpJson);
         // 未命中host
         if (extracts == null) {
-            noHostList.add(httpJson);
             return;
         }
         List<List<MatchHttpConfig.Match>> matches = selectMatch(extracts, httpJson);
         // 未命中matchStr
         if (matches == null) {
-            noMatchStrList.add(httpJson);
             return;
         }
         // 抽取失败
@@ -129,18 +134,22 @@ public class HttpAnalysisReceiver implements Receiver {
         String httpAnalysisNoHitPath = this.httpAnalysisNoHitPath + dirName;
         String httpAnalysisNoHostPath = this.httpAnalysisNoHostPath + dirName;
         String httpAnalysisNoMathStrPath = this.httpAnalysisNoMatchStrPath + dirName;
+        String httpAnalysisTrashPath = this.httpAnalysisTrashPath + dirName;
         FileUtils.checkPath(httpAnalysisNoHitPath, httpAnalysisNoHostPath, httpAnalysisNoMathStrPath);
         String fileFile = "/" + Instant.now().toEpochMilli() + ".json";
         List<TargetAttribute> successData =
                 this.successList.stream().map(jsonObject -> jsonObject.toJavaObject(TargetAttribute.class)).collect(Collectors.toList());
         targetAttributeDao.insert(successData);
-        log.info("输出未匹配Host记录：{}条,未匹配URL记录：{}条,未命中规则记录：{}条，入库：{}条", this.noHostList.size(), this.noMatchStrList.size(), this.noHitList.size(), successData.size());
+        log.info("输出未匹配Host记录：{}条,未匹配URL记录：{}条,未命中规则记录：{}条，垃圾{}条,入库：{}条", this.noHostList.size(),
+                this.noMatchStrList.size(), this.noHitList.size(), this.trashList.size(), successData.size());
         writeFile(this.noHostList, httpAnalysisNoHostPath + fileFile);
-        writeFile(this.noMatchStrList, httpAnalysisNoMatchStrPath + fileFile);
+        writeFile(this.noMatchStrList, httpAnalysisNoMathStrPath + fileFile);
         writeFile(this.noHitList, httpAnalysisNoHitPath + fileFile);
+        writeFile(this.trashList, httpAnalysisTrashPath + fileFile);
         this.noHitList.clear();
         this.noMatchStrList.clear();
         this.noHostList.clear();
+        this.trashList.clear();
         boolean delete = file.delete();
         log.info("删除{}{}", file.getPath(), delete ? "成功" : "失败");
 
@@ -160,27 +169,31 @@ public class HttpAnalysisReceiver implements Receiver {
 
 
     private List<MatchHttpConfig.Extract> selectExtract(JSONObject httpJson) {
-        if (!httpJson.containsKey("host")) {
-            return null;
-        }
-        String host = httpJson.getString("host");
+        String host = httpJson.getOrDefault("host", "").toString();
         MatchHttpConfig matchHttpConfig = matchMap.get(host);
         if (matchHttpConfig == null) {
+            noHostList.add(httpJson);
             return null;
         }
         return matchHttpConfig.getExtract();
     }
 
+
     private List<List<MatchHttpConfig.Match>> selectMatch(List<MatchHttpConfig.Extract> extracts, JSONObject httpJson) {
         String content = httpJson.getString("content");
         if (content == null) {
+            noMatchStrList.add(httpJson);
             return null;
         }
         for (MatchHttpConfig.Extract extract : extracts) {
             if (content.startsWith(extract.getMatchStr())) {
+                if (extract.isTrash()) {
+                    trashList.add(httpJson);
+                }
                 return extract.getItems();
             }
         }
+        noMatchStrList.add(httpJson);
         return null;
     }
 
@@ -204,7 +217,10 @@ public class HttpAnalysisReceiver implements Receiver {
         httpAnalysisNoHostPath = jsonElements + "/noHost";
         httpAnalysisNoMatchStrPath = jsonElements + "/noMatchStr";
         httpAnalysisNoHitPath = jsonElements + "/noHit";
-        FileUtils.checkPath(httpAnalysisNoHostPath, httpAnalysisNoMatchStrPath, httpAnalysisNoHitPath);
+        httpAnalysisNoHitPath = jsonElements + "/noHit";
+        httpAnalysisTrashPath = jsonElements + "/trash";
+        FileUtils.checkPath(httpAnalysisNoHostPath, httpAnalysisNoMatchStrPath, httpAnalysisNoHitPath,
+                httpAnalysisTrashPath);
 
     }
 
