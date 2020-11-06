@@ -67,6 +67,10 @@ public class MatchHttpConfig extends SimpleBaseDO {
                 return require;
             }
             String value = content.substring(startIndex, endIndex);
+            // 如果value值是"" 直接返回 不打印在info上面
+            if(value.isEmpty()){
+                return true;
+            }
             JSONArray info = jsonObject.getJSONArray("information");
             if(CollectionUtils.isEmpty(info)){
                 info = new JSONArray();
