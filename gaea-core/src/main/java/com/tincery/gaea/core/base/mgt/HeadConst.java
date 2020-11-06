@@ -45,7 +45,7 @@ public class HeadConst {
             FIELD.FOREIGN + CSV_SEPARATOR +
             FIELD.DURATION + CSV_SEPARATOR +
             FIELD.SYN_FLAG + CSV_SEPARATOR +
-            FIELD.FIN_FLAG;
+            FIELD.FIN_FLAG + CSV_SEPARATOR;
 
     /* ssl csv文件头 */
     public final static String SSL_HEADER = BASE_COMMON_HEADER +

@@ -8,6 +8,7 @@ import com.tincery.gaea.core.dw.SessionFactory;
 import com.tincery.starter.base.InitializationRequired;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Setter
@@ -20,6 +21,7 @@ public class ReorganizationFactory implements InitializationRequired {
     private final ApplicationProtocol applicationProtocol;
     private final DnsRequest dnsRequest;
 
+    @Autowired
     private SessionFactory sessionFactory;
 
     public ReorganizationFactory(IpSelector ipSelector, CerSelector cerSelector, ApplicationProtocol applicationProtocol, DnsRequest dnsRequest) {
@@ -27,10 +29,6 @@ public class ReorganizationFactory implements InitializationRequired {
         this.cerSelector = cerSelector;
         this.applicationProtocol = applicationProtocol;
         this.dnsRequest = dnsRequest;
-    }
-
-    public void sessionFactoryInit() {
-        this.sessionFactory = new SessionFactory();
     }
 
     @Override

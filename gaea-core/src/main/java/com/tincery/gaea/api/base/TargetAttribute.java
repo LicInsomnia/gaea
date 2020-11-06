@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -21,7 +21,7 @@ public class TargetAttribute extends SimpleBaseDO {
     /**
      * 数据中会话时间
      */
-    private LocalDateTime capTime;
+    private Date capTime;
     /**
      * 数据中会话重点目标名称
      */

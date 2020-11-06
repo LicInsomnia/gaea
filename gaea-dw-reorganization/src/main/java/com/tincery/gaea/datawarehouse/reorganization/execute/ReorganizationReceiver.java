@@ -55,7 +55,6 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
         );
         impSessionFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("impsession") + "/impsession_" + System.currentTimeMillis() + ".json");
         assetFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
-        this.reorganizationFactory.sessionFactoryInit();
     }
 
     @Override

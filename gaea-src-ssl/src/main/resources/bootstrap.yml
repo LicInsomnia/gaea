@@ -6,7 +6,7 @@ spring:
   application:
     name: src_ssl
   profiles:
-    active: sparrow
+    active: insomnia
   cloud:
     nacos:
       config:

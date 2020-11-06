@@ -12,14 +12,12 @@ import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
-@Component
 @Slf4j
 public class SessionFactory {
 
@@ -185,24 +183,29 @@ public class SessionFactory {
     }
 
     private void append4Malformed(CsvRow csvRow, AbstractDataWarehouseData data) {
-        MalformedExtension malformedExtension = new MalformedExtension();
-        malformedExtension.setMalformedUpPayload(csvRow.getEmptyNull(HeadConst.FIELD.MALFORMED_UP_PAYLOAD));
-        malformedExtension.setMalformedDownPayload(csvRow.getEmptyNull(HeadConst.FIELD.MALFORMED_DOWN_PAYLOAD));
-        data.setMalformedExtension(malformedExtension);
+        MalformedExtension extension = new MalformedExtension();
+        extension.setMalformedUpPayload(csvRow.getEmptyNull(HeadConst.FIELD.MALFORMED_UP_PAYLOAD));
+        extension.setMalformedDownPayload(csvRow.getEmptyNull(HeadConst.FIELD.MALFORMED_DOWN_PAYLOAD));
+        data.setExtensionFlag(data.getDataSource());
+        data.setMalformedExtension(extension);
     }
 
     private void append4Session(CsvRow csvRow, AbstractDataWarehouseData data) {
-        SessionExtension sessionExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SessionExtension.class);
-        data.setSessionExtension(sessionExtension);
+        SessionExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SessionExtension.class);
+        data.setSessionExtension(extension);
         data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4Ssl(CsvRow csvRow, AbstractDataWarehouseData data) {
-        SslExtension sslExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SslExtension.class);
-        data.setSslExtension(sslExtension);
+        SslExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SslExtension.class);
+        data.setSslExtension(extension);
         data.setExtensionFlag(data.getDataSource());
-        data.setKeyWord(sslExtension.getServerName());
-        String sha1 = sslExtension.getSha1();
+        if (null == extension) {
+            return;
+        }
+        data.setExtensionFlag(data.getDataSource());
+        data.setKeyWord(extension.getServerName());
+        String sha1 = extension.getSha1();
         if (null != sha1) {
             sha1 = sha1.split("_")[0];
             Map<String, Object> cer = this.cerSelector.selector(sha1);
@@ -213,11 +216,15 @@ public class SessionFactory {
     }
 
     private void append4OpenVpn(CsvRow csvRow, AbstractDataWarehouseData data) {
-        OpenVpnExtension openVpnExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), OpenVpnExtension.class);
-        data.setOpenVpnExtension(openVpnExtension);
+        OpenVpnExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), OpenVpnExtension.class);
+        data.setOpenVpnExtension(extension);
         data.setExtensionFlag(data.getDataSource());
-        data.setKeyWord(openVpnExtension.getServerName());
-        String sha1 = openVpnExtension.getSha1();
+        if (null == extension) {
+            return;
+        }
+        data.setExtensionFlag(data.getDataSource());
+        data.setKeyWord(extension.getServerName());
+        String sha1 = extension.getSha1();
         if (null != sha1) {
             sha1 = sha1.split("_")[0];
             Map<String, Object> cer = this.cerSelector.selector(sha1);
@@ -228,17 +235,23 @@ public class SessionFactory {
     }
 
     private void append4Dns(CsvRow csvRow, AbstractDataWarehouseData data) {
-        DnsExtension dnsExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), DnsExtension.class);
-        data.setDnsExtension(dnsExtension);
+        DnsExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), DnsExtension.class);
+        data.setDnsExtension(extension);
         data.setExtensionFlag(data.getDataSource());
-        data.setKeyWord(dnsExtension.getDomain());
+        if (null == extension) {
+            return;
+        }
+        data.setKeyWord(extension.getDomain());
     }
 
     private void append4Http(CsvRow csvRow, AbstractDataWarehouseData data) {
-        HttpExtension httpExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), HttpExtension.class);
-        data.setHttpExtension(httpExtension);
+        HttpExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), HttpExtension.class);
+        data.setHttpExtension(extension);
         data.setExtensionFlag(data.getDataSource());
-        data.setKeyWord(httpExtension.getHost().get(0));
+        if (null == extension) {
+            return;
+        }
+        data.setKeyWord(extension.getHost().get(0));
     }
 
     private void append4Email(CsvRow csvRow, AbstractDataWarehouseData data) {
@@ -246,26 +259,26 @@ public class SessionFactory {
     }
 
     private void append4Ssh(CsvRow csvRow, AbstractDataWarehouseData data) {
-        SshExtension sshExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SshExtension.class);
-        data.setSshExtension(sshExtension);
+        SshExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), SshExtension.class);
+        data.setSshExtension(extension);
         data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4FtpAndTelnet(CsvRow csvRow, AbstractDataWarehouseData data) {
-        FtpAndTelnetExtension ftpAndTelnetExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), FtpAndTelnetExtension.class);
-        data.setFtpAndTelnetExtension(ftpAndTelnetExtension);
+        FtpAndTelnetExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), FtpAndTelnetExtension.class);
+        data.setFtpAndTelnetExtension(extension);
         data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4EspAndAh(CsvRow csvRow, AbstractDataWarehouseData data) {
-        EspAndAhExtension espAndAhExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), EspAndAhExtension.class);
-        data.setEspAndAhExtension(espAndAhExtension);
+        EspAndAhExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), EspAndAhExtension.class);
+        data.setEspAndAhExtension(extension);
         data.setExtensionFlag(data.getDataSource());
     }
 
     private void append4Isakmp(CsvRow csvRow, AbstractDataWarehouseData data) {
-        IsakmpExtension isakmpExtension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), IsakmpExtension.class);
-        data.setIsakmpExtension(isakmpExtension);
+        IsakmpExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), IsakmpExtension.class);
+        data.setIsakmpExtension(extension);
         data.setExtensionFlag(data.getDataSource());
     }
 
