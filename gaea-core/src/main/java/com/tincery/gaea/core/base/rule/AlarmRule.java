@@ -186,7 +186,6 @@ public class AlarmRule extends BaseSimpleRule {
                         context = matchValue.substring(min, max);
                     } catch (NoSuchFieldException | IllegalAccessException ignored) {
                     }
-
                 }
                 AlarmMaterialData alarmMaterialData = new AlarmMaterialData(data, this.source, context, AlarmRule.this.ipSelector);
                 /*alarmRule 是 src告警*/

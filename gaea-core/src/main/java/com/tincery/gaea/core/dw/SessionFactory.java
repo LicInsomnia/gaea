@@ -10,13 +10,17 @@ import com.tincery.gaea.core.base.component.support.DnsRequest;
 import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
+@Component
+@Slf4j
 public class SessionFactory {
 
     @Autowired
@@ -112,11 +116,9 @@ public class SessionFactory {
                 .setDuration(csvRow.getLong(HeadConst.FIELD.DURATION))
                 .setSyn(csvRow.getBoolean(HeadConst.FIELD.SYN_FLAG))
                 .setFin(csvRow.getBoolean(HeadConst.FIELD.FIN_FLAG));
-        data.setClientLocation(this.ipSelector.getCommonInformation(data.getClientIp()))
-                .setServerLocation(this.ipSelector.getCommonInformation(data.getServerIp()))
-                .setDataSource(category);
+        data.setDataSource(category);
         String caseTags = csvRow.get(HeadConst.FIELD.CASE_TAGS);
-        if (null != caseTags) {
+        if (null != caseTags && !caseTags.isEmpty()) {
             data.setCaseTags(new HashSet<>(Arrays.asList(caseTags.split(";"))));
         }
         data.setAssetFlag((Integer) csvRow.getExtensionValue(HeadConst.FIELD.ASSET_FLAG));
@@ -134,8 +136,10 @@ public class SessionFactory {
 
     private void adjust(AbstractDataWarehouseData data) {
         // 设置dnsRequest
-        data.setProtocolKnown(!HeadConst.PRONAME.OTHER.equals(data.getProName()));
-        data.setMalFormed(Objects.equals(-1, data.getDataType()));
+        data.setClientLocation(this.ipSelector.getCommonInformation(data.getClientIp()))
+                .setServerLocation(this.ipSelector.getCommonInformation(data.getServerIp()))
+                .setProtocolKnown(!HeadConst.PRONAME.OTHER.equals(data.getProName()))
+                .setMalFormed(Objects.equals(-1, data.getDataType()));
         if (!HeadConst.PRONAME.DNS.equals(data.getProName())) {
             String key = data.getUserId() + "_" + data.getServerIp();
             data.setDnsRequestBO(this.dnsRequest.getDnsRequest(key, data.getCapTime()));
