@@ -172,12 +172,12 @@ public class HttpAnalysisReceiver implements Receiver {
     }
 
     private List<List<MatchHttpConfig.Match>> selectMatch(List<MatchHttpConfig.Extract> extracts, JSONObject httpJson) {
-        String url = httpJson.getString("url");
-        if (url == null) {
+        String content = httpJson.getString("content");
+        if (content == null) {
             return null;
         }
         for (MatchHttpConfig.Extract extract : extracts) {
-            if (url.startsWith(extract.getMatchStr())) {
+            if (content.startsWith(extract.getMatchStr())) {
                 return extract.getItems();
             }
         }
