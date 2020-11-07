@@ -71,21 +71,21 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
     protected void analysisLine(List<String> lines) {
         for (String line : lines) {
             if (StringUtils.isNotEmpty(line)) {
-                ImpSessionData impSessionData;
+                ImpSessionData impSessionData = null;
                 try {
                     impSessionData = this.analysis.pack(line);
                     impSessionData.adjust();
-                    String key = impSessionData.getKey();
-                    String pairKey = impSessionData.getPairKey();
-                    if (this.impSessionMap.containsKey(pairKey)) {
-                        ImpSessionData buffer = this.impSessionMap.get(pairKey);
-                        buffer.merge(impSessionData);
-                        this.impSessionMap.replace(pairKey, buffer);
-                    } else {
-                        this.impSessionMap.put(key, impSessionData);
-                    }
                 } catch (Exception e) {
-                    this.errorFileWriter.write(line);
+                    log.error("错误SRC：{}", line);
+                }
+                String key = impSessionData.getKey();
+                String pairKey = impSessionData.getPairKey();
+                if (this.impSessionMap.containsKey(pairKey)) {
+                    ImpSessionData buffer = this.impSessionMap.get(pairKey);
+                    buffer.merge(impSessionData);
+                    this.impSessionMap.replace(pairKey, buffer);
+                } else {
+                    this.impSessionMap.put(key, impSessionData);
                 }
             }
         }

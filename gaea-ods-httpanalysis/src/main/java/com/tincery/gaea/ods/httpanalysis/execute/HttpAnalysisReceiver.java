@@ -25,12 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -77,7 +72,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
-        File file = new File("/Users/gongxuanzhang/Desktop/http_1604561701291.json");
+        File file = new File(textMessage.getText());
         log.info("开始解析文件{}", file.getPath());
         List<String> lines = FileUtils.readLine(file);
         if (lines.size() <= executorCount) {

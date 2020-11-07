@@ -62,7 +62,7 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
         List<Pair<String, String>> result = new ArrayList<>();
         for (String sessionCategory : sesssionCategorys) {
             List<String> fileNames = getCsvDataSetBySessionCategory(sessionCategory, startTime, endTime);
-            log.info("获取{}的csv文件{}个", sessionCategory, fileNames.size());
+            log.info("获取{}的csv文件[{}]个", sessionCategory, fileNames.size());
             for (String fileName : fileNames) {
                 result.add(new Pair<>(sessionCategory, fileName));
             }
@@ -74,8 +74,8 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     public void free() {
         this.impSessionFileWriter.close();
         this.assetFileWriter.close();
-        log.info("解析完成，共获取重点目标会话：{}条", impSessionCount);
-        log.info("解析完成，共获取资产会话：{}条", assetCount);
+        log.info("解析完成，共获取重点目标会话：[{}]条", impSessionCount);
+        log.info("解析完成，共获取资产会话：[{}]条", assetCount);
         impSessionCount = assetCount = 0;
     }
 

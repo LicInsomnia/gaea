@@ -92,7 +92,7 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
                 weChatData.adjust();
                 this.weChatList.add(weChatData);
             } catch (Exception e) {
-                this.errorFileWriter.write(line);
+                log.error("错误SRC：{}", line);
             }
         }
         if (this.countDownLatch != null) {
