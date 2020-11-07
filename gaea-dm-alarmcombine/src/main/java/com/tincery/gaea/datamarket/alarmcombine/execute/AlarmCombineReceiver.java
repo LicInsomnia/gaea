@@ -50,8 +50,6 @@ public class AlarmCombineReceiver implements Receiver {
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         File fileFolder = new File(textMessage.getText());
-//        String accuracy = alarmDictionary.parse("accuracy", 1);
-
         if (!fileFolder.isDirectory()){
             throw new JMSException("消息错误，请输入有效文件夹");
         }
@@ -59,8 +57,10 @@ public class AlarmCombineReceiver implements Receiver {
         ConcurrentHashMap<String, Pair<Alarm,Integer>> alarmMap = new ConcurrentHashMap<>();
         CopyOnWriteArrayList<Alarm> resultList = new CopyOnWriteArrayList<>();
         File [] fileList = fileFolder.listFiles();
+        log.info("开始解析文件,共[{}]个文件", fileList.length);
         for (int i = 0; i < fileList.length; i++) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileList[i]))) {
+                log.info("开始解析文件[{}]",fileList[i].getName());
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     AlarmMaterialData alarmMaterialData = JSON.parseObject(line).toJavaObject(AlarmMaterialData.class);
@@ -111,7 +111,9 @@ public class AlarmCombineReceiver implements Receiver {
         alarmMap.forEach((key,value)->{
             resultList.add(adjustDescription(value.getKey(),value.getValue()));
         });
+
         alarmDao.insert(resultList);
+        log.info("共入库[{}]条告警信息",resultList.size());
     }
 
     /**

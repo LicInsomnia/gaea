@@ -98,15 +98,21 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 int dstPort = Integer.parseInt(elements[5]);
                 if (srcPort<=dstPort){
                     fixD2S(elements,dnsData);
+                    this.srcLineSupport.setMalformedPayload(elements[28],elements[27],dnsData);
                 }else{
                     fixS2D(elements,dnsData);
+                    this.srcLineSupport.setMalformedPayload(elements[27],elements[28],dnsData);
                 }
                 break;
         }
         this.srcLineSupport.setMobileElements(elements[14], elements[15], elements[16], dnsData);
         this.srcLineSupport.setPartiesId(elements[22], elements[23], dnsData);
         dnsData.setMacOuter("1".equals(elements[24]));
-
+        if (dataType == -1){
+            DnsExtension dnsExtension = new DnsExtension();
+            dnsData.setDnsExtension(dnsExtension);
+            return dnsData;
+        }
         DnsExtension dnsExtension = packExtension(elements, dnsData);
         dnsData.setDnsExtension(dnsExtension);
         return dnsData;

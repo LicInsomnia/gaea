@@ -95,4 +95,6 @@ public class ActiveMqConfig {
         return new ActiveMQQueue(QueueNames.ODS_HTTPANALYSIS);
     }
 
+    @Bean(name = QueueNames.DM_ALARMCOMBINE)
+    public Queue getAlarmCombine(){return new ActiveMQQueue(QueueNames.DM_ALARMCOMBINE);}
 }
