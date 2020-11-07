@@ -89,7 +89,7 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
                     this.openVpnMap.put(key, openVpnData);
                 }
             } catch (Exception e) {
-                this.errorFile.write(line);
+                this.errorFileWriter.write(line);
             }
         }
         if (this.countDownLatch != null) {

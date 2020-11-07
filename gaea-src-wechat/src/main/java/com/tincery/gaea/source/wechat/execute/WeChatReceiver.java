@@ -92,7 +92,7 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
                 weChatData.adjust();
                 this.weChatList.add(weChatData);
             } catch (Exception e) {
-                this.errorFile.write(line);
+                this.errorFileWriter.write(line);
             }
         }
         if (this.countDownLatch != null) {
@@ -109,6 +109,5 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
     public void registryRules(Rule rule) {
         RuleRegistry.getInstance().putRule(rule);
     }
-
 
 }

@@ -85,7 +85,7 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
                         this.impSessionMap.put(key, impSessionData);
                     }
                 } catch (Exception e) {
-                    this.errorFile.write(line);
+                    this.errorFileWriter.write(line);
                 }
             }
         }
