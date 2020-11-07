@@ -75,8 +75,8 @@ public class MatchHttpConfig extends SimpleBaseDO {
             if(CollectionUtils.isEmpty(info)){
                 info = new JSONArray();
             }
-            info.add(new NameAndValue(name,value));
-            jsonObject.put("info",info);
+            info.add(new InformationNode(name,value));
+            jsonObject.put("information",info);
             return true;
         }
     }

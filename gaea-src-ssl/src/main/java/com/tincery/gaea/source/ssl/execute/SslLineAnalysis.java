@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author gxz
@@ -104,6 +105,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
         }
     }
 
+
     /**
      * 解析拓展信息中的握手相关会话
      *
@@ -117,8 +119,9 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
             throw new Exception("握手会话数据格式有误...");
         }
         boolean isServer;
-        switch (kv[0].charAt(0)) {
-            case 'C':
+        char dOrs = kv[0].charAt(0);
+        switch (dOrs){
+            case 'D':
                 isServer = false;
                 break;
             case 'S':
@@ -127,50 +130,51 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
             default:
                 throw new Exception("握手会话数据格式有误...");
         }
+
         String handshakeKeyword = kv[0].trim();
         int length = Integer.parseInt(kv[1].trim());
         switch (handshakeKeyword) {
-            case "C Client Hello":
+            case "D2S Client Hello":
                 handshake.setClientHello(length);
                 break;
-            case "S Server Hello":
+            case "S2D Server Hello":
                 handshake.setServerHello(length);
                 break;
-            case "S Certificate":
+            case "S2D Certificate":
                 handshake.setServerCertificate(length);
                 break;
-            case "S Server Key Exchange":
+            case "S2D Server Key Exchange":
                 handshake.setServerKeyExchange(length);
                 break;
-            case "S Certificate Request":
+            case "S2D Certificate Request":
                 handshake.setServerCertificateRequest(length);
                 break;
-            case "S Server Hello Done":
+            case "S2D Server Hello Done":
                 handshake.setServerHelloDone(length);
                 break;
-            case "C Certificate":
+            case "D2S Certificate":
                 handshake.setClientCertificate(length);
                 break;
-            case "C Client Key Exchange":
+            case "D2S Client Key Exchange":
                 handshake.setClientKeyExchange(length);
                 break;
-            case "C Certificate Verify":
+            case "D2S Certificate Verify":
                 handshake.setClientCertificateVerify(length);
                 break;
-            case "C Finished":
+            case "D2S Finished":
                 handshake.setClientFinished(length);
                 break;
-            case "S Finished":
+            case "S2D Finished":
                 handshake.setServerFinished(length);
                 break;
-            case "C Change Cipher Spec":
+            case "D2S Change Cipher Spec":
                 handshake.setClientChangeCipherSpec(length);
                 break;
-            case "S Change Cipher Spec":
+            case "S2D Change Cipher Spec":
                 handshake.setServerChangeCipherSpec(length);
                 break;
-            case "C Application Data":
-            case "S Application Data":
+            case "D2S Application Data":
+            case "S2D Application Data":
                 sslExtension.setHasApplicationData(true);
                 break;
             default:
