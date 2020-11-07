@@ -94,7 +94,7 @@ public class SslExtension {
 
     public String toCsv(char splitChar) {
         String handshake = null == this.handshake ? "" : JSONObject.toJSONString(this.handshake);
-        String cipherSuites = null == this.cipherSuite ? "" : this.cipherSuite.toCsv(splitChar);
+        String cipherSuites = null == this.cipherSuite ? new CipherSuiteDO().toCsv(splitChar) : this.cipherSuite.toCsv(splitChar);
         Object[] join = new Object[]{
                 handshake,
                 this.hasApplicationData, this.serverName,
