@@ -5,6 +5,7 @@ import com.tincery.gaea.core.base.tool.ToolUtils;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
-public class IsakmpExtension {
+public class IsakmpExtension implements Serializable {
 
     static Set<String> initiatorSpecialElementKey = new HashSet<>(Arrays.asList("encryption_algorithm", "hash_algorithm", "group_description"));
     static Set<String> responderSpecialElementKey = new HashSet<>(Arrays.asList("encryption_algorithm", "hash_algorithm", "group_description"));

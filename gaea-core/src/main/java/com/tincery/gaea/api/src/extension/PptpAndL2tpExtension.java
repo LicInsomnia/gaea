@@ -4,9 +4,11 @@ import com.google.common.base.Joiner;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class PptpAndL2tpExtension {
+public class PptpAndL2tpExtension implements Serializable {
 
     /**
      * 响应

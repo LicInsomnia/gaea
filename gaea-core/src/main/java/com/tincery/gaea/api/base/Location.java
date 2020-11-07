@@ -3,12 +3,14 @@ package com.tincery.gaea.api.base;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Setter
 @Getter
-public class Location {
+public class Location implements Serializable {
     private String country;
     private String countryZh;
     private String region;

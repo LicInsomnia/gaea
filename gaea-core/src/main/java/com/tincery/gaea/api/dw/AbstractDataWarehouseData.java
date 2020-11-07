@@ -17,12 +17,12 @@ import java.util.Set;
 @Getter
 public class AbstractDataWarehouseData extends AbstractMetaData implements MergeAble {
 
-    String id;
+    private String id;
     /**
      * 会话双方地理位置信息
      */
-    Location clientLocation;
-    Location serverLocation;
+    private Location clientLocation;
+    private Location serverLocation;
     /**
      * 拓展信息根据会话协议有差异
      */

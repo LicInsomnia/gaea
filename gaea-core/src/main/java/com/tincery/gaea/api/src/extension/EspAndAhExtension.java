@@ -4,9 +4,11 @@ import com.google.common.base.Joiner;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class EspAndAhExtension {
+public class EspAndAhExtension implements Serializable {
 
     private String c2sSpi;
     private String s2cSpi;

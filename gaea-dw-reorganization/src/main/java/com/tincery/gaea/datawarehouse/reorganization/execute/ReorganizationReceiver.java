@@ -9,6 +9,7 @@ import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.dw.AbstractDataWarehouseReceiver;
+import com.tincery.gaea.core.dw.DwProperties;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,15 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     private FileWriter impSessionFileWriter;
     private FileWriter assetFileWriter;
 
+
     @Override
     public void init() {
+    }
+
+    @Autowired
+    @Override
+    public void setProperties(DwProperties dwProperties) {
+        this.dwProperties = dwProperties;
     }
 
     @Override

@@ -8,11 +8,12 @@ import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-public class SslExtension {
+public class SslExtension implements Serializable {
 
     /* 会话信息 */
     /**

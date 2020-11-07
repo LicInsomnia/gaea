@@ -4,9 +4,11 @@ import com.google.common.base.Joiner;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class SessionExtension {
+public class SessionExtension implements Serializable {
 
     /**
      * 上下行载荷内容

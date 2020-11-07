@@ -12,7 +12,6 @@ import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -46,8 +45,9 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
                 new ThreadPoolExecutor.AbortPolicy());
     }
 
-    @Autowired
     protected DwProperties dwProperties;
+
+    public abstract void setProperties(DwProperties dwProperties);
 
     protected static CountDownLatch countDownLatch;
 
