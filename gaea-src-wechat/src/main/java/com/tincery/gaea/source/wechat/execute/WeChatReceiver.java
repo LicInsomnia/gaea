@@ -110,5 +110,4 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
         RuleRegistry.getInstance().putRule(rule);
     }
 
-
 }
