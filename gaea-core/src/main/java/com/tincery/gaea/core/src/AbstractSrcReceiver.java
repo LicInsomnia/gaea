@@ -66,8 +66,9 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     protected long maxTime;
     protected SrcLineAnalysis<M> analysis;
     protected CountDownLatch countDownLatch;
+    protected CyclicBarrier cyclicBarrier;
 
-    protected FileWriter errorFile;
+    protected FileWriter errorFileWriter;
 
     public abstract void setProperties(SrcProperties properties);
 
@@ -86,7 +87,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         log.info("开始解析文件:[{}]", file.getName());
         long startTime = System.currentTimeMillis();
         String errorFileName = ApplicationInfo.getCategory() + "_" + System.currentTimeMillis() + ".txt";
-        this.errorFile = new FileWriter(getErrorPath() + "/" + errorFileName);
+        this.errorFileWriter = new FileWriter(getErrorPath() + "/" + errorFileName);
         analysisFile(file);
         try {
             if (countDownLatch != null) {
@@ -130,10 +131,18 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         } else {
             List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor) + 1);
             this.countDownLatch = new CountDownLatch(partitions.size());
+            this.cyclicBarrier = new CyclicBarrier(partitions.size() + 1);
             for (List<String> partition : partitions) {
                 executorService.execute(() -> analysisLine(partition));
             }
+            try {
+                cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
+
+
     }
 
     /****
@@ -151,13 +160,20 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 pack = this.analysis.pack(line);
                 pack.adjust();
             } catch (Exception e) {
-                this.errorFile.write(line);
+                this.errorFileWriter.write(line);
                 continue;
             }
             this.putCsvMap(pack);
         }
         if (this.countDownLatch != null) {
             this.countDownLatch.countDown();
+        }
+        if (this.cyclicBarrier != null) {
+            try {
+                this.cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -167,7 +183,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     protected void free() {
         outputCsvData();
         outputAlarm();
-        this.errorFile.close();
+        this.errorFileWriter.close();
     }
 
     /***

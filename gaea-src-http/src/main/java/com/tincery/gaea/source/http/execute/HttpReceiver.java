@@ -149,7 +149,7 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
                         this.httpMap.put(key, httpData);
                     }
                 } catch (Exception e) {
-                    this.errorFile.write(line);
+                    this.errorFileWriter.write(line);
                 }
             }
         }

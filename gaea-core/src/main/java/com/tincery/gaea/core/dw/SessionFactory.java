@@ -38,47 +38,56 @@ public class SessionFactory {
      * @return 抽象是否成功
      */
     public AbstractDataWarehouseData create(String category, CsvRow csvRow) {
-        AbstractDataWarehouseData data = appendBaseAndAttach(category, csvRow);
-        adjust(data);
-        if (data.getMalFormed()) {
-            append4Malformed(csvRow, data);
-        } else {
-            switch (category) {
-                case "session":
-                    this.append4Session(csvRow, data);
-                    break;
-                case "ssl":
-                    this.append4Ssl(csvRow, data);
-                    break;
-                case "openvpn":
-                    this.append4OpenVpn(csvRow, data);
-                    break;
-                case "dns":
-                    this.append4Dns(csvRow, data);
-                    break;
-                case "http":
-                    this.append4Http(csvRow, data);
-                    break;
-                case "email":
-                    this.append4Email(csvRow, data);
-                    break;
-                case "isakmp":
-                    this.append4Isakmp(csvRow, data);
-                    break;
-                case "ssh":
-                    this.append4Ssh(csvRow, data);
-                    break;
-                case "ftp_telnet":
-                    this.append4FtpAndTelnet(csvRow, data);
-                    break;
-                case "esp_ah":
-                    this.append4EspAndAh(csvRow, data);
-                    break;
-                default:
-                    return null;
+        try {
+            if (csvRow == null) {
+                return null;
             }
+            AbstractDataWarehouseData data = appendBaseAndAttach(category, csvRow);
+            adjust(data);
+            if (data.getMalFormed()) {
+                append4Malformed(csvRow, data);
+            } else {
+                switch (category) {
+                    case "session":
+                        this.append4Session(csvRow, data);
+                        break;
+                    case "ssl":
+                        this.append4Ssl(csvRow, data);
+                        break;
+                    case "openvpn":
+                        this.append4OpenVpn(csvRow, data);
+                        break;
+                    case "dns":
+                        this.append4Dns(csvRow, data);
+                        break;
+                    case "http":
+                        this.append4Http(csvRow, data);
+                        break;
+                    case "email":
+                        this.append4Email(csvRow, data);
+                        break;
+                    case "isakmp":
+                        this.append4Isakmp(csvRow, data);
+                        break;
+                    case "ssh":
+                        this.append4Ssh(csvRow, data);
+                        break;
+                    case "ftp_telnet":
+                        this.append4FtpAndTelnet(csvRow, data);
+                        break;
+                    case "esp_ah":
+                        this.append4EspAndAh(csvRow, data);
+                        break;
+                    default:
+                        return null;
+                }
+            }
+            return data;
+        } catch (Exception e) {
+            log.error("Csv构造错误：\n{}", csvRow.toString());
+            e.printStackTrace();
+            return null;
         }
-        return data;
     }
 
     private AbstractDataWarehouseData appendBaseAndAttach(String category, CsvRow csvRow) {

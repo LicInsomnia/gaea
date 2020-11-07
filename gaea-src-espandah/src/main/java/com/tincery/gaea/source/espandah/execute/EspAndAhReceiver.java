@@ -80,7 +80,7 @@ public class EspAndAhReceiver extends AbstractSrcReceiver<EspAndAhData> {
                     espAndAhData = this.analysis.pack(line);
                     merge(espAndAhData);
                 } catch (Exception e) {
-                    this.errorFile.write(line);
+                    this.errorFileWriter.write(line);
                 }
             }
         }
