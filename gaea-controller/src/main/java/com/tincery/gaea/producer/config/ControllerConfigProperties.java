@@ -15,6 +15,7 @@ public class ControllerConfigProperties {
     private SourceConfig src;
     private DataWarehouseConfig dataWarehouse;
     private OdsConfig ods;
+    private DmConfig dm;
 
     @Setter
     @Getter
@@ -45,6 +46,12 @@ public class ControllerConfigProperties {
     @Getter
     public static class OdsConfig{
         private String httpanalysis;
+    }
+
+    @Setter
+    @Getter
+    public static class DmConfig{
+        private String alarmcombine;
     }
 
 }
