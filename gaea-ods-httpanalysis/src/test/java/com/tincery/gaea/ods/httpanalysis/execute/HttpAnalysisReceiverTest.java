@@ -31,7 +31,7 @@ class HttpAnalysisReceiverTest {
     @Test
     public void aa() throws JMSException {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
-        activeMQTextMessage.setText("/Users/gongxuanzhang/fsdownload/http_1604561701291.json");
+        activeMQTextMessage.setText("/Users/gongxuanzhang/Desktop/http_1604561701291.json");
         receiver.receive(activeMQTextMessage);
     }
 
