@@ -77,7 +77,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
-        File file = new File(textMessage.getText());
+        File file = new File("/Users/gongxuanzhang/Desktop/http_1604561701291.json");
         log.info("开始解析文件{}", file.getPath());
         List<String> lines = FileUtils.readLine(file);
         if (lines.size() <= executorCount) {
@@ -135,7 +135,7 @@ public class HttpAnalysisReceiver implements Receiver {
         String httpAnalysisNoHostPath = this.httpAnalysisNoHostPath + dirName;
         String httpAnalysisNoMathStrPath = this.httpAnalysisNoMatchStrPath + dirName;
         String httpAnalysisTrashPath = this.httpAnalysisTrashPath + dirName;
-        FileUtils.checkPath(httpAnalysisNoHitPath, httpAnalysisNoHostPath, httpAnalysisNoMathStrPath);
+        FileUtils.checkPath(httpAnalysisNoHitPath, httpAnalysisNoHostPath, httpAnalysisNoMathStrPath,httpAnalysisTrashPath);
         String fileFile = "/" + Instant.now().toEpochMilli() + ".json";
         List<TargetAttribute> successData =
                 this.successList.stream().map(jsonObject -> jsonObject.toJavaObject(TargetAttribute.class)).collect(Collectors.toList());
