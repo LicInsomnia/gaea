@@ -1,12 +1,12 @@
 server:
   port: 11112
 node:
-  name: insomnia
+  name: gxz
 spring:
   application:
     name: src_ssl
   profiles:
-    active: insomnia
+    active: gxz
   cloud:
     nacos:
       config:
