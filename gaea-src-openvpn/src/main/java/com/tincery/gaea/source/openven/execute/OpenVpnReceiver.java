@@ -89,9 +89,7 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
                     this.openVpnMap.put(key, openVpnData);
                 }
             } catch (Exception e) {
-                log.error("解析实体出现了问题{}", line);
-                // TODO: 2020/9/8 实体解析有问题告警
-                e.printStackTrace();
+                this.errorFile.write(line);
             }
         }
         if (this.countDownLatch != null) {

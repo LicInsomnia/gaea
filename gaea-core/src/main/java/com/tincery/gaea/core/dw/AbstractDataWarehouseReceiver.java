@@ -54,7 +54,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             dataWarehouseAnalysis(startTime, endTime);
             runConfig.replace("starttime", endTime);
             log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);
-//            DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
+            DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
         } catch (JMSException e) {
             e.printStackTrace();
         }
@@ -104,7 +104,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         return headString.split(HeadConst.CSV_SEPARATOR_STR);
     }
 
-    private void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
+    public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
         log.info("本次处理开始时间：{}，结束时间：{}", startTime, endTime);
         List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
         long st = Instant.now().toEpochMilli();

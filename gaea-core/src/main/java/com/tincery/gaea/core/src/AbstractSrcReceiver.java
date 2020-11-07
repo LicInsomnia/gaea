@@ -67,6 +67,8 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     protected SrcLineAnalysis<M> analysis;
     protected CountDownLatch countDownLatch;
 
+    protected FileWriter errorFile;
+
     public abstract void setProperties(SrcProperties properties);
 
     /****
@@ -83,6 +85,8 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         File file = new File(text);
         log.info("开始解析文件:[{}]", file.getName());
         long startTime = System.currentTimeMillis();
+        String errorFileName = ApplicationInfo.getCategory() + "_" + System.currentTimeMillis() + ".txt";
+        this.errorFile = new FileWriter(getErrorPath() + "/" + errorFileName);
         analysisFile(file);
         try {
             if (countDownLatch != null) {
@@ -147,9 +151,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 pack = this.analysis.pack(line);
                 pack.adjust();
             } catch (Exception e) {
-                log.error("解析实体出现了问题{}", line);
-                // TODO: 2020/9/8 实体解析有问题告警
-                e.printStackTrace();
+                this.errorFile.write(line);
                 continue;
             }
             this.putCsvMap(pack);
@@ -165,6 +167,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     protected void free() {
         outputCsvData();
         outputAlarm();
+        this.errorFile.close();
     }
 
     /***
@@ -289,6 +292,10 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
 
     protected String getDataWarehouseCsvPath() {
         return ApplicationInfo.getDataWarehouseCsvPathByCategory();
+    }
+
+    protected String getErrorPath() {
+        return ApplicationInfo.getErrorByCategory();
     }
 
     /****

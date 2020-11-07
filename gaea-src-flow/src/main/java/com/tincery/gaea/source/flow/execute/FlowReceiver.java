@@ -74,9 +74,7 @@ public class FlowReceiver extends AbstractSrcReceiver<FlowData> {
                         }
                     }
                 } catch (Exception e) {
-                    log.error("解析实体出现了问题{}", line);
-                    // TODO: 2020/9/8 实体解析有问题告警
-                    e.printStackTrace();
+                    this.errorFile.write(line);
                 }
             }
         }

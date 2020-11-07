@@ -91,4 +91,8 @@ public class ApplicationInfo {
         return NodeInfo.getBakByCategory(getCategory());
     }
 
+    public static String getErrorByCategory() {
+        return NodeInfo.getErrorByCategory(getCategory());
+    }
+
 }
