@@ -63,34 +63,29 @@ public abstract class AbstractRuleChecker {
         if (this.matchField.contains(".")) {
             // 如果包含 。 说明是级联嵌套内容 需要另外的查询方式
             String[] split = this.matchField.split("\\.");
-            try{
-                String rooFieldName  = split[0];
-                Optional<Field> rootFieldOptional =
-                        fields.stream().filter(field -> field.getName().equals(rooFieldName)).findFirst();
-                if (rootFieldOptional.isPresent()) {
-                    Field rootField = rootFieldOptional.get();
-                    rootField.setAccessible(true);
-                    Object rootValue = null;
-                    try {
-                        rootValue = rootField.get(data);
-                        if (rootValue == null) {
-                            return false;
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+            String rooFieldName = split[0];
+            Optional<Field> rootFieldOptional =
+                    fields.stream().filter(field -> field.getName().equals(rooFieldName)).findFirst();
+            if (rootFieldOptional.isPresent()) {
+                Field rootField = rootFieldOptional.get();
+                rootField.setAccessible(true);
+                Object rootValue = null;
+                try {
+                    rootValue = rootField.get(data);
+                    if (rootValue == null) {
+                        return false;
                     }
-                    for (int i = 1; i < split.length; i++) {
-                        rootValue = getDepthValue(rootValue, split[i]);
-                        if (rootValue == null) {
-                            return false;
-                        }
-                    }
-                    matchValue = rootValue.toString();
-                } else {
-                    return false;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e){
-                log.info("这里不应该报错 但是报错了  我得看看这是何方神圣{},长度{}",this.matchField,split.length);
+                for (int i = 1; i < split.length; i++) {
+                    rootValue = getDepthValue(rootValue, split[i]);
+                    if (rootValue == null) {
+                        return false;
+                    }
+                }
+                matchValue = rootValue.toString();
+            } else {
                 return false;
             }
 
