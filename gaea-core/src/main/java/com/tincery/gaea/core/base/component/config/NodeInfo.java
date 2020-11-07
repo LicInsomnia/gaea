@@ -112,7 +112,7 @@ public class NodeInfo {
         GLOBAL_MAP.put(DATA_WAREHOUSE_CUSTOM, dataWarehouseCustomPath);
         GLOBAL_MAP.put(BAK, bakPath);
         GLOBAL_MAP.put(CACHE, cachePath);
-        GLOBAL_MAP.put(ERROR, dataWarehousePath);
+        GLOBAL_MAP.put(ERROR, errorPath);
         lock();
     }
 

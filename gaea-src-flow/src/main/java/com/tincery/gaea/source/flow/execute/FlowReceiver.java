@@ -74,7 +74,7 @@ public class FlowReceiver extends AbstractSrcReceiver<FlowData> {
                         }
                     }
                 } catch (Exception e) {
-                    this.errorFile.write(line);
+                    this.errorFileWriter.write(line);
                 }
             }
         }

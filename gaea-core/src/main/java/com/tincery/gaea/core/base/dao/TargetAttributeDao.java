@@ -24,14 +24,14 @@ public class TargetAttributeDao extends SimpleBaseDaoImpl<TargetAttribute> {
 
 
     @Override
-    @Value("match_http_config")
+    @Value("target_attribute")
     public void setDbName(String dbName) {
         this.dbName = dbName;
     }
 
 
     @Override
-    @Resource(name = "sysMongoTemplate")
+    @Resource(name = "proMongoTemplate")
     protected void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }

@@ -1,6 +1,7 @@
 package com.tincery.gaea.core.dw;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
@@ -20,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.LongAdder;
 
 import static com.tincery.gaea.core.base.tool.util.DateUtils.DAY;
 import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
@@ -29,6 +32,17 @@ import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
  **/
 @Slf4j
 public abstract class AbstractDataWarehouseReceiver implements Receiver {
+    protected static ThreadPoolExecutor executorService = new ThreadPoolExecutor(
+            CPU + 1,
+            CPU * 2,
+            10,
+            TimeUnit.MINUTES,
+            new ArrayBlockingQueue<>(200),
+            Executors.defaultThreadFactory(),
+            new ThreadPoolExecutor.AbortPolicy());
+    protected static CountDownLatch countDownLatch;
+
+    protected static LongAdder longAdder = new LongAdder();
 
     private List<CsvFilter> csvFilterList;
 
@@ -104,20 +118,36 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         return headString.split(HeadConst.CSV_SEPARATOR_STR);
     }
 
-    public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
-        log.info("本次处理开始时间：{}，结束时间：{}", startTime, endTime);
-        List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
-        long st = Instant.now().toEpochMilli();
-        log.info("开始解析CSV数据...");
+    private void analysisList(List<Pair<String, String>> csvPaths) {
         for (Pair<String, String> csvPath : csvPaths) {
             CsvReader csvReader;
             try {
-                csvReader = CsvReader.builder().file(csvPath.getValue()).registerFilter(csvFilterList).build();
+                csvReader = CsvReader.builder().file(csvPath.getValue()).build();
             } catch (Exception e) {
                 log.error(e.getMessage());
                 continue;
             }
             analysis(csvPath.getKey(), csvReader);
+        }
+
+    }
+
+    public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
+        log.info("本次处理开始时间：{}，结束时间：{}", startTime, endTime);
+        List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
+        long st = Instant.now().toEpochMilli();
+        log.info("开始解析CSV数据...");
+        System.out.println("一共有" + csvPaths.size() + "个文件");
+
+        List<List<Pair<String, String>>> partition = Lists.partition(csvPaths, csvPaths.size() / 4 + 1);
+        countDownLatch = new CountDownLatch(csvPaths.size());
+        for (List<Pair<String, String>> pairs : partition) {
+            executorService.execute(() -> analysisList(pairs));
+        }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         free();
         log.info("共用时{}毫秒", (Instant.now().toEpochMilli() - st));

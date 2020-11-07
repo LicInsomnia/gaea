@@ -3,21 +3,20 @@ package com.tincery.gaea.datawarehouse.reorganization.execute;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.dw.AbstractDataWarehouseReceiver;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -37,22 +36,18 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     };
     private static int impSessionCount = 0;
     private static int assetCount = 0;
-    private final AssetCsvFilter assetCsvFilter;
-    private final ReorganizationFactory reorganizationFactory;
+    @Autowired
+    private ImpSessionCsvFilter impSessionCsvFilter;
+    @Autowired
+    private AssetCsvFilter assetCsvFilter;
+    @Autowired
+    private ReorganizationFactory reorganizationFactory;
+
     private FileWriter impSessionFileWriter;
     private FileWriter assetFileWriter;
 
-    public ReorganizationReceiver(AssetCsvFilter assetCsvFilter, ReorganizationFactory reorganizationFactory) {
-        this.assetCsvFilter = assetCsvFilter;
-        this.reorganizationFactory = reorganizationFactory;
-    }
-
     @Override
     public void init() {
-        this.registryFilter(
-                new ImpSessionCsvFilter(),
-                this.assetCsvFilter
-        );
     }
 
     @Override
@@ -86,79 +81,33 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
 
     @Override
     public void analysis(String sessionCategory, CsvReader csvReader) {
-        ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-                CPU + 1,
-                CPU * 2,
-                10,
-                TimeUnit.MINUTES,
-                new ArrayBlockingQueue<>(200),
-                Executors.defaultThreadFactory(),
-                new ThreadPoolExecutor.AbortPolicy());
-        executorService.execute(new ImpSessionProduce(sessionCategory, csvReader));
-        executorService.execute(new AssetProduce(sessionCategory, csvReader));
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            executorService.shutdownNow();
-        }
+        produce(sessionCategory, csvReader);
+        countDownLatch.countDown();
     }
 
-
-    public class ImpSessionProduce implements Runnable {
-
-        private final String sessionCategory;
-        private final CsvReader csvReader;
-
-        public ImpSessionProduce(String sessionCategory, CsvReader csvReader) {
-            this.sessionCategory = sessionCategory;
-            this.csvReader = csvReader;
-        }
-
-        @Override
-        public void run() {
-            CsvRow csvRow;
-            while ((csvRow = csvReader.nextRow(ImpSessionCsvFilter.class)) != null) {
-                try {
-                    AbstractDataWarehouseData abstractDataWarehouseData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
-                    impSessionFileWriter.write(JSONObject.toJSONString(abstractDataWarehouseData));
+    public void produce(String sessionCategory, CsvReader csvReader) {
+        CsvRow csvRow;
+        while ((csvRow = csvReader.nextRow()) != null) {
+            if (this.impSessionCsvFilter.filter(csvRow)) {
+                AbstractDataWarehouseData impsessonData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
+                if (impsessonData != null) {
+                    impSessionFileWriter.write(JSONObject.toJSONString(impsessonData));
                     impSessionCount++;
-                } catch (Exception e) {
-                    log.error("Csv构造错误：\n{}", csvRow.toString());
-                    e.printStackTrace();
                 }
             }
-        }
-
-    }
-
-
-    public class AssetProduce implements Runnable {
-
-        private final String sessionCategory;
-        private final CsvReader csvReader;
-
-        public AssetProduce(String sessionCategory, CsvReader csvReader) {
-            this.sessionCategory = sessionCategory;
-            this.csvReader = csvReader;
-        }
-
-        @Override
-        public void run() {
-            CsvRow csvRow;
-            while ((csvRow = csvReader.nextRow(AssetCsvFilter.class)) != null) {
-                try {
-                    AbstractDataWarehouseData abstractDataWarehouseData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
-                    assetFileWriter.write(JSONObject.toJSONString(abstractDataWarehouseData));
+            if (this.assetCsvFilter.filter(csvRow)) {
+                AbstractDataWarehouseData assetData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
+                if (assetData != null) {
+                    assetFileWriter.write(JSONObject.toJSONString(assetData));
                     assetCount++;
-                } catch (Exception e) {
-                    log.error("Csv构造错误：\n{}", csvRow.toString());
-                    e.printStackTrace();
                 }
             }
         }
     }
+
+    private boolean isImpSession(CsvRow csvRow) {
+        return StringUtils.isNotEmpty(csvRow.get(HeadConst.FIELD.TARGET_NAME));
+    }
+
 
 }

@@ -5,9 +5,10 @@ import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.util.CsvUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ImpSessionCsvFilter implements CsvFilter {
-
 
     @Override
     public boolean filter(CsvRow csvRow) {
