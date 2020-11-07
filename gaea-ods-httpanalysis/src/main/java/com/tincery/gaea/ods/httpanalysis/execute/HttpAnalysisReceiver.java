@@ -77,7 +77,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
-        File file = new File("/Users/gongxuanzhang/Desktop/http_1604561701291.json");
+        File file = new File(textMessage.getText());
         log.info("开始解析文件{}", file.getPath());
         List<String> lines = FileUtils.readLine(file);
         if (lines.size() <= executorCount) {

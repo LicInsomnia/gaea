@@ -3,6 +3,7 @@ package com.tincery.gaea.api.base;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -10,10 +11,18 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class InformationNode {
+public class InformationNode implements Serializable {
 
     private String name;
     private Object value;
+
+    public InformationNode() {
+    }
+
+    public InformationNode(String name, Object value) {
+        this.name = name;
+        this.value = value;
+    }
 
     @Override
     public boolean equals(Object o) {
