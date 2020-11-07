@@ -1,24 +1,27 @@
+package com.tincery.gaea.source.ssl.execute;
+
+import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.source.ssl.GaeaSourceSslApplication;
-import com.tincery.gaea.source.ssl.execute.MessageListener;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+
 @SpringBootTest(classes = GaeaSourceSslApplication.class)
-public class SslTest {
+class SslReceiverTest {
+
 
     @Autowired
-    private MessageListener messageListener;
-
+    private Receiver receiver;
     @Test
-    public void Test() {
+    public void aa() throws Exception{
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
-        try {
-            activeMQTextMessage.setText("D:\\data5\\src\\ssl\\ssl_0.txt");
-            messageListener.receive(activeMQTextMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        activeMQTextMessage.setText("/Users/gongxuanzhang/Downloads/ssl_0.txt");
+        receiver.receive(activeMQTextMessage);
     }
+
+
 }
