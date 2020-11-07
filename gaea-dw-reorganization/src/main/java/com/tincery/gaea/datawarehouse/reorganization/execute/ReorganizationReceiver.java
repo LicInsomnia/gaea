@@ -53,8 +53,13 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
                 new ImpSessionCsvFilter(),
                 this.assetCsvFilter
         );
-        impSessionFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("impsession") + "/impsession_" + System.currentTimeMillis() + ".json");
-        assetFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
+    }
+
+    @Override
+    public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
+        this.impSessionFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("impsession") + "/impsession_" + System.currentTimeMillis() + ".json");
+        this.assetFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
+        super.dataWarehouseAnalysis(startTime, endTime);
     }
 
     @Override

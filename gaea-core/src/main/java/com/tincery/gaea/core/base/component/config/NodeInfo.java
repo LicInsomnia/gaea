@@ -65,6 +65,7 @@ public class NodeInfo {
     private static final String DATA_WAREHOUSE_CUSTOM = "dataWarehouseCustom";
     private static final String BAK = "bak";
     private static final String CACHE = "cache";
+    private static final String ERROR = "error";
     private static Map<String, String> NODE_MAP;
     private static volatile boolean lock = false;
 
@@ -97,7 +98,8 @@ public class NodeInfo {
         String dataWarehouseCustomPath = dataWarehousePath + "/custom";
         String bakPath = dataPath + "/bak";
         String cachePath = dataPath + "/cache";
-        FileUtils.checkPath(dataWarehouseCsvPath, dataWarehouseJsonPath, dataWarehouseCustomPath, bakPath, cachePath);
+        String errorPath = dataPath + "/error";
+        FileUtils.checkPath(dataWarehouseCsvPath, dataWarehouseJsonPath, dataWarehouseCustomPath, bakPath, cachePath, errorPath);
 
         GLOBAL_MAP.put(NODE_NAME, nodeName);
         GLOBAL_MAP.put(HOME, home);
@@ -110,6 +112,7 @@ public class NodeInfo {
         GLOBAL_MAP.put(DATA_WAREHOUSE_CUSTOM, dataWarehouseCustomPath);
         GLOBAL_MAP.put(BAK, bakPath);
         GLOBAL_MAP.put(CACHE, cachePath);
+        GLOBAL_MAP.put(ERROR, dataWarehousePath);
         lock();
     }
 
@@ -200,6 +203,16 @@ public class NodeInfo {
 
     public static String getBakByCategory(String category) {
         String path = getBak() + "/" + category + "/";
+        FileUtils.checkPath(path);
+        return path;
+    }
+
+    public static String getError() {
+        return NODE_MAP.get(ERROR);
+    }
+
+    public static String getErrorByCategory(String category) {
+        String path = getError() + "/" + category + "/";
         FileUtils.checkPath(path);
         return path;
     }

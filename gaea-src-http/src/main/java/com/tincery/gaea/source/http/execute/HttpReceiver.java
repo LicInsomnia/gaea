@@ -141,18 +141,15 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
                 HttpData httpData;
                 try {
                     httpData = this.analysis.pack(line);
+                    String key = httpData.getKey();
+                    if (this.httpMap.containsKey(key)) {
+                        HttpData buffer = this.httpMap.get(key);
+                        buffer.merge(httpData);
+                    } else {
+                        this.httpMap.put(key, httpData);
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    log.error("解析实体出现了问题{}", line);
-                    // TODO: 2020/9/8 实体解析有问题告警
-                    continue;
-                }
-                String key = httpData.getKey();
-                if (this.httpMap.containsKey(key)) {
-                    HttpData buffer = this.httpMap.get(key);
-                    buffer.merge(httpData);
-                } else {
-                    this.httpMap.put(key, httpData);
+                    this.errorFile.write(line);
                 }
             }
         }
