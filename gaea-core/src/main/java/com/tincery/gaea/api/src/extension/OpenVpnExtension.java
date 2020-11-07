@@ -5,11 +5,12 @@ import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-public class OpenVpnExtension extends SslExtension {
+public class OpenVpnExtension extends SslExtension implements Serializable {
 
     @SuppressWarnings("unchecked")
     public void merge(OpenVpnExtension openVpnExtension) {
