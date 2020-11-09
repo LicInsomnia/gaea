@@ -40,32 +40,38 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         OpenVpnData openVpnData = new OpenVpnData();
         String[] elements = StringUtils.FileLineSplit(line);
         //设置不会因为isServer 变动的数据
+
+        //获得该条数据 关键变量
+        Boolean isServer = sureIsServer(elements, openVpnData);
+        /*以下 根据isServer 书写属性*/
         setFixProperties(elements, openVpnData);
         OpenVpnExtension openVpnExtension = new OpenVpnExtension();
-        if (openVpnData.getDataType() == -1) {
-            //设置malformed情况下不会因为isServer变动的数据
-            this.openVpnLineSupport.setMalformedPayload(elements[29], elements[30], openVpnData);
-        } else {
+        if (openVpnData.getDataType() != -1) {
+            //设置malformed情况下不会因为isServer变动的数据 因为malformed的setMalformedPayload需要先填入端口等数据 所以不能再这里添加
             if (elements[29].contains("malformed")) {
+                // 当openVpn dataType!=-1 且 29 有malformed的时候
                 openVpnData.setDataType(-2);
             } else {
-                //这里确定不是malformed  然后先过一遍数据 确定isServer  然后再装填其他属性
-                Boolean isServer = openVpnIsServer(elements,openVpnData);
-                if (Objects.nonNull(isServer)){
-                    //设置正常(非malformed)情况下 根据isServer变动的基础数据
-                    fixPropertiesByIsServer(elements,openVpnData,isServer);
-                    //设置握手和会话信息
-                    addOpenVpnExtension(elements, openVpnExtension, openVpnData,isServer);
-                }
+                /*这里确定不是malformed  装填其他属性
+                设置正常(非malformed)情况下 根据isServer变动的基础数据*/
+                fixPropertiesByIsServer(elements,openVpnData,isServer);
+                //设置握手和会话信息
+                addOpenVpnExtension(elements, openVpnExtension, openVpnData,isServer);
             }
         }
         if (openVpnData.getDataType()<0){
             //装填malformed 根据isServer变动的基础属性
             fixPropertiesMalformed(elements,openVpnData);
+            this.openVpnLineSupport.setMalformedPayload(elements[29], elements[30], openVpnData);
         }
         openVpnData.setForeign(this.openVpnLineSupport.isForeign(openVpnData.getServerIp()));
         openVpnData.setOpenVpnExtension(openVpnExtension);
         return openVpnData;
+    }
+
+    private Boolean sureIsServer(String[] elements,OpenVpnData openVpnData) throws Exception {
+        this.openVpnLineSupport.fixForJudgeIsServer(openVpnData,Integer.parseInt(elements[8]),elements[14],elements[15]);
+        return this.openVpnLineSupport.judgeIsServer(elements, 29, openVpnData, elements[12], elements[13]);
     }
 
     /**
@@ -83,43 +89,6 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
 
     }
 
-    /**
-     * 先过一遍数据判断isServer
-     * @param elements 输入数据
-     * @return isServer  返回如果是null  则为malformed  如果不是null  则为boolean
-     * isServer false: src = Server dst = Client
-     * isServer true： src = Client dst = Server
-     */
-    private Boolean openVpnIsServer(String[] elements,OpenVpnData openVpnData) throws Exception {
-        Boolean isServer = false;
-
-        if (openVpnData.getDataType() == -1) {
-            this.openVpnLineSupport.setMalformedPayload(elements[29], elements[30], openVpnData);
-            return null;
-        }
-        if (elements[29].contains("malformed")) {
-            openVpnData.setDataType(-2);
-            return null;
-        }
-        for (int i = 29; i < elements.length; i++) {
-            if (StringUtils.isEmpty(elements[i])) {
-                continue;
-            }
-            isServer = sureIsServer(elements[i]);
-            if (Objects.nonNull(isServer)){
-                break;
-            }
-        }
-        //如果直到这里isServer都没有值 那么通过端口来判断isServer
-        if (Objects.isNull(isServer)){
-            int srcPort = Integer.parseInt(elements[14]);
-            int dstPort = Integer.parseInt(elements[15]);
-            // src对应server dst对应client
-            // src对应client dst对应server
-            isServer = getIsServerByPort(srcPort,dstPort);
-        }
-        return isServer;
-    }
     /**
      * 根据端口判断isServer
      */
@@ -166,7 +135,6 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
     private void setFixProperties(String[] elements, OpenVpnData openVpnData) {
         openVpnData.setSource(elements[16]);
         this.openVpnLineSupport.setTime(Long.parseLong(elements[2]), Long.parseLong(elements[3]), openVpnData);
-        openVpnData.setDataType(Integer.parseInt(elements[8]));
         openVpnData.setSyn("1".equals(elements[0]));
         openVpnData.setFin("1".equals(elements[1]));
         this.openVpnLineSupport.setMobileElements(elements[18], elements[19], elements[20], openVpnData);
@@ -237,31 +205,20 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
     }
 
     private void addOpenVpnExtension(String[] elements, OpenVpnExtension openVpnExtension, OpenVpnData openVpnData,Boolean isServer) throws Exception {
-        if (openVpnData.getDataType() == -1) {
-            this.openVpnLineSupport.setMalformedPayload(elements[29], elements[30], openVpnData);
-        } else {
-            if (elements[29].contains("malformed")) {
-                openVpnData.setDataType(-2);
+        Handshake handshake = null;
+        for (int i = 29; i < elements.length; i++) {
+            if (StringUtils.isEmpty(elements[i])) {
+                continue;
+            }
+            if (elements[i].startsWith("(")) {
+                // 为会话属性信息
+                addSessionProperties(elements[i], openVpnExtension, isServer);
             } else {
-                Handshake handshake = null;
-                for (int i = 29; i < elements.length; i++) {
-                    if (StringUtils.isEmpty(elements[i])) {
-                        continue;
-                    }
-                    if (elements[i].startsWith("(")) {
-                        // 为会话属性信息
-                        addSessionProperties(elements[i], openVpnExtension, isServer);
-                    } else {
-                        if (null == handshake) {
-                            handshake = new Handshake();
-                        }
-                        // 为握手会话信息
-                            addHandshake(elements[i], openVpnExtension, handshake,elements);
-                    }
-                }
-                openVpnExtension.setHandshake(handshake);
+                // 为握手会话信息
+                handshake = addHandshake(elements[i], openVpnExtension, handshake);
             }
         }
+        openVpnExtension.setHandshake(handshake);
     }
 
     /**
@@ -269,59 +226,80 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
      *
      * @param element   拓展信息
      * @param handshake 握手过程
-     * @param elements 输入数据
      */
-    private void addHandshake(String element, OpenVpnExtension openVpnExtension, Handshake handshake,String[] elements) throws Exception {
+    private Handshake addHandshake(String element, OpenVpnExtension openVpnExtension, Handshake handshake) throws Exception {
         String[] kv = element.split(":");
         String handshakeKeyword = kv[0].trim();
         int length = Integer.parseInt(kv[1].trim());
         switch (handshakeKeyword) {
             case "D2S Client Hello":
+                handshake = newHandshake(handshake);
                 handshake.setClientHello(length);
                 break;
             case "S2D Server Hello":
+                handshake = newHandshake(handshake);
                 handshake.setServerHello(length);
                 break;
             case "S2D Certificate":
+                handshake = newHandshake(handshake);
                 handshake.setServerCertificate(length);
                 break;
             case "S2D Server Key Exchange":
+                handshake = newHandshake(handshake);
                 handshake.setServerKeyExchange(length);
                 break;
             case "S2D Certificate Request":
+                handshake = newHandshake(handshake);
                 handshake.setServerCertificateRequest(length);
                 break;
             case "S2D Server Hello Done":
+                handshake = newHandshake(handshake);
                 handshake.setServerHelloDone(length);
                 break;
             case "D2S Certificate":
+                handshake = newHandshake(handshake);
                 handshake.setClientCertificate(length);
                 break;
             case "D2S Client Key Exchange":
+                handshake = newHandshake(handshake);
                 handshake.setClientKeyExchange(length);
                 break;
             case "D2S Certificate Verify":
+                handshake = newHandshake(handshake);
                 handshake.setClientCertificateVerify(length);
                 break;
             case "D2S Finished":
+                handshake = newHandshake(handshake);
                 handshake.setClientFinished(length);
                 break;
             case "S2D Finished":
+                handshake = newHandshake(handshake);
                 handshake.setServerFinished(length);
                 break;
             case "D2S Change Cipher Spec":
+                handshake = newHandshake(handshake);
                 handshake.setClientChangeCipherSpec(length);
                 break;
             case "S2D Change Cipher Spec":
+                handshake = newHandshake(handshake);
                 handshake.setServerChangeCipherSpec(length);
                 break;
             case "D2S Application Data":
             case "S2D Application Data":
+                handshake = newHandshake(handshake);
                 openVpnExtension.setHasApplicationData(true);
                 break;
             default:
                 break;
         }
+        return handshake;
+    }
+
+    private Handshake newHandshake(Handshake handshake){
+        if (Objects.isNull(handshake)){
+            handshake = new Handshake();
+        }
+        return handshake;
     }
 
     private void addSessionProperties(String element, OpenVpnExtension openVpnExtension, Boolean isServer) throws Exception {
