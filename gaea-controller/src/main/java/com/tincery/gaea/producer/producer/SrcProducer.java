@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 
 import javax.jms.Queue;
 import java.io.File;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,35 +19,29 @@ import java.util.stream.Collectors;
 @Setter
 public class SrcProducer {
 
-    private long currentTime = 0L;
 
     @Autowired
     JmsMessagingTemplate jmsMessagingTemplate;
     @Value("${node.src-path}")
     private String srcPath;
 
-    private LocalDateTime preTime;
+    private long lastTime;
 
     public void producer(Queue queue, String category, String extension) {
         File path = new File(srcPath + "/" + category + "/");
         if (!path.exists()) {
             return;
         }
-        long delayTime = 0;
-        if (preTime != null) {
-            Duration between = Duration.between(preTime, LocalDateTime.now());
-            // 这里预留60秒 防止扫描过程中出现或者删除的文件
-            delayTime = between.getSeconds()+60;
-        }
-        preTime = LocalDateTime.now();
         List<String> files = FileUtils.searchFiles(path.getAbsolutePath(),
                 category,
                 null,
                 extension,
-                delayTime)
+                0L)
                 .stream()
-                .sorted(Comparator.comparingLong(File::lastModified)).map(File::getAbsolutePath)
+                .sorted(Comparator.comparingLong(File::lastModified)).filter(file -> file.lastModified() >= lastTime).map(File::getAbsolutePath)
                 .collect(Collectors.toList());
+        File lastFile = new File(files.get(files.size()-1));
+        lastTime = lastFile.lastModified();
         for (String file : files) {
             this.jmsMessagingTemplate.convertAndSend(queue, file);
         }
