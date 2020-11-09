@@ -115,7 +115,7 @@ public class HttpAnalysisReceiver implements Receiver {
         writeFile(httpAnalysisGroup.getNoMatchStrList(), httpAnalysisNoMathStrPath + fileFile);
         writeFile(httpAnalysisGroup.getNoHitList(), httpAnalysisNoHitPath + fileFile);
         writeFile(httpAnalysisGroup.getTrashList(), httpAnalysisTrashPath + fileFile);
-        writeFile(successJson, httpAnalysisTrashPath + fileFile);
+        writeFile(successJson, httpAnalysisSuccessPath + fileFile);
         boolean delete = file.delete();
         log.info("删除{}{}", file.getPath(), delete ? "成功" : "失败");
 
