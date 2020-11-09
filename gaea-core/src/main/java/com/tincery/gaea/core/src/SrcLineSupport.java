@@ -227,7 +227,7 @@ public class SrcLineSupport {
      * @param elements 判断依据1. 数据中是否有D2S Client等字符串出现
      * @param index 从数组何处开始循环
      * @param data 此处的data需要装载dataType  和 serverPort(为srcPort) clientPort(为dstPort) 这里的这两个属性是临时装填的  后面会根据情况被替换
-     * @return boolean
+     * @return boolean D2S Client = false  S2D Client = true;
      */
     public Boolean judgeIsServer(String[] elements,Integer index,AbstractSrcData data,String srcIp,String dstIp) throws Exception {
         Boolean isServer = null;
@@ -238,14 +238,14 @@ public class SrcLineSupport {
                     continue;
                 }
                 //第一个判断依据 数据中是否有符合标准的数据
-                isServer = sureIsServerFirst(elements[i]);
+                isServer = sureIsServerByElements(elements[i]);
                 if (Objects.nonNull(isServer)){
                     return isServer;
                 }
             }
             // 第二个判断依据 数据中是否有符合标准的端口
             // 注意 此处的serverPort 为srcPort  此处的clientPort 为dstPort
-            isServer = sureIsServerSecond(dataType,data.getServerPort(),data.getClientPort(),isServer);
+            isServer = sureIsServerByPortAndDataType(dataType,data.getServerPort(),data.getClientPort(),isServer);
             if (Objects.nonNull(isServer)){
                 return isServer;
             }
@@ -255,12 +255,12 @@ public class SrcLineSupport {
             data.setDataType(0);
         }
         //第三个判断依据 数据中是否一个外网一个内网
-        isServer = sureIsServerThird(srcIp,dstIp,isServer);
+        isServer = sureIsServerByIsInnerIp(srcIp,dstIp,isServer);
         if (Objects.nonNull(isServer)){
             return isServer;
         }
         //如果都不是  走第四个判断依据  根据端口大小判断
-        return data.getServerPort() > data.getClientPort();
+        return sureIsServerByComparePort(data.getServerPort(),data.getClientPort());
     }
 
     /**
@@ -280,7 +280,7 @@ public class SrcLineSupport {
      * @param element 根据该元素判断
      * @return isServer
      */
-    private Boolean sureIsServerFirst(String element) throws Exception {
+    public Boolean sureIsServerByElements(String element) throws Exception {
         Boolean isServer = null;
         String[] kv = element.split(":");
         if (kv.length != 2) {
@@ -315,7 +315,7 @@ public class SrcLineSupport {
     /**
      * 判断依据二  根据端口和dataType判断
      */
-    private Boolean sureIsServerSecond(Integer dataType,Integer srcPort,Integer dstPort , Boolean isServer){
+    public Boolean sureIsServerByPortAndDataType(Integer dataType,Integer srcPort,Integer dstPort , Boolean isServer){
         if (!Objects.equals(-1,dataType)){
             if ( Objects.equals(1194,srcPort) && (!Objects.equals(1194,dstPort))){
                 isServer = false;
@@ -329,7 +329,7 @@ public class SrcLineSupport {
     /**
      * 判断依据三  根据内外网ip地址 判断
      */
-    private Boolean sureIsServerThird(String srcIp,String dstIp,Boolean isServer){
+    public Boolean sureIsServerByIsInnerIp(String srcIp,String dstIp,Boolean isServer){
         boolean srcInner = isInnerIp(srcIp);
         boolean dstInner = isInnerIp(dstIp);
         if (srcInner && (!dstInner)){
@@ -338,5 +338,12 @@ public class SrcLineSupport {
             isServer = false;
         }
         return isServer;
+    }
+
+    /**
+     * 判断依据四 根据端口大小判断
+     */
+    public Boolean sureIsServerByComparePort(Integer serverPort,Integer clientPort){
+        return serverPort > clientPort;
     }
 }

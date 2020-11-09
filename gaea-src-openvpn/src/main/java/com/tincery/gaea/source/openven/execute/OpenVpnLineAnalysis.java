@@ -96,41 +96,6 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         return srcPort > dstPort;
     }
 
-    /**
-     * 该方法是确定isServer关键变量的值的。。因为要遍历所有的握手信息才能获得该变量值，然后根据该变量去装填其他属性
-     * @param element 根据该元素判断
-     * @return isServer
-     */
-    private Boolean sureIsServer(String element) throws Exception {
-        Boolean isServer = null;
-        String[] kv = element.split(":");
-        if (kv.length != 2) {
-            throw new Exception("握手会话数据格式有误...");
-        }
-        char dOrs = kv[0].charAt(0);
-        char cORs = kv[0].charAt(4);
-        switch (dOrs){
-            case 'D':
-                if (Objects.equals(cORs,'C')){
-                    // 例如：D2S Client
-                    isServer = false;
-                }else if (Objects.equals(cORs,'S')){
-                    // 例如：D2S Server Hello
-                    isServer = true;
-                }
-                break;
-            case 'S':
-                if (Objects.equals(cORs,'C')){
-                    // 例如S2D Client Hello
-                    isServer = true;
-                }else if (Objects.equals(cORs,'S')){
-                    // 例如S2D Server Hello
-                    isServer = false;
-                }
-                break;
-        }
-        return isServer;
-    }
 
     private void setFixProperties(String[] elements, OpenVpnData openVpnData) {
         openVpnData.setSource(elements[16]);
