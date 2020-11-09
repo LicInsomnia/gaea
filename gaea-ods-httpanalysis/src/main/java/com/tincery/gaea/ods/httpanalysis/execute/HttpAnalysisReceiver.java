@@ -70,7 +70,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
-        File file = new File("/Users/gongxuanzhang/fsdownload/http_1604883555226.json");
+        File file = new File(textMessage.getText());
         log.info("开始解析文件{}", file.getPath());
         List<String> lines = FileUtils.readLine(file);
         List<List<String>> partition = Lists.partition(lines, (lines.size() / executorCount) + 1);
@@ -85,6 +85,7 @@ public class HttpAnalysisReceiver implements Receiver {
             }
             free(file, finish);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("解析文件{}出现错误", file.getPath());
         }
     }
