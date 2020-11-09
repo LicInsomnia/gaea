@@ -78,7 +78,7 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
             try {
                 openVpnData = this.analysis.pack(line);
                 String key = openVpnData.getKey();
-                if (openVpnData.getDataType() == -1) {
+                if (openVpnData.getDataType() <= -1) {
                     putCsvMap(openVpnData);
                     continue;
                 }
