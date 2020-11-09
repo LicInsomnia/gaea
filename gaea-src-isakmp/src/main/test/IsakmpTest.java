@@ -19,7 +19,7 @@ public class IsakmpTest {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
 
         try {
-            activeMQTextMessage.setText("D:\\data5\\src\\isakmp\\isakmp_0_1604542316150643.txt");
+            activeMQTextMessage.setText("D:\\data5\\src\\isakmp\\isakmp_0.txt");
             isakmpReceiver.receive(activeMQTextMessage);
             messageListener.receive(activeMQTextMessage);
         } catch (Exception e) {

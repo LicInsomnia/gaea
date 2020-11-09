@@ -149,7 +149,7 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
                         this.httpMap.put(key, httpData);
                     }
                 } catch (Exception e) {
-                    this.errorFileWriter.write(line);
+                    log.error("错误SRC：{}", line);
                 }
             }
         }

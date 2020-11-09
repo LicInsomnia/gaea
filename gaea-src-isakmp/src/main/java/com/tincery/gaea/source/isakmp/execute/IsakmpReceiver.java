@@ -70,7 +70,7 @@ public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
                 isakmpData.adjust();
                 this.putCsvMap(isakmpData);
             } catch (Exception e) {
-                this.errorFileWriter.write(line);
+                log.error("错误SRC：{}", line);
             }
         }
         if (this.countDownLatch != null) {

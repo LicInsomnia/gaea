@@ -32,14 +32,23 @@ import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
  **/
 @Slf4j
 public abstract class AbstractDataWarehouseReceiver implements Receiver {
-    protected static ThreadPoolExecutor executorService = new ThreadPoolExecutor(
-            CPU + 1,
-            CPU * 2,
-            10,
-            TimeUnit.MINUTES,
-            new ArrayBlockingQueue<>(200),
-            Executors.defaultThreadFactory(),
-            new ThreadPoolExecutor.AbortPolicy());
+    protected static ThreadPoolExecutor executorService;
+
+    static {
+        executorService = new ThreadPoolExecutor(
+                CPU + 1,
+                CPU * 2,
+                10,
+                TimeUnit.MINUTES,
+                new ArrayBlockingQueue<>(200),
+                Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy());
+    }
+
+    protected DwProperties dwProperties;
+
+    public abstract void setProperties(DwProperties dwProperties);
+
     protected static CountDownLatch countDownLatch;
 
     protected static LongAdder longAdder = new LongAdder();
@@ -54,19 +63,19 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             // 加载当前程序模块对应的run_config表配置
             JSONObject runConfig = DataWarehouseRunController.getRunConfig(ApplicationInfo.getCategory());
             // 获取run_config中的startTime（读CSV的开始时间）
-            LocalDateTime startTime = DateUtils.Date2LocalDateTime(runConfig.getDate("starttime"));
-            LocalDateTime dwTime = now.plusHours(-1);
+            LocalDateTime startTime = DateUtils.Date2LocalDateTime(runConfig.getDate("startTime"));
+            LocalDateTime dwTime = now.plusMinutes(-1 * this.dwProperties.getDelayExecutionTime());
             if (dwTime.compareTo(startTime) <= 0) {
-                log.info("执行时间临近当前时间1小时，本次执行跳出");
+                log.info("执行时间临近当前时间{}分钟，本次执行跳出", this.dwProperties.getDelayExecutionTime());
                 return;
             }
-            int recollTime = runConfig.getInteger("recolltime");
-            LocalDateTime endTime = startTime.plusMinutes(recollTime);
+            int duration = runConfig.getInteger("duration");
+            LocalDateTime endTime = startTime.plusMinutes(duration);
             if (dwTime.compareTo(endTime) < 0) {
                 endTime = dwTime;
             }
             dataWarehouseAnalysis(startTime, endTime);
-            runConfig.replace("starttime", endTime);
+            runConfig.replace("startTime", endTime);
             log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);
             DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
         } catch (JMSException e) {
@@ -137,9 +146,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
         long st = Instant.now().toEpochMilli();
         log.info("开始解析CSV数据...");
-        System.out.println("一共有" + csvPaths.size() + "个文件");
-
-        List<List<Pair<String, String>>> partition = Lists.partition(csvPaths, csvPaths.size() / 4 + 1);
+        List<List<Pair<String, String>>> partition = Lists.partition(csvPaths, csvPaths.size() / this.dwProperties.getExecutor() + 1);
         countDownLatch = new CountDownLatch(csvPaths.size());
         for (List<Pair<String, String>> pairs : partition) {
             executorService.execute(() -> analysisList(pairs));

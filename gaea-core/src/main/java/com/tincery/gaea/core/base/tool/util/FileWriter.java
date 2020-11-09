@@ -131,7 +131,7 @@ public class FileWriter implements Closeable {
                 File tbf = new File(this.tmpFile);
                 if (tbf.exists() && tbf.isFile()) {
                     if (tbf.length() == 0) {
-                        tbf.deleteOnExit();
+                        tbf.delete();
                     } else {
                         tbf.renameTo(bf);
                     }

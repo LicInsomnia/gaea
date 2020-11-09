@@ -9,6 +9,7 @@ import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.dw.AbstractDataWarehouseReceiver;
+import com.tincery.gaea.core.dw.DwProperties;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,15 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     private FileWriter impSessionFileWriter;
     private FileWriter assetFileWriter;
 
+
     @Override
     public void init() {
+    }
+
+    @Autowired
+    @Override
+    public void setProperties(DwProperties dwProperties) {
+        this.dwProperties = dwProperties;
     }
 
     @Override
@@ -62,7 +70,7 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
         List<Pair<String, String>> result = new ArrayList<>();
         for (String sessionCategory : sesssionCategorys) {
             List<String> fileNames = getCsvDataSetBySessionCategory(sessionCategory, startTime, endTime);
-            log.info("获取{}的csv文件{}个", sessionCategory, fileNames.size());
+            log.info("获取{}的csv文件[{}]个", sessionCategory, fileNames.size());
             for (String fileName : fileNames) {
                 result.add(new Pair<>(sessionCategory, fileName));
             }
@@ -74,8 +82,8 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     public void free() {
         this.impSessionFileWriter.close();
         this.assetFileWriter.close();
-        log.info("解析完成，共获取重点目标会话：{}条", impSessionCount);
-        log.info("解析完成，共获取资产会话：{}条", assetCount);
+        log.info("解析完成，共获取重点目标会话：[{}]条", impSessionCount);
+        log.info("解析完成，共获取资产会话：[{}]条", assetCount);
         impSessionCount = assetCount = 0;
     }
 
