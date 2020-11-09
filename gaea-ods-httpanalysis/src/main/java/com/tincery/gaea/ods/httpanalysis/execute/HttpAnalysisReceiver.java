@@ -70,7 +70,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
-        File file = new File(textMessage.getText());
+        File file = new File("/Users/gongxuanzhang/fsdownload/http_1604883555226.json");
         log.info("开始解析文件{}", file.getPath());
         List<String> lines = FileUtils.readLine(file);
         List<List<String>> partition = Lists.partition(lines, (lines.size() / executorCount) + 1);
@@ -115,7 +115,7 @@ public class HttpAnalysisReceiver implements Receiver {
         writeFile(httpAnalysisGroup.getNoMatchStrList(), httpAnalysisNoMathStrPath + fileFile);
         writeFile(httpAnalysisGroup.getNoHitList(), httpAnalysisNoHitPath + fileFile);
         writeFile(httpAnalysisGroup.getTrashList(), httpAnalysisTrashPath + fileFile);
-        writeFile(successJson, httpAnalysisTrashPath + fileFile);
+        writeFile(successJson, httpAnalysisSuccessPath + fileFile);
         boolean delete = file.delete();
         log.info("删除{}{}", file.getPath(), delete ? "成功" : "失败");
 

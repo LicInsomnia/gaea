@@ -48,7 +48,9 @@ public class TargetAttribute extends SimpleBaseDO {
     private Set<InformationNode> information;
 
     public String getKey() {
-        return null == this.information ? ToolUtils.getMD5(this.targetName + this.userId + this.source + this.title + this.urlRoot + this.information.toString()) : null;
+        return null != this.information ?
+                ToolUtils.getMD5(this.targetName + this.userId + this.source + this.title + this.urlRoot + this.information.toString())
+                : null;
     }
 
 }
