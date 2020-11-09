@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-//@Component
+@Component
 public class MessageListener {
 
     @Autowired
