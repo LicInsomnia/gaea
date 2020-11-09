@@ -19,10 +19,13 @@ import java.util.stream.Collectors;
 @Setter
 public class SrcProducer {
 
+
     @Autowired
     JmsMessagingTemplate jmsMessagingTemplate;
     @Value("${node.src-path}")
     private String srcPath;
+
+    private long lastTime;
 
     public void producer(Queue queue, String category, String extension) {
         File path = new File(srcPath + "/" + category + "/");
@@ -33,10 +36,12 @@ public class SrcProducer {
                 category,
                 null,
                 extension,
-                0)
+                0L)
                 .stream()
-                .sorted(Comparator.comparingLong(File::lastModified)).map(File::getAbsolutePath)
+                .sorted(Comparator.comparingLong(File::lastModified)).filter(file -> file.lastModified() >= lastTime).map(File::getAbsolutePath)
                 .collect(Collectors.toList());
+        File lastFile = new File(files.get(files.size()-1));
+        lastTime = lastFile.lastModified();
         for (String file : files) {
             this.jmsMessagingTemplate.convertAndSend(queue, file);
         }

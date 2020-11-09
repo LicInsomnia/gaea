@@ -32,7 +32,9 @@
         <!--<module>gaea-ods-matchhttp</module>-->
         <module>gaea-dm-alarmcombine</module>
         <module>gaea-ods-httpanalysis</module>
-        <!--        <module>gaea-dm-asset</module>-->
+        <module>gaea-support-messagecomsumer</module>
+        <module>gaea-dm-asset</module>
+        <module>gaea-support-mongostash</module>
     </modules>
 
 

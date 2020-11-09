@@ -20,11 +20,16 @@ import lombok.extern.slf4j.Slf4j;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.io.File;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com 汇聚执行器 此方法的执行策略是 将准备写入的csv内容存到map中 最终统一执行写入  流程如下图 Src处理器  此类监听由Producer 发送的Mq消息
@@ -65,7 +70,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      */
     protected long maxTime;
     protected SrcLineAnalysis<M> analysis;
-    protected CountDownLatch countDownLatch;
+
 
     public abstract void setProperties(SrcProperties properties);
 
@@ -84,15 +89,12 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         log.info("开始解析文件:[{}]", file.getName());
         long startTime = System.currentTimeMillis();
         analysisFile(file);
-        try {
-            if (countDownLatch != null) {
-                countDownLatch.await();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        long l = Instant.now().toEpochMilli();
         this.clearFile(file);
+        System.out.println("clearFile用了"+(l-Instant.now().toEpochMilli()));
+        long l1 = Instant.now().toEpochMilli();
         this.free();
+        System.out.println("free用了"+(l-Instant.now().toEpochMilli()));
         log.info("文件:[{}]处理完成，用时{}毫秒", file.getName(), (System.currentTimeMillis() - startTime));
     }
 
@@ -125,13 +127,25 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             analysisLine(lines);
         } else {
             List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor) + 1);
-            this.countDownLatch = new CountDownLatch(partitions.size());
+            CountDownLatch countDownLatch = new CountDownLatch(partitions.size());
             for (List<String> partition : partitions) {
-                executorService.execute(() -> analysisLine(partition));
+                executorService.execute(() -> {
+                    try{
+                        analysisLine(partition);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        log.error("解析实体时出现特殊异常");
+                    }finally {
+                        countDownLatch.countDown();
+                    }
+                });
+            }
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-
-
     }
 
     /****
@@ -153,9 +167,6 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 continue;
             }
             this.putCsvMap(pack);
-        }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
         }
     }
 

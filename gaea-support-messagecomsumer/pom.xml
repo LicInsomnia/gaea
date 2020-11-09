@@ -10,14 +10,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>gaea-src-pptpandl2tp</artifactId>
-
+    <artifactId>gaea-support-messagecomsumer</artifactId>
 
     <dependencies>
         <dependency>
-            <artifactId>gaea-core</artifactId>
-            <groupId>com.tincery</groupId>
-            <version>5.0.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <version>2.2.4.RELEASE</version>
         </dependency>
     </dependencies>
 
