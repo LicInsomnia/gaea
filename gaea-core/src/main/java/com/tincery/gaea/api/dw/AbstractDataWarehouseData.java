@@ -64,8 +64,11 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
     private Boolean malFormed;
     private Boolean foreign;
     /**
-     * 1.特殊应用（{"label.apptype" : "specail"}） 2.重点关注应用（{"label.apptype" : "important") 3.正常应用（{"label.apptype" :
-     * "general"}） 4.未知应用（{"label.apptype" : "unknown"}） 5.其它应用（{"label.apptype" : "other"}）
+     * 1.特殊应用（{"label.appType" : "specail"}）
+     * 2.重点关注应用（{"label.appType" : "important")
+     * 3.正常应用（{"label.appType" : "general"}）
+     * 4.未知应用（{"label.appType" : "unknown"}）
+     * 5.其它应用（{"label.appType" : "other"}）
      */
     private String applicationType;
     /**

@@ -3,6 +3,7 @@ package com.tincery.gaea.core.base.component.support;
 import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.DnsRequestBO;
+import com.tincery.gaea.api.src.DnsData;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.config.RunConfig;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
@@ -44,7 +45,6 @@ public class DnsRequest implements InitializationRequired {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void init() {
         if (RunConfig.isEmpty()) {
             return;
@@ -79,5 +79,28 @@ public class DnsRequest implements InitializationRequired {
         }
     }
 
+    public void append(DnsData dnsData) {
+        if (dnsData.getImp() || dnsData.getDataType() != 1) {
+            return;
+        }
+        String domain = dnsData.getDnsExtension().getDomain();
+        Set<String> responseIps = dnsData.getDnsExtension().getResponseIp();
+        if (null == domain || null == responseIps) {
+            return;
+        }
+        for (String responseIp : responseIps) {
+            String key = dnsData.getUserId() + "_" + responseIp;
+            DnsRequestBO dnsRequestBO = new DnsRequestBO(key, domain, dnsData.getCapTime());
+            List<DnsRequestBO> dnsRequestBOList;
+            if (this.dnsRequestMap.containsKey(key)) {
+                dnsRequestBOList = this.dnsRequestMap.get(key);
+                dnsRequestBOList.add(dnsRequestBO);
+            } else {
+                dnsRequestBOList = new ArrayList<>();
+                dnsRequestBOList.add(dnsRequestBO);
+                this.dnsRequestMap.put(key, dnsRequestBOList);
+            }
+        }
+    }
 
 }
