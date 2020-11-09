@@ -1,8 +1,10 @@
 import com.tincery.gaea.source.http.GaeaSrcHttpApplication;
-import com.tincery.gaea.source.http.execute.MessageListener;
+import com.tincery.gaea.source.http.execute.HttpReceiver;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.jms.JMSException;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
@@ -10,17 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = GaeaSrcHttpApplication.class)
 public class HttpTest {
 
-    @Autowired
-    private MessageListener messageListener;
+@Autowired
+private HttpReceiver httpReceiver;
 
     @org.junit.jupiter.api.Test
-    public void http() {
+    public void http() throws JMSException {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
-        try {
-            activeMQTextMessage.setText("D:\\gaeaData\\http-1587617242963013-0.dat");
-            messageListener.receive(activeMQTextMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        activeMQTextMessage.setText("/Users/gongxuanzhang/fsdownload/http-1604889305914599-0.dat");
+        httpReceiver.receive(activeMQTextMessage);
     }
 }

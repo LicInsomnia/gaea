@@ -98,7 +98,7 @@ public class App {
         String packPath = gaeaPath + "/pack/";
         File pack = new File(packPath);
         if (pack.exists()) {
-            pack.delete();
+            deleteFile(pack);
         }
         FileUtils.checkPath(packPath);
         for (int i = 0; i < MODELS.length; i++) {
@@ -116,6 +116,18 @@ public class App {
             fileWriter.write(bootStrapYmlString);
             fileWriter.close();
             System.out.println("模块[" + model + "]打包成功");
+        }
+        // FileUtils.compressFiles2Zip(pack.listFiles(),packPath+"gaea.zip");
+    }
+
+    private static void deleteFile(File pack) {
+        File[] files = pack.listFiles();
+        for (File file : files) {
+            if(file.isDirectory()){
+                deleteFile(file);
+            }else{
+                file.delete();
+            }
         }
     }
 

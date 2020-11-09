@@ -73,9 +73,6 @@ public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
                 log.error("错误SRC：{}", line);
             }
         }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
-        }
     }
 
     @Override

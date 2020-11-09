@@ -92,9 +92,6 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
                 log.error("错误SRC：{}", line);
             }
         }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
-        }
     }
 
     @Override

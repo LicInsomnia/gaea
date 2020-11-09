@@ -78,9 +78,6 @@ public class FlowReceiver extends AbstractSrcReceiver<FlowData> {
                 }
             }
         }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
-        }
     }
 
     @Override

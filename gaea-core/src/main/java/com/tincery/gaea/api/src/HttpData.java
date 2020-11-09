@@ -159,7 +159,7 @@ public class HttpData extends AbstractSrcData {
     /**
      * 合并两个httpData的数据
      */
-    public synchronized void merge(HttpData httpData) {
+    public synchronized HttpData merge(HttpData httpData) {
         List<HttpMeta> newMetas = this.getMetas();
         if (CollectionUtils.isEmpty(newMetas)) {
             newMetas = new ArrayList<>();
@@ -174,7 +174,7 @@ public class HttpData extends AbstractSrcData {
 
         long endTime = Math.max(this.getCapTime() + this.getDuration(), httpData.getCapTime() + httpData.getDuration());
         this.setDuration(endTime - this.getCapTime());
-
+        return this;
 
     }
 
