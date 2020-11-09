@@ -1,6 +1,7 @@
 package com.tincery.gaea.source.dns.quartz.execute;
 
 import com.tincery.gaea.api.src.DnsData;
+import com.tincery.gaea.core.base.component.support.DnsRequest;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -43,7 +44,7 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
     @Autowired
     private PayloadDetector payloadDetector;
 
-
+    private DnsRequest dnsRequest = new DnsRequest();
 
     @Autowired
     public void setAnalysis(DnsLineAnalysis analysis) {
@@ -71,6 +72,7 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
             try {
                 dnsData = this.analysis.pack(line);
                 dnsData.adjust();
+                this.dnsRequest.append(dnsData);
             } catch (Exception e) {
                 log.error("错误SRC：{}", line);
                 continue;
