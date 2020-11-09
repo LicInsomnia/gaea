@@ -178,7 +178,7 @@ public class SrcQuartzConfig {
     @ConditionalOnProperty(prefix = PREFIX, name = "email")
     public JobDetail emailJob() {
         log.info("控制器此次分发email任务");
-        return JobBuilder.newJob(SslJob.class)
+        return JobBuilder.newJob(EmailJob.class)
                 .withIdentity("emailJob")
                 .storeDurably()
                 .build();

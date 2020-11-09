@@ -2,7 +2,6 @@ package com.tincery.gaea.ods.httpanalysis.execute;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
 import com.tincery.gaea.api.base.MatchHttpConfig;
 import com.tincery.gaea.api.base.TargetAttribute;
 import com.tincery.gaea.core.base.component.Receiver;
@@ -72,7 +71,8 @@ public class HttpAnalysisReceiver implements Receiver {
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
-        File file = new File(textMessage.getText());
+        System.out.println(textMessage.getText());
+      /*  File file = new File(textMessage.getText());
         log.info("开始解析文件{}", file.getPath());
         List<String> lines = FileUtils.readLine(file);
         if (lines.size() <= executorCount) {
@@ -96,7 +96,7 @@ public class HttpAnalysisReceiver implements Receiver {
         } catch (IOException e) {
             e.printStackTrace();
             log.error("解析{}时,写入文件发生错误", file.getPath());
-        }
+        }*/
     }
 
     private void analysisHttp(String httpLine) {
@@ -117,7 +117,7 @@ public class HttpAnalysisReceiver implements Receiver {
             noHitList.add(httpJson);
             return;
         }
-        successList.add(httpJson);
+        successList.addAll(hitDatas);
     }
 
     private void free(File file) throws IOException {
