@@ -63,6 +63,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
             //装填malformed 根据isServer变动的基础属性
             fixPropertiesMalformed(elements,openVpnData);
         }
+        openVpnData.setForeign(this.openVpnLineSupport.isForeign(openVpnData.getServerIp()));
         openVpnData.setOpenVpnExtension(openVpnExtension);
         return openVpnData;
     }
@@ -169,7 +170,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         openVpnData.setSyn("1".equals(elements[0]));
         openVpnData.setFin("1".equals(elements[1]));
         this.openVpnLineSupport.setMobileElements(elements[18], elements[19], elements[20], openVpnData);
-        openVpnData.setForeign(this.openVpnLineSupport.isForeign(openVpnData.getServerIp()));
+
     }
 
     /**
