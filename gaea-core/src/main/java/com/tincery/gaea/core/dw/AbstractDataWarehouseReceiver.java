@@ -54,7 +54,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             // 加载当前程序模块对应的run_config表配置
             JSONObject runConfig = DataWarehouseRunController.getRunConfig(ApplicationInfo.getCategory());
             // 获取run_config中的startTime（读CSV的开始时间）
-            LocalDateTime startTime = DateUtils.Date2LocalDateTime(runConfig.getDate("starttime"));
+            LocalDateTime startTime = DateUtils.Date2LocalDateTime(runConfig.getDate("startTime"));
             LocalDateTime dwTime = now.plusHours(-1);
             if (dwTime.compareTo(startTime) <= 0) {
                 log.info("执行时间临近当前时间1小时，本次执行跳出");
