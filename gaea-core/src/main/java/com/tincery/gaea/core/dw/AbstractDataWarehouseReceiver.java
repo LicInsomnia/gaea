@@ -1,7 +1,6 @@
 package com.tincery.gaea.core.dw;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
@@ -16,13 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.io.File;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static com.tincery.gaea.core.base.tool.util.DateUtils.DAY;
 import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
@@ -49,9 +49,6 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
 
     public abstract void setProperties(DwProperties dwProperties);
 
-    protected static CountDownLatch countDownLatch;
-
-    protected static LongAdder longAdder = new LongAdder();
 
     private List<CsvFilter> csvFilterList;
 
@@ -127,37 +124,15 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         return headString.split(HeadConst.CSV_SEPARATOR_STR);
     }
 
-    private void analysisList(List<Pair<String, String>> csvPaths) {
-        for (Pair<String, String> csvPath : csvPaths) {
-            CsvReader csvReader;
-            try {
-                csvReader = CsvReader.builder().file(csvPath.getValue()).build();
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                continue;
-            }
-            analysis(csvPath.getKey(), csvReader);
-        }
-
-    }
+    /****
+     * 模板方法 子类必须实现 而且此方法必须阻塞
+     * @author gxz
+     * @param startTime
+     * @param endTime
+     **/
 
     public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
-        log.info("本次处理开始时间：{}，结束时间：{}", startTime, endTime);
-        List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
-        long st = Instant.now().toEpochMilli();
-        log.info("开始解析CSV数据...");
-        List<List<Pair<String, String>>> partition = Lists.partition(csvPaths, csvPaths.size() / this.dwProperties.getExecutor() + 1);
-        countDownLatch = new CountDownLatch(csvPaths.size());
-        for (List<Pair<String, String>> pairs : partition) {
-            executorService.execute(() -> analysisList(pairs));
-        }
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        free();
-        log.info("共用时{}毫秒", (Instant.now().toEpochMilli() - st));
+      throw new UnsupportedOperationException();
     }
 
 

@@ -1,7 +1,9 @@
 package com.tincery.gaea.datawarehouse.reorganization.execute;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
+import com.tincery.gaea.api.dw.ReorganizationDataWareGroup;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
@@ -14,10 +16,14 @@ import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 @Component
 @Slf4j
@@ -60,9 +66,42 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
 
     @Override
     public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
-        this.impSessionFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("impsession") + "/impsession_" + System.currentTimeMillis() + ".json");
-        this.assetFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
-        super.dataWarehouseAnalysis(startTime, endTime);
+        this.impSessionFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("impsession") +
+                "/impsession_" + System.currentTimeMillis() + ".json");
+        this.assetFileWriter =
+                new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
+        log.info("本次处理开始时间：{}，结束时间：{}", startTime, endTime);
+        List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
+        long st = Instant.now().toEpochMilli();
+        log.info("开始解析CSV数据...");
+        List<List<Pair<String, String>>> partition = Lists.partition(csvPaths, csvPaths.size() / this.dwProperties.getExecutor() + 1);
+        List<Future<ReorganizationDataWareGroup>> futures = new ArrayList<>();
+        for (List<Pair<String, String>> pairs : partition) {
+            futures.add(executorService.submit(new ReorganizationProducer(pairs)));
+        }
+        try{
+            for (Future<ReorganizationDataWareGroup> future : futures) {
+                ReorganizationDataWareGroup reorganizationDataWareGroup = future.get();
+                List<AbstractDataWarehouseData> assetDataList = reorganizationDataWareGroup.getAssetDataList();
+                List<AbstractDataWarehouseData> impsessionDataList = reorganizationDataWareGroup.getImpsessionDataList();
+                if(!CollectionUtils.isEmpty(assetDataList)){
+                    assetDataList.forEach(assetData->{
+                        assetFileWriter.write(JSONObject.toJSONString(assetData));
+                    });
+                    assetCount+= assetDataList.size();
+                }
+                if(!CollectionUtils.isEmpty(impsessionDataList)){
+                    impsessionDataList.forEach(impsessionData->{
+                        impSessionFileWriter.write(JSONObject.toJSONString(impsessionData));
+                    });
+                    impSessionCount+= assetDataList.size();
+                }
+            }
+        }catch (Exception e){
+            log.error("解析过程中出现问题");
+        }
+        free();
+        log.info("共用时{}毫秒", (Instant.now().toEpochMilli() - st));
     }
 
     @Override
@@ -87,34 +126,56 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
         impSessionCount = assetCount = 0;
     }
 
-    @Override
-    public void analysis(String sessionCategory, CsvReader csvReader) {
-        produce(sessionCategory, csvReader);
-        countDownLatch.countDown();
+    private boolean isImpSession(CsvRow csvRow) {
+        return StringUtils.isNotEmpty(csvRow.get(HeadConst.FIELD.TARGET_NAME));
     }
 
-    public void produce(String sessionCategory, CsvReader csvReader) {
-        CsvRow csvRow;
-        while ((csvRow = csvReader.nextRow()) != null) {
-            if (this.impSessionCsvFilter.filter(csvRow)) {
-                AbstractDataWarehouseData impsessonData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
-                if (impsessonData != null) {
-                    impSessionFileWriter.write(JSONObject.toJSONString(impsessonData));
-                    impSessionCount++;
+
+    public class ReorganizationProducer implements Callable<ReorganizationDataWareGroup> {
+
+        private final List<Pair<String, String>> csvPaths;
+
+        private final ReorganizationDataWareGroup result;
+
+        public ReorganizationProducer(List<Pair<String, String>> csvPaths) {
+            this.csvPaths = csvPaths;
+            result =  ReorganizationDataWareGroup.init();
+        }
+
+        @Override
+        public ReorganizationDataWareGroup call() throws Exception {
+                for (Pair<String, String> csvPath : csvPaths) {
+                    CsvReader csvReader;
+                    try {
+                        csvReader = CsvReader.builder().file(csvPath.getValue()).build();
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        continue;
+                    }
+                    analysis(csvPath.getKey(), csvReader);
                 }
-            }
-            if (this.assetCsvFilter.filter(csvRow)) {
-                AbstractDataWarehouseData assetData = reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
-                if (assetData != null) {
-                    assetFileWriter.write(JSONObject.toJSONString(assetData));
-                    assetCount++;
+            return result;
+        }
+
+        public void analysis(String sessionCategory, CsvReader csvReader){
+            CsvRow csvRow;
+            while ((csvRow = csvReader.nextRow()) != null) {
+                if (ReorganizationReceiver.this.impSessionCsvFilter.filter(csvRow)) {
+                    AbstractDataWarehouseData impsessonData =
+                            reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
+                    if (impsessonData != null) {
+                        result.getImpsessionDataList().add(impsessonData);
+                    }
+                }
+                if (ReorganizationReceiver.this.assetCsvFilter.filter(csvRow)) {
+                    AbstractDataWarehouseData assetData =
+                            reorganizationFactory.getSessionFactory().create(sessionCategory, csvRow);
+                    if (assetData != null) {
+                        result.getAssetDataList().add(assetData);
+                    }
                 }
             }
         }
-    }
-
-    private boolean isImpSession(CsvRow csvRow) {
-        return StringUtils.isNotEmpty(csvRow.get(HeadConst.FIELD.TARGET_NAME));
     }
 
 

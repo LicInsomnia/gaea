@@ -15,6 +15,8 @@ import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class SrcLineSupport {
 
@@ -219,4 +221,129 @@ public class SrcLineSupport {
         return this.ipChecker.isForeign(ip);
     }
 
+
+    /**
+     * 判断是否是服务端
+     * @param elements 判断依据1. 数据中是否有D2S Client等字符串出现
+     * @param index 从数组何处开始循环
+     * @param data 此处的data需要装载dataType  和 serverPort(为srcPort) clientPort(为dstPort) 这里的这两个属性是临时装填的  后面会根据情况被替换
+     * @return boolean D2S Client = false  S2D Client = true;
+     */
+    public Boolean judgeIsServer(String[] elements,Integer index,AbstractSrcData data,String srcIp,String dstIp) throws Exception {
+        Boolean isServer = null;
+        Integer dataType = data.getDataType();
+        if (dataType>=0){
+            for (int i = index; i < elements.length; i++) {
+                if (StringUtils.isEmpty(elements[i])) {
+                    continue;
+                }
+                //第一个判断依据 数据中是否有符合标准的数据
+                isServer = sureIsServerByElements(elements[i]);
+                if (Objects.nonNull(isServer)){
+                    return isServer;
+                }
+            }
+            // 第二个判断依据 数据中是否有符合标准的端口
+            // 注意 此处的serverPort 为srcPort  此处的clientPort 为dstPort
+            isServer = sureIsServerByPortAndDataType(dataType,data.getServerPort(),data.getClientPort(),isServer);
+            if (Objects.nonNull(isServer)){
+                return isServer;
+            }
+        }
+        // malformed 和 dataType = 1 但上面数据不符合的情况
+        if (dataType>0){
+            data.setDataType(0);
+        }
+        //第三个判断依据 数据中是否一个外网一个内网
+        isServer = sureIsServerByIsInnerIp(srcIp,dstIp,isServer);
+        if (Objects.nonNull(isServer)){
+            return isServer;
+        }
+        //如果都不是  走第四个判断依据  根据端口大小判断
+        return sureIsServerByComparePort(data.getServerPort(),data.getClientPort());
+    }
+
+    /**
+     * 临时装载以下属性 为了判断是否是服务端
+     * @param data 被装载的对象
+     * @param dataType int
+     * @param srcPort String->int 对应ServerPort
+     * @param dstPort String->int 对应ClientPort
+     */
+    public void fixForJudgeIsServer(AbstractSrcData data,Integer dataType,String srcPort,String dstPort){
+        data.setDataType(dataType)
+                .setServerPort(Integer.parseInt(srcPort))
+                .setClientPort(Integer.parseInt(dstPort));
+    }
+    /**
+     * 该方法是确定isServer关键变量的值的。。因为要遍历所有的握手信息才能获得该变量值，然后根据该变量去装填其他属性
+     * @param element 根据该元素判断
+     * @return isServer
+     */
+    public Boolean sureIsServerByElements(String element) throws Exception {
+        Boolean isServer = null;
+        String[] kv = element.split(":");
+        if (kv.length != 2) {
+            throw new Exception("握手会话数据格式有误...");
+        }
+        // 该数据形如 D2S Client Hello || S2D Server Hello || Apllication...
+        char dOrs = kv[0].charAt(0);
+        char cORs = kv[0].charAt(4);
+        switch (dOrs){
+            case 'D':
+                if (Objects.equals(cORs,'C')){
+                    // 例如：D2S Client
+                    isServer = false;
+                }else if (Objects.equals(cORs,'S')){
+                    // 例如：D2S Server Hello
+                    isServer = true;
+                }
+                break;
+            case 'S':
+                if (Objects.equals(cORs,'C')){
+                    // 例如S2D Client Hello
+                    isServer = true;
+                }else if (Objects.equals(cORs,'S')){
+                    // 例如S2D Server Hello
+                    isServer = false;
+                }
+                break;
+        }
+        return isServer;
+    }
+
+    /**
+     * 判断依据二  根据端口和dataType判断
+     */
+    public Boolean sureIsServerByPortAndDataType(Integer dataType,Integer srcPort,Integer dstPort , Boolean isServer){
+        if (!Objects.equals(-1,dataType)){
+            if ( Objects.equals(1194,srcPort) && (!Objects.equals(1194,dstPort))){
+                isServer = false;
+            }else if ((!Objects.equals(1194,srcPort)) && Objects.equals(1194,dstPort)){
+                isServer = true;
+            }
+        }
+        return isServer;
+    }
+
+    /**
+     * 判断依据三  根据内外网ip地址 判断
+     */
+    public Boolean sureIsServerByIsInnerIp(String srcIp,String dstIp,Boolean isServer){
+        boolean srcInner = isInnerIp(srcIp);
+        boolean dstInner = isInnerIp(dstIp);
+        if (srcInner && (!dstInner)){
+            isServer = true;
+        }else if ((!srcInner) && dstInner){
+            isServer = false;
+        }
+        return isServer;
+    }
+
+    /**
+     * 判断依据四 根据端口大小判断
+     */
+    public Boolean sureIsServerByComparePort(Integer serverPort,Integer clientPort){
+        return serverPort > clientPort;
+    }
 }
