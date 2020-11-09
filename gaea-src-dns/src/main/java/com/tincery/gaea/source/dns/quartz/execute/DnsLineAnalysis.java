@@ -64,7 +64,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         this.srcLineSupport.setGroupName(dnsData);
 
         Integer s2dFlag = Integer.parseInt(elements[25]);
-        Integer dataType = Integer.parseInt(elements[26]);
+        int dataType = Integer.parseInt(elements[26]);
         dnsData.setDataType(dataType);
         /*
         根据s2dFlag 和dataType判断  装载顺序
@@ -91,18 +91,15 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 break;
             case -1:
                 /*
-                s2dport<= d2sport fixD2S(elements,dnsData);
-                s2dport > d2sport fixS2D(elements,dnsData);
+                  D2S Client = false  S2D Client = true;
                  */
-                int srcPort = Integer.parseInt(elements[4]);
-                int dstPort = Integer.parseInt(elements[5]);
-                if (srcPort<=dstPort){
+                boolean flag = malformedDataGetIsServer(elements);
+                if (flag){
                     fixD2S(elements,dnsData);
-                    this.srcLineSupport.setMalformedPayload(elements[28],elements[27],dnsData);
                 }else{
                     fixS2D(elements,dnsData);
-                    this.srcLineSupport.setMalformedPayload(elements[27],elements[28],dnsData);
                 }
+                this.srcLineSupport.setMalformedPayload(elements[27],elements[28],dnsData);
                 break;
         }
         this.srcLineSupport.setMobileElements(elements[14], elements[15], elements[16], dnsData);
@@ -117,6 +114,18 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         dnsData.setDnsExtension(dnsExtension);
         return dnsData;
     }
+
+    /**
+     * dataType = -1时 装载的顺序
+     */
+    private Boolean malformedDataGetIsServer(String[] elements){
+        Boolean flag = this.srcLineSupport.sureIsServerByIsInnerIp(elements[2], elements[3], null);
+        if (Objects.isNull(flag)){
+           flag =  this.srcLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
+        }
+        return flag;
+    }
+
     /*根据s2dFLag 和datatype 处理   s2dFlag 1 dataType 0   s2dFlag 2 dataType 1*/
     private void fixS2D(String[] elements,DnsData dnsData){
         this.srcLineSupport.set7Tuple(
