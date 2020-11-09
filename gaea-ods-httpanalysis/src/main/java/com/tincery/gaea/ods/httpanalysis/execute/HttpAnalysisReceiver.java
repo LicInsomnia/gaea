@@ -122,7 +122,7 @@ public class HttpAnalysisReceiver implements Receiver {
             noHitList.add(httpJson);
             return;
         }
-        successList.add(httpJson);
+        successList.addAll(hitDatas);
     }
 
     private void free(File file) throws IOException {
