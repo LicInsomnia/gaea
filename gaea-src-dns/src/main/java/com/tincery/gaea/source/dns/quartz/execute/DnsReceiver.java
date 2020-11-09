@@ -77,9 +77,6 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
             }
             this.putCsvMap(dnsData);
         }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
-        }
     }
 
     @Override
