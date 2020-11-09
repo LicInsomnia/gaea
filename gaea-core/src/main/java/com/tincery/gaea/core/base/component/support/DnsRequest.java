@@ -1,12 +1,12 @@
 package com.tincery.gaea.core.base.component.support;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.DnsRequestBO;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.config.RunConfig;
-import com.tincery.gaea.core.base.plugin.csv.CsvReader;
-import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.gaea.core.base.tool.util.FileReader;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.starter.base.InitializationRequired;
 import org.springframework.stereotype.Component;
@@ -49,31 +49,28 @@ public class DnsRequest implements InitializationRequired {
         if (RunConfig.isEmpty()) {
             return;
         }
-        Date startTime = RunConfig.getDate("starttime");
+        Date startTime = RunConfig.getDate("startTime");
         long startTimeLong;
         if (startTime == null) {
             startTimeLong = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
         } else {
-            startTimeLong = startTime.getTime() - (15 * DateUtils.MINUTE);
+            startTimeLong = startTime.getTime() - (3 * DateUtils.HOUR);
         }
-
-        String category = "impdnsrequest";
+        String category = "dnsRequest";
         String impDnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(category);
         List<File> files = FileUtils.searchFiles(impDnsRequestPath, category, null, null, 0);
         for (File file : files) {
             long time = Long.parseLong(file.getName().split("\\.")[0].split("_")[1]);
             if (time > startTimeLong) {
-                try {
-                    CsvReader csvReader = CsvReader.builder().file(file).build();
-                    CsvRow csvRow;
-                    List<DnsRequestBO> list = new ArrayList<>();
-                    while ((csvRow = csvReader.nextRow()) != null) {
-                        list.add(new DnsRequestBO(csvRow.get(0), csvRow.get(1), csvRow.getLong(4)));
+                List<String> lines = FileReader.readLine(file);
+                List<DnsRequestBO> list = new ArrayList<>();
+                for (String line : lines) {
+                    DnsRequestBO dnsRequestBO = JSONObject.parseObject(line, DnsRequestBO.class);
+                    if (null != dnsRequestBO) {
+                        list.add(dnsRequestBO);
                     }
-                    this.dnsRequestMap = list.stream().collect(Collectors.groupingBy(DnsRequestBO::getKey));
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
                 }
+                this.dnsRequestMap = list.stream().collect(Collectors.groupingBy(DnsRequestBO::getKey));
             }
         }
         if (CollectionUtil.isNotEmpty(this.dnsRequestMap)) {
@@ -81,4 +78,6 @@ public class DnsRequest implements InitializationRequired {
             this.empty = false;
         }
     }
+
+
 }

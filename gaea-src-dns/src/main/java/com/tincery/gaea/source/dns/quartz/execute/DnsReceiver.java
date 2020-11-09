@@ -8,6 +8,7 @@ import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
 import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
 import lombok.Getter;
@@ -16,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author gxz
@@ -41,6 +44,7 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
     private PayloadDetector payloadDetector;
 
 
+
     @Autowired
     public void setAnalysis(DnsLineAnalysis analysis) {
         this.analysis = analysis;
@@ -50,6 +54,32 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
+    }
+
+    /****
+     * 解析一行记录 填充到相应的容器中
+     * @author gxz
+     * @param lines 多条记录
+     **/
+    @Override
+    protected void analysisLine(List<String> lines) {
+        for (String line : lines) {
+            if (StringUtils.isEmpty(line)) {
+                continue;
+            }
+            DnsData dnsData;
+            try {
+                dnsData = this.analysis.pack(line);
+                dnsData.adjust();
+            } catch (Exception e) {
+                log.error("错误SRC：{}", line);
+                continue;
+            }
+            this.putCsvMap(dnsData);
+        }
+        if (this.countDownLatch != null) {
+            this.countDownLatch.countDown();
+        }
     }
 
     @Override

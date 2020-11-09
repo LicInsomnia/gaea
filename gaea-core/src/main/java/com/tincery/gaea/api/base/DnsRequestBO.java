@@ -17,7 +17,6 @@ public class DnsRequestBO implements Comparable<DnsRequestBO> {
         this.capTime = capTime;
     }
 
-
     @Override
     public int compareTo(DnsRequestBO o) {
         return Long.compare(this.capTime, o.capTime);

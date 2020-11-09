@@ -94,4 +94,5 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
     public String getId() {
         return this.id;
     }
+
 }

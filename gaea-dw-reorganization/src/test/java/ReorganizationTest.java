@@ -1,3 +1,4 @@
+import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.datawarehouse.reorganization.GaeaDwReorganizationApplication;
 import com.tincery.gaea.datawarehouse.reorganization.execute.AssetCsvFilter;
 import com.tincery.gaea.datawarehouse.reorganization.execute.ReorganizationReceiver;
@@ -9,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 import javax.jms.MessageNotWriteableException;
 
 @SpringBootTest(classes = GaeaDwReorganizationApplication.class)
-public class Test {
+public class ReorganizationTest {
 
     @Autowired
     private ReorganizationReceiver reorganizationExecute;
@@ -19,6 +20,10 @@ public class Test {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+
+    @Autowired
+    private IpSelector ipSelector;
 
 
     @org.junit.jupiter.api.Test
