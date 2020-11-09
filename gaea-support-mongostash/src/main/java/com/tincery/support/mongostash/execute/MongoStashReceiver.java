@@ -51,8 +51,8 @@ public class MongoStashReceiver implements Receiver {
         }
 
         for (TableConfig tableConfig : updateConfig) {
-            List<String> updateElements = tableConfig.getUpdateElements();
-            List<String> updateDate = tableConfig.getUpdateDate();
+//            List<String> updateElements = tableConfig.getUpdateElements();
+//            List<String> updateDate = tableConfig.getUpdateDate();
 
         }
     }

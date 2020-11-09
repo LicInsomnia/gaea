@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -55,6 +56,12 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
     @Override
     public void setProperties(SrcProperties properties) {
         this.properties = properties;
+    }
+
+    @Override
+    protected void analysisFile(File file) {
+        super.analysisFile(file);
+        this.dnsRequest.output();
     }
 
     /****

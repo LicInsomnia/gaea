@@ -73,8 +73,8 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             }
             dataWarehouseAnalysis(startTime, endTime);
             runConfig.replace("startTime", endTime);
-            log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);
             DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
+            log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);
         } catch (JMSException e) {
             e.printStackTrace();
         }
