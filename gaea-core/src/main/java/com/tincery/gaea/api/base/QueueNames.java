@@ -19,6 +19,7 @@ public class QueueNames {
     public static final String SRC_QQ = "src_qq";
     public final static String DW_REORGANIZATION = "dw_reorganization";
     public final static String DM_ASSET = "dm_asset";
+    public final static String DM_SESSION_LOADER = "dm_sessionloader";
 
 
     public static final String DM_ALARMCOMBINE = "dm_alarmcombine";

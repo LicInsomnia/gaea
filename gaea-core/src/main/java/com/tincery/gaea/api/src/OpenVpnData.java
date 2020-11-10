@@ -69,6 +69,9 @@ public class OpenVpnData extends AbstractSrcData {
     public synchronized void merge(OpenVpnData openVpnData) {
         this.capTime = Math.min(this.capTime, openVpnData.capTime);
         this.duration = Math.max(this.capTime + this.duration, openVpnData.capTime + openVpnData.duration);
+        if (this.dataType == 1 || openVpnData.getDataType() == 1){
+            this.dataType = 1;
+        }
         if (null == this.openVpnExtension || this.openVpnExtension.getHandshake() == null) {
             this.openVpnExtension = openVpnData.getOpenVpnExtension();
         } else {

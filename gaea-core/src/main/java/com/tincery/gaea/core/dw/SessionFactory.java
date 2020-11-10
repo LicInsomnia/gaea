@@ -138,7 +138,8 @@ public class SessionFactory {
                 data.getServerPort(),
                 data.getCapTime()
         });
-        return data.setId(id);
+        data.setId(id);
+        return data;
     }
 
     private void adjust(AbstractDataWarehouseData data) {

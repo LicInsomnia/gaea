@@ -218,11 +218,11 @@ public class NodeInfo {
     }
 
     public static String getAlarmMaterial() {
-        return getDataWarehouseJsonPathByCategory("alarmMaterial");
+        return getCacheByCategory("alarmMaterial");
     }
 
     public static String getEventData() {
-        return getDataWarehouseJsonPathByCategory("eventData");
+        return getCacheByCategory("eventData");
     }
 
 }

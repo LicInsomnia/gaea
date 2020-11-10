@@ -34,6 +34,11 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
      * 20.msisdn        21.outclientip  22.outserverip      23.outclientport    24.outserverport
      * 25.outproto      26.userid       27.serverid         28.ismac2outer      29.data1 / upPayload
      * 30.data2 / downPayload           ...dataN
+     *
+     *
+     * 装填顺序  先去确认isServer  因为基础属性的装填是根据isServer来的
+     * 然后装填extension  extension是根据isServer 和前面的S2D D2S相比较的结果出的
+     *
      */
     @Override
     public OpenVpnData pack(String line) throws Exception {
@@ -41,7 +46,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         String[] elements = StringUtils.FileLineSplit(line);
         //设置不会因为isServer 变动的数据
 
-        //获得该条数据 关键变量
+        //获得该条数据 关键变量 可能为null  为null的情况下 继续执行其他判断的方法
         Boolean isServer = sureIsServer(elements, openVpnData);
         /*以下 根据isServer 书写属性*/
         setFixProperties(elements, openVpnData);
@@ -55,7 +60,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
                 /*这里确定不是malformed  装填其他属性
                 设置正常(非malformed)情况下 根据isServer变动的基础数据*/
                 fixPropertiesByIsServer(elements,openVpnData,isServer);
-                //设置握手和会话信息
+                //设置握手和会话信息 ※
                 addOpenVpnExtension(elements, openVpnExtension, openVpnData,isServer);
             }
         }
@@ -69,9 +74,21 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         return openVpnData;
     }
 
+    /**
+     * 确定第一个能代表 isServer的位置
+     */
     private Boolean sureIsServer(String[] elements,OpenVpnData openVpnData) throws Exception {
-        this.openVpnLineSupport.fixForJudgeIsServer(openVpnData,Integer.parseInt(elements[8]),elements[14],elements[15]);
-        return this.openVpnLineSupport.judgeIsServer(elements, 29, openVpnData, elements[12], elements[13]);
+        int dataType = Integer.parseInt(elements[8]);
+        this.openVpnLineSupport.fixForJudgeIsServer(openVpnData,dataType,elements[14],elements[15]);
+        if (dataType != -1){
+            if (elements[29].contains("malformed")) {
+                // 当openVpn dataType!=-1 且 29 有malformed的时候
+                openVpnData.setDataType(-2);
+            }else{
+                return this.openVpnLineSupport.judgeIsServer(elements, 29, openVpnData);
+            }
+        }
+        return null;
     }
 
     /**
@@ -80,20 +97,22 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
      * @param openVpnData 要装载的数据
      */
     private void fixPropertiesMalformed(String[] elements, OpenVpnData openVpnData) {
-        boolean isServer = getIsServerByPort(Integer.parseInt(elements[14]),Integer.parseInt(elements[15]));
+        Boolean isServer = null;
+        try {
+            isServer = this.openVpnLineSupport.sureIsServerByIsInnerIp(elements[12], elements[13], null);
+        }catch (Exception e){
+            // 这里可能遇到内外网检测方法无法检测ipv6  跳过进行端口检测
+            isServer =  this.openVpnLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[14]),Integer.parseInt(elements[15]));
+        }
+        if (Objects.isNull(isServer)){
+            isServer =  this.openVpnLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[14]),Integer.parseInt(elements[15]));
+        }
         if (isServer){
             fixPropertiesTrue(elements,openVpnData);
         }else {
             fixPropertiesFalse(elements,openVpnData);
         }
 
-    }
-
-    /**
-     * 根据端口判断isServer
-     */
-    private boolean getIsServerByPort(int srcPort,int dstPort){
-        return srcPort > dstPort;
     }
 
 
@@ -103,7 +122,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         openVpnData.setSyn("1".equals(elements[0]));
         openVpnData.setFin("1".equals(elements[1]));
         this.openVpnLineSupport.setMobileElements(elements[18], elements[19], elements[20], openVpnData);
-
+        openVpnData.setDataType(Integer.parseInt(elements[8]));
     }
 
     /**
@@ -119,6 +138,17 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
             fixPropertiesTrue(elements,openVpnData);
         }else if (Objects.equals(17,protocol)){
             //UDP协议装填  要在extension之后加载 根据isServer加载
+            if (Objects.isNull(isServer)){
+                isServer = this.openVpnLineSupport.sureIsServerByPortAndDataType(openVpnData.getDataType(), openVpnData.getServerPort(), openVpnData.getClientPort(), isServer);
+            }
+            if (Objects.isNull(isServer)){
+                // srcIp dstIp
+                isServer = this.openVpnLineSupport.sureIsServerByIsInnerIp(elements[12], elements[13], isServer);
+                if (Objects.isNull(isServer)){
+                    isServer = this.openVpnLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[14]), Integer.parseInt(elements[15]));
+                }
+                openVpnData.setDataType(0);
+            }
 
             if (isServer){
                 //isServer = true src = Client dst = Server
@@ -179,8 +209,11 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
                 // 为会话属性信息
                 addSessionProperties(elements[i], openVpnExtension, isServer);
             } else {
+                if (Objects.isNull(handshake)){
+                    handshake = new Handshake();
+                }
                 // 为握手会话信息
-                handshake = addHandshake(elements[i], openVpnExtension, handshake);
+                isServer = addHandshake(elements[i], openVpnExtension, handshake,isServer);
             }
         }
         openVpnExtension.setHandshake(handshake);
@@ -188,84 +221,108 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
 
     /**
      * 解析拓展信息中的握手相关会话
+     * handShake装载过程 isServer和D2S S2D对比
+     * data.startWith("D2S Client")   --> S2D--Server  D2S--Client
+     * data.startWith("S2D Client")   --> S2D--Client  D2S--Server
+     * data.startWith("D2S Server")	  --> S2D--Client  D2S--Server
+     * data.startWith("S2D Server")	  --> S2D--Server  D2S--Client
+     * 基础信息 是由第一个S2D （Client/Server）或者 D2S(Client/Server) 决定的
      *
      * @param element   拓展信息
      * @param handshake 握手过程
      */
-    private Handshake addHandshake(String element, OpenVpnExtension openVpnExtension, Handshake handshake) throws Exception {
+    private Boolean addHandshake(String element, OpenVpnExtension openVpnExtension, Handshake handshake,Boolean isServer) throws Exception {
         String[] kv = element.split(":");
         String handshakeKeyword = kv[0].trim();
         int length = Integer.parseInt(kv[1].trim());
         switch (handshakeKeyword) {
             case "D2S Client Hello":
-                handshake = newHandshake(handshake);
                 handshake.setClientHello(length);
+                isServer = changeIsServer(isServer,1);
                 break;
             case "S2D Server Hello":
-                handshake = newHandshake(handshake);
                 handshake.setServerHello(length);
+                isServer = changeIsServer(isServer,0);
                 break;
             case "S2D Certificate":
-                handshake = newHandshake(handshake);
                 handshake.setServerCertificate(length);
+                isServer = changeIsServer(isServer,0);
                 break;
             case "S2D Server Key Exchange":
-                handshake = newHandshake(handshake);
                 handshake.setServerKeyExchange(length);
+                isServer = changeIsServer(isServer,0);
                 break;
             case "S2D Certificate Request":
-                handshake = newHandshake(handshake);
                 handshake.setServerCertificateRequest(length);
+                isServer = changeIsServer(isServer,0);
                 break;
             case "S2D Server Hello Done":
-                handshake = newHandshake(handshake);
                 handshake.setServerHelloDone(length);
+                isServer = changeIsServer(isServer,0);
                 break;
             case "D2S Certificate":
-                handshake = newHandshake(handshake);
                 handshake.setClientCertificate(length);
+                isServer = changeIsServer(isServer,1);
                 break;
             case "D2S Client Key Exchange":
-                handshake = newHandshake(handshake);
                 handshake.setClientKeyExchange(length);
+                isServer = changeIsServer(isServer,1);
                 break;
             case "D2S Certificate Verify":
-                handshake = newHandshake(handshake);
                 handshake.setClientCertificateVerify(length);
+                isServer = changeIsServer(isServer,1);
                 break;
             case "D2S Finished":
-                handshake = newHandshake(handshake);
                 handshake.setClientFinished(length);
+                isServer = changeIsServer(isServer,1);
                 break;
             case "S2D Finished":
-                handshake = newHandshake(handshake);
                 handshake.setServerFinished(length);
+                isServer = changeIsServer(isServer,0);
                 break;
             case "D2S Change Cipher Spec":
-                handshake = newHandshake(handshake);
                 handshake.setClientChangeCipherSpec(length);
+                isServer = changeIsServer(isServer,1);
                 break;
             case "S2D Change Cipher Spec":
-                handshake = newHandshake(handshake);
                 handshake.setServerChangeCipherSpec(length);
+                isServer = changeIsServer(isServer,0);
                 break;
             case "D2S Application Data":
-            case "S2D Application Data":
-                handshake = newHandshake(handshake);
                 openVpnExtension.setHasApplicationData(true);
+                isServer = changeIsServer(isServer,1);
+                break;
+            case "S2D Application Data":
+                openVpnExtension.setHasApplicationData(true);
+                isServer = changeIsServer(isServer,0);
                 break;
             default:
                 break;
         }
-        return handshake;
+        return isServer;
     }
 
-    private Handshake newHandshake(Handshake handshake){
-        if (Objects.isNull(handshake)){
-            handshake = new Handshake();
+    /**
+     * data.startWith("D2S Client")   --> S2D--Server  D2S--Client
+     * data.startWith("S2D Client")   --> S2D--Client  D2S--Server
+     * data.startWith("D2S Server")	  --> S2D--Client  D2S--Server
+     * data.startWith("S2D Server")	  --> S2D--Server  D2S--Client
+     * S2D  为 0
+     * D2S  为 1
+     * 可见
+     *      isServer : false :S2D Client  D2S Server
+     *      true:  D2S Client   S2D Server
+     */
+    private Boolean changeIsServer(Boolean isServer , int dOrS){
+        switch (dOrS){
+            case 0:
+                return isServer;
+            case 1:
+                return !isServer;
         }
-        return handshake;
+        return isServer;
     }
+
 
     private void addSessionProperties(String element, OpenVpnExtension openVpnExtension, Boolean isServer) throws Exception {
         if (null == isServer) {
