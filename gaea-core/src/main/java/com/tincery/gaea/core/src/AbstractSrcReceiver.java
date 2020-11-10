@@ -163,7 +163,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 pack = this.analysis.pack(line);
                 pack.adjust();
             } catch (Exception e) {
-                log.error("错误SRC：{}", line);
+                log.error("错误信息:{},错误SRC：{}", e.getMessage(),line);
                 continue;
             }
             this.putCsvMap(pack);

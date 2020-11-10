@@ -84,7 +84,7 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
                         this.impSessionMap.put(key, impSessionData);
                     }
                 } catch (Exception e) {
-                    log.error("错误SRC：{}", line);
+                    log.error("错误信息:{},错误SRC：{}", e.getMessage(),line);
                 }
 
             }

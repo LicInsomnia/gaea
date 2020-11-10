@@ -9,6 +9,9 @@ import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.starter.base.model.TableConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -16,6 +19,9 @@ import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,21 +45,48 @@ public class MongoStashReceiver implements Receiver {
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         long jmsTimestamp = textMessage.getJMSTimestamp();
-        List<TableConfig> update = tableConfigDao.getUpdate();
-        List<TableConfig> insert = tableConfigDao.getInsert();
-        update(update);
-        insert(insert);
+        List<TableConfig> updateConfig = tableConfigDao.getUpdate();
+        List<TableConfig> insertConfig = tableConfigDao.getInsert();
+        update(updateConfig);
+        insert(insertConfig);
     }
 
     private void update(List<TableConfig> updateConfig) {
         if (CollectionUtils.isEmpty(updateConfig)) {
             return;
         }
-
         for (TableConfig tableConfig : updateConfig) {
             List<String> updateElements = tableConfig.getUpdateElements();
             List<String> updateDate = tableConfig.getUpdateDate();
-
+            String cacheByCategory = NodeInfo.getCacheByCategory(tableConfig.getId());
+            File categoryCacheFile = new File(cacheByCategory);
+            if (!categoryCacheFile.exists()) {
+                continue;
+            }
+            File[] files = categoryCacheFile.listFiles();
+            if (files != null) {
+                Arrays.stream(files).map(FileUtils::readLine).flatMap(Collection::stream).map(JSON::parseObject).forEach(jsonObject -> {
+                    Update update = new Update();
+                    boolean updateFlag = false;
+                    for (String updateElement : updateElements) {
+                        if(jsonObject.containsKey(updateElement)){
+                            updateFlag = true;
+                            update.set(updateElement,jsonObject.get(updateElement));
+                        }
+                    }
+                    for (String updateDateElement : updateDate) {
+                         if(jsonObject.containsKey(updateDateElement)){
+                             updateFlag = true;
+                             Date date = jsonObject.getDate(updateDateElement);
+                             update.set(updateDateElement,date);
+                         }
+                    }
+                    if(updateFlag){
+                        Query query = new Query(Criteria.where("_id").is(jsonObject.getString("_id")));
+                        proMongoTemplate.updateFirst(query,update,tableConfig.getName());
+                    }
+                });
+            }
         }
     }
 
@@ -66,6 +99,9 @@ public class MongoStashReceiver implements Receiver {
             String cacheByCategory = NodeInfo.getCacheByCategory(id);
             String name = tableConfig.getName();
             File categoryCacheFile = new File(cacheByCategory);
+            if (!categoryCacheFile.exists()) {
+                continue;
+            }
             File[] files = categoryCacheFile.listFiles();
             if (files != null) {
                 for (File file : files) {
