@@ -35,6 +35,7 @@
         <module>gaea-support-messagecomsumer</module>
         <module>gaea-support-mongostash</module>
         <module>gaea-support-pack</module>
+        <module>gaea-dm-sessionloader</module>
     </modules>
 
 

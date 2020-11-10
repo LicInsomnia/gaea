@@ -22,11 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +38,6 @@ import java.util.function.BiFunction;
 @Slf4j
 @Service
 public class AssetReceiver implements Receiver {
-
 
     private final List<AlarmMaterialData> alarmList = new CopyOnWriteArrayList<>();
 
@@ -62,8 +57,6 @@ public class AssetReceiver implements Receiver {
 
     @Autowired
     private AssetPortDao assetPortDao;
-
-
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
