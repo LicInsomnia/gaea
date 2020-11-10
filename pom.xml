@@ -32,10 +32,10 @@
         <module>gaea-ods-httpanalysis</module>
         <module>gaea-dm-alarmcombine</module>
         <module>gaea-dm-asset</module>
+        <module>gaea-dm-sessionloader</module>
         <module>gaea-support-messagecomsumer</module>
         <module>gaea-support-mongostash</module>
         <module>gaea-support-pack</module>
-        <module>gaea-dm-sessionloader</module>
     </modules>
 
 

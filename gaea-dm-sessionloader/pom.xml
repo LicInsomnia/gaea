@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
 
-    <artifactId>gaea-dw-reorganization</artifactId>
+    <artifactId>gaea-dm-sessionloader</artifactId>
     <groupId>com.tincery</groupId>
     <version>5.0.0</version>
 
