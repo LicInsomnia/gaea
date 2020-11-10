@@ -84,7 +84,7 @@ public class DnsRequest implements InitializationRequired {
     }
 
     public void append(DnsData dnsData) {
-        if (dnsData.getImp() || dnsData.getDataType() != 1) {
+        if ((dnsData.getImp()!= null && dnsData.getImp()) || dnsData.getDataType() != 1) {
             return;
         }
         String domain = dnsData.getDnsExtension().getDomain();

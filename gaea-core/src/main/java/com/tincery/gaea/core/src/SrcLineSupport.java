@@ -229,7 +229,7 @@ public class SrcLineSupport {
      * @param data 此处的data需要装载dataType  和 serverPort(为srcPort) clientPort(为dstPort) 这里的这两个属性是临时装填的  后面会根据情况被替换
      * @return boolean D2S Client = false  S2D Client = true;
      */
-    public Boolean judgeIsServer(String[] elements,Integer index,AbstractSrcData data,String srcIp,String dstIp) throws Exception {
+    public Boolean judgeIsServer(String[] elements,Integer index,AbstractSrcData data) throws Exception {
         Boolean isServer = null;
         Integer dataType = data.getDataType();
         if (dataType>=0){
@@ -243,24 +243,9 @@ public class SrcLineSupport {
                     return isServer;
                 }
             }
-            // 第二个判断依据 数据中是否有符合标准的端口
-            // 注意 此处的serverPort 为srcPort  此处的clientPort 为dstPort
-            isServer = sureIsServerByPortAndDataType(dataType,data.getServerPort(),data.getClientPort(),isServer);
-            if (Objects.nonNull(isServer)){
-                return isServer;
-            }
         }
-        // malformed 和 dataType = 1 但上面数据不符合的情况
-        if (dataType>0){
-            data.setDataType(0);
-        }
-        //第三个判断依据 数据中是否一个外网一个内网
-        isServer = sureIsServerByIsInnerIp(srcIp,dstIp,isServer);
-        if (Objects.nonNull(isServer)){
-            return isServer;
-        }
-        //如果都不是  走第四个判断依据  根据端口大小判断
-        return sureIsServerByComparePort(data.getServerPort(),data.getClientPort());
+
+        return isServer;
     }
 
     /**
@@ -287,8 +272,6 @@ public class SrcLineSupport {
             throw new Exception("握手会话数据格式有误...");
         }
         // 该数据形如 D2S Client Hello || S2D Server Hello || Apllication...
-        char dOrs = kv[0].charAt(0);
-        char cORs = kv[0].charAt(4);
         String start = kv[0];
         if (start.startsWith("S2D Client")){
             isServer = false;
@@ -297,27 +280,7 @@ public class SrcLineSupport {
         }else if (start.startsWith("S2D Server")){
             isServer = true;
         }else if (start.startsWith("D2S Server")){
-
-        }
-        switch (dOrs){
-            case 'D':
-                if (Objects.equals(cORs,'C')){
-                    // 例如：D2S Client
-                    isServer = false;
-                }else if (Objects.equals(cORs,'S')){
-                    // 例如：D2S Server Hello
-                    isServer = true;
-                }
-                break;
-            case 'S':
-                if (Objects.equals(cORs,'C')){
-                    // 例如S2D Client Hello
-                    isServer = true;
-                }else if (Objects.equals(cORs,'S')){
-                    // 例如S2D Server Hello
-                    isServer = false;
-                }
-                break;
+            isServer = false;
         }
         return isServer;
     }
