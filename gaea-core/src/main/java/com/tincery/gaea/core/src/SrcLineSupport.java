@@ -240,7 +240,6 @@ public class SrcLineSupport {
                 //第一个判断依据 数据中是否有符合标准的数据
                 isServer = sureIsD2SServerByElements(elements[i]);
                 if (Objects.nonNull(isServer)){
-                    System.out.println(isServer);
                     return isServer;
                 }
             }
