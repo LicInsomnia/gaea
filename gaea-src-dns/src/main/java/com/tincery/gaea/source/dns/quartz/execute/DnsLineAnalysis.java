@@ -51,7 +51,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
      */
 
     @Override
-    public DnsData pack(String line) {
+    public DnsData pack(String line) throws Exception {
         DnsData dnsData = new DnsData();
         String[] elements = StringUtils.FileLineSplit(line);
 
@@ -118,8 +118,14 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
     /**
      * dataType = -1时 装载的顺序
      */
-    private Boolean malformedDataGetIsServer(String[] elements){
-        Boolean flag = this.srcLineSupport.sureIsServerByIsInnerIp(elements[2], elements[3], null);
+    private Boolean malformedDataGetIsServer(String[] elements) throws Exception {
+        //TODO 这里内外网检测的方法无法检测ipv6 如果出现ipv6的情况会解析失败
+        Boolean flag = null;
+        try {
+            flag = this.srcLineSupport.sureIsServerByIsInnerIp(elements[2], elements[3], null);
+        }catch (Exception e){
+            throw new Exception("可能遇到ipv6的内外网检测");
+        }
         if (Objects.isNull(flag)){
            flag =  this.srcLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
         }
