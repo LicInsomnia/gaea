@@ -188,6 +188,12 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
 
     /**
      * 解析拓展信息中的握手相关会话
+     * handShake装载过程不需要isServer字段 而是isServer由此产生
+     * data.startWith("D2S Client")   --> S2D--Server  D2S--Client
+     * data.startWith("S2D Client")   --> S2D--Client  D2S--Server
+     * data.startWith("D2S Server")	  --> S2D--Client  D2S--Server
+     * data.startWith("S2D Server")	  --> S2D--Server  D2S--Client
+     * 基础信息 是由第一个S2D （Client/Server）或者 D2S(Client/Server) 决定的
      *
      * @param element   拓展信息
      * @param handshake 握手过程

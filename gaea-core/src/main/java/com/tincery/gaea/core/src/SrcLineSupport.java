@@ -289,6 +289,16 @@ public class SrcLineSupport {
         // 该数据形如 D2S Client Hello || S2D Server Hello || Apllication...
         char dOrs = kv[0].charAt(0);
         char cORs = kv[0].charAt(4);
+        String start = kv[0];
+        if (start.startsWith("S2D Client")){
+            isServer = false;
+        }else if (start.startsWith("D2S Client")){
+            isServer = true;
+        }else if (start.startsWith("S2D Server")){
+            isServer = true;
+        }else if (start.startsWith("D2S Server")){
+
+        }
         switch (dOrs){
             case 'D':
                 if (Objects.equals(cORs,'C')){
