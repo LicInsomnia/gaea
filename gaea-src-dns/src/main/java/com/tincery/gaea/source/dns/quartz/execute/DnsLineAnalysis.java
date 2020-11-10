@@ -118,19 +118,22 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
     /**
      * dataType = -1时 装载的顺序
      */
-    private Boolean malformedDataGetIsServer(String[] elements) throws Exception {
+    private Boolean malformedDataGetIsServer(String[] elements){
         //TODO 这里内外网检测的方法无法检测ipv6 如果出现ipv6的情况会解析失败
         Boolean flag = null;
         try {
             flag = this.srcLineSupport.sureIsServerByIsInnerIp(elements[2], elements[3], null);
         }catch (Exception e){
-            throw new Exception("可能遇到ipv6的内外网检测");
+            // 这里可能遇到内外网检测方法无法检测ipv6  跳过进行端口检测
+            flag =  this.srcLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
+            return flag;
         }
         if (Objects.isNull(flag)){
            flag =  this.srcLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
         }
         return flag;
     }
+
 
     /*根据s2dFLag 和datatype 处理   s2dFlag 1 dataType 0   s2dFlag 2 dataType 1*/
     private void fixS2D(String[] elements,DnsData dnsData){
