@@ -68,8 +68,7 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
         this.impSessionFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("impsession") +
                 "/impsession_" + System.currentTimeMillis() + ".json");
-        this.assetFileWriter =
-                new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
+        this.assetFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
         log.info("本次处理开始时间：{}，结束时间：{}", startTime, endTime);
         List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
         long st = Instant.now().toEpochMilli();

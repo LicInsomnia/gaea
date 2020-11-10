@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author gxz
@@ -131,7 +130,6 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
             default:
                 throw new Exception("握手会话数据格式有误...");
         }
-
         String handshakeKeyword = kv[0].trim();
         int length = Integer.parseInt(kv[1].trim());
         switch (handshakeKeyword) {
