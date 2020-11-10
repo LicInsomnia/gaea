@@ -122,14 +122,14 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         //TODO 这里内外网检测的方法无法检测ipv6 如果出现ipv6的情况会解析失败
         Boolean flag = null;
         try {
-            flag = this.srcLineSupport.sureIsServerByIsInnerIp(elements[2], elements[3], null);
+            flag = this.srcLineSupport.sureisD2SServerByIsInnerIp(elements[2], elements[3], null);
         }catch (Exception e){
             // 这里可能遇到内外网检测方法无法检测ipv6  跳过进行端口检测
-            flag =  this.srcLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
+            flag =  this.srcLineSupport.sureisD2SServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
             return flag;
         }
         if (Objects.isNull(flag)){
-           flag =  this.srcLineSupport.sureIsServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
+           flag =  this.srcLineSupport.sureisD2SServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
         }
         return flag;
     }
