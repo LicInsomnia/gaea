@@ -229,7 +229,7 @@ public class SrcLineSupport {
      * @param data 此处的data需要装载dataType  和 serverPort(为srcPort) clientPort(为dstPort) 这里的这两个属性是临时装填的  后面会根据情况被替换
      * @return boolean D2S Client = false  S2D Client = true;
      */
-    public Boolean judgeIsServer(String[] elements,Integer index,AbstractSrcData data) throws Exception {
+    public Boolean judgeisD2SServer(String[] elements,Integer index,AbstractSrcData data) throws Exception {
         Boolean isServer = null;
         Integer dataType = data.getDataType();
         if (dataType>=0){
@@ -238,8 +238,9 @@ public class SrcLineSupport {
                     continue;
                 }
                 //第一个判断依据 数据中是否有符合标准的数据
-                isServer = sureIsServerByElements(elements[i]);
+                isServer = sureIsD2SServerByElements(elements[i]);
                 if (Objects.nonNull(isServer)){
+                    System.out.println(isServer);
                     return isServer;
                 }
             }
@@ -265,8 +266,8 @@ public class SrcLineSupport {
      * @param element 根据该元素判断
      * @return isServer
      */
-    public Boolean sureIsServerByElements(String element) throws Exception {
-        Boolean isServer = null;
+    public Boolean sureIsD2SServerByElements(String element) throws Exception {
+        Boolean isD2SServer = null;
         String[] kv = element.split(":");
         if (kv.length != 2) {
             throw new Exception("握手会话数据格式有误...");
@@ -274,49 +275,49 @@ public class SrcLineSupport {
         // 该数据形如 D2S Client Hello || S2D Server Hello || Apllication...
         String start = kv[0];
         if (start.startsWith("S2D Client")){
-            isServer = false;
+            isD2SServer = true;
         }else if (start.startsWith("D2S Client")){
-            isServer = true;
+            isD2SServer = false;
         }else if (start.startsWith("S2D Server")){
-            isServer = true;
+            isD2SServer = false;
         }else if (start.startsWith("D2S Server")){
-            isServer = false;
+            isD2SServer = true;
         }
-        return isServer;
+        return isD2SServer;
     }
 
     /**
      * 判断依据二  根据端口和dataType判断
      */
-    public Boolean sureIsServerByPortAndDataType(Integer dataType,Integer srcPort,Integer dstPort , Boolean isServer){
+    public Boolean sureisD2SServerByPortAndDataType(Integer dataType,Integer srcPort,Integer dstPort , Boolean isD2SServer){
         if (!Objects.equals(-1,dataType)){
             if ( Objects.equals(1194,srcPort) && (!Objects.equals(1194,dstPort))){
-                isServer = false;
+                isD2SServer = false;
             }else if ((!Objects.equals(1194,srcPort)) && Objects.equals(1194,dstPort)){
-                isServer = true;
+                isD2SServer = true;
             }
         }
-        return isServer;
+        return isD2SServer;
     }
 
     /**
      * 判断依据三  根据内外网ip地址 判断
      */
-    public Boolean sureIsServerByIsInnerIp(String srcIp,String dstIp,Boolean isServer){
+    public Boolean sureisD2SServerByIsInnerIp(String srcIp,String dstIp,Boolean isD2SServer){
         boolean srcInner = isInnerIp(srcIp);
         boolean dstInner = isInnerIp(dstIp);
         if (srcInner && (!dstInner)){
-            isServer = true;
+            isD2SServer = true;
         }else if ((!srcInner) && dstInner){
-            isServer = false;
+            isD2SServer = false;
         }
-        return isServer;
+        return isD2SServer;
     }
 
     /**
      * 判断依据四 根据端口大小判断
      */
-    public Boolean sureIsServerByComparePort(Integer serverPort,Integer clientPort){
+    public Boolean sureisD2SServerByComparePort(Integer serverPort,Integer clientPort){
         return serverPort > clientPort;
     }
 }
