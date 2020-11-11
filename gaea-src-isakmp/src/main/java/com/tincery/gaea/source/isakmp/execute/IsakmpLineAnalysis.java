@@ -49,7 +49,6 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         if (!elements[30].startsWith("Is_first") && isakmpData.getDataType() != -1) {
             throw new Exception("Is_first字段标记错误");
         }
-        //TODO 调换这个的位置
 
         if (isakmpData.getDataType() == -1){
             s2dFlag = getS2DFlag(s2dFlag,elements);
@@ -320,7 +319,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             if (kv.length != 2) {
                 continue;
             }
-            String key = formatKey(kv[0]);
+            String key = kv[0];
             String value = kv[1].trim();
             if (key.isEmpty() || value.isEmpty()) {
                 continue;
