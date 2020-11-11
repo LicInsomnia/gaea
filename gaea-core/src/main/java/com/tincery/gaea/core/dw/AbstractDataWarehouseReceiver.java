@@ -1,9 +1,8 @@
 package com.tincery.gaea.core.dw;
 
-import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.component.Receiver;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
+import com.tincery.gaea.core.base.component.config.RunConfig;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
@@ -11,6 +10,7 @@ import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -32,6 +32,9 @@ import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
  **/
 @Slf4j
 public abstract class AbstractDataWarehouseReceiver implements Receiver {
+
+    private MongoTemplate mongoTemplate;
+
     protected static ThreadPoolExecutor executorService;
 
     static {
@@ -49,7 +52,6 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
 
     public abstract void setProperties(DwProperties dwProperties);
 
-
     private List<CsvFilter> csvFilterList;
 
     @Override
@@ -57,24 +59,22 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         try {
             LocalDateTime now = LocalDateTime.now();
             log.info("消息传递时间：{}；执行时间：{}", DateUtils.format(textMessage.getJMSTimestamp()), now.format(DateUtils.DEFAULT_DATE_PATTERN));
-            // 加载当前程序模块对应的run_config表配置
-            JSONObject runConfig = DataWarehouseRunController.getRunConfig(ApplicationInfo.getCategory());
             // 获取run_config中的startTime（读CSV的开始时间）
-            LocalDateTime startTime = DateUtils.Date2LocalDateTime(runConfig.getDate("startTime"));
+            LocalDateTime startTime = DateUtils.Date2LocalDateTime(RunConfig.getDate("startTime"));
             LocalDateTime dwTime = now.plusMinutes(-1 * this.dwProperties.getDelayExecutionTime());
             if (dwTime.compareTo(startTime) <= 0) {
                 log.info("执行时间临近当前时间{}分钟，本次执行跳出", this.dwProperties.getDelayExecutionTime());
                 return;
             }
-            int duration = runConfig.getInteger("duration");
+            int duration = RunConfig.getInteger("duration");
             LocalDateTime endTime = startTime.plusMinutes(duration);
             if (dwTime.compareTo(endTime) < 0) {
                 endTime = dwTime;
             }
             dataWarehouseAnalysis(startTime, endTime);
-            runConfig.replace("startTime", endTime);
-            DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
-            log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);
+//            runConfig.replace("startTime", endTime);
+//            DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
+//            log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);
         } catch (JMSException e) {
             e.printStackTrace();
         }
