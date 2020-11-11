@@ -8,8 +8,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Insomnia
@@ -39,6 +42,8 @@ public class IsakmpExtension implements Serializable {
     private Set<JSONObject> initiatorVid;
     @JSONField(serialize = false)
     private Set<JSONObject> responderVid;
+    @JSONField(serialize = false)
+    private Integer version;
     @JSONField(serialize = false)
     private JSONObject extension;
 
@@ -84,6 +89,9 @@ public class IsakmpExtension implements Serializable {
             stringBuilder.setLength(stringBuilder.length() - 1);
             this.responderVidStr = stringBuilder.toString();
         }
+        if (null != this.version){
+            this.extension.put("version",this.version);
+        }
     }
 
     /**
@@ -104,7 +112,7 @@ public class IsakmpExtension implements Serializable {
      * 密钥交换第二阶段模式【secondMode】
      * 如果是messagelist包含"Quick Mode"，则为"快速模式"，否则为”-“
      */
-    private String secodeMode;
+    private String secondMode;
     /**
      * 发起方密钥交换第一阶段交换数据完整性【initiatorFirstComplete】
      * 如果initiator_information的Private Use Data、Nonce Data、Identification Data、Signature Data均存在，则显示"完整"
@@ -170,9 +178,9 @@ public class IsakmpExtension implements Serializable {
     }
 
     private void adjustFirstMode() {
-        if (this.messageList.contains("Aggressive")) {
+        if (this.messageList.contains("initiator:Aggressive")||this.messageList.contains("responder:Aggressive")) {
             this.firstMode = "野蛮模式";
-        } else if (this.messageList.contains("Identity Protection (Main Mode)")) {
+        } else if (this.messageList.contains("initiator:Identity Protection (Main Mode)") || this.messageList.contains("responder:Identity Protection (Main Mode)")) {
             this.firstMode = "-";
         } else {
             this.firstMode = "主模式";
@@ -180,10 +188,10 @@ public class IsakmpExtension implements Serializable {
     }
 
     private void adjustSecondMode() {
-        if (this.messageList.contains("Quick Mode")) {
-            this.secodeMode = "快速模式";
+        if (this.messageList.contains("initiator:Quick Mode")||this.messageList.contains("responder:Quick Mode")) {
+            this.secondMode = "快速模式";
         } else {
-            this.secodeMode = "-";
+            this.secondMode = "-";
         }
     }
 
@@ -192,10 +200,12 @@ public class IsakmpExtension implements Serializable {
             this.initiatorFirstComplete = "-";
             return;
         }
-        if (this.initiatorInformation.contains("Private Use Data") &&
-                this.initiatorInformation.contains("Nonce Data") &&
-                this.initiatorInformation.contains("Identification Data") &&
-                this.initiatorInformation.contains("Signature Data")) {
+        Set<String> set = new HashSet<>();
+        this.initiatorInformation.stream().map(JSONObject::keySet).forEach(set::addAll);
+        if (set.contains("Private Use Data") &&
+                set.contains("Nonce Data") &&
+                set.contains("Identification Data") &&
+                set.contains("Signature Data")) {
             this.initiatorFirstComplete = "完整";
         } else {
             this.initiatorFirstComplete = "不完整";
@@ -207,11 +217,14 @@ public class IsakmpExtension implements Serializable {
             this.responderFirstComplete = "-";
             return;
         }
-        if (this.responderInformation.contains("Private Use Data") &&
-                this.responderInformation.contains("Nonce Data") &&
-                this.responderInformation.contains("Identification Data") &&
-                this.responderInformation.contains("Signature Data")) {
-            this.responderFirstComplete = "完整";
+        Set<String> set = new HashSet<>();
+        this.responderInformation.stream().map(JSONObject::keySet).forEach(set::addAll);
+
+        if (set.contains("Private Use Data") &&
+                set.contains("Nonce Data") &&
+                set.contains("Identification Data") &&
+                set.contains("Signature Data")) {
+            this.initiatorFirstComplete = "完整";
         } else {
             this.responderFirstComplete = "不完整";
         }

@@ -1,5 +1,6 @@
 package com.tincery.gaea.source.isakmp.execute;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.src.IsakmpData;
 import com.tincery.gaea.api.src.extension.IsakmpExtension;
@@ -166,7 +167,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
     private void setVersion1(String[] elements, IsakmpExtension isakmpExtension) {
         boolean s2dFlag = true;
         String sdFlag = elements[29];
-        if (!Objects.equals(sdFlag,"S2D")){
+        if (Objects.equals(sdFlag,"D2S")){
             s2dFlag = false;
         }
         JSONObject jsonObject = new JSONObject();
@@ -179,20 +180,20 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
              if (elements[i].isEmpty()) {
                 continue;
             }
-            if (("S2D".equals(elements[i]) || "D2S".equals(elements[i])) && !elements[i].equals(sdFlag)) {
-                s2dFlag = false;
+            if ("S2D".equals(elements[i]) || "D2S".equals(elements[i])) {
+                s2dFlag = !elements[i].equals("D2S");
                 continue;
             }
             String[] kv = elements[i].split(":");
             if (kv.length != 2) {
                 continue;
             }
-            String key = formatKey(kv[0]);
+            String key = kv[0].trim();
             String value = kv[1].trim();
             if (key.isEmpty() || value.isEmpty()) {
                 continue;
             }
-            if (key.equals("exchange_type")) {
+            if (key.equals("Exchange Type")) {
                 if (s2dFlag) {
                     messageList.add("initiator:" + value);
                 } else {
@@ -216,7 +217,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                         }
                     }
                     break;
-                case "transform":
+                case "Transform":
                     if (jsonObject.isEmpty()) {
                         continue;
                     }
@@ -228,7 +229,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                         jsonObject = new JSONObject();
                     }
                     break;
-                case "vendor_id":
+                case "Vendor Id":
                     JSONObject json = new JSONObject();
                     if (s2dFlag) {
                         json.put("Vendor ID", getVid(value));
@@ -237,6 +238,9 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                         json.put("Vendor ID", getVid(value));
                         responderVid.add(json);
                     }
+                    break;
+                case "Cert Encoding":
+                    jsonObject.put("Cert Encoding",fixCertEncoding(value));
                     break;
                 default:
                     break;
@@ -248,11 +252,55 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         isakmpExtension.setResponderInformation(responderInformation);
         isakmpExtension.setInitiatorVid(initiatorVid);
         isakmpExtension.setResponderVid(responderVid);
+        isakmpExtension.setVersion(1);
+    }
+
+    /**
+     * 将value转换成对应的中文
+     */
+    private String fixCertEncoding(String value) {
+
+        switch (value){
+            case "PKCS #7 wrapped X.509 certificate":
+                value = "PKCS#7包装的X.509证书";
+                break;
+            case "PGP Certificate":
+                value = "PGP证书";
+                break;
+            case "DNS Signed Key":
+                value = "DNS签名密钥";
+                break;
+            case "X.509 Certificate - Signature":
+                value = "X.509签名证书";
+                break;
+            case "X.509 Certificate - Key Exchange":
+                value = "X.509加密证书";
+                break;
+            case "Kerberos Tokens":
+                value = "Kerberos令牌";
+                break;
+            case "Certificate Revocation List (CRL)":
+                value = "证书吊销列表（CRL）";
+                break;
+            case "Authority Revocation List (ARL)":
+                value = "授权撤销列表（ARL）";
+                break;
+            case "SPKI Certificate":
+                value = "SPKI证书";
+                break;
+            case "X.509 Certificate - Attribute":
+                value = "X.509属性证书";
+                break;
+        }
+        return value;
     }
 
     private void setVersion2(String[] elements, IsakmpExtension isakmpExtension) {
-        String sdFlg = elements[29];
-        boolean s2dFlg = true;
+        String sdFlag = elements[29];
+        boolean s2dFlag = true;
+        if (Objects.equals(sdFlag,"D2S")){
+            s2dFlag = false;
+        }
         JSONObject jsonObject = new JSONObject();
         JSONObject vidJsonObject = new JSONObject();
         List<String> messageList = new ArrayList<>();
@@ -264,8 +312,8 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             if (elements[i].isEmpty()) {
                 continue;
             }
-            if (("S2D".equals(elements[i]) || "D2S".equals(elements[i])) && !elements[i].equals(sdFlg)) {
-                s2dFlg = false;
+            if ("S2D".equals(elements[i]) || "D2S".equals(elements[i])) {
+                s2dFlag = !elements[i].equals("D2S");
                 continue;
             }
             String[] kv = elements[i].split(":");
@@ -279,14 +327,14 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             }
             switch (key) {
                 case "Exchange Type":
-                    if (s2dFlg) {
+                    if (s2dFlag) {
                         messageList.add("initiator:" + value);
                     } else {
                         messageList.add("responder:" + value);
                     }
                     break;
                 case "payload":
-                    if (s2dFlg) {
+                    if (s2dFlag) {
                         messageList.add("initiator:" + value);
                         if (!jsonObject.isEmpty()) {
                             initiatorInformation.add((JSONObject) ToolUtils.clone(jsonObject));
@@ -304,7 +352,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                     if (jsonObject.isEmpty()) {
                         continue;
                     }
-                    if (s2dFlg) {
+                    if (s2dFlag) {
                         initiatorInformation.add((JSONObject) ToolUtils.clone(jsonObject));
                         jsonObject = new JSONObject();
                     } else {
@@ -313,7 +361,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                     }
                     break;
                 case "Vendor ID":
-                    if (s2dFlg) {
+                    if (s2dFlag) {
                         initiatorVid.add((JSONObject) ToolUtils.clone(vidJsonObject));
                     } else {
                         responderVid.add((JSONObject) ToolUtils.clone(vidJsonObject));
@@ -330,6 +378,9 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                 case "CheckPoint Version":
                     vidJsonObject.put(key, value);
                     break;
+                case "cert_encoding":
+                    jsonObject.put("Cert Encoding",fixCertEncoding(value));
+                    break;
                 default:
                     break;
             }
@@ -340,6 +391,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         isakmpExtension.setResponderInformation(responderInformation);
         isakmpExtension.setInitiatorVid(initiatorVid);
         isakmpExtension.setResponderVid(responderVid);
+        isakmpExtension.setVersion(2);
     }
 
     private String getVid(String str) {

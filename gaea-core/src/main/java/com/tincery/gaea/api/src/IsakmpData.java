@@ -16,7 +16,7 @@ public class IsakmpData extends AbstractSrcData {
     public void adjust() {
         super.adjust();
         if (this.dataType  == 1){
-            isakmpExtension.adjust(true, this.protocol, this.serverPort);
+            isakmpExtension.adjust(false, this.protocol, this.serverPort);
         }
     }
 
