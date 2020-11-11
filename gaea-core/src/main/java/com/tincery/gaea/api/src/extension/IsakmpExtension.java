@@ -3,15 +3,14 @@ package com.tincery.gaea.api.src.extension;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.tincery.gaea.core.base.tool.ToolUtils;
+import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -157,7 +156,12 @@ public class IsakmpExtension implements Serializable {
      * 是否存在加密的鉴别数据【encryptedAuthenticationData】
      * 如果是"Identity Protection (Main Mode) "，并且 “payload: Hash”存在，则为true，否则为false
      */
-    private String encryptedAuthenticationData;
+    private Boolean encryptedAuthenticationData;
+
+
+    private String InitiatorSPI;
+
+    private String ResponderSPI;
 
     public void adjust(boolean malformed, int protocol, int serverPort) {
         adjustProtocolVersion(malformed, protocol, serverPort);
@@ -165,6 +169,62 @@ public class IsakmpExtension implements Serializable {
         adjustSecondMode();
         adjustInitiatorFirstComplete(malformed);
         adjustResponderFirstComplete(malformed);
+        adjustEncryptionDiscernData();
+        adjustSecondComplete();
+    }
+
+    /**
+     * 第二阶段密钥完整性
+     */
+    private void adjustSecondComplete() {
+        HashSet<JSONObject> resultSet = new HashSet<>(this.initiatorInformation);
+        resultSet.addAll(this.responderInformation);
+        List<JSONObject> collect = resultSet.stream().filter(item -> Objects.equals("Quick Mode", item.get("Exchange Type")))
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)){
+            this.secondComplete = "-";
+        }
+        List<String> list = collect.stream().map(item -> {
+            Object messageId = item.get("Message ID");
+            Object length = item.get("Length");
+            if (Objects.nonNull(messageId) && Objects.nonNull(length)) {
+                return messageId.toString() + length.toString();
+            }
+            return null;
+        }).filter(Objects::nonNull).distinct().collect(Collectors.toList());
+        if (!list.isEmpty() && list.size()>1){
+            this.secondComplete = "完整";
+        }else{
+            this.secondComplete = "不完整";
+        }
+
+    }
+
+    /*是否存在加密鉴别数据 */
+    private void adjustEncryptionDiscernData() {
+        HashSet<JSONObject> resultSet = new HashSet<>(this.initiatorInformation);
+        resultSet.addAll(this.responderInformation);
+        resultSet.stream().filter(item->Objects.nonNull(item.get("Exchange Type")))
+                .forEach(jsonObject -> {
+                    if (encryptionDiscernData(jsonObject)){
+                        this.encryptedAuthenticationData = true;
+                    }
+                });
+        if (!Objects.equals(this.encryptedAuthenticationData,true)){
+            this.encryptedAuthenticationData = false;
+        }
+    }
+
+    private boolean encryptionDiscernData(JSONObject jsonObject){
+        if (!jsonObject.isEmpty()){
+            if (Objects.equals("Identity Protection (Main Mode)",jsonObject.get("Exchange Type"))){
+                Object payload = jsonObject.get("payload");
+                if (Objects.nonNull(payload)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void adjustProtocolVersion(boolean malformed, int protocol, int serverPort) {
@@ -181,9 +241,9 @@ public class IsakmpExtension implements Serializable {
         if (this.messageList.contains("initiator:Aggressive")||this.messageList.contains("responder:Aggressive")) {
             this.firstMode = "野蛮模式";
         } else if (this.messageList.contains("initiator:Identity Protection (Main Mode)") || this.messageList.contains("responder:Identity Protection (Main Mode)")) {
-            this.firstMode = "-";
-        } else {
             this.firstMode = "主模式";
+        } else {
+            this.firstMode = "-";
         }
     }
 
@@ -195,6 +255,8 @@ public class IsakmpExtension implements Serializable {
         }
     }
 
+
+
     private void adjustInitiatorFirstComplete(boolean malformed) {
         if (malformed) {
             this.initiatorFirstComplete = "-";
@@ -202,6 +264,7 @@ public class IsakmpExtension implements Serializable {
         }
         Set<String> set = new HashSet<>();
         this.initiatorInformation.stream().map(JSONObject::keySet).forEach(set::addAll);
+
         if (set.contains("Private Use Data") &&
                 set.contains("Nonce Data") &&
                 set.contains("Identification Data") &&
@@ -219,7 +282,6 @@ public class IsakmpExtension implements Serializable {
         }
         Set<String> set = new HashSet<>();
         this.responderInformation.stream().map(JSONObject::keySet).forEach(set::addAll);
-
         if (set.contains("Private Use Data") &&
                 set.contains("Nonce Data") &&
                 set.contains("Identification Data") &&
@@ -228,6 +290,42 @@ public class IsakmpExtension implements Serializable {
         } else {
             this.responderFirstComplete = "不完整";
         }
+    }
+
+    public String convertCert(String value){
+        switch (value){
+            case "PKCS #7 wrapped X.509 certificate":
+                value = "PKCS#7包装的X.509证书";
+                break;
+            case "PGP Certificate":
+                value = "PGP证书";
+                break;
+            case "DNS Signed Key":
+                value = "DNS签名密钥";
+                break;
+            case "X.509 Certificate - Signature":
+                value = "X.509签名证书";
+                break;
+            case "X.509 Certificate - Key Exchange":
+                value = "X.509加密证书";
+                break;
+            case "Kerberos Tokens":
+                value = "Kerberos令牌";
+                break;
+            case "Certificate Revocation List (CRL)":
+                value = "证书吊销列表（CRL）";
+                break;
+            case "Authority Revocation List (ARL)":
+                value = "授权撤销列表（ARL）";
+                break;
+            case "SPKI Certificate":
+                value = "SPKI证书";
+                break;
+            case "X.509 Certificate - Attribute":
+                value = "X.509属性证书";
+                break;
+        }
+        return value;
     }
 
 }

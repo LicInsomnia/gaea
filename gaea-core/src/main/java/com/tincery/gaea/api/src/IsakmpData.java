@@ -17,6 +17,10 @@ public class IsakmpData extends AbstractSrcData {
         super.adjust();
         if (this.dataType  == 1){
             isakmpExtension.adjust(false, this.protocol, this.serverPort);
+        }else{
+            IsakmpExtension isakmpExtension = new IsakmpExtension();
+            isakmpExtension.setProtocolVersion("非标准IPSEC");
+            this.isakmpExtension = isakmpExtension;
         }
     }
 
