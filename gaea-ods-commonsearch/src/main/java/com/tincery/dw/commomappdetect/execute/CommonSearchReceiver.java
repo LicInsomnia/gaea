@@ -1,4 +1,4 @@
-package com.tincery.ods.commonsearch.execute;
+package com.tincery.dw.commomappdetect.execute;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com

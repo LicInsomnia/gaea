@@ -121,5 +121,8 @@ public class DateUtils {
     public static long LocalDateTime2Long(LocalDateTime localDateTime) {
         return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
+    public static Date LocalDateTime2Date(LocalDateTime localDateTime){
+         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
 
 }

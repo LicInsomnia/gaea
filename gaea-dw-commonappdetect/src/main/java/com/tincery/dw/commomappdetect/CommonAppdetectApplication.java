@@ -1,4 +1,4 @@
-package com.tincery.ods.commonsearch;
+package com.tincery.dw.commomappdetect;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @SpringBootApplication
-public class CommonSearchApplication {
+public class CommonAppdetectApplication {
     public static void main(String[] args) {
-        SpringApplication.run(CommonSearchApplication.class, args);
+        SpringApplication.run(CommonAppdetectApplication.class, args);
     }
 }

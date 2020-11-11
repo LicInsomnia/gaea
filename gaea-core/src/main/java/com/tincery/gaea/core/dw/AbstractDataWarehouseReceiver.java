@@ -66,7 +66,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             LocalDateTime now = LocalDateTime.now();
             log.info("消息传递时间：{}；执行时间：{}", DateUtils.format(textMessage.getJMSTimestamp()), now.format(DateUtils.DEFAULT_DATE_PATTERN));
             // 获取run_config中的startTime（读CSV的开始时间）
-            LocalDateTime startTime = RunConfig.getLocalDateTime("startTime");;
+            LocalDateTime startTime = RunConfig.getLocalDateTime("startTime");
             LocalDateTime dwTime = now.plusMinutes(-1 * this.dwProperties.getDelayExecutionTime());
             if (dwTime.compareTo(startTime) <= 0) {
                 log.info("执行时间临近当前时间{}分钟，本次执行跳出", this.dwProperties.getDelayExecutionTime());
@@ -198,6 +198,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         Update update = new Update();
         update.set(ApplicationInfo.getCategory() +".startTime",newStartTime);
         this.mongoTemplate.updateFirst(query,update,"run_config");
+        RunConfig.replace("startTime",DateUtils.LocalDateTime2Date(newStartTime));
     }
 
 }

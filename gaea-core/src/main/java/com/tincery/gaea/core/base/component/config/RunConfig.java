@@ -21,6 +21,11 @@ public class RunConfig {
         RUN_CONFIG = new JSONObject(configData);
     }
 
+
+    public static void replace(String key, Object value){
+        RUN_CONFIG.put(key,value);
+    }
+
     public static <T> T get(BiFunction<String, JSONObject, T> function, String key) {
         return function.apply(key, RUN_CONFIG);
     }
