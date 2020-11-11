@@ -15,7 +15,7 @@ public class ControllerConfigProperties {
     private SourceConfig src;
     private DataWarehouseConfig dataWarehouse;
     private OdsConfig ods;
-    private DmConfig dm;
+    private DmConfig datamarket;
 
     @Setter
     @Getter
@@ -52,6 +52,7 @@ public class ControllerConfigProperties {
     @Getter
     public static class DmConfig{
         private String alarmcombine;
+        private String asset;
     }
 
 }

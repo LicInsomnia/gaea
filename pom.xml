@@ -12,6 +12,7 @@
     <modules>
         <module>gaea-core</module>
         <module>gaea-controller</module>
+
         <module>gaea-src-session</module>
         <module>gaea-src-ssl</module>
         <module>gaea-src-email</module>
@@ -27,12 +28,16 @@
         <module>gaea-src-pptpandl2tp</module>
         <module>gaea-src-ftpandtelnet</module>
         <module>gaea-src-espandah</module>
-        <!--<module>gaea-ods-matchhttp</module>-->
+
         <module>gaea-dw-reorganization</module>
+
+        <module>gaea-ods-commonsearch</module>
         <module>gaea-ods-httpanalysis</module>
+
         <module>gaea-dm-alarmcombine</module>
         <module>gaea-dm-asset</module>
         <module>gaea-dm-sessionloader</module>
+
         <module>gaea-support-messagecomsumer</module>
         <module>gaea-support-mongostash</module>
         <module>gaea-support-pack</module>

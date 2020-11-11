@@ -1,5 +1,6 @@
 package com.tincery.gaea.api.dm;
 
+import com.tincery.gaea.api.base.IpGroup;
 import com.tincery.gaea.api.base.IpHitable;
 import com.tincery.gaea.api.base.IpRange;
 import com.tincery.starter.base.model.SimpleBaseDO;
