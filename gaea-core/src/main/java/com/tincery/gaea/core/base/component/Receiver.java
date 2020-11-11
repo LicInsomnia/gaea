@@ -2,6 +2,7 @@ package com.tincery.gaea.core.base.component;
 
 import com.tincery.starter.base.InitializationRequired;
 
+import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 

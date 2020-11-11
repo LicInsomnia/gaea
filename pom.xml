@@ -30,8 +30,8 @@
         <module>gaea-src-espandah</module>
 
         <module>gaea-dw-reorganization</module>
+        <module>gaea-dw-commonappdetect</module>
 
-        <module>gaea-ods-commonsearch</module>
         <module>gaea-ods-httpanalysis</module>
 
         <module>gaea-dm-alarmcombine</module>
