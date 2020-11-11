@@ -88,19 +88,21 @@ public class AssetReceiver implements Receiver {
         List<AssetDataDTO> unitList = AssetGroupSupport.getSaveDataByAll(allAsset, AssetGroupSupport::unitDataFrom);
         AssetGroupSupport.rechecking(assetUnitDao,unitList);
          unitList.forEach(assetUnitDao::saveOrUpdate);
-
+         log.info("单位维度合并插入{}条数据",unitList.size());
         List<AssetDataDTO> ipList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList
                 , AssetGroupSupport::clientIpDataFrom, serverAssetList, AssetGroupSupport::serverIpDataFrom);
         AssetGroupSupport.rechecking(assetIpDao,ipList);
          ipList.forEach(assetIpDao::saveOrUpdate);
+        log.info("IP维度合并插入{}条数据",ipList.size());
 
         List<AssetDataDTO> protocolList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList,
                 AssetGroupSupport::clientProtocolDataFrom, serverAssetList, AssetGroupSupport::serverProtocolDataFrom);
         assetProtocolDao.insert(protocolList);
+        log.info("协议维度合并插入{}条数据",protocolList.size());
 
         List<AssetDataDTO> portData = AssetGroupSupport.getSaveDataByAll(serverAssetList, AssetGroupSupport::portDataFrom);
         assetPortDao.insert(portData);
-
+        log.info("端口维度合并插入{}条数据",portData.size());
         writeAlarm();
     }
 

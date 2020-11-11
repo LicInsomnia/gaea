@@ -3,16 +3,14 @@ package com.tincery.gaea.api.dm;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-@Setter
-@Getter
+@Data
 public class FieldCondition {
 
     protected static final int EQUALS = 1;
@@ -29,6 +27,10 @@ public class FieldCondition {
     protected static final int FALSE = 12;
     protected static final int EXIST = 13;
     protected static final int NO_EXIST = 14;
+    protected static final int START_WITH = 15;
+    protected static final int END_WITH = 16;
+    protected static final int IN = 17;
+
 
     protected static final int INT = 1;
     protected static final int LONG = 2;
@@ -190,6 +192,10 @@ public class FieldCondition {
                 return value.contains(targetValue);
             case NO_CONTAIN:
                 return !value.contains(targetValue);
+            case START_WITH:
+                return value.startsWith(targetValue);
+            case END_WITH:
+                return value.endsWith(targetValue);
             default:
                 throw new IllegalArgumentException("String operator can't is " + operator);
         }

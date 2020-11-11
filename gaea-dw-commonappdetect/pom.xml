@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>gaea-ods-commonsearch</artifactId>
+    <artifactId>gaea-dw-commonappdetect</artifactId>
     <groupId>com.tincery</groupId>
     <version>5.0.0</version>
 
