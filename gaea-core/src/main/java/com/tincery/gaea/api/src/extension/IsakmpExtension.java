@@ -1,13 +1,13 @@
 package com.tincery.gaea.api.src.extension;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -16,30 +16,40 @@ import java.util.Set;
  */
 @Getter
 @Setter
+@ToString
 public class IsakmpExtension implements Serializable {
 
-    static Set<String> initiatorSpecialElementKey = new HashSet<>(Arrays.asList("encryption_algorithm", "hash_algorithm", "group_description"));
-    static Set<String> responderSpecialElementKey = new HashSet<>(Arrays.asList("encryption_algorithm", "hash_algorithm", "group_description"));
-    String messageListStr = null;
-    String initiatorInformationStr = null;
-    String responderInformationStr = null;
-    String initiatorVidStr = null;
-    String responderVidStr = null;
+    @JSONField(serialize = false)
+    private String messageListStr = null;
+    @JSONField(serialize = false)
+    private String initiatorInformationStr = null;
+    @JSONField(serialize = false)
+    private String responderInformationStr = null;
+    @JSONField(serialize = false)
+    private String initiatorVidStr = null;
+    @JSONField(serialize = false)
+    private String responderVidStr = null;
+    @JSONField(serialize = false)
     private List<String> messageList;
+    @JSONField(serialize = false)
     private Set<JSONObject> initiatorInformation;
+    @JSONField(serialize = false)
     private Set<JSONObject> responderInformation;
+    @JSONField(serialize = false)
     private Set<JSONObject> initiatorVid;
+    @JSONField(serialize = false)
     private Set<JSONObject> responderVid;
+    @JSONField(serialize = false)
     private JSONObject extension;
 
     public void setExtension() {
         this.extension = new JSONObject();
         if (null != this.messageList && !this.messageList.isEmpty()) {
-            this.extension.put("message_list", this.messageList);
+            this.extension.put("messageList", this.messageList);
             this.messageListStr = ToolUtils.convertString(this.messageList, ";");
         }
         if (null != this.initiatorInformation && !this.initiatorInformation.isEmpty()) {
-            this.extension.put("initiator_information", this.initiatorInformation);
+            this.extension.put("initiatorInformation", this.initiatorInformation);
             StringBuilder stringBuilder = new StringBuilder();
             for (JSONObject jsonObject : this.initiatorInformation) {
                 stringBuilder.append(JSONObject.toJSONString(jsonObject)).append(";");
@@ -48,7 +58,7 @@ public class IsakmpExtension implements Serializable {
             this.initiatorInformationStr = stringBuilder.toString();
         }
         if (null != this.responderInformation && !this.responderInformation.isEmpty()) {
-            this.extension.put("responder_information", this.responderInformation);
+            this.extension.put("responderInformation", this.responderInformation);
             StringBuilder stringBuilder = new StringBuilder();
             for (JSONObject jsonObject : this.responderInformation) {
                 stringBuilder.append(JSONObject.toJSONString(jsonObject)).append(";");
@@ -57,7 +67,7 @@ public class IsakmpExtension implements Serializable {
             this.responderInformationStr = stringBuilder.toString();
         }
         if (null != this.initiatorVid && !this.initiatorVid.isEmpty()) {
-            this.extension.put("initiator_vid", this.initiatorVid);
+            this.extension.put("initiatorVid", this.initiatorVid);
             StringBuilder stringBuilder = new StringBuilder();
             for (JSONObject jsonObject : this.initiatorVid) {
                 stringBuilder.append(JSONObject.toJSONString(jsonObject)).append(";");
@@ -66,7 +76,7 @@ public class IsakmpExtension implements Serializable {
             this.initiatorVidStr = stringBuilder.toString();
         }
         if (null != this.responderVid && !this.responderVid.isEmpty()) {
-            this.extension.put("responder_vid", this.responderVid);
+            this.extension.put("responderVid", this.responderVid);
             StringBuilder stringBuilder = new StringBuilder();
             for (JSONObject jsonObject : this.responderVid) {
                 stringBuilder.append(JSONObject.toJSONString(jsonObject)).append(";");

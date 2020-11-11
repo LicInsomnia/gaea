@@ -16,15 +16,19 @@ public class IsakmpData extends AbstractSrcData {
     public void adjust() {
         super.adjust();
         if (this.dataType  == 1){
-            isakmpExtension.adjust(this.dataType == -1, this.protocol, this.serverPort);
+            isakmpExtension.adjust(true, this.protocol, this.serverPort);
         }
     }
 
     @Override
     public String toCsv(char splitChar) {
-        String extension = null;
+        JSONObject extension = null;
         if (null != this.isakmpExtension) {
-            extension = JSONObject.toJSONString(this.isakmpExtension);
+            extension = (JSONObject) JSONObject.toJSON(this.isakmpExtension);
+            JSONObject jsonObject = this.isakmpExtension.getExtension();
+            if (null != jsonObject) {
+                extension.putAll(jsonObject);
+            }
         }
         Object[] join = new Object[]{super.toCsv(splitChar),
                 this.malformedUpPayload, this.malformedDownPayload,
