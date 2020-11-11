@@ -195,9 +195,9 @@ public class HeadConst {
         public final static String PROTOCOL = "protocol";
         public final static String PRONAME = "proName";
         public final static String CLIENT_IP = "clientIp";
-        public final static String CLIENT_IP_N = "clientIp_n";
+        public final static String CLIENT_IP_N = "clientIpN";
         public final static String SERVER_IP = "serverIp";
-        public final static String SERVER_IP_N = "serverIp_n";
+        public final static String SERVER_IP_N = "serverIpN";
         public final static String CLIENT_PORT = "clientPort";
         public final static String SERVER_PORT = "serverPort";
         public final static String CLIENT_IP_OUTER = "clientIpOuter";

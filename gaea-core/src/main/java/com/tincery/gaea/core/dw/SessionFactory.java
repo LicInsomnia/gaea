@@ -123,7 +123,9 @@ public class SessionFactory {
                 .setDuration(csvRow.getLong(HeadConst.FIELD.DURATION))
                 .setSyn(csvRow.getBoolean(HeadConst.FIELD.SYN_FLAG))
                 .setFin(csvRow.getBoolean(HeadConst.FIELD.FIN_FLAG));
-        data.setDataSource(category);
+        data.setDataSource(category)
+                .setClientIpN(csvRow.getLong(HeadConst.FIELD.CLIENT_IP_N))
+                .setServerIpN(csvRow.getLong(HeadConst.FIELD.SERVER_IP_N));
         String caseTags = csvRow.get(HeadConst.FIELD.CASE_TAGS);
         if (null != caseTags && !caseTags.isEmpty()) {
             data.setCaseTags(new HashSet<>(Arrays.asList(caseTags.split(";"))));

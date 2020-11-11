@@ -19,6 +19,11 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
 
     private String id;
     /**
+     * 会话双方十进制IP地址
+     */
+    private Long clientIpN;
+    private Long serverIpN;
+    /**
      * 会话双方地理位置信息
      */
     private Location clientLocation;
