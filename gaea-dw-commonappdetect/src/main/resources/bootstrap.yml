@@ -1,10 +1,10 @@
 server:
   port: 11112
 node:
-  name: insomnia
+  name: gxz
 spring:
   application:
-    name: dw_reorganization
+    name: dw-commonappdetect
   cloud:
     nacos:
       config:
@@ -17,8 +17,9 @@ spring:
             group: GAEA_GROUP
           - dataId: common_config.yml
             group: GAEA_GROUP
+
   profiles:
-    active: insomnia
+    active: gxz
 logging:
   level:
     root: info

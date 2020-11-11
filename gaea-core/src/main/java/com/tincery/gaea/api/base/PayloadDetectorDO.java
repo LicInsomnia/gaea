@@ -90,7 +90,7 @@ public class PayloadDetectorDO extends SimpleBaseDO {
         @Field("clientport")
         private Integer clientPort;
 
-        private List<KV> extension;
+        private List<KV<String,Object>> extension;
 
         /****
          * 匹配载荷内容 如果规则中没有 则直接通过
@@ -119,10 +119,10 @@ public class PayloadDetectorDO extends SimpleBaseDO {
         }
 
         private boolean hitExtension(Map<String, Object> extension) {
-            for (KV kv : this.extension) {
+            for (KV<String,Object> kv : this.extension) {
                 String key = kv.getKey();
                 String value = extension.getOrDefault(key, "").toString();
-                if (!value.contains(kv.getValue())) {
+                if (!value.contains(kv.getValue().toString())) {
                     return false;
                 }
             }

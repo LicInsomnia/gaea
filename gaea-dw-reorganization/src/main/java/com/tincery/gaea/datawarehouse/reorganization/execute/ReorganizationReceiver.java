@@ -15,9 +15,11 @@ import com.tincery.gaea.core.dw.DwProperties;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -65,38 +67,48 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     }
 
     @Override
+    @Resource(name = "sysMongoTemplate")
+    public void setMongoTemplate(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+
+    @Override
     public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
         this.impSessionFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("impsession") +
                 "/impsession_" + System.currentTimeMillis() + ".json");
-        this.assetFileWriter = new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
+        this.assetFileWriter =
+                new FileWriter(NodeInfo.getDataWarehouseJsonPathByCategory("asset") + "/asset_" + System.currentTimeMillis() + ".json");
         log.info("本次处理开始时间：{}，结束时间：{}", startTime, endTime);
         List<Pair<String, String>> csvPaths = getCsvDataSet(startTime, endTime);
         long st = Instant.now().toEpochMilli();
         log.info("开始解析CSV数据...");
-        List<List<Pair<String, String>>> partition = Lists.partition(csvPaths, csvPaths.size() / this.dwProperties.getExecutor() + 1);
+        List<List<Pair<String, String>>> partition = Lists.partition(csvPaths,
+                csvPaths.size() / this.dwProperties.getExecutor() + 1);
         List<Future<ReorganizationDataWareGroup>> futures = new ArrayList<>();
         for (List<Pair<String, String>> pairs : partition) {
             futures.add(executorService.submit(new ReorganizationProducer(pairs)));
         }
-        try{
+        try {
             for (Future<ReorganizationDataWareGroup> future : futures) {
                 ReorganizationDataWareGroup reorganizationDataWareGroup = future.get();
                 List<AbstractDataWarehouseData> assetDataList = reorganizationDataWareGroup.getAssetDataList();
-                List<AbstractDataWarehouseData> impsessionDataList = reorganizationDataWareGroup.getImpsessionDataList();
-                if(!CollectionUtils.isEmpty(assetDataList)){
-                    assetDataList.forEach(assetData->{
+                List<AbstractDataWarehouseData> impsessionDataList =
+                        reorganizationDataWareGroup.getImpsessionDataList();
+                if (!CollectionUtils.isEmpty(assetDataList)) {
+                    assetDataList.forEach(assetData -> {
                         assetFileWriter.write(JSONObject.toJSONString(assetData));
                     });
-                    assetCount+= assetDataList.size();
+                    assetCount += assetDataList.size();
                 }
-                if(!CollectionUtils.isEmpty(impsessionDataList)){
-                    impsessionDataList.forEach(impsessionData->{
+                if (!CollectionUtils.isEmpty(impsessionDataList)) {
+                    impsessionDataList.forEach(impsessionData -> {
                         impSessionFileWriter.write(JSONObject.toJSONString(impsessionData));
                     });
-                    impSessionCount+= assetDataList.size();
+                    impSessionCount += assetDataList.size();
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("解析过程中出现问题");
         }
         free();
@@ -138,25 +150,25 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
 
         public ReorganizationProducer(List<Pair<String, String>> csvPaths) {
             this.csvPaths = csvPaths;
-            result =  ReorganizationDataWareGroup.init();
+            result = ReorganizationDataWareGroup.init();
         }
 
         @Override
         public ReorganizationDataWareGroup call() throws Exception {
-                for (Pair<String, String> csvPath : csvPaths) {
-                    CsvReader csvReader;
-                    try {
-                        csvReader = CsvReader.builder().file(csvPath.getValue()).build();
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        continue;
-                    }
-                    analysis(csvPath.getKey(), csvReader);
+            for (Pair<String, String> csvPath : csvPaths) {
+                CsvReader csvReader;
+                try {
+                    csvReader = CsvReader.builder().file(csvPath.getValue()).build();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    continue;
                 }
+                analysis(csvPath.getKey(), csvReader);
+            }
             return result;
         }
 
-        public void analysis(String sessionCategory, CsvReader csvReader){
+        public void analysis(String sessionCategory, CsvReader csvReader) {
             CsvRow csvRow;
             while ((csvRow = csvReader.nextRow()) != null) {
                 if (ReorganizationReceiver.this.impSessionCsvFilter.filter(csvRow)) {

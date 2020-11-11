@@ -30,17 +30,17 @@
         <module>gaea-src-espandah</module>
 
         <module>gaea-dw-reorganization</module>
+        <module>gaea-dw-commonappdetect</module>
 
-        <module>gaea-ods-commonsearch</module>
         <module>gaea-ods-httpanalysis</module>
 
         <module>gaea-dm-alarmcombine</module>
         <module>gaea-dm-asset</module>
-        <module>gaea-dm-sessionloader</module>
 
         <module>gaea-support-messagecomsumer</module>
         <module>gaea-support-mongostash</module>
         <module>gaea-support-pack</module>
+        <module>gaea-dm-sessionadjust</module>
     </modules>
 
 

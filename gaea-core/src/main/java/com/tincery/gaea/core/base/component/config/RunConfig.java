@@ -2,7 +2,9 @@ package com.tincery.gaea.core.base.component.config;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.tincery.gaea.core.base.tool.util.DateUtils;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -17,6 +19,11 @@ public class RunConfig {
 
     public static void init(Map<String, Object> configData) {
         RUN_CONFIG = new JSONObject(configData);
+    }
+
+
+    public static void replace(String key, Object value){
+        RUN_CONFIG.put(key,value);
     }
 
     public static <T> T get(BiFunction<String, JSONObject, T> function, String key) {
@@ -37,6 +44,10 @@ public class RunConfig {
 
     public static Date getDate(String key) {
         return RUN_CONFIG.getDate(key);
+    }
+    public static LocalDateTime getLocalDateTime(String key){
+        Date date = getDate(key);
+        return DateUtils.Date2LocalDateTime(date);
     }
 
     public static Double getDouble(String key) {
