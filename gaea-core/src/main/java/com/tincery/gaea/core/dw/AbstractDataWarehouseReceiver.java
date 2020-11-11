@@ -1,6 +1,7 @@
 package com.tincery.gaea.core.dw;
 
 import com.tincery.gaea.core.base.component.Receiver;
+import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.config.RunConfig;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -11,6 +12,9 @@ import com.tincery.gaea.core.base.tool.util.DateUtils;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -33,7 +37,7 @@ import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
 @Slf4j
 public abstract class AbstractDataWarehouseReceiver implements Receiver {
 
-    private MongoTemplate mongoTemplate;
+    protected MongoTemplate mongoTemplate;
 
     protected static ThreadPoolExecutor executorService;
 
@@ -52,6 +56,8 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
 
     public abstract void setProperties(DwProperties dwProperties);
 
+    public abstract void setMongoTemplate(MongoTemplate mongoTemplate);
+
     private List<CsvFilter> csvFilterList;
 
     @Override
@@ -60,7 +66,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
             LocalDateTime now = LocalDateTime.now();
             log.info("消息传递时间：{}；执行时间：{}", DateUtils.format(textMessage.getJMSTimestamp()), now.format(DateUtils.DEFAULT_DATE_PATTERN));
             // 获取run_config中的startTime（读CSV的开始时间）
-            LocalDateTime startTime = DateUtils.Date2LocalDateTime(RunConfig.getDate("startTime"));
+            LocalDateTime startTime = RunConfig.getLocalDateTime("startTime");;
             LocalDateTime dwTime = now.plusMinutes(-1 * this.dwProperties.getDelayExecutionTime());
             if (dwTime.compareTo(startTime) <= 0) {
                 log.info("执行时间临近当前时间{}分钟，本次执行跳出", this.dwProperties.getDelayExecutionTime());
@@ -72,9 +78,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
                 endTime = dwTime;
             }
             dataWarehouseAnalysis(startTime, endTime);
-//            runConfig.replace("startTime", endTime);
-//            DataWarehouseRunController.reWriteRunconfig(ApplicationInfo.getCategory(), runConfig);
-//            log.info("更新[{}]运行配置：{}", ApplicationInfo.getCategory(), runConfig);
+            reWirteStartTime(endTime);
         } catch (JMSException e) {
             e.printStackTrace();
         }
@@ -166,14 +170,6 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         return list;
     }
 
-    public void free() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void analysis(String sessionCategory, CsvReader csvReader) {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * 获取csv文件名的集合 集合中一组pair中key：sessionCategory;value：文件名 同一个sessionCategory可能对应多组文件 例: [ {key1:value1} {key1:value2}
      * {key2:value3} ]
@@ -186,6 +182,22 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         }
         this.csvFilterList.addAll(Arrays.asList(csvFilterList));
         return this.csvFilterList;
+    }
+
+    public void free() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void analysis(String sessionCategory, CsvReader csvReader) {
+        throw new UnsupportedOperationException();
+    }
+
+
+    private void reWirteStartTime(LocalDateTime newStartTime){
+        Query query = new Query(Criteria.where("_id").is(NodeInfo.getNodeName()));
+        Update update = new Update();
+        update.set(ApplicationInfo.getCategory() +".startTime",newStartTime);
+        this.mongoTemplate.updateFirst(query,update,"run_config");
     }
 
 }
