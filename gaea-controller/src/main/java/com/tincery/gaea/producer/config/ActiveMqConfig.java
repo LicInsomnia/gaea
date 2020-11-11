@@ -96,5 +96,12 @@ public class ActiveMqConfig {
     }
 
     @Bean(name = QueueNames.DM_ALARMCOMBINE)
-    public Queue getAlarmCombine(){return new ActiveMQQueue(QueueNames.DM_ALARMCOMBINE);}
+    public Queue getAlarmCombine() {
+        return new ActiveMQQueue(QueueNames.DM_ALARMCOMBINE);
+    }
+
+    @Bean(name = QueueNames.DM_ASSET)
+    public Queue getAsset() {
+        return new ActiveMQQueue(QueueNames.DM_ASSET);
+    }
 }

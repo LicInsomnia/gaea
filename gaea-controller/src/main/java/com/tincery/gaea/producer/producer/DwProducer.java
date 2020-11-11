@@ -1,6 +1,5 @@
 package com.tincery.gaea.producer.producer;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsMessagingTemplate;
@@ -8,16 +7,18 @@ import org.springframework.stereotype.Component;
 
 import javax.jms.JMSException;
 import javax.jms.Queue;
+import java.io.File;
 
+/**
+ * @author gongxuanzhang
+ */
 @Component
 @Slf4j
-@Setter
-public class DwProducer {
+public class DwProducer extends AbstractProducer {
 
-    @Autowired
-    JmsMessagingTemplate jmsMessagingTemplate;
 
-    public void producer(Queue queue) {
+    @Override
+    public void producer(Queue queue, String category, String extension) {
         jmsMessagingTemplate.convertAndSend(queue, "苍叔牛逼");
         try {
             log.info("提交了一条dw.{}任务", queue.getQueueName());
@@ -26,4 +27,14 @@ public class DwProducer {
         }
     }
 
+    @Override
+    public File getRootFile(String category, String extension) {
+        return null;
+    }
+
+    @Override
+    @Autowired
+    public void setJmsMessagingTemplate(JmsMessagingTemplate jmsMessagingTemplate) {
+        this.jmsMessagingTemplate = jmsMessagingTemplate;
+    }
 }

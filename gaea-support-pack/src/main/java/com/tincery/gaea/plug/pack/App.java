@@ -20,7 +20,7 @@ public class App {
             "gaea-src-openvpn",
             "gaea-src-dns",
             "gaea-src-http",
-            
+
             "gaea-src-ssh",
             "gaea-src-ftpandtelnet",
             "gaea-src-pptpandl2tp",
@@ -29,7 +29,8 @@ public class App {
             "gaea-src-wechat",
             "gaea-ods-httpanalysis",
 //            "gaea-src-qq",
-            "gaea-dw-reorganization"
+            "gaea-dw-reorganization",
+            "gaea-dm-asset"
     };
     private static String gaeaPath;
 

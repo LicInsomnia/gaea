@@ -1,6 +1,6 @@
-package com.tincery.gaea.api.dm;
+package com.tincery.gaea.api.base;
 
-import com.tincery.gaea.api.base.IpHitable;
+import com.tincery.gaea.api.dm.ProtocolGroup;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Getter;
 import lombok.Setter;
