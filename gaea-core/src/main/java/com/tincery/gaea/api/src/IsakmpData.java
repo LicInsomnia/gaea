@@ -15,7 +15,9 @@ public class IsakmpData extends AbstractSrcData {
     @Override
     public void adjust() {
         super.adjust();
-        isakmpExtension.adjust(this.dataType == -1, this.protocol, this.serverPort);
+        if (this.dataType  == 1){
+            isakmpExtension.adjust(this.dataType == -1, this.protocol, this.serverPort);
+        }
     }
 
     @Override
@@ -30,5 +32,6 @@ public class IsakmpData extends AbstractSrcData {
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }
+
 
 }

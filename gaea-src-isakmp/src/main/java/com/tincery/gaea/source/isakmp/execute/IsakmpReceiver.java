@@ -1,6 +1,7 @@
 package com.tincery.gaea.source.isakmp.execute;
 
 import com.tincery.gaea.api.src.IsakmpData;
+import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**

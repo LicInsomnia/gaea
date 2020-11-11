@@ -10,10 +10,7 @@ import com.tincery.gaea.core.src.SrcLineAnalysis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author gongxuanzhang
@@ -30,35 +27,46 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
      * 14.serverPort   15.clientPort    16.source   17.ruleName 18.imsi 19.imei 20.msisdn
      * 21.outclientip   22.outserverip  23.outclientport    24.outserverport    25.outproto
      * 26.userid    27.serverid 28.ismac2outer  29.upPayload    30.downPayload
+     *
+     * data1: ~ datan:
+     * 装填逻辑：
+     * data1 == D2S|S2D  data2:Is_first:1  (第一种逻辑)
+     * if element[30]位置 结尾是0  那么装载common
      **/
     @Override
     public IsakmpData pack(String line) throws Exception {
         IsakmpData isakmpData = new IsakmpData();
         String[] elements = StringUtils.FileLineSplit(line);
-        boolean s2dFlag = true;
+        Boolean s2dFlag = null;
         isakmpData.setDataType(Integer.parseInt(elements[8]));
         setFixProperties(elements, isakmpData);
-        if (isakmpData.getDataType() == -1) {
-            this.isakmpLineSupport.set7TupleAndFlow(s2dFlag, elements[10], elements[11], elements[12], elements[13],
-                    elements[14], elements[15], elements[4], elements[5], elements[6], elements[7], isakmpData
-            );
-            isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
-            this.isakmpLineSupport.setMalformedPayload(elements[29], elements[30], isakmpData);
-            return isakmpData;
-        }
-        if (!elements[30].startsWith("Is_first")) {
-            throw new Exception("Is_first字段标记错误");
-        }
-        if (elements[30].endsWith("0")) {
-            return null;
-        }
         if ("D2S".equals(elements[29])) {
             s2dFlag = false;
+        }else if (Objects.equals("S2D",elements[29])){
+            s2dFlag = true;
         }
-        this.isakmpLineSupport.set7TupleAndFlow(s2dFlag, elements[10], elements[11], elements[12], elements[13],
-                elements[14], elements[15], elements[4], elements[5], elements[6], elements[7], isakmpData
-        );
-        isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
+        if (!elements[30].startsWith("Is_first") && isakmpData.getDataType() != -1) {
+            throw new Exception("Is_first字段标记错误");
+        }
+        //TODO 调换这个的位置
+
+        if (isakmpData.getDataType() == -1){
+            s2dFlag = getS2DFlag(s2dFlag,elements);
+            fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
+            isakmpData.setIsakmpExtension(new IsakmpExtension());
+            return isakmpData;
+        }
+
+        if (elements[30].endsWith("0")) {
+            /*使用第二种判断方式 装填common后直接返回*/
+            s2dFlag = getS2DFlag(s2dFlag,elements);
+            fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
+            isakmpData.setIsakmpExtension(new IsakmpExtension());
+            isakmpData.setDataType(-2);
+            return isakmpData;
+        }
+        /*根据s2dFlag 判断用什么装填方式*/
+        fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
         IsakmpExtension isakmpExtension = new IsakmpExtension();
         int version = Integer.parseInt(elements[33].split(":")[1].trim());
         switch (version) {
@@ -76,6 +84,70 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         return isakmpData;
     }
 
+    private Boolean getS2DFlag(Boolean s2dFlag, String[] elements) {
+        if (Objects.nonNull(s2dFlag)){
+            return s2dFlag;
+        }
+        s2dFlag = secondTypeS2DFlag(elements,Integer.parseInt(elements[8]));
+        if (Objects.nonNull(s2dFlag)){
+            return s2dFlag;
+        }
+        try {
+            s2dFlag = this.isakmpLineSupport.sureisD2SServerByIsInnerIp(elements[12], elements[13], null);
+        }catch (Exception e){
+            s2dFlag = this.isakmpLineSupport.sureisD2SServerByComparePort(Integer.parseInt(elements[14]), Integer.parseInt(elements[15]));
+        }
+        if (Objects.isNull(s2dFlag)){
+            s2dFlag = this.isakmpLineSupport.sureisD2SServerByComparePort(Integer.parseInt(elements[14]), Integer.parseInt(elements[15]));
+        }
+        return s2dFlag;
+    }
+
+    private Boolean secondTypeS2DFlag(String[] elements,Integer dataType){
+        if (dataType == -1){
+            return null;
+        }
+        int srcPort = Integer.parseInt(elements[14]);
+        int dstPort = Integer.parseInt(elements[15]);
+        if (srcPort == 500 && dstPort != 500){
+            return false;
+        }else if (srcPort != 500 && dstPort == 500){
+            return true;
+        }else if (srcPort == 4500 && dstPort != 4500){
+            return false;
+        }else if (srcPort != 4500 && dstPort == 4500){
+            return true;
+        }
+        return null;
+    }
+
+    private void fixCommonByS2DFlag(IsakmpData isakmpData,String[] elements,Boolean s2dFlag){
+        this.isakmpLineSupport.set7TupleAndFlow(s2dFlag, elements[10], elements[11], elements[12], elements[13],
+                elements[14], elements[15], elements[4], elements[5], elements[6], elements[7], isakmpData
+        );
+        isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
+
+        if (s2dFlag){
+            if (isakmpData.getDataType() == -1){
+                this.isakmpLineSupport.setMalformedPayload(elements[30],elements[29],  isakmpData);
+            }
+
+            this.isakmpLineSupport.set5TupleOuter(elements[22],elements[21],  elements[24], elements[23], elements[25], isakmpData);
+            isakmpData.setUserId(elements[27])
+                    .setServerId(elements[26]);
+        }else{
+            if (isakmpData.getDataType() == -1){
+                this.isakmpLineSupport.setMalformedPayload(elements[29],elements[30],  isakmpData);
+            }
+            this.isakmpLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], isakmpData);
+            isakmpData.setUserId(elements[26])
+                    .setServerId(elements[27]);
+        }
+
+
+
+    }
+
     private void setFixProperties(String[] elements, IsakmpData isakmpData) {
         long capTimeN = Long.parseLong(elements[2]);
         this.isakmpLineSupport.setTargetName(elements[17], isakmpData);
@@ -85,17 +157,18 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                 .setImsi(SourceFieldUtils.parseStringStr(elements[18]))
                 .setImei(SourceFieldUtils.parseStringStr(elements[19]))
                 .setMsisdn(SourceFieldUtils.parseStringStr(elements[20]))
-                .setUserId(elements[26])
-                .setServerId(elements[27])
                 .setSyn(SourceFieldUtils.parseBooleanStr(elements[0]))
                 .setFin(SourceFieldUtils.parseBooleanStr(elements[1]));
         isakmpData.setMacOuter(SourceFieldUtils.parseBooleanStr(elements[28]));
-        this.isakmpLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], isakmpData);
+
     }
 
     private void setVersion1(String[] elements, IsakmpExtension isakmpExtension) {
-        String sdFlag = elements[29];
         boolean s2dFlag = true;
+        String sdFlag = elements[29];
+        if (!Objects.equals(sdFlag,"S2D")){
+            s2dFlag = false;
+        }
         JSONObject jsonObject = new JSONObject();
         List<String> messageList = new ArrayList<>();
         Set<JSONObject> initiatorInformation = new LinkedHashSet<>();
@@ -103,7 +176,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         Set<JSONObject> initiatorVid = new LinkedHashSet<>();
         Set<JSONObject> responderVid = new LinkedHashSet<>();
         for (int i = 34; i < elements.length; i++) {
-            if (elements[i].isEmpty()) {
+             if (elements[i].isEmpty()) {
                 continue;
             }
             if (("S2D".equals(elements[i]) || "D2S".equals(elements[i])) && !elements[i].equals(sdFlag)) {
@@ -119,7 +192,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             if (key.isEmpty() || value.isEmpty()) {
                 continue;
             }
-            if (key.equals("Exchange Type")) {
+            if (key.equals("exchange_type")) {
                 if (s2dFlag) {
                     messageList.add("initiator:" + value);
                 } else {
@@ -143,7 +216,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                         }
                     }
                     break;
-                case "Transform":
+                case "transform":
                     if (jsonObject.isEmpty()) {
                         continue;
                     }
@@ -155,7 +228,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                         jsonObject = new JSONObject();
                     }
                     break;
-                case "Vendor ID":
+                case "vendor_id":
                     JSONObject json = new JSONObject();
                     if (s2dFlag) {
                         json.put("Vendor ID", getVid(value));
