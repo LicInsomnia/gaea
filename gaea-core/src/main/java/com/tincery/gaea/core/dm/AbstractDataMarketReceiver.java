@@ -1,6 +1,7 @@
 package com.tincery.gaea.core.dm;
 
 import com.tincery.gaea.core.base.component.Receiver;
+import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,10 +30,21 @@ public abstract class AbstractDataMarketReceiver implements Receiver {
         }
         List<String> allLines = FileUtils.readLine(file);
         dmFileAnalysis(allLines);
-        /* 删除原始文件 */
-        file.delete();
     }
 
     protected abstract void dmFileAnalysis(List<String> lines);
+
+    protected void freeFile(File file) {
+        /* 删除或备份原始文件 */
+        if (this.dmProperties.isBack()) {
+            String src = file.getAbsolutePath();
+            String dst = ApplicationInfo.getDataMarketBakByCategory() + "/" + file.getName();
+            FileUtils.fileMove(src, dst);
+        } else {
+            if (!file.delete()) {
+                log.error("删除文件[{}]失败", file.getAbsolutePath());
+            }
+        }
+    }
 
 }

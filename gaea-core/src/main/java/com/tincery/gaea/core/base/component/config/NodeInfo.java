@@ -208,6 +208,12 @@ public class NodeInfo {
         return path;
     }
 
+    public static String getDataMarketBakByCategory(String category) {
+        String path = getBak() + "/dataMarket/" + category + "/";
+        FileUtils.checkPath(path);
+        return path;
+    }
+
     public static String getError() {
         return NODE_MAP.get(ERROR);
     }
