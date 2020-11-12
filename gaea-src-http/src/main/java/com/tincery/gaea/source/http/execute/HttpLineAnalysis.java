@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.xml.bind.DatatypeConverter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -71,7 +72,8 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         } else {
             text = split[2];
         }
-        byte[] value = text.getBytes();
+        byte[] value = text.getBytes(StandardCharsets.ISO_8859_1);
+
 
         /*
          * 设置httpData的key  和 common
@@ -225,11 +227,10 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         }
         if (httpData.getMetas().size() > index) {
             meta = httpData.getMetas().get(index);
-            meta.setHasResponse(httpData.getIsResponse());
         } else {
             meta = new HttpMeta();
-            meta.setHasResponse(httpData.getIsResponse());
         }
+        meta.setHasResponse(httpData.getIsResponse());
         if (text.length() < 4 || !getLegelHeader().contains(text.substring(0, 4))) {
             meta.setContent(text, httpData.getIsResponse());
             meta.addMethod("", false);

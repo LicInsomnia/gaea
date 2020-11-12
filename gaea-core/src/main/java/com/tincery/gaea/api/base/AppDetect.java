@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
@@ -14,13 +16,13 @@ public class AppDetect extends SimpleBaseDO {
     @Id
     private String id;
 
-    /**条件*/
+    /**条件栈*/
     private List<SearchCondition> conditions;
 
     /**描述*/
     private String description;
 
-    /**规则栈*/
+    /**规则*/
     private List<SearchRule> rules;
 
     /**应用信息*/
@@ -31,6 +33,16 @@ public class AppDetect extends SimpleBaseDO {
 
     /**距离时间*/
     private long duration;
+
+
+    public int getRuleCount(){
+        return rules.size();
+    }
+
+    public Set<String> getCategorySet(){
+        return rules.stream().map(SearchRule::getMatch).map(KV::getKey).collect(Collectors.toSet());
+    }
+
 
 
     @Data

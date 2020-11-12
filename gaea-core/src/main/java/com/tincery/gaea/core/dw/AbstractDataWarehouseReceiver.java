@@ -201,4 +201,5 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         RunConfig.replace("startTime", DateUtils.LocalDateTime2Date(newStartTime));
     }
 
+
 }

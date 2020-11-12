@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,9 +81,14 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
 
     @Override
     protected List<String> getLines(File file) {
-        return FileUtils.readByteArray(file).entrySet().stream().map(entry -> entry.getKey() +
+        long start = System.currentTimeMillis();
+        List<String> collect = FileUtils.readByteArray(file).entrySet().stream().map(entry -> entry.getKey() +
                 HttpConstant.HTTP_CONSTANT + entry.getValue().getKey() +
-                HttpConstant.HTTP_CONSTANT + new String(entry.getValue().getValue())).collect(Collectors.toList());
+                HttpConstant.HTTP_CONSTANT + new String(entry.getValue().getValue(), StandardCharsets.ISO_8859_1) +
+                HttpConstant.HTTP_CONSTANT + entry.getValue().getValue().length).collect(Collectors.toList());
+        long end = System.currentTimeMillis();
+        System.out.println(end-start + "读取文件" );
+        return collect;
     }
 
     /**
