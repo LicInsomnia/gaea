@@ -30,6 +30,7 @@ public abstract class AbstractDataMarketReceiver implements Receiver {
         }
         List<String> allLines = FileUtils.readLine(file);
         dmFileAnalysis(allLines);
+        freeFile(file);
     }
 
     protected abstract void dmFileAnalysis(List<String> lines);
