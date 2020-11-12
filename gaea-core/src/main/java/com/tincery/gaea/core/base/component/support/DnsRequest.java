@@ -7,7 +7,6 @@ import com.tincery.gaea.api.src.DnsData;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.config.RunConfig;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
-import com.tincery.gaea.core.base.tool.util.FileReader;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.starter.base.InitializationRequired;
@@ -66,7 +65,7 @@ public class DnsRequest implements InitializationRequired {
         for (File file : files) {
             long time = Long.parseLong(file.getName().split("\\.")[0].split("_")[1]);
             if (time > startTimeLong) {
-                List<String> lines = FileReader.readLine(file);
+                List<String> lines = FileUtils.readLine(file);
                 List<DnsRequestBO> list = new ArrayList<>();
                 for (String line : lines) {
                     DnsRequestBO dnsRequestBO = JSONObject.parseObject(line, DnsRequestBO.class);
