@@ -48,8 +48,7 @@ public class DnsRequest implements InitializationRequired {
 
     @Override
     public void init() {
-        this.dnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(CATEGORY);
-        FileUtils.checkPath(this.dnsRequestPath);
+        initializePath();
         long startTime = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
         List<File> files = FileUtils.searchFiles(dnsRequestPath, CATEGORY, null, ".json", 0);
         for (File file : files) {
@@ -114,6 +113,11 @@ public class DnsRequest implements InitializationRequired {
         this.dnsRequestMap.clear();
         this.minTime = Long.MAX_VALUE;
         this.empty = true;
+    }
+
+    private void initializePath() {
+        this.dnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(CATEGORY);
+        FileUtils.checkPath(this.dnsRequestPath);
     }
 
 }

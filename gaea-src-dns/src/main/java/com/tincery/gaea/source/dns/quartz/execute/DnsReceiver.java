@@ -98,11 +98,11 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
         // loadGroup();
         registryRules(passRule);
         registryRules(alarmRule);
+        this.dnsRequest.init();
     }
 
     public void registryRules(Rule rule) {
         RuleRegistry.getInstance().putRule(rule);
     }
-
 
 }

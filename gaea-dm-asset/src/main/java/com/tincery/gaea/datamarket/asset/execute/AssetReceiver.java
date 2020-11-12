@@ -261,5 +261,4 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         }
     }
 
-
 }

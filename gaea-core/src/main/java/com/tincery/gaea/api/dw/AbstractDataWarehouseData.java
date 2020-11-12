@@ -2,16 +2,12 @@ package com.tincery.gaea.api.dw;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AbstractMetaData;
-import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.DnsRequestBO;
 import com.tincery.gaea.api.base.Location;
 import com.tincery.gaea.api.src.extension.*;
 import com.tincery.gaea.core.dw.MergeAble;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Map;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -33,10 +29,6 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
      */
     protected String tag;
     protected String keyWord;
-    protected ApplicationInformationBO application;
-    protected Map<String, ApplicationInformationBO> applicationElements;
-    protected Set<String> appCheckModes;
-    protected String checkMode;
     /**
      * 会话标签，标记协议名或malformed
      */

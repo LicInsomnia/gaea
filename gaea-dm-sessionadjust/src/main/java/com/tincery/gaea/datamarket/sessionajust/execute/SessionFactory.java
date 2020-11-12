@@ -13,7 +13,6 @@ public class SessionFactory {
     @Autowired
     private DnsRequest dnsRequest;
 
-
     public SessionMergeData adjustSessionData(AbstractDataWarehouseData data) {
         return new SessionMergeData();
     }
