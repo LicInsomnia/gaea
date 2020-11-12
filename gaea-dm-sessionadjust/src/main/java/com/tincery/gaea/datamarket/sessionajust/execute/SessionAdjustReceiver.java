@@ -53,13 +53,13 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
         } else {
             // 多线程执行
             List<List<String>> partitions = Lists.partition(allLines, allLines.size() / executor + 1);
-            List<Future<SessionMergeResult>> futures = new ArrayList<>();
+            List<Future<List<SessionMergeData>>> futures = new ArrayList<>();
             for (List<String> lines : partitions) {
                 futures.add(executorService.submit(new SessionMergeProducer(lines)));
             }
-            for (Future<SessionMergeResult> future : futures) {
+            for (Future<List<SessionMergeData>> future : futures) {
                 try {
-                    sessionMergeDataList.addAll(future.get().list);
+                    sessionMergeDataList.addAll(future.get());
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
@@ -81,7 +81,7 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
     /**
      * @author Insomnia
      */
-    private static class SessionMergeProducer implements Callable<SessionMergeResult> {
+    private static class SessionMergeProducer implements Callable<List<SessionMergeData>> {
 
         final private List<String> lines;
 
@@ -94,28 +94,16 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
         }
 
         @Override
-        public SessionMergeResult call() {
+        public List<SessionMergeData> call() {
             List<SessionMergeData> list = new ArrayList<>();
             for (String line : lines) {
                 AbstractDataWarehouseData data = JSON.parseObject(line, AbstractDataWarehouseData.class);
                 list.add(producer(data));
             }
-            return new SessionMergeResult(list);
+            return list;
         }
-
     }
 
-    /**
-     * @author Insomnia
-     */
-    private static class SessionMergeResult {
 
-        private final List<SessionMergeData> list;
-
-        public SessionMergeResult(List<SessionMergeData> list) {
-            this.list = list;
-        }
-
-    }
 
 }
