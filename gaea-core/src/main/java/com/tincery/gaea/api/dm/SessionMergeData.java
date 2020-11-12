@@ -6,4 +6,6 @@ import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
  * @author Insomnia
  */
 public class SessionMergeData extends AbstractDataWarehouseData {
+
+
 }

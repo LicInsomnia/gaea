@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.dm.SessionMergeData;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
-import com.tincery.gaea.core.base.component.support.DnsRequest;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,7 @@ import java.util.concurrent.*;
 public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
 
     @Autowired
-    private DnsRequest dnsRequest;
+    private SessionFactory sessionFactory;
 
     protected static ThreadPoolExecutor executorService;
 
@@ -48,14 +47,14 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
             // 单线程执行
             for (String line : allLines) {
                 AbstractDataWarehouseData data = JSON.parseObject(line, AbstractDataWarehouseData.class);
-                sessionMergeDataList.add(SessionMergeProducer.producer(data));
+                sessionMergeDataList.add(this.sessionFactory.adjustSessionData(data));
             }
         } else {
             // 多线程执行
             List<List<String>> partitions = Lists.partition(allLines, allLines.size() / executor + 1);
             List<Future<SessionMergeResult>> futures = new ArrayList<>();
             for (List<String> lines : partitions) {
-                futures.add(executorService.submit(new SessionMergeProducer(lines)));
+                futures.add(executorService.submit(new SessionMergeProducer(lines, this.sessionFactory)));
             }
             for (Future<SessionMergeResult> future : futures) {
                 try {
@@ -77,20 +76,17 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
 
     }
 
-
     /**
      * @author Insomnia
      */
     private static class SessionMergeProducer implements Callable<SessionMergeResult> {
 
         final private List<String> lines;
+        final private SessionFactory sessionFactory;
 
-        public SessionMergeProducer(List<String> lines) {
+        public SessionMergeProducer(List<String> lines, SessionFactory sessionFactory) {
             this.lines = lines;
-        }
-
-        public static SessionMergeData producer(AbstractDataWarehouseData data) {
-            return new SessionMergeData();
+            this.sessionFactory = sessionFactory;
         }
 
         @Override
@@ -98,7 +94,7 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
             List<SessionMergeData> list = new ArrayList<>();
             for (String line : lines) {
                 AbstractDataWarehouseData data = JSON.parseObject(line, AbstractDataWarehouseData.class);
-                list.add(producer(data));
+                list.add(sessionFactory.adjustSessionData(data));
             }
             return new SessionMergeResult(list);
         }
