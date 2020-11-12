@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @author gxz gongxuanzhang@foxmail.com Src层通用配置
+ * @author gxz gongxuanzhang@foxmail.com Dw层通用配置
  **/
 @Setter
 @Getter

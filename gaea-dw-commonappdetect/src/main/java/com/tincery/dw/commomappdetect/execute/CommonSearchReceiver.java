@@ -11,7 +11,12 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
@@ -23,12 +28,26 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
     @Autowired
     private AppDetectDao appDetectDao;
 
+    private Set<String> categorySet;
+
     @Override
     public void init() {
         List<AppDetect> all = appDetectDao.findAll();
+        // 根据总步骤分组
+        Map<Integer, List<AppDetect>> collect = all.stream().collect(Collectors.groupingBy(AppDetect::getRuleCount));
+        // 根据category和步骤分组
+
+        int index = 1;
+        Map<String,List<String>> map = new HashMap<>();
+
+
+
+        Set<String> categorySet = new HashSet<>();
         for (AppDetect appDetect : all) {
+            categorySet.addAll(appDetect.getCategorySet());
 
         }
+        this.categorySet = categorySet;
     }
 
     @Override
