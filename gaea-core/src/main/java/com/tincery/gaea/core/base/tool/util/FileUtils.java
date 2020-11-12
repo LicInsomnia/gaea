@@ -8,19 +8,10 @@ import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -43,7 +34,19 @@ public class FileUtils {
     private FileUtils() {
     }
 
-
+    public static File getLastFile(String pathName, String prefix, String contains, String extension) {
+        File path = new File(pathName);
+        if (!path.exists() || !path.isDirectory()) {
+            return null;
+        }
+        File[] files = path.listFiles((dir, name) -> StringUtils.checkStr(name, prefix, contains, extension));
+        if (null == files || files.length == 0) {
+            return null;
+        }
+        List<File> fileList = Arrays.asList(files);
+        Collections.sort(fileList);
+        return fileList.get(0);
+    }
 
     /*****
      * 寻找符合标准的子文件
