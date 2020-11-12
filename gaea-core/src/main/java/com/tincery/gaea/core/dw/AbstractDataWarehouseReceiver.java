@@ -136,7 +136,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
      **/
 
     public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
-      throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
 
@@ -171,8 +171,8 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
     }
 
     /**
-     * 获取csv文件名的集合 集合中一组pair中key：sessionCategory;value：文件名 同一个sessionCategory可能对应多组文件 例: [ {key1:value1} {key1:value2}
-     * {key2:value3} ]
+     * 获取csv文件名的集合 集合中一组pair中key：sessionCategory;
+     * value：文件名 同一个sessionCategory可能对应多组文件 例: [ {key1:value1} {key1:value2} {key2:value3} ]
      */
     public abstract List<Pair<String, String>> getCsvDataSet(LocalDateTime startTime, LocalDateTime endTime);
 
@@ -193,12 +193,12 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
     }
 
 
-    private void reWirteStartTime(LocalDateTime newStartTime){
+    private void reWirteStartTime(LocalDateTime newStartTime) {
         Query query = new Query(Criteria.where("_id").is(NodeInfo.getNodeName()));
         Update update = new Update();
-        update.set(ApplicationInfo.getCategory() +".startTime",newStartTime);
-        this.mongoTemplate.updateFirst(query,update,"run_config");
-        RunConfig.replace("startTime",DateUtils.LocalDateTime2Date(newStartTime));
+        update.set(ApplicationInfo.getCategory() + ".startTime", newStartTime);
+        this.mongoTemplate.updateFirst(query, update, "run_config");
+        RunConfig.replace("startTime", DateUtils.LocalDateTime2Date(newStartTime));
     }
 
 }

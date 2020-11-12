@@ -12,7 +12,7 @@
     <modules>
         <module>gaea-core</module>
         <module>gaea-controller</module>
-
+        <!--SOURCE层模块-->
         <module>gaea-src-session</module>
         <module>gaea-src-ssl</module>
         <module>gaea-src-email</module>
@@ -28,19 +28,19 @@
         <module>gaea-src-pptpandl2tp</module>
         <module>gaea-src-ftpandtelnet</module>
         <module>gaea-src-espandah</module>
-
+        <!--DATAWAREHOUSE层模块-->
         <module>gaea-dw-reorganization</module>
         <module>gaea-dw-commonappdetect</module>
-
+        <!--ODS层模块-->
         <module>gaea-ods-httpanalysis</module>
-
+        <!--DATAMARKET层模块-->
         <module>gaea-dm-alarmcombine</module>
         <module>gaea-dm-asset</module>
-
+        <module>gaea-dm-sessionadjust</module>
+        <!--SUPPORT模块-->
         <module>gaea-support-messagecomsumer</module>
         <module>gaea-support-mongostash</module>
         <module>gaea-support-pack</module>
-        <module>gaea-dm-sessionadjust</module>
     </modules>
 
 
