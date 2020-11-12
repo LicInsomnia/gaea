@@ -7,9 +7,12 @@ import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.Location;
 import com.tincery.gaea.api.dm.Alarm;
 import com.tincery.gaea.core.base.component.Receiver;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.AlarmDao;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
+import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
+import com.tincery.gaea.core.dm.DmProperties;
 import com.tincery.gaea.datamarket.alarmcombine.mgt.AlarmDictionary;
 import com.tincery.gaea.datamarket.alarmcombine.property.AlarmCombineProperties;
 import javafx.util.Pair;
@@ -29,18 +32,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Slf4j
 @Service
-public class AlarmCombineReceiver implements Receiver {
+public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
 
-
-    private AlarmCombineProperties properties;
     @Autowired
     private AlarmDictionary alarmDictionary;
     @Autowired
     private AlarmDao alarmDao;
 
+    @Override
     @Autowired
-    public void setProperties(AlarmCombineProperties properties) {
-        this.properties = properties;
+    protected void setDmProperties(DmProperties dmProperties) {
+        this.dmProperties = dmProperties;
     }
 
     /**
@@ -49,18 +51,19 @@ public class AlarmCombineReceiver implements Receiver {
      */
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
-        File fileFolder = new File(textMessage.getText());
+        log.info("alarmCombine接收到了消息开始处理");
+        String alarmMaterialDir = NodeInfo.getAlarmMaterial();
+        File fileFolder = new File(alarmMaterialDir);
+        log.info("扫描文件夹[{}]",alarmMaterialDir);
         if (!fileFolder.isDirectory()){
-            throw new JMSException("消息错误，请输入有效文件夹");
+            throw new JMSException("消息错误，请检测配置的文件夹");
         }
-
         ConcurrentHashMap<String, Pair<Alarm,Integer>> alarmMap = new ConcurrentHashMap<>();
         CopyOnWriteArrayList<Alarm> resultList = new CopyOnWriteArrayList<>();
         File [] fileList = fileFolder.listFiles();
         log.info("开始解析文件,共[{}]个文件", fileList.length);
         for (int i = 0; i < fileList.length; i++) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileList[i]))) {
-                log.info("开始解析文件[{}]",fileList[i].getName());
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     AlarmMaterialData alarmMaterialData = JSON.parseObject(line).toJavaObject(AlarmMaterialData.class);
@@ -91,8 +94,11 @@ public class AlarmCombineReceiver implements Receiver {
                             //合并 存储在告警map中 最后输出
                             alarmMap.put(key,new Pair<>(mergeData,kv.getValue()+1));
                         }
-
                     }
+                }
+                //读取完成删除文件
+                if (fileList[i].exists() && fileList[i].isFile()){
+                   this.freeFile(fileList[i]);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -101,6 +107,12 @@ public class AlarmCombineReceiver implements Receiver {
         //输出告警Alarm
         free(resultList,alarmMap);
     }
+
+    @Override
+    protected void dmFileAnalysis(List<String> lines) {
+
+    }
+
 
     /**
      * 输出告警信息
@@ -111,9 +123,10 @@ public class AlarmCombineReceiver implements Receiver {
         alarmMap.forEach((key,value)->{
             resultList.add(adjustDescription(value.getKey(),value.getValue()));
         });
-
         alarmDao.insert(resultList);
         log.info("共入库[{}]条告警信息",resultList.size());
+        alarmMap.clear();
+        resultList.clear();
     }
 
     /**
@@ -193,7 +206,7 @@ public class AlarmCombineReceiver implements Receiver {
     private void adjustTupleDescription(Alarm alarm, Integer times) {
         StringBuilder description = new StringBuilder();
         fixPrefixTime(description,alarm);
-        int secure = properties.getSecure();
+        int secure = dmProperties.getSecure();
         switch (secure){
             case 1:
                 //安全
@@ -341,7 +354,7 @@ public class AlarmCombineReceiver implements Receiver {
 
     /*填装dw描述*/
     private void adjustDWDescription(Alarm oldAlarm, Integer times) {
-        int secure = properties.getSecure();
+        int secure = dmProperties.getSecure();
         StringBuilder stringBuilder = new StringBuilder();
         switch (secure){
             case 1:
@@ -378,7 +391,7 @@ public class AlarmCombineReceiver implements Receiver {
 
     /*填装src描述*/
     private void adjustSrcDescription(Alarm oldAlarm, Integer times){
-        int secure = properties.getSecure();
+        int secure = dmProperties.getSecure();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(DateUtils.format(oldAlarm.capTime))
                 .append("[").append(oldAlarm.getLevel())
