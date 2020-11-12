@@ -17,57 +17,57 @@ import java.util.Set;
 @Getter
 public class AbstractDataWarehouseData extends AbstractMetaData implements MergeAble {
 
-    private String id;
+    protected String id;
     /**
      * 会话双方十进制IP地址
      */
-    private Long clientIpN;
-    private Long serverIpN;
+    protected Long clientIpN;
+    protected Long serverIpN;
     /**
      * 会话双方地理位置信息
      */
-    private Location clientLocation;
-    private Location serverLocation;
+    protected Location clientLocation;
+    protected Location serverLocation;
     /**
      * 拓展信息根据会话协议有差异
      */
-    private String tag;
-    private String keyWord;
-    private ApplicationInformationBO application;
-    private Map<String, ApplicationInformationBO> applicationElements;
-    private Set<String> appCheckModes;
-    private String checkMode;
+    protected String tag;
+    protected String keyWord;
+    protected ApplicationInformationBO application;
+    protected Map<String, ApplicationInformationBO> applicationElements;
+    protected Set<String> appCheckModes;
+    protected String checkMode;
     /**
      * 会话标签，标记协议名或malformed
      */
-    private String extensionFlag;
+    protected String extensionFlag;
     /**
      * 各协议不同的拓展信息
      */
-    private SessionExtension sessionExtension;
-    private SslExtension sslExtension;
-    private OpenVpnExtension openVpnExtension;
-    private DnsExtension dnsExtension;
-    private SshExtension sshExtension;
-    private HttpExtension httpExtension;
-    private IsakmpExtension isakmpExtension;
-    private FtpAndTelnetExtension ftpAndTelnetExtension;
-    private EspAndAhExtension espAndAhExtension;
-    private MalformedExtension malformedExtension;
+    protected SessionExtension sessionExtension;
+    protected SslExtension sslExtension;
+    protected OpenVpnExtension openVpnExtension;
+    protected DnsExtension dnsExtension;
+    protected SshExtension sshExtension;
+    protected HttpExtension httpExtension;
+    protected IsakmpExtension isakmpExtension;
+    protected FtpAndTelnetExtension ftpAndTelnetExtension;
+    protected EspAndAhExtension espAndAhExtension;
+    protected MalformedExtension malformedExtension;
     /**
      * 键值参考sys.common_config.reorganization.value.cerkeys
      */
-    private JSONObject cer;
-    private DnsRequestBO dnsRequestBO;
+    protected JSONObject cer;
+    protected DnsRequestBO dnsRequestBO;
     /**
      * 标签信息根据属性抽象
      */
-    private String dataSource;
-    private Integer dataType;
-    private Boolean protocolKnown;
-    private Boolean appKnown;
-    private Boolean malFormed;
-    private Boolean foreign;
+    protected String dataSource;
+    protected Integer dataType;
+    protected Boolean protocolKnown;
+    protected Boolean appKnown;
+    protected Boolean malFormed;
+    protected Boolean foreign;
     /**
      * 1.特殊应用（{"label.appType" : "specail"}）
      * 2.重点关注应用（{"label.appType" : "important")
@@ -75,15 +75,15 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
      * 4.未知应用（{"label.appType" : "unknown"}）
      * 5.其它应用（{"label.appType" : "other"}）
      */
-    private String applicationType;
+    protected String applicationType;
     /**
      * 会话加密标识(null:未知;false:非加密;true:加密)
      */
-    private Boolean enc;
+    protected Boolean enc;
     /**
      * 资产标识(0:无资产;1:client为资产;2:server为资产;3:双方均为资产)
      */
-    private Integer assetFlag;
+    protected Integer assetFlag;
 
     /**
      * 拓展标识
