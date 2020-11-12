@@ -18,20 +18,21 @@ public abstract class AbstractDataMarketReceiver implements Receiver {
 
     protected DmProperties dmProperties;
 
+    protected abstract void setDmProperties(DmProperties dmProperties);
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         File file = new File(textMessage.getText());
-        if(!file.exists()){
-            log.warn("{}已经被处理",file.getPath());
+        if (!file.exists()) {
+            log.warn("{}已经被处理", file.getPath());
             return;
         }
         List<String> allLines = FileUtils.readLine(file);
         dmFileAnalysis(allLines);
+        /* 删除原始文件 */
+        file.delete();
     }
 
     protected abstract void dmFileAnalysis(List<String> lines);
-
-    protected abstract void setDmProperties(DmProperties dmProperties);
 
 }

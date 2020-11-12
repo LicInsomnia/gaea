@@ -15,5 +15,7 @@ public class DmProperties {
      */
     private int executor = 0;
 
+    private boolean back = false;
+
 
 }

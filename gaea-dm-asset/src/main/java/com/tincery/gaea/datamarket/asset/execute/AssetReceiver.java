@@ -22,11 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Instant;
@@ -34,14 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.BiFunction;
 
 
@@ -85,27 +74,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
 
     @Autowired
     private AssetPortDao assetPortDao;
-
-
-
-
-    @Override
-    public void receive(TextMessage textMessage) throws JMSException {
-        File file = new File(textMessage.getText());
-        List<JSONObject> clientAssetList = new CopyOnWriteArrayList<>();
-        List<JSONObject> serverAssetList = new CopyOnWriteArrayList<>();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                JSONObject assetJson = JSON.parseObject(line);
-                alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector));
-                AssetFlag.fillAndAdd(assetJson, assetDetector, clientAssetList, serverAssetList);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        free(clientAssetList, serverAssetList);
-    }
 
     @Override
     protected void dmFileAnalysis(List<String> allLines) {
@@ -263,8 +231,8 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
     }
 
     private static class AssetResult {
-        private List<JSONObject> clientAssetList;
-        private List<JSONObject> serverAssetList;
+        private final List<JSONObject> clientAssetList;
+        private final List<JSONObject> serverAssetList;
 
         public AssetResult(List<JSONObject> clientAssetList, List<JSONObject> serverAssetList) {
             this.clientAssetList = clientAssetList;
