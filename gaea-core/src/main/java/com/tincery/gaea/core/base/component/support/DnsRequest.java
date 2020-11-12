@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.DnsRequestBO;
 import com.tincery.gaea.api.src.DnsData;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
-import com.tincery.gaea.core.base.component.config.RunConfig;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
@@ -51,20 +50,11 @@ public class DnsRequest implements InitializationRequired {
     public void init() {
         this.dnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(CATEGORY);
         FileUtils.checkPath(this.dnsRequestPath);
-        if (RunConfig.isEmpty()) {
-            return;
-        }
-        Date startTime = RunConfig.getDate("startTime");
-        long startTimeLong;
-        if (startTime == null) {
-            startTimeLong = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
-        } else {
-            startTimeLong = startTime.getTime() - (3 * DateUtils.HOUR);
-        }
+        long startTime = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
         List<File> files = FileUtils.searchFiles(dnsRequestPath, CATEGORY, null, ".json", 0);
         for (File file : files) {
             long time = Long.parseLong(file.getName().split("\\.")[0].split("_")[1]);
-            if (time > startTimeLong) {
+            if (time > startTime) {
                 List<String> lines = FileUtils.readLine(file);
                 List<DnsRequestBO> list = new ArrayList<>();
                 for (String line : lines) {
@@ -83,7 +73,7 @@ public class DnsRequest implements InitializationRequired {
     }
 
     public void append(DnsData dnsData) {
-        if ((dnsData.getImp()!= null && dnsData.getImp()) || dnsData.getDataType() != 1) {
+        if ((dnsData.getImp() != null && dnsData.getImp()) || dnsData.getDataType() != 1) {
             return;
         }
         String domain = dnsData.getDnsExtension().getDomain();
