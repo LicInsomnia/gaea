@@ -32,7 +32,7 @@ public class AlarmDictionary implements Dictionary {
 
     @Override
     public void init() {
-        log.info("开始加载alarmRule 码表");
+        log.info("开始加载alarm码表");
         final String srcKey = "alarm";
         ConstantComparisonTableDO constants = constantComparisonTableDao.findOne(new Query(Criteria.where("_id").is(srcKey)));
         constants.getContrast().forEach(contrast -> DICTIONARY.put(contrast.getKey(), contrast.getCode()));
