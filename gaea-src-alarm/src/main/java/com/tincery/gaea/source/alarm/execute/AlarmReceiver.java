@@ -1,5 +1,9 @@
-package com.tincery.gaea.source.isakmp.execute;
+package com.tincery.gaea.source.alarm.execute;
 
+import com.google.common.collect.Lists;
+import com.tincery.gaea.api.base.AlarmMaterialData;
+import com.tincery.gaea.api.src.AlarmTupleData;
+import com.tincery.gaea.api.src.HttpData;
 import com.tincery.gaea.api.src.IsakmpData;
 import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -7,6 +11,7 @@ import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
 import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
+import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -16,10 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 
 /**
@@ -29,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 @Getter
 @Slf4j
-public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
+public class AlarmReceiver extends AbstractSrcReceiver<AlarmTupleData> {
 
     @Autowired
     private PassRule passRule;
@@ -43,14 +52,26 @@ public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
         this.properties = properties;
     }
 
+    //TODO 换HEADER
     @Override
     public String getHead() {
-        return HeadConst.ISAKMP_HEADER;
+        return HeadConst.SESSION_HEADER;
     }
 
     @Autowired
-    public void setAnalysis(IsakmpLineAnalysis analysis) {
+    public void setAnalysis(AlarmLineAnalysis analysis) {
         this.analysis = analysis;
+    }
+
+
+    /**
+     * 解析文件 并在输出之前进行文件整理
+     *
+     * @param file 一个输入dat文件
+     */
+    @Override
+    protected void analysisFile(File file) {
+        super.analysisFile(file);
     }
 
     /****
@@ -64,24 +85,22 @@ public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
             if (StringUtils.isEmpty(line)) {
                 continue;
             }
-            IsakmpData isakmpData;
+            AlarmTupleData alarmTupleData;
             try {
-                isakmpData = this.analysis.pack(line);
-                if (Objects.isNull(isakmpData)){
-                    continue;
-                }
-                isakmpData.adjust();
-                this.putCsvMap(isakmpData);
+                alarmTupleData = this.analysis.pack(line);
+                alarmTupleData.adjust();
+                AlarmMaterialData alarmMaterialData = new AlarmMaterialData(alarmTupleData);
+
             } catch (Exception e) {
                 log.error("错误SRC：{}", line);
             }
         }
     }
 
+
     @Override
     public void init() {
-        registryRules(passRule);
-        registryRules(alarmRule);
+
     }
 
     public void registryRules(Rule rule) {

@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @Component
 @Slf4j
-public class AlarmRule extends BaseSimpleRule {
+public class DPTKRule extends BaseSimpleRule {
 
     public static final Map<String, AlarmMaterialData> alarmList = new HashMap<>();
     public static final List<String> eventDataList = new ArrayList<>();
@@ -37,11 +37,7 @@ public class AlarmRule extends BaseSimpleRule {
      */
     @Autowired
     protected IpSelector ipSelector;
-    /**
-     * 资产检测模块
-     */
-    @Autowired
-    protected AssetDetector assetDetector;
+
     /**
      * 告警信息标签
      */
@@ -99,7 +95,6 @@ public class AlarmRule extends BaseSimpleRule {
 
     protected void pushAlarm(AlarmMaterialData alarmMaterialData, String keyStr) {
         alarmMaterialData.setKey(keyStr);
-        alarmMaterialData.setAsset(this.assetDetector);
         //根据自定义键值获取该条告警信息key
         String md5Key = alarmMaterialData.getKey();
         if (null == md5Key) {
@@ -137,7 +132,7 @@ public class AlarmRule extends BaseSimpleRule {
 
         /****
          * 你并不能阻止构造方法创建对象 所以我们在此处判断一下  如果不符合标准 就将activity置为false 在上层过滤掉
-         * @see AlarmRule #init()
+         * @see DPTKRule #init()
          **/
         public AlarmRuleChecker(SrcRuleDO srcRuleDO) {
             super(srcRuleDO);
@@ -187,7 +182,7 @@ public class AlarmRule extends BaseSimpleRule {
                     } catch (NoSuchFieldException | IllegalAccessException ignored) {
                     }
                 }
-                AlarmMaterialData alarmMaterialData = new AlarmMaterialData(data, this.source, context, AlarmRule.this.ipSelector);
+                AlarmMaterialData alarmMaterialData = new AlarmMaterialData(data, this.source, context, DPTKRule.this.ipSelector);
                 /*alarmRule 是 src告警*/
                 alarmMaterialData.setPattern(1);
                 pushAlarm(alarmMaterialData, null);
