@@ -12,13 +12,18 @@ import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * @author Insomnia
+ */
 @Slf4j
+@Component
 public class SessionFactory {
 
     @Autowired

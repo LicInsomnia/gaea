@@ -4,6 +4,7 @@ package com.tincery.gaea.core.base.component.support;
 import com.tincery.gaea.api.base.AbstractMetaData;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.PayloadDetectorDO;
+import com.tincery.gaea.api.dm.SessionMergeData;
 import com.tincery.gaea.core.base.dao.PayloadDetectorDao;
 import com.tincery.starter.base.InitializationRequired;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,6 @@ public class PayloadDetector implements InitializationRequired {
 
     @Autowired
     private PayloadDetectorDao payloadDetectorDao;
-
 
     private Map<String, List<PayloadDetectorDO>> hasApplicationAndProtocolPort;
 
@@ -60,6 +60,11 @@ public class PayloadDetector implements InitializationRequired {
         return maybeHit.map(PayloadDetectorDO::getApplication).orElse(null);
 
 
+    }
+
+    public ApplicationInformationBO getApplication(SessionMergeData data) {
+        return getApplication(data.getProtocol(), data.getServerPort(), data.getClientPort(),
+                data.getMalformedUpPayload(), data.getMalformedDownPayload(), data.getExtension());
     }
 
 

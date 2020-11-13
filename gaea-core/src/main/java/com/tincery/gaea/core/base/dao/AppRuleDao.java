@@ -63,10 +63,9 @@ public class AppRuleDao extends SimpleBaseDaoImpl<AppRule> {
      * 多线程分段查询映射  解决规则太多 映射不过来的情况
      * @author gxz
      **/
-
     private class ForkJoinGetRule extends RecursiveTask<List<JSONObject>> {
-        private int begin; //查询开始位置
-        private int end;
+        private final int begin; //查询开始位置
+        private final int end;
 
         ForkJoinGetRule(int begin, int end) {
             this.begin = begin;

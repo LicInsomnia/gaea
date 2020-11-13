@@ -25,11 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com 汇聚执行器 此方法的执行策略是 将准备写入的csv内容存到map中 最终统一执行写入  流程如下图 Src处理器  此类监听由Producer 发送的Mq消息
@@ -202,7 +198,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         this.appendCsvData(
                 fileName,
                 data.toCsv(HeadConst.CSV_SEPARATOR),
-                data.capTime
+                data.getCapTime()
         );
     }
 

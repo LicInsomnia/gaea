@@ -1,4 +1,4 @@
-package com.tincery.gaea.datamarket.sessionajust.support;
+package com.tincery.gaea.datamarket.sessionadjust.support;
 
 import com.alibaba.fastjson.JSON;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
@@ -23,10 +23,17 @@ public class ContextCache implements InitializationRequired {
 
     private final Map<String, ApplicationInformationBO> map = new ConcurrentHashMap<>();
 
+    public ApplicationInformationBO detect(SessionMergeData sessionMergeData) {
+        return this.map.getOrDefault(sessionMergeData.targetSessionKey(), null);
+    }
+
     @Override
     public void init() {
         String historyPath = ApplicationInfo.getDataMarketBakByCategory();
         File file = FileUtils.getLastFile(historyPath, null, null, ".json");
+        if (null == file) {
+            return;
+        }
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -38,8 +45,8 @@ public class ContextCache implements InitializationRequired {
         }
     }
 
-    public void append(SessionMergeData data) {
-
+    public void append(String key, ApplicationInformationBO application) {
+        this.map.put(key, application);
     }
 
 }

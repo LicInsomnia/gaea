@@ -61,14 +61,6 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
     protected Boolean malFormed;
     protected Boolean foreign;
     /**
-     * 1.特殊应用（{"label.appType" : "specail"}）
-     * 2.重点关注应用（{"label.appType" : "important")
-     * 3.正常应用（{"label.appType" : "general"}）
-     * 4.未知应用（{"label.appType" : "unknown"}）
-     * 5.其它应用（{"label.appType" : "other"}）
-     */
-    protected String applicationType;
-    /**
      * 会话加密标识(null:未知;false:非加密;true:加密)
      */
     protected Boolean enc;
@@ -82,7 +74,6 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
      */
     @Override
     public void adjust() {
-        this.applicationType = "unknown";
     }
 
     @Override

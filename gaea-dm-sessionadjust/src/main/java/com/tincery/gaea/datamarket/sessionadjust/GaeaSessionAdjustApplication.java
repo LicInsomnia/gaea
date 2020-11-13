@@ -1,4 +1,4 @@
-package com.tincery.gaea.datamarket.sessionajust;
+package com.tincery.gaea.datamarket.sessionadjust;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

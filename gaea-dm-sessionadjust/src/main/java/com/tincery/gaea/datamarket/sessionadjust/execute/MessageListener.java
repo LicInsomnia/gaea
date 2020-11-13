@@ -1,4 +1,4 @@
-package com.tincery.gaea.datamarket.sessionajust.execute;
+package com.tincery.gaea.datamarket.sessionadjust.execute;
 
 import com.tincery.gaea.api.base.QueueNames;
 import com.tincery.gaea.core.base.component.Receiver;

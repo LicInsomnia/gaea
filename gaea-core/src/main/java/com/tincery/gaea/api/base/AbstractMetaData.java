@@ -23,11 +23,11 @@ public abstract class AbstractMetaData extends GaeaData {
     /**
      * 探针标识 记录是哪个探针生成的txt
      */
-    public String source;
+    protected String source;
     /**
      * 数据采集时间
      */
-    public Long capTime;
+    protected Long capTime;
     /**
      * 用户标识
      */
