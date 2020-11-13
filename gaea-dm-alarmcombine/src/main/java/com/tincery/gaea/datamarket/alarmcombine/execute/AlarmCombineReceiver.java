@@ -48,6 +48,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     /**
      * @param textMessage 接收到的消息  存放要扫描的目录名
      * @throws JMSException
+     * 扫描的文件夹NodeInfo.getAlarmMaterial
      */
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
@@ -478,10 +479,22 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         eventData.addAll(newAlarm.getEventData());
         oldAlarm.setEventData(eventData);
 
+        mergeFlow(oldAlarm,newAlarm);
+
         return oldAlarm;
     }
 
-
+    /**
+     * 合并流量
+     * @param oldAlarm
+     * @param newAlarm
+     */
+    private void mergeFlow(Alarm oldAlarm, Alarm newAlarm) {
+        oldAlarm.setUpByte(oldAlarm.getUpByte() + newAlarm.getUpByte());
+        oldAlarm.setDownByte(oldAlarm.getDownByte() + newAlarm.getDownByte());
+        oldAlarm.setUpPkt(oldAlarm.getUpPkt() + newAlarm.getUpPkt());
+        oldAlarm.setDownPkt(oldAlarm.getDownPkt() + newAlarm.getDownPkt());
+    }
 
 
     /**
