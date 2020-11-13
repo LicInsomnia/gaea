@@ -99,6 +99,9 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         }
         httpMetaData.setForeign(httpLineSupport.isForeign(httpMetaData.getServerIp()));
 
+        httpMetaData.setServerLocation(this.httpLineSupport.getLocation(httpMetaData.getServerIp()));
+        httpMetaData.setClientLocation(this.httpLineSupport.getLocation(httpMetaData.getClientIp()));
+
         return httpMetaData;
     }
 

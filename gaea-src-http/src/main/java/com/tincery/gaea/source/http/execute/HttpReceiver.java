@@ -87,7 +87,7 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
                 HttpConstant.HTTP_CONSTANT + new String(entry.getValue().getValue(), StandardCharsets.ISO_8859_1) +
                 HttpConstant.HTTP_CONSTANT + entry.getValue().getValue().length).collect(Collectors.toList());
         long end = System.currentTimeMillis();
-        System.out.println(end-start + "读取文件" );
+        System.out.println(end-start + "读取文件变成集合" );
         return collect;
     }
 
@@ -130,7 +130,7 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
         for (HttpData httpData : this.httpMap.values()) {
             httpData.adjust();
             // 装载Location
-            fixHttpDataLocation(httpData);
+//            fixHttpDataLocation(httpData);
             // 输出CSV
             /*
             csv  每个meta单独输出
@@ -151,10 +151,13 @@ public class HttpReceiver extends AbstractSrcReceiver<HttpData> {
         dataWarehouseJsonFileWriter.close();
     }
 
-    private void putJson(List<JSONObject> jsonObjects, FileWriter fileWriter) {
-        for (JSONObject jsonObject : jsonObjects) {
+    private void putJson(List<String> jsonStringList, FileWriter fileWriter) {
+
+        fileWriter.write(jsonStringList);
+        /*
+        for (String jsonObject : jsonStringList) {
             fileWriter.write(JSONObject.toJSONString(jsonObject));
-        }
+        }*/
     }
 
     /**
