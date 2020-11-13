@@ -63,7 +63,7 @@ public class SessionReceiver extends AbstractSrcReceiver<SessionData> {
         String fileName = sessionData.getDateSetFileName(category);
         this.appendCsvData(fileName,
                 sessionData.toCsv(HeadConst.CSV_SEPARATOR),
-                sessionData.capTime);
+                sessionData.getCapTime());
     }
 
     @Override
