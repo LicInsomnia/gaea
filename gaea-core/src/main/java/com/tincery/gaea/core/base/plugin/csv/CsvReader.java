@@ -151,12 +151,10 @@ public class CsvReader {
             }
 
         } catch (IOException e) {
-            if (csvBufferedReader != null) {
-                try {
-                    csvBufferedReader.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+            try {
+                csvBufferedReader.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         } catch (InterruptedException e) {
             log.warn("阻塞队列阻塞过程中被中断");

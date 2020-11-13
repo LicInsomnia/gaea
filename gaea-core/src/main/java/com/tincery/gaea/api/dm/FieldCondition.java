@@ -6,6 +6,7 @@ import com.tincery.gaea.core.base.tool.util.DateUtils;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
@@ -130,9 +131,9 @@ public class FieldCondition {
         double targetValue = Double.parseDouble(this.value.toString());
         switch (operator) {
             case EQUALS:
-                return value == targetValue;
+                return Objects.equals(value,targetValue);
             case NO_EQUALS:
-                return value != targetValue;
+                return !Objects.equals(value,targetValue);
             case GT:
                 return value > targetValue;
             case GTE:
