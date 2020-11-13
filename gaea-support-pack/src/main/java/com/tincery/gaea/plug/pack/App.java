@@ -30,7 +30,8 @@ public class App {
             "gaea-ods-httpanalysis",
 //            "gaea-src-qq",
             "gaea-dw-reorganization",
-            "gaea-dm-asset"
+            "gaea-dm-asset",
+            "gaea-dm-alarmcombine"
     };
     private static String gaeaPath;
 

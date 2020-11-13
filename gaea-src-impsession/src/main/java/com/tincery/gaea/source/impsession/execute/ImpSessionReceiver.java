@@ -108,7 +108,7 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
         String fileName = impSessionData.getDateSetFileName(category);
         this.appendCsvData(fileName,
                 impSessionData.toCsv(HeadConst.CSV_SEPARATOR),
-                impSessionData.capTime);
+                impSessionData.getCapTime());
     }
 
     @Override

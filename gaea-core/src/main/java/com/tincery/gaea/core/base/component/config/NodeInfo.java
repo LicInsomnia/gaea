@@ -225,11 +225,11 @@ public class NodeInfo {
     }
 
     public static String getAlarmMaterial() {
-        return getCacheByCategory("alarmMaterial");
+        return getDataWarehouseJsonPathByCategory("alarmMaterial");
     }
 
     public static String getEventData() {
-        return getCacheByCategory("eventData");
+        return getDataWarehouseJsonPathByCategory("eventData");
     }
 
 }

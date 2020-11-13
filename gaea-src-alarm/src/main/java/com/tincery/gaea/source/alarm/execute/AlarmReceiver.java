@@ -1,17 +1,12 @@
 package com.tincery.gaea.source.alarm.execute;
 
-import com.google.common.collect.Lists;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.src.AlarmTupleData;
-import com.tincery.gaea.api.src.HttpData;
-import com.tincery.gaea.api.src.IsakmpData;
-import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
 import com.tincery.gaea.core.base.rule.PassRule;
 import com.tincery.gaea.core.base.rule.Rule;
 import com.tincery.gaea.core.base.rule.RuleRegistry;
-import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
@@ -22,13 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 
 /**
