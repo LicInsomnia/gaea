@@ -63,19 +63,5 @@ public class DpdkRuleDO extends SimpleBaseDO implements Serializable, Cloneable 
     private String createUser;
     private Boolean isSystem;
 
-
-/*    @Field("match_field")
-    private String matchField;
-    @Field("rule_value")
-    private String ruleValue;
-    private Integer accuracy;
-    @Field("web_flag")
-    private Integer webFlag;
-    @Field("gaea_flag")
-    private Integer gaeaFlag;*/
-
-
-
-
 }
 

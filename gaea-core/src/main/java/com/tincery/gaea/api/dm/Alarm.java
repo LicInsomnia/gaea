@@ -1,17 +1,13 @@
 package com.tincery.gaea.api.dm;
 
-import com.sun.corba.se.spi.activation.LocatorPackage.ServerLocation;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.Location;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -231,7 +227,7 @@ public class Alarm  extends SimpleBaseDO {
         this.upByte = alarmMaterialData.getUpByte();
         this.downPkt = alarmMaterialData.getDownPkt();
         this.downByte = alarmMaterialData.getDownByte();
-        this.durationTime = alarmMaterialData.getDurationTime();
+        this.durationTime = alarmMaterialData.getDuration();
         this.durationEndTime = alarmMaterialData.getDurationEndTime();
         this.caseTags = alarmMaterialData.getCaseTags();
         this.macOuter = alarmMaterialData.getMacOuter();

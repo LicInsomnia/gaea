@@ -88,7 +88,6 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         long l = Instant.now().toEpochMilli();
         this.clearFile(file);
         System.out.println("clearFile用了"+(l-Instant.now().toEpochMilli()));
-        long l1 = Instant.now().toEpochMilli();
         this.free();
         System.out.println("free用了"+(l-Instant.now().toEpochMilli()));
         log.info("文件:[{}]处理完成，用时{}毫秒", file.getName(), (System.currentTimeMillis() - startTime));
@@ -126,12 +125,12 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             CountDownLatch countDownLatch = new CountDownLatch(partitions.size());
             for (List<String> partition : partitions) {
                 executorService.execute(() -> {
-                    try{
+                    try {
                         analysisLine(partition);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                         log.error("解析实体时出现特殊异常");
-                    }finally {
+                    } finally {
                         countDownLatch.countDown();
                     }
                 });
@@ -207,11 +206,12 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      * 清理原文件
      */
     protected void clearFile(File file) {
+        if (this.properties.isTest()) {
+            return;
+        }
         bakFile(file);
-        if (!this.properties.isTest()) {
-            if (file.delete()) {
-                log.info("删除文件{}", file.getName());
-            }
+        if (file.delete()) {
+            log.info("删除文件{}", file.getName());
         }
     }
 

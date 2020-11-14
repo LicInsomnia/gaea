@@ -122,7 +122,7 @@ public abstract class AbstractSrcData extends AbstractMetaData {
     }
 
     protected void adjustCompleteSession() {
-        if (this.syn && this.fin) {
+        if (null != this.syn && this.syn && null != fin && this.fin) {
             this.completeSession = true;
         }
     }

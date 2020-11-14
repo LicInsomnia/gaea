@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.alarm.property;
+package com.tincery.gaea.source.alarm.config.property;
 
 import com.tincery.gaea.core.src.SrcProperties;
 import lombok.Getter;

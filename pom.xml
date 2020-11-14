@@ -13,6 +13,7 @@
         <module>gaea-core</module>
         <module>gaea-controller</module>
         <!--SOURCE层模块-->
+        <module>gaea-src-alarm</module>
         <module>gaea-src-session</module>
         <module>gaea-src-ssl</module>
         <module>gaea-src-email</module>
@@ -41,7 +42,6 @@
         <module>gaea-support-messagecomsumer</module>
         <module>gaea-support-mongostash</module>
         <module>gaea-support-pack</module>
-        <module>gaea-src-alarm</module>
     </modules>
 
 

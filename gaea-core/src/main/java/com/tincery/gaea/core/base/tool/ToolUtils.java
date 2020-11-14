@@ -170,18 +170,20 @@ public class ToolUtils {
                     }
                     outBuffer.append((char) value);
                 } else {
-                    if (aChar == 't')
+                    if (aChar == 't') {
                         aChar = '\t';
-                    else if (aChar == 'r')
+                    } else if (aChar == 'r') {
                         aChar = '\r';
-                    else if (aChar == 'n')
+                    } else if (aChar == 'n') {
                         aChar = '\n';
-                    else if (aChar == 'f')
+                    } else if (aChar == 'f') {
                         aChar = '\f';
+                    }
                     outBuffer.append(aChar);
                 }
-            } else
+            } else {
                 outBuffer.append(aChar);
+            }
 
         }
         return outBuffer.toString();

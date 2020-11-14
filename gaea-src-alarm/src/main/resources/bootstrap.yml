@@ -5,8 +5,6 @@ node:
 spring:
   application:
     name: src_alarm
-  profiles:
-    active: sparrow
   cloud:
     nacos:
       config:
@@ -19,6 +17,9 @@ spring:
             group: GAEA_GROUP
           - dataId: common_config.yml
             group: GAEA_GROUP
+
+  profiles:
+    active: insomnia
 logging:
   level:
     root: info
