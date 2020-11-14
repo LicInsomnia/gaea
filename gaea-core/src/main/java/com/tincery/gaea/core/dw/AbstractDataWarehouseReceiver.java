@@ -9,7 +9,6 @@ import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
-import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -140,10 +139,10 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
     }
 
 
-    protected List<String> getCsvDataSetBySessionCategory(String sesionCategory, LocalDateTime startTime, LocalDateTime endTime) {
+    protected List<String> getCsvDataSetBySessionCategory(String sessionCategory, LocalDateTime startTime, LocalDateTime endTime) {
         long endTimeLong = DateUtils.LocalDateTime2Long(endTime);
         long startTimeLong = DateUtils.LocalDateTime2Long(startTime);
-        String rootPath = NodeInfo.getDataWarehouseCsvPathByCategory(sesionCategory);
+        String rootPath = NodeInfo.getDataWarehouseCsvPathByCategory(sessionCategory);
         List<String> list = new ArrayList<>();
         long timeStamp = startTimeLong = startTimeLong / MINUTE * MINUTE;
         endTimeLong = endTimeLong / MINUTE * MINUTE + MINUTE;
@@ -153,7 +152,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
                 String[] files = path.list();
                 if (null != files) {
                     for (String fileName : files) {
-                        if (!fileName.startsWith(sesionCategory)) {
+                        if (!fileName.startsWith(sessionCategory)) {
                             continue;
                         }
                         String[] elements = fileName.split("\\.")[0].split("_");
@@ -170,11 +169,6 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         return list;
     }
 
-    /**
-     * 获取csv文件名的集合 集合中一组pair中key：sessionCategory;
-     * value：文件名 同一个sessionCategory可能对应多组文件 例: [ {key1:value1} {key1:value2} {key2:value3} ]
-     */
-    public abstract List<Pair<String, String>> getCsvDataSet(LocalDateTime startTime, LocalDateTime endTime);
 
     protected List<CsvFilter> registryFilter(CsvFilter... csvFilterList) {
         if (null == this.csvFilterList) {

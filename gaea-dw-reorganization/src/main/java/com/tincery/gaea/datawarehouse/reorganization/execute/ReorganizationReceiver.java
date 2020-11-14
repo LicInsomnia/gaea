@@ -115,7 +115,11 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
         log.info("共用时{}毫秒", (Instant.now().toEpochMilli() - st));
     }
 
-    @Override
+
+    /**
+     * 获取csv文件名的集合 集合中一组pair中key：sessionCategory;
+     * value：文件名 同一个sessionCategory可能对应多组文件 例: [ {key1:value1} {key1:value2} {key2:value3} ]
+     */
     public List<Pair<String, String>> getCsvDataSet(LocalDateTime startTime, LocalDateTime endTime) {
         List<Pair<String, String>> result = new ArrayList<>();
         for (String sessionCategory : sesssionCategorys) {

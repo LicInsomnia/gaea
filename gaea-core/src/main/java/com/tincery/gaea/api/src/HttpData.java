@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -178,8 +179,8 @@ public class HttpData extends AbstractSrcData {
 
     }
 
-    public List<JSONObject> toJsonObjects() {
-        List<JSONObject> result = new ArrayList<>();
+    public List<String> toJsonObjects() {
+        List<String> result = new ArrayList<>();
         List<HttpMeta> metas = this.getMetas();
         if (CollectionUtils.isEmpty(metas)) {
             metas = new ArrayList<>();
@@ -190,7 +191,7 @@ public class HttpData extends AbstractSrcData {
             if (element.getIsMalformed()) {
                 continue;
             }
-            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(element);
+            String jsonObject = JSONObject.toJSONString(element);
             result.add(jsonObject);
         }
         return result;
