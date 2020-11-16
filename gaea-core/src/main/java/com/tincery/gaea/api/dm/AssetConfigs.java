@@ -26,11 +26,7 @@ public class AssetConfigs {
     private static final Function<JSONObject, Integer> getPort;
 
     static {
-        createAlarm = (jsonObject, assetConfigDO) -> {
-            // 首先将元数据alarm置为true
-            jsonObject.put("alarm", true);
-            return new AlarmMaterialData();
-        };
+        createAlarm = AlarmMaterialData::new;
         getProtocol = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.PROTOCOL);
         getPort = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
     }

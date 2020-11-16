@@ -157,7 +157,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         File file = new File(NodeInfo.getAlarmMaterial() + fileName);
         try (FileWriter fileWriter = new FileWriter(file, true)) {
             for (AlarmMaterialData alarmMaterialData : this.alarmList) {
-                fileWriter.write(alarmMaterialData.toString() + "\n");
+                fileWriter.write(JSON.toJSONString(alarmMaterialData) + "\n");
             }
             this.alarmList.clear();
         } catch (IOException e) {
