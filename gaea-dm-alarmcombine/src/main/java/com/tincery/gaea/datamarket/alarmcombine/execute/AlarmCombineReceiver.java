@@ -71,8 +71,9 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                     //TODO 这里需要区分到底是什么类型的告警 然后准备合并
                     Alarm newAlarm = new Alarm(alarmMaterialData);
                     adjustAlarm(newAlarm,alarmMaterialData);
-                    Integer pattern = alarmMaterialData.getPattern();
-                    if (pattern == 0){
+                    String pattern = getPatternByCategoryAndSubCategory(alarmMaterialData.getCategory(),alarmMaterialData.getSubCategory());
+//                    Integer pattern = alarmMaterialData.getPattern();
+                    if (pattern == null){
                         //证书告警不合并
                         resultList.add(newAlarm);
                     }
@@ -86,7 +87,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                     }else{
                         Alarm oldAlarm = kv.getKey();
                         //合并告警  TODO 这里需要不根据pattern区分 newAlarm，oldAlarm
-                        Alarm mergeData = mergeAlarm(pattern,newAlarm,oldAlarm);
+                        Alarm mergeData = mergeAlarm(newAlarm,oldAlarm);
                         if (Objects.isNull(mergeData)){
                             //如果返回的null  则不合并 分别存储
                             resultList.add(adjustDescription(oldAlarm,kv.getValue()));
@@ -107,6 +108,18 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         }
         //输出告警Alarm
         free(resultList,alarmMap);
+    }
+
+    /** 根据category和subCategory 确定该条告警属于哪个模块 **/
+    private String getPatternByCategoryAndSubCategory(Integer category, String subCategory) {
+        if (category<=6 || category == 14){
+            return "SRC";
+        }
+        if (category == 13){
+            return "TUPLE";
+        }
+        //TODO 需要完善
+        return null;
     }
 
     @Override
@@ -149,8 +162,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
 //        alarmDictionary.parse("range",alarmMaterialData.getRange) 元数据没有这个字段
         String type = alarmDictionary.parse("type", alarmMaterialData.getType());
         alarm.setType(type);
-        String pattern = alarmDictionary.parse("pattern", alarmMaterialData.getPattern());
-        alarm.setPattern(pattern);
         ArrayList<String> eventData = new ArrayList<>();
         eventData.add(alarmMaterialData.getEventData());
         alarm.setEventData(eventData);
@@ -459,12 +470,11 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     /**
      * 告警信息的合并  10分钟内的数据合并   如果超过时间返回null
      * 合并时间信息和eventData信息
-     * @param pattern 告警类型
      * @param newAlarm 当前数据
      * @param oldAlarm map集合中的数据 （第一条）
      * @return 合并后的数据
      */
-    private synchronized Alarm mergeAlarm(Integer pattern, Alarm newAlarm, Alarm oldAlarm) {
+    private synchronized Alarm mergeAlarm(Alarm newAlarm, Alarm oldAlarm) {
         //10分钟的间隔
         int time = DateUtils.SECOND * DateUtils.MINUTE * 10;
         //超时返回null  不合并
@@ -519,7 +529,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      * @param alarmMaterialData
      * @return
      */
-    private String getAlarmKeyByPattern(Integer pattern,AlarmMaterialData alarmMaterialData){
+    private String getAlarmKeyByPattern(String pattern,AlarmMaterialData alarmMaterialData){
         StringBuilder stringBuilder = new StringBuilder();
         String serverIp = alarmMaterialData.getServerIp();
         String clientIp = alarmMaterialData.getClientIp();
@@ -528,10 +538,10 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         String title = alarmMaterialData.getTitle();
         //TODO  这里如果没有pattern了  怎么判定是什么类型
         switch (pattern){
-            case 0:
+            case "CERT":
                 //证书告警 不对告警进行操作
                 return null;
-            case 1: case 5: case 7: case 8:
+            case "SRC": case "TUPLE":
                 //src告警 /DNS关联告警 /五元组 /特殊告警
                 stringBuilder.append(clientIp)
                         .append(serverIp)
@@ -539,18 +549,20 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                         .append(subCategoryDesc)
                         .append(title);
                 break;
-            case 2:
+            case "DW":
                 //dw告警
                 stringBuilder.append(clientIp).append(categoryDesc).append(subCategoryDesc).append(title);
                 break;
-            case 3:
+            case "ASSET":
                 //资产告警
                 stringBuilder.append(alarmMaterialData.getAssetIp()).append(categoryDesc).append(subCategoryDesc).append(title);
                 break;
-            case 4: case 6:
+            case "OTHER":
                 //行为告警 /证书关联告警
                 stringBuilder.append(serverIp).append(categoryDesc).append(subCategoryDesc).append(title);
                 break;
+            default:
+                return null;
         }
         return stringBuilder.toString();
     }
