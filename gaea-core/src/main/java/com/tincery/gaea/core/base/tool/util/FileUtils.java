@@ -158,7 +158,7 @@ public class FileUtils {
      * value 为content 是比较大的byte[] 内容
      */
     public static Map<String, Pair<Integer, byte[]>> readByteArray(File file) {
-        Map<String, Pair<Integer, byte[]>> mapContent = new LinkedHashMap<>();
+        Map<String, Pair<Integer, byte[]>> mapContent = new HashMap<>();
         if (null == file || (!file.exists()) || file.isDirectory()) {
             return new HashMap<>();
         }

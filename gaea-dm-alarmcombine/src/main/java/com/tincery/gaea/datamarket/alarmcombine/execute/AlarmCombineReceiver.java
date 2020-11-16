@@ -85,7 +85,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                         alarmMap.put(key,new Pair<>(newAlarm,1));
                     }else{
                         Alarm oldAlarm = kv.getKey();
-                        //合并告警
+                        //合并告警  TODO 这里需要不根据pattern区分 newAlarm，oldAlarm
                         Alarm mergeData = mergeAlarm(pattern,newAlarm,oldAlarm);
                         if (Objects.isNull(mergeData)){
                             //如果返回的null  则不合并 分别存储
@@ -526,6 +526,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         String categoryDesc = alarmMaterialData.getCategoryDesc();
         String subCategoryDesc = alarmMaterialData.getSubCategoryDesc();
         String title = alarmMaterialData.getTitle();
+        //TODO  这里如果没有pattern了  怎么判定是什么类型
         switch (pattern){
             case 0:
                 //证书告警 不对告警进行操作
