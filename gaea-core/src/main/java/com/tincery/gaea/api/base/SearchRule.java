@@ -10,11 +10,23 @@ import java.util.Map;
  **/
 @Data
 public class SearchRule {
-
+    /**
+     * 需要命中次数
+     */
     private int count;
+    /**
+     * 命中标记，
+     * -1: <=命中次数
+     * 0 : == 命中次数
+     * 1: >= 命中次数
+     */
     private int countType;
+
     private KV<String, List<String>> match;
-    private Map<Integer,Integer> forward;
+    /**
+     * 转发集合 null意为不转发
+     */
+    private Map<Integer, Integer> forward;
     private List<String> out;
 
 }

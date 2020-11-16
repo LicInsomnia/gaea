@@ -7,13 +7,10 @@ import com.tincery.gaea.api.dm.AssetConfigDO;
 import com.tincery.gaea.api.src.extension.AlarmExtension;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.component.support.IpSelector;
-import com.tincery.gaea.core.base.mgt.AlarmDictionary;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashSet;
@@ -214,7 +211,7 @@ public final class AlarmMaterialData {
     /**
      * 资产需要的一个新的告警
      */
-    public AlarmMaterialData(JSONObject jsonObject,AssetConfigDO assetConfigDO){
+    public AlarmMaterialData(JSONObject jsonObject,AssetConfigDO assetConfigDO,Boolean isClient){
         jsonObject.put("alarm", true);
         this.source = jsonObject.getString("source");
         this.capTime = DateUtils.validateTime(jsonObject.getLong("capTime"));

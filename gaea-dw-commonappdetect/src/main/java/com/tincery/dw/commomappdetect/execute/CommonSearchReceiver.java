@@ -1,6 +1,7 @@
 package com.tincery.dw.commomappdetect.execute;
 
 import com.tincery.gaea.api.base.AppDetect;
+import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.core.base.dao.AppDetectDao;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
@@ -98,7 +99,8 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
         if (this.maybeHitSet.isEmpty()) {
             System.out.println("没有命中的");
         } else {
-            System.out.println(this.maybeHitSet);
+            System.out.println(this.maybeHitSet.stream()
+                    .map(AppDetect::getAppInfo).map(ApplicationInformationBO::getTitle).collect(Collectors.toList()));
         }
     }
 
@@ -144,7 +146,7 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
 
     private Set<AppDetect> cantHitAppDetect() {
         Set<AppDetect> shouldRemoveAppDetect = new HashSet<>();
-        Map<String, Set<AppDetect>> currentAppDetect = this.stepCategoryMap.get(this.step);
+        Map<String, Set<AppDetect>> currentAppDetect = this.stepCategoryMap.get(this.step+1);
         currentAppDetect.values().forEach(appDetects -> appDetects.forEach(appDetect -> {
             int shouldHitCount = appDetect.getRules().get(this.step).getCount();
             int hitCount = hitCountMap.getOrDefault(appDetect, 0);
@@ -163,7 +165,9 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
         dynamicBox = new HashMap<>();
         userIdMap = new HashMap<>();
         timeMap = new HashMap<>();
+        hitCountMap = new HashMap<>();
         categorySet = stepCategoryMap.values().stream().map(Map::keySet).flatMap(Collection::stream).collect(Collectors.toSet());
+        categoryFiles = new HashMap<>(categorySet.size());
     }
 
     /****
@@ -181,6 +185,7 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
                     e.printStackTrace();
                     return;
                 }
+                int index = 0;
                 CsvRow csvRow;
                 while ((csvRow = csvReader.nextRow()) != null) {
                     CommonAppDetectHitSupport support = new CommonAppDetectHitSupport(mongoTemplate, dynamicBox);
@@ -190,7 +195,9 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
                             successHit(appDetect, csvRow);
                         }
                     }
+                    index++;
                 }
+                System.out.println("完成"+file.getPath()+"一共"+index+"行");
             });
         });
     }
@@ -238,7 +245,7 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
         // 拿到所有的App规则  转成set 便于将来移除
         allDetects = appDetectDao.findAll();
         initAndGroupAppDetects();
-        this.step = this.stepCategoryMap.size();
+        maxStep = stepCategoryMap.size();
     }
 
     @Override
