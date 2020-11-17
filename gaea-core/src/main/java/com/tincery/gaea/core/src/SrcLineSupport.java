@@ -92,7 +92,7 @@ public class SrcLineSupport {
 
     public void setTime(Long capTimeN, Long endTimeN, AbstractSrcData data) {
         data.setCapTime(DateUtils.validateTime(capTimeN));
-        data.setDuration(endTimeN - capTimeN);
+        data.setDuration((endTimeN - capTimeN) / 1000);
     }
 
     /**
@@ -221,6 +221,26 @@ public class SrcLineSupport {
         return this.ipChecker.isForeign(ip);
     }
 
+    /**
+     * 设置isMac2Outer
+     * @param isMac2Outer isMac2Outer
+     * @param data  SRC层的数据
+     */
+    public void setIsMac2Outer(String isMac2Outer,AbstractSrcData data){
+        data.setMacOuter("1".equals(isMac2Outer));
+    }
+
+
+    /**
+     * 设置syn 和 fin
+     * @param syn syn
+     * @param fin fin
+     * @param data 数据实体
+     */
+    public void setSynAndFin(String syn,String fin,AbstractMetaData data){
+        data.setSyn("1".equals(syn))
+                .setFin("0".equals(fin));
+    }
 
     /**
      * 判断是否是服务端

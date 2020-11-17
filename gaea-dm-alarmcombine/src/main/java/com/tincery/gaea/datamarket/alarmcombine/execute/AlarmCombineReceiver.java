@@ -71,7 +71,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                     //TODO 这里需要区分到底是什么类型的告警 然后准备合并
                     Alarm newAlarm = new Alarm(alarmMaterialData);
                     adjustAlarm(newAlarm,alarmMaterialData);
-                    String pattern = getPatternByCategoryAndSubCategory(alarmMaterialData.getCategory(),alarmMaterialData.getSubCategory());
+                     String pattern = getPatternByCategoryAndSubCategory(alarmMaterialData.getCategory(),alarmMaterialData.getSubCategory());
 //                    Integer pattern = alarmMaterialData.getPattern();
                     if (pattern == null){
                         //证书告警不合并
@@ -102,7 +102,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                 if (fileList[i].exists() && fileList[i].isFile()){
                    this.freeFile(fileList[i]);
                 }
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e){
                 e.printStackTrace();
             }
         }
@@ -118,8 +118,11 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         if (category == 13){
             return "TUPLE";
         }
+        if (category == 11){
+            return "ASSET";
+        }
         //TODO 需要完善
-        return null;
+        return "";
     }
 
     @Override
@@ -149,13 +152,18 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      * @param alarm  告警实体
      * @param alarmMaterialData 元数据
      */
-    private void adjustAlarm(Alarm alarm,AlarmMaterialData alarmMaterialData){
+    private void adjustAlarm(Alarm alarm,AlarmMaterialData alarmMaterialData) throws NullPointerException{
         String category = alarmDictionary.parse("category", alarmMaterialData.getCategory());
         alarm.setCategory(category);
         String level = alarmDictionary.parse("level", alarmMaterialData.getLevel());
         alarm.setLevel(level);
-        String checkMode = alarmDictionary.parse("checkmode", alarmMaterialData.getCheckMode());
-        alarm.setCheckMode(checkMode);
+        try {
+            String checkMode = alarmDictionary.parse("checkmode", alarmMaterialData.getCheckMode());
+            alarm.setCheckMode(checkMode);
+        }catch (NullPointerException e){
+            log.warn("字段[{}]没有值,数据为：[{}]","checkMode",alarmMaterialData);
+        }
+
 //        alarmDictionary.parse("function",alarmMaterialData.getFunction) 元数据没有这个字段
         String accuracy = alarmDictionary.parse("accuracy", alarmMaterialData.getAccuracy());
         alarm.setAccuracy(accuracy);
@@ -174,7 +182,8 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      * @return alarmMaterialData
      */
     private Alarm adjustDescription(Alarm oldAlarm, Integer times) {
-        String pattern = oldAlarm.getPattern();
+        int category = alarmDictionary.valueOf("category", oldAlarm.getCategory());
+        String pattern = getPatternByCategoryAndSubCategory(category, oldAlarm.getSubCategory());
         switch (pattern){
             case "SRC":
                 //src装填description
@@ -246,24 +255,37 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
             fixPrefixTime(description,alarm);
             description.append("检测到sha1为").append(sha1);
             String subCategory = alarm.getSubCategory();
-            if ("leak".equals(subCategory)) {
-                description.append("的证书存在算法漏洞");
-            } else if ("unreliability_cert".equals(subCategory)) {
-                description.append("的证书不可靠");
-            } else if ("incompliance_cert".equals(subCategory)) {
-                description.append("的证书不合规");
-            } else if ("selfsigned_cert".equals(subCategory)) {
-                description.append("的证书为“*.gov.cn”自签名证书");
-            } else if ("signaturealgooid".equals(subCategory)) {
-                description.append("国密证书（").append(alarm.getSubCategoryDesc()).append("）");
-            } else {
-                description.append("的可疑证书");
+            switch (subCategory){
+                case "leak":
+                    description.append("的证书存在算法漏洞");
+                    break;
+                case "unreliability_cert":
+                    description.append("的证书不可靠");
+                    break;
+                case "incompliance_cert":
+                    description.append("的证书不合规");
+                    break;
+                case "selfsigned_cert":
+                    description.append("的证书为“*.gov.cn”自签名证书");
+                case "signaturealgooid":
+                    description.append("国密证书（").append(alarm.getSubCategoryDesc()).append("）");
+                default:
+                    description.append("的可疑证书");
             }
+
         } else {
             description.append(alarm.getDescription());
         }
         alarm.setDescription(description.toString());
     }
+
+/*    enum Description{
+        leak("","的证书存在算法漏洞",null);
+
+        Description(String pre,String suf,StringBuilder target){
+
+        }
+    }*/
 
     /*填装证书关联告警*/
     private void adjustCerRelateDescription(Alarm alarm, Integer times) {
@@ -320,6 +342,8 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         }
         alarm.setDescription(description.toString());
     }
+
+
 
     /*填装dns关联告警描述*/
     private void adjustDnsRelateDescription(Alarm alarm, Integer times) {
@@ -571,4 +595,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     public void init() {
 
     }
+
+
+
 }

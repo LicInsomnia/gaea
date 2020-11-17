@@ -24,7 +24,7 @@ public class QQData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{
-                super.toCsv(splitChar)
+                super.toCsv(splitChar),this.qq
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

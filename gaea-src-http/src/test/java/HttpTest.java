@@ -18,7 +18,7 @@ private HttpReceiver httpReceiver;
     @org.junit.jupiter.api.Test
     public void http() throws JMSException {
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
-        activeMQTextMessage.setText("/Users/gongxuanzhang/fsdownload/http-1604889305914599-0.dat");
+        activeMQTextMessage.setText("D:\\gaeaData\\http-1605160308771598-0.dat");
         httpReceiver.receive(activeMQTextMessage);
     }
 }

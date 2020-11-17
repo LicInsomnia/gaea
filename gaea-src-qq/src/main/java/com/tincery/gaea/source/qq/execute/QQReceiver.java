@@ -1,7 +1,8 @@
-package com.tincery.gaea.source.wechat.execute;
+package com.tincery.gaea.source.qq.execute;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tincery.gaea.api.src.WeChatData;
+import com.tincery.gaea.api.src.OpenVpnData;
+import com.tincery.gaea.api.src.QQData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -28,18 +30,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Setter
 @Getter
 @Service
-public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
+public class QQReceiver extends AbstractSrcReceiver<QQData> {
 
     @Autowired
     private PassRule passrule;
     @Autowired
     private AlarmRule alarmRule;
 
-    private final CopyOnWriteArrayList<WeChatData> weChatList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<QQData> qqList = new CopyOnWriteArrayList<>();
 
 
     @Autowired
-    public void setAnalysis(WeChatLineAnalysis analysis) {
+    public void setAnalysis(QQLineAnalysis analysis) {
         this.analysis = analysis;
     }
 
@@ -49,9 +51,10 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
         this.properties = properties;
     }
 
+    //TODO  换头
     @Override
     public String getHead() {
-        return HeadConst.WECHAT_HEADER;
+        return HeadConst.QQ;
     }
 
     @Override
@@ -64,11 +67,11 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
         String dataWarehouseJsonFile = ApplicationInfo.getDataWarehouseJsonPathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
                 System.currentTimeMillis() + ".json";
         FileWriter dataWarehouseJsonFileWriter = new FileWriter(dataWarehouseJsonFile);
-        for (WeChatData weChatData : this.weChatList) {
-            putJson(weChatData.toJsonObjects(), dataWarehouseJsonFileWriter);
+        for (QQData qqData : this.qqList) {
+            putJson(qqData.toJsonObjects(), dataWarehouseJsonFileWriter);
         }
         dataWarehouseJsonFileWriter.close();
-        this.weChatList.clear();
+        this.qqList.clear();
     }
 
     private void putJson(JSONObject jsonObjects, FileWriter fileWriter) {
@@ -86,15 +89,16 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
             if (StringUtils.isEmpty(line)) {
                 continue;
             }
-            WeChatData weChatData;
+            QQData qqData;
             try {
-                weChatData = this.analysis.pack(line);
-                weChatData.adjust();
-                this.weChatList.add(weChatData);
-                this.putCsvMap(weChatData);
+                qqData = this.analysis.pack(line);
+                qqData.adjust();
+                this.qqList.add(qqData);
+                this.putCsvMap(qqData);
             } catch (Exception e) {
                 log.error("错误SRC：{}", line);
             }
+
         }
     }
 

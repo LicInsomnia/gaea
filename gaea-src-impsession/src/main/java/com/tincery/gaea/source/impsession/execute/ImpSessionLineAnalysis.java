@@ -50,7 +50,12 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
         if (needCorrect(elements)) {
             modifyImpSessionData(impSessionData, elements);
         }
-        impSessionData.setForeign(this.srcLineSupport.isForeign(impSessionData.getServerIp()));
+        try {
+            impSessionData.setForeign(this.srcLineSupport.isForeign(impSessionData.getServerIp()));
+        }catch (Exception e){
+            throw new IllegalArgumentException("无法判断ipv6内外网");
+        }
+
         return impSessionData;
     }
 
