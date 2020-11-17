@@ -57,36 +57,38 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         log.info("alarmCombine接收到了消息开始处理");
-        String alarmMaterialDir = NodeInfo.getAlarmMaterial();
-        File fileFolder = new File(alarmMaterialDir);
-        log.info("扫描文件夹[{}]",alarmMaterialDir);
-        if (!fileFolder.isDirectory()){
-            throw new JMSException("消息错误，请检测配置的文件夹");
-        }
+
         ConcurrentHashMap<String, Pair<Alarm,Integer>> alarmMap = new ConcurrentHashMap<>();
         CopyOnWriteArrayList<Alarm> resultList = new CopyOnWriteArrayList<>();
-        File [] fileList = fileFolder.listFiles();
-        assert fileList != null;
+        File[] fileList = getFileList();
+        if (Objects.isNull(fileList)){
+            return;
+        }
+        analysisFileList(fileList,alarmMap,resultList);
+        //输出告警Alarm
+        free(resultList,alarmMap);
+    }
+
+    private void analysisFileList(File[] fileList,ConcurrentHashMap<String, Pair<Alarm,Integer>> alarmMap,CopyOnWriteArrayList<Alarm> resultList) {
         log.info("开始解析文件,共[{}]个文件", fileList.length);
         for (File file : fileList) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 String line;
                 log.info("开始解析文件[{}]", file.getName());
                 while ((line = bufferedReader.readLine()) != null) {
-                    AlarmMaterialData alarmMaterialData = null;
+                    AlarmMaterialData alarmMaterialData;
+                    Alarm newAlarm;
                     try {
                         alarmMaterialData = JSON.parseObject(line).toJavaObject(AlarmMaterialData.class);
+                        newAlarm = fixAlarm(alarmMaterialData);
                     } catch (JSONException e) {
                         log.error("文件解析错误[{}],数据为:[{}]", file.getName(), line);
                         continue;
                     }
 
-                    //TODO 这里需要区分到底是什么类型的告警 然后准备合并
-                    Alarm newAlarm = new Alarm(alarmMaterialData);
-                    adjustAlarm(newAlarm, alarmMaterialData);
                     String pattern = getPatternByCategoryAndSubCategory(alarmMaterialData.getCategory(),
                             alarmMaterialData.getSubCategory());
-//                    Integer pattern = alarmMaterialData.getPattern();
+                    /* 这里的warning是因为pattern还没能完全写完确定 */
                     if (pattern == null) {
                         //证书告警不合并
                         resultList.add(newAlarm);
@@ -95,22 +97,19 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                     if (StringUtils.isEmpty(key)) {
                         continue;
                     }
-                    Pair<Alarm, Integer> kv = alarmMap.getOrDefault(key, null);
-                    if (Objects.isNull(kv)) {
-                        alarmMap.put(key, new Pair<>(newAlarm, 1));
-                    } else {
-                        Alarm oldAlarm = kv.getKey();
-                        //合并告警  TODO 这里需要不根据pattern区分 newAlarm，oldAlarm
-                        Alarm mergeData = mergeAlarm(newAlarm, oldAlarm);
-                        if (Objects.isNull(mergeData)) {
-                            //如果返回的null  则不合并 分别存储
-                            resultList.add(adjustDescription(oldAlarm, kv.getValue()));
-                            alarmMap.put(key, new Pair<>(newAlarm, 1));
-                        } else {
-                            //合并 存储在告警map中 最后输出
-                            alarmMap.put(key, new Pair<>(mergeData, kv.getValue() + 1));
+                    /* 合并map */
+                    alarmMap.merge(key,new Pair<>(newAlarm,1),(oldValue,newValue)->{
+                        Alarm oldAlarmTemp = oldValue.getKey();
+                        Alarm newAlarmTemp = newValue.getKey();
+                        Alarm merge = mergeAlarm(newAlarmTemp, oldAlarmTemp);
+                        if (Objects.isNull(merge)){
+                            //如果合并失败 分别存储
+                            resultList.add(adjustDescription(oldAlarmTemp,oldValue.getValue()));
+                            return newValue;
+                        }else{
+                            return new Pair<>(merge,newValue.getValue() + 1);
                         }
-                    }
+                    });
                 }
                 //读取完成删除文件
                 if (file.exists() && file.isFile()) {
@@ -120,9 +119,34 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                 log.error("文件解析错误[{}]", file.getName());
             }
         }
-        //输出告警Alarm
-        free(resultList,alarmMap);
     }
+
+    /**
+     * 根据告警素材生成一个告警实体
+     * @param alarmMaterialData 告警素材
+     * @return 数据实体
+     */
+    private Alarm fixAlarm(AlarmMaterialData alarmMaterialData) {
+        Alarm newAlarm = new Alarm(alarmMaterialData);
+        adjustAlarm(newAlarm, alarmMaterialData);
+        return newAlarm;
+    }
+
+    /**
+     * 获得指定位置的文件夹（路径由配置决定）
+     * @return 文件夹下文件的数组
+     * @throws JMSException 未能找到文件夹
+     */
+    private File[] getFileList() throws JMSException {
+        String alarmMaterialDir = NodeInfo.getAlarmMaterial();
+        File fileFolder = new File(alarmMaterialDir);
+        log.info("扫描文件夹[{}]",alarmMaterialDir);
+        if (!fileFolder.isDirectory()){
+            throw new JMSException("消息错误，请检测配置的文件夹");
+        }
+        return fileFolder.listFiles();
+    }
+
 
     /** 根据category和subCategory 确定该条告警属于哪个模块 **/
     private String getPatternByCategoryAndSubCategory(Integer category, String subCategory) {
@@ -151,9 +175,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      * @param alarmMap 还未填装属性的集合
      */
     private void free(CopyOnWriteArrayList<Alarm> resultList, ConcurrentHashMap<String, Pair<Alarm, Integer>> alarmMap) {
-        alarmMap.forEach((key,value)->{
-            resultList.add(adjustDescription(value.getKey(),value.getValue()));
-        });
+        alarmMap.forEach((key,value)-> resultList.add(adjustDescription(value.getKey(),value.getValue())));
         alarmDao.insert(resultList);
         log.info("共入库[{}]条告警信息",resultList.size());
         alarmMap.clear();
@@ -166,7 +188,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      * @param alarm  告警实体
      * @param alarmMaterialData 元数据
      */
-    private void adjustAlarm(Alarm alarm,AlarmMaterialData alarmMaterialData) throws NullPointerException{
+    private void adjustAlarm(Alarm alarm,AlarmMaterialData alarmMaterialData){
         String category = alarmDictionary.parse("category", alarmMaterialData.getCategory());
         alarm.setCategory(category);
         String level = alarmDictionary.parse("level", alarmMaterialData.getLevel());
@@ -177,12 +199,8 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
 //        alarmDictionary.parse("range",alarmMaterialData.getRange) 元数据没有这个字段
         String type = alarmDictionary.parse("type", alarmMaterialData.getType());
         alarm.setType(type);
-        try {
-            String checkMode = alarmDictionary.parse("checkmode", alarmMaterialData.getCheckMode());
-            alarm.setCheckMode(checkMode);
-        }catch (NullPointerException e){
-            log.warn("字段[{}]没有值,数据为：[{}]","checkMode",alarmMaterialData);
-        }
+        String checkMode = alarmDictionary.parse("checkmode", alarmMaterialData.getCheckMode());
+        alarm.setCheckMode(checkMode);
         ArrayList<String> eventData = new ArrayList<>();
         eventData.add(alarmMaterialData.getEventData());
         alarm.setEventData(eventData);
@@ -190,7 +208,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
 
     /**
      * 填充orDefault的 description
-     * @param oldAlarm
+     * @param oldAlarm 原有的数据
      * @param times 命中次数
      * @return alarmMaterialData
      */
@@ -219,21 +237,18 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                 adjustCerRelateDescription(oldAlarm,times);
                 break;
             case "CERT":
-                adjustCertDescription(oldAlarm,times);
+                adjustCertDescription(oldAlarm);
                 break;
             case "TUPLE":
                 adjustTupleDescription(oldAlarm,times);
                 break;
             default:
-                adjustOtherDescription(oldAlarm,times);
+                //输出原有告警
         }
         return oldAlarm;
     }
 
-    /*填装其他告警*/
-    private void adjustOtherDescription(Alarm alarm, Integer times) {
-        //输出原有描述
-    }
+
 
 
     /*填装五元组告警*/
@@ -260,7 +275,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     }
 
     /*填装证书告警 不合并只填装description*/
-    private void adjustCertDescription(Alarm alarm, Integer times) {
+    private void adjustCertDescription(Alarm alarm) {
         String categoryDesc = alarm.getCategoryDesc();
         StringBuilder description = new StringBuilder();
         if ("证书".equals(categoryDesc)) {
@@ -362,7 +377,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     private void adjustDnsRelateDescription(Alarm alarm, Integer times) {
         StringBuilder stringBuilder = new StringBuilder();
         fixPrefixTime(stringBuilder,alarm);
-        stringBuilder.append("次");
+        stringBuilder.append(times).append("次");
         fixTask(stringBuilder,alarm);
         stringBuilder.append("检测到").append(alarm.getProName()).append("通信中")
                 .append(alarm.getSubCategoryDesc()).append("（")
@@ -513,7 +528,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      */
     private synchronized Alarm mergeAlarm(Alarm newAlarm, Alarm oldAlarm) {
         //10分钟的间隔
-        int time = DateUtils.SECOND * DateUtils.MINUTE * 10;
+        int time = DateUtils.MINUTE * 10;
         //超时返回null  不合并
         if (overTime(time,newAlarm,oldAlarm)){
             return null;
@@ -533,8 +548,8 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
 
     /**
      * 合并流量
-     * @param oldAlarm
-     * @param newAlarm
+     * @param oldAlarm 原有数据
+     * @param newAlarm 新的数据
      */
     private void mergeFlow(Alarm oldAlarm, Alarm newAlarm) {
         oldAlarm.setUpByte(oldAlarm.getUpByte() + newAlarm.getUpByte());
@@ -563,8 +578,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      *               1.src src告警 2.dw dw告警 3.asset 资产告警
      *               4.behaviour 行为告警 5.dns_related DNS关联告警 6.cert_related 证书关联告警
      *               7.tuple 五元组 8.other 特殊告警
-     * @param alarmMaterialData
-     * @return
      */
     private String getAlarmKeyByPattern(String pattern,AlarmMaterialData alarmMaterialData) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
@@ -573,7 +586,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         String categoryDesc = alarmMaterialData.getCategoryDesc();
         String subCategoryDesc = alarmMaterialData.getSubCategoryDesc();
         String title = alarmMaterialData.getTitle();
-        //TODO  这里如果没有pattern了  怎么判定是什么类型
         switch (pattern){
             case "CERT":
                 //证书告警 不对告警进行操作
