@@ -20,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -59,19 +61,24 @@ public class QQReceiver extends AbstractSrcReceiver<QQData> {
 
     @Override
     protected void free() {
+        HashSet<QQData> qqData = new HashSet<>(qqList);
+        for (QQData qq : qqData) {
+            this.putCsvMap(qq);
+        }
         super.free();
-        outPutJson();
+        outPutJson(qqData);
+        this.qqList.clear();
     }
 
-    private void outPutJson(){
+    private void outPutJson(Set<QQData> qqDataSet){
         String dataWarehouseJsonFile = ApplicationInfo.getDataWarehouseJsonPathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
                 System.currentTimeMillis() + ".json";
         FileWriter dataWarehouseJsonFileWriter = new FileWriter(dataWarehouseJsonFile);
-        for (QQData qqData : this.qqList) {
+        for (QQData qqData : qqDataSet) {
             putJson(qqData.toJsonObjects(), dataWarehouseJsonFileWriter);
         }
         dataWarehouseJsonFileWriter.close();
-        this.qqList.clear();
+        qqDataSet.clear();
     }
 
     private void putJson(JSONObject jsonObjects, FileWriter fileWriter) {
@@ -94,7 +101,6 @@ public class QQReceiver extends AbstractSrcReceiver<QQData> {
                 qqData = this.analysis.pack(line);
                 qqData.adjust();
                 this.qqList.add(qqData);
-                this.putCsvMap(qqData);
             } catch (Exception e) {
                 log.error("错误SRC：{}", line);
             }
