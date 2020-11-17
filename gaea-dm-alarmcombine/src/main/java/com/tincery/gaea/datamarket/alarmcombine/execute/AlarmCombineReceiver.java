@@ -2,6 +2,7 @@ package com.tincery.gaea.datamarket.alarmcombine.execute;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.Location;
@@ -66,8 +67,15 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         for (int i = 0; i < fileList.length; i++) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileList[i]))) {
                 String line;
+                log.info("开始解析文件[{}]",fileList[i].getName());
                 while ((line = bufferedReader.readLine()) != null) {
-                    AlarmMaterialData alarmMaterialData = JSON.parseObject(line).toJavaObject(AlarmMaterialData.class);
+                    AlarmMaterialData alarmMaterialData = null;
+                    try {
+                        alarmMaterialData = JSON.parseObject(line).toJavaObject(AlarmMaterialData.class);
+                    }catch (JSONException e){
+                        log.error("文件解析错误[{}],数据为:[{}]",fileList[i].getName(),line);
+                    }
+
                     //TODO 这里需要区分到底是什么类型的告警 然后准备合并
                     Alarm newAlarm = new Alarm(alarmMaterialData);
                     adjustAlarm(newAlarm,alarmMaterialData);
@@ -103,7 +111,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                    this.freeFile(fileList[i]);
                 }
             } catch (IOException | NullPointerException e){
-                e.printStackTrace();
+                log.error("文件解析错误[{}]",fileList[i].getName());
             }
         }
         //输出告警Alarm
