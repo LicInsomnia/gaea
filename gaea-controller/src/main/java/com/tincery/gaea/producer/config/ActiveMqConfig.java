@@ -104,4 +104,9 @@ public class ActiveMqConfig {
     public Queue getAsset() {
         return new ActiveMQQueue(QueueNames.DM_ASSET);
     }
+
+    @Bean(name = QueueNames.SUPPORT_MONGO_STASH)
+    public Queue getSupportMongoStash() {
+        return new ActiveMQQueue(QueueNames.SUPPORT_MONGO_STASH);
+    }
 }

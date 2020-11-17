@@ -7,6 +7,7 @@ import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.TableConfigDao;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.starter.base.model.TableConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,13 +23,16 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Component
+@Slf4j
 public class MongoStashReceiver implements Receiver {
 
 
@@ -38,12 +42,12 @@ public class MongoStashReceiver implements Receiver {
     @Resource(name = "sysMongoTemplate")
     private MongoTemplate sysMongoTemplate;
 
-
     @Autowired
     private TableConfigDao tableConfigDao;
 
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
+        log.info("开始执行");
         long jmsTimestamp = textMessage.getJMSTimestamp();
         List<TableConfig> updateConfig = tableConfigDao.getUpdate();
         List<TableConfig> insertConfig = tableConfigDao.getInsert();
@@ -55,6 +59,7 @@ public class MongoStashReceiver implements Receiver {
         if (CollectionUtils.isEmpty(updateConfig)) {
             return;
         }
+        Map<String, Integer> updateCount = new HashMap<>();
         for (TableConfig tableConfig : updateConfig) {
             List<String> updateElements = tableConfig.getUpdateElements();
             List<String> updateDate = tableConfig.getUpdateDate();
@@ -69,31 +74,34 @@ public class MongoStashReceiver implements Receiver {
                     Update update = new Update();
                     boolean updateFlag = false;
                     for (String updateElement : updateElements) {
-                        if(jsonObject.containsKey(updateElement)){
+                        if (jsonObject.containsKey(updateElement)) {
                             updateFlag = true;
-                            update.set(updateElement,jsonObject.get(updateElement));
+                            update.set(updateElement, jsonObject.get(updateElement));
                         }
                     }
                     for (String updateDateElement : updateDate) {
-                         if(jsonObject.containsKey(updateDateElement)){
-                             updateFlag = true;
-                             Date date = jsonObject.getDate(updateDateElement);
-                             update.set(updateDateElement,date);
-                         }
+                        if (jsonObject.containsKey(updateDateElement)) {
+                            updateFlag = true;
+                            Date date = jsonObject.getDate(updateDateElement);
+                            update.set(updateDateElement, date);
+                        }
                     }
-                    if(updateFlag){
+                    if (updateFlag) {
                         Query query = new Query(Criteria.where("_id").is(jsonObject.getString("_id")));
-                        proMongoTemplate.updateFirst(query,update,tableConfig.getName());
+                        proMongoTemplate.updateFirst(query, update, tableConfig.getName());
+                        updateCount.merge(tableConfig.getName(), 1, Integer::sum);
                     }
                 });
             }
         }
+        updateCount.forEach((tableName, count) -> log.info("数据库{},修改了{}条记录", tableName, count));
     }
 
     private void insert(List<TableConfig> insertConfig) {
         if (CollectionUtils.isEmpty(insertConfig)) {
             return;
         }
+        Map<String, Integer> insertCount = new HashMap<>();
         for (TableConfig tableConfig : insertConfig) {
             String id = tableConfig.getId();
             String cacheByCategory = NodeInfo.getCacheByCategory(id);
@@ -112,9 +120,11 @@ public class MongoStashReceiver implements Receiver {
                     } else {
                         sysMongoTemplate.insert(insertData, name);
                     }
+                    insertCount.merge(tableConfig.getName(), 1, Integer::sum);
                 }
             }
         }
+        insertCount.forEach((collectionName, count) -> log.info("数据库{}添加了{}条", collectionName, count));
     }
 
     @Override

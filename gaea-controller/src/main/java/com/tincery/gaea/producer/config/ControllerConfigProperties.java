@@ -54,5 +54,10 @@ public class ControllerConfigProperties {
         private String alarmcombine;
         private String asset;
     }
+    @Setter
+    @Getter
+    public static class SupportConfig{
+        private String mongoStash;
+    }
 
 }

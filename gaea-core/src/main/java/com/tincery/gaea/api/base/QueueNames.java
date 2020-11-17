@@ -25,4 +25,6 @@ public class QueueNames {
     public static final String DM_ALARMCOMBINE = "dm_alarmcombine";
 
     public static final String ODS_HTTPANALYSIS = "ods_httpanalysis";
+
+    public static final String SUPPORT_MONGO_STASH  = "support_mongostash";
 }
