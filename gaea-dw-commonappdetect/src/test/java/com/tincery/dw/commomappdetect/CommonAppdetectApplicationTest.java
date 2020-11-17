@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.jms.MessageNotWriteableException;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(classes = CommonAppdetectApplication.class)
