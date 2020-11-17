@@ -31,7 +31,8 @@ public class App {
 //            "gaea-src-qq",
             "gaea-dw-reorganization",
             "gaea-dm-asset",
-            "gaea-dm-alarmcombine"
+            "gaea-dm-alarmcombine",
+            "gaea-support-mongostash"
     };
     private static String gaeaPath;
 
