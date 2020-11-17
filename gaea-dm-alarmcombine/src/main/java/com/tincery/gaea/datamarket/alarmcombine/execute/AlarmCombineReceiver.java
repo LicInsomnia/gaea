@@ -157,19 +157,18 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         alarm.setCategory(category);
         String level = alarmDictionary.parse("level", alarmMaterialData.getLevel());
         alarm.setLevel(level);
+        //        alarmDictionary.parse("function",alarmMaterialData.getFunction) 元数据没有这个字段
+        String accuracy = alarmDictionary.parse("accuracy", alarmMaterialData.getAccuracy());
+        alarm.setAccuracy(accuracy);
+//        alarmDictionary.parse("range",alarmMaterialData.getRange) 元数据没有这个字段
+        String type = alarmDictionary.parse("type", alarmMaterialData.getType());
+        alarm.setType(type);
         try {
             String checkMode = alarmDictionary.parse("checkmode", alarmMaterialData.getCheckMode());
             alarm.setCheckMode(checkMode);
         }catch (NullPointerException e){
             log.warn("字段[{}]没有值,数据为：[{}]","checkMode",alarmMaterialData);
         }
-
-//        alarmDictionary.parse("function",alarmMaterialData.getFunction) 元数据没有这个字段
-        String accuracy = alarmDictionary.parse("accuracy", alarmMaterialData.getAccuracy());
-        alarm.setAccuracy(accuracy);
-//        alarmDictionary.parse("range",alarmMaterialData.getRange) 元数据没有这个字段
-        String type = alarmDictionary.parse("type", alarmMaterialData.getType());
-        alarm.setType(type);
         ArrayList<String> eventData = new ArrayList<>();
         eventData.add(alarmMaterialData.getEventData());
         alarm.setEventData(eventData);

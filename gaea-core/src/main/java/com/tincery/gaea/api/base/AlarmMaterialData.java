@@ -11,6 +11,7 @@ import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -24,6 +25,7 @@ import java.util.*;
  */
 @Setter
 @Getter
+@ToString
 public final class AlarmMaterialData {
     /**
      * 探针标识 记录是哪个探针生成的txt
