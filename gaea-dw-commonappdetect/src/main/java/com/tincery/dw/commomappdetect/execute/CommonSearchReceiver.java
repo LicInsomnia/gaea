@@ -122,6 +122,8 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
         Set<AppDetect> cantHitAppDetect = cantHitAppDetect();
         if (!CollectionUtils.isEmpty(cantHitAppDetect)) {
             this.maybeHitSet.removeAll(cantHitAppDetect);
+            System.out.println("移除"+cantHitAppDetect.size()
+                    +"个不可能命中的规则"+cantHitAppDetect.stream().map(AppDetect::getId).collect(Collectors.toList()));
             this.stepCategoryMap.forEach((step, categoryMap) ->
                     categoryMap.forEach((category, appDetectSet) ->
                             appDetectSet.removeAll(cantHitAppDetect)));
@@ -178,7 +180,7 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
         stepCategoryMap.get(step + 1).forEach((category, rules) -> {
             List<File> files = this.categoryFiles.get(category);
             files.forEach(file -> {
-                CsvReader csvReader = null;
+                CsvReader csvReader;
                 try {
                     csvReader = CsvReader.builder().file(file).build();
                 } catch (IllegalAccessException e) {

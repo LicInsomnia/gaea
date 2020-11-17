@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.Location;
 import com.tincery.gaea.api.dm.Alarm;
-import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.AlarmDao;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
@@ -15,7 +14,6 @@ import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import com.tincery.gaea.datamarket.alarmcombine.mgt.AlarmDictionary;
-import com.tincery.gaea.datamarket.alarmcombine.property.AlarmCombineProperties;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +21,13 @@ import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -63,55 +66,58 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         ConcurrentHashMap<String, Pair<Alarm,Integer>> alarmMap = new ConcurrentHashMap<>();
         CopyOnWriteArrayList<Alarm> resultList = new CopyOnWriteArrayList<>();
         File [] fileList = fileFolder.listFiles();
+        assert fileList != null;
         log.info("开始解析文件,共[{}]个文件", fileList.length);
-        for (int i = 0; i < fileList.length; i++) {
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileList[i]))) {
+        for (File file : fileList) {
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 String line;
-                log.info("开始解析文件[{}]",fileList[i].getName());
+                log.info("开始解析文件[{}]", file.getName());
                 while ((line = bufferedReader.readLine()) != null) {
                     AlarmMaterialData alarmMaterialData = null;
                     try {
                         alarmMaterialData = JSON.parseObject(line).toJavaObject(AlarmMaterialData.class);
-                    }catch (JSONException e){
-                        log.error("文件解析错误[{}],数据为:[{}]",fileList[i].getName(),line);
+                    } catch (JSONException e) {
+                        log.error("文件解析错误[{}],数据为:[{}]", file.getName(), line);
+                        continue;
                     }
 
                     //TODO 这里需要区分到底是什么类型的告警 然后准备合并
                     Alarm newAlarm = new Alarm(alarmMaterialData);
-                    adjustAlarm(newAlarm,alarmMaterialData);
-                     String pattern = getPatternByCategoryAndSubCategory(alarmMaterialData.getCategory(),alarmMaterialData.getSubCategory());
+                    adjustAlarm(newAlarm, alarmMaterialData);
+                    String pattern = getPatternByCategoryAndSubCategory(alarmMaterialData.getCategory(),
+                            alarmMaterialData.getSubCategory());
 //                    Integer pattern = alarmMaterialData.getPattern();
-                    if (pattern == null){
+                    if (pattern == null) {
                         //证书告警不合并
                         resultList.add(newAlarm);
                     }
                     String key = getAlarmKeyByPattern(pattern, alarmMaterialData);
-                    if (StringUtils.isEmpty(key)){
+                    if (StringUtils.isEmpty(key)) {
                         continue;
                     }
                     Pair<Alarm, Integer> kv = alarmMap.getOrDefault(key, null);
-                    if (Objects.isNull(kv)){
-                        alarmMap.put(key,new Pair<>(newAlarm,1));
-                    }else{
+                    if (Objects.isNull(kv)) {
+                        alarmMap.put(key, new Pair<>(newAlarm, 1));
+                    } else {
                         Alarm oldAlarm = kv.getKey();
                         //合并告警  TODO 这里需要不根据pattern区分 newAlarm，oldAlarm
-                        Alarm mergeData = mergeAlarm(newAlarm,oldAlarm);
-                        if (Objects.isNull(mergeData)){
+                        Alarm mergeData = mergeAlarm(newAlarm, oldAlarm);
+                        if (Objects.isNull(mergeData)) {
                             //如果返回的null  则不合并 分别存储
-                            resultList.add(adjustDescription(oldAlarm,kv.getValue()));
-                            alarmMap.put(key,new Pair<>(newAlarm,1));
-                        }else{
+                            resultList.add(adjustDescription(oldAlarm, kv.getValue()));
+                            alarmMap.put(key, new Pair<>(newAlarm, 1));
+                        } else {
                             //合并 存储在告警map中 最后输出
-                            alarmMap.put(key,new Pair<>(mergeData,kv.getValue()+1));
+                            alarmMap.put(key, new Pair<>(mergeData, kv.getValue() + 1));
                         }
                     }
                 }
                 //读取完成删除文件
-                if (fileList[i].exists() && fileList[i].isFile()){
-                   this.freeFile(fileList[i]);
+                if (file.exists() && file.isFile()) {
+                    this.freeFile(file);
                 }
-            } catch (IOException | NullPointerException e){
-                log.error("文件解析错误[{}]",fileList[i].getName());
+            } catch (IOException | NullPointerException e) {
+                log.error("文件解析错误[{}]", file.getName());
             }
         }
         //输出告警Alarm

@@ -79,9 +79,9 @@ public class CommonAppDetectHitSupport {
         for (String index : indexs) {
             int i = Integer.parseInt(index);
             if (i > 0) {
-                result &= hit(csvRow, conditions.get(i-1), appDetect);
+                result &= hit(csvRow, conditions.get(i - 1), appDetect);
             } else {
-                result |= hit(csvRow, conditions.get(-(i-1)), appDetect);
+                result |= hit(csvRow, conditions.get(-(i - 1)), appDetect);
             }
         }
         return result;
@@ -113,15 +113,16 @@ public class CommonAppDetectHitSupport {
 
         @Override
         public BiConsumer<Map<Integer, Map<String, Set<AppDetect>>>, AppDetect> accumulator() {
-            return (map, app) -> app.getRules().forEach(rule -> {
-                int step = app.getRuleCount();
-                for (int i = 0; i < step; i++) {
+            return (map, app) -> {
+                int appStep = app.getRuleCount();
+                for (int i = 0; i < appStep; i++) {
+                    SearchRule searchRule = app.getRules().get(i);
+                    String category = searchRule.getMatch().getKey();
                     Map<String, Set<AppDetect>> categoryMap = map.computeIfAbsent(i + 1, k -> new HashMap<>());
-                    String category = rule.getMatch().getKey();
-                    Set<AppDetect> categorySet = categoryMap.computeIfAbsent(category, k -> new HashSet<>());
-                    categorySet.add(app);
+                    Set<AppDetect> appDetects = categoryMap.computeIfAbsent(category, k -> new HashSet<>());
+                    appDetects.add(app);
                 }
-            });
+            };
         }
 
         @Override
