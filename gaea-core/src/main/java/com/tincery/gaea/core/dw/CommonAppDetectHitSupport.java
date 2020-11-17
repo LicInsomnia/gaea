@@ -38,15 +38,15 @@ public class CommonAppDetectHitSupport {
     /****
      * 步匹配
      * @author gxz
-     * @param csvRow 此行可能多线程访问 绝对禁止修改
+     * @param csvRow 此行可能多线程访问 禁止修改
      * @return boolean
      **/
     public boolean stepHit(final CsvRow csvRow, AppDetect appDetect, SearchRule searchRule) {
-        boolean hit = searchRule.getMatch().getValue().stream().allMatch(definition -> definitionHit(csvRow, definition,
-                appDetect));
+        boolean hit = searchRule.getMatch().getValue().stream()
+                .allMatch(definition -> definitionHit(csvRow, definition, appDetect));
         // 如果需要记录out 记录一下out
         List<String> outs = searchRule.getOut();
-        if (!CollectionUtils.isEmpty(outs) && hit) {
+        if (hit && !CollectionUtils.isEmpty(outs)) {
             recordOuts(outs, csvRow, appDetect);
         }
         return hit;
@@ -79,9 +79,9 @@ public class CommonAppDetectHitSupport {
         for (String index : indexs) {
             int i = Integer.parseInt(index);
             if (i > 0) {
-                result &= hit(csvRow, conditions.get(i), appDetect);
+                result &= hit(csvRow, conditions.get(i - 1), appDetect);
             } else {
-                result |= hit(csvRow, conditions.get(-i), appDetect);
+                result |= hit(csvRow, conditions.get(-(i - 1)), appDetect);
             }
         }
         return result;
@@ -113,25 +113,29 @@ public class CommonAppDetectHitSupport {
 
         @Override
         public BiConsumer<Map<Integer, Map<String, Set<AppDetect>>>, AppDetect> accumulator() {
-            return (map, app) -> app.getRules().forEach(rule -> {
-                int step = rule.getCount();
-                for (int i = 0; i < step; i++) {
-                    Map<String, Set<AppDetect>> categoryMap = map.computeIfAbsent(i, k -> new HashMap<>());
-                    String category = rule.getMatch().getKey();
-                    Set<AppDetect> categorySet = categoryMap.computeIfAbsent(category, k -> new HashSet<>());
-                    categorySet.add(app);
+            return (map, app) -> {
+                int appStep = app.getRuleCount();
+                for (int i = 0; i < appStep; i++) {
+                    SearchRule searchRule = app.getRules().get(i);
+                    String category = searchRule.getMatch().getKey();
+                    Map<String, Set<AppDetect>> categoryMap = map.computeIfAbsent(i + 1, k -> new HashMap<>());
+                    Set<AppDetect> appDetects = categoryMap.computeIfAbsent(category, k -> new HashSet<>());
+                    appDetects.add(app);
                 }
-            });
+            };
         }
 
         @Override
         public BinaryOperator<Map<Integer, Map<String, Set<AppDetect>>>> combiner() {
-            return null;
+            return (map1, map2) -> {
+                map1.putAll(map2);
+                return map1;
+            };
         }
 
         @Override
         public Function<Map<Integer, Map<String, Set<AppDetect>>>, Map<Integer, Map<String, Set<AppDetect>>>> finisher() {
-            return null;
+            return (x) -> x;
         }
 
         @Override

@@ -176,6 +176,8 @@ public class HeadConst {
             FIELD.WXNUM + CSV_SEPARATOR +
             FIELD.VERSION + CSV_SEPARATOR +
             FIELD.OSTYPE;
+    public final static String QQ = BASE_COMMON_HEADER +
+            FIELD.QQ;
 
 
     private HeadConst() {
@@ -321,6 +323,7 @@ public class HeadConst {
         public final static String FINAL_PUBLIC_KEY_ALGORITHMS = "finalPublicKeyAlgorithms";
         /* CER */
         public final static String SUBJECT_CN_STRING = "subject_cn";
+        public static final String QQ = "qq";
     }
 
     public static class PRONAME {
@@ -342,6 +345,7 @@ public class HeadConst {
         public final static String WECHAT = "WECHAT";
         public final static String PPTP = "PPTP";
         public final static String L2TP = "L2TP";
+        public final static String QQ = "QQ";
     }
 
     public static class APPLICATION_DETECT_MODE {

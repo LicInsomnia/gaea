@@ -19,7 +19,7 @@ public class DmAlarmProducer extends AbstractProducer {
 
     @Override
     public void producer(Queue queue, String category, String extension) {
-        jmsMessagingTemplate.convertAndSend(queue, "苍叔牛逼");
+        jmsMessagingTemplate.convertAndSend(queue, "dm层提交了一个任务");
         try {
             log.info("提交了一条dm.{}任务", queue.getQueueName());
         } catch (JMSException e) {

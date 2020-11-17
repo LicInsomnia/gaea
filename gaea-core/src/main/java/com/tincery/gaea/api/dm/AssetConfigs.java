@@ -2,7 +2,8 @@ package com.tincery.gaea.api.dm;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
-import com.tincery.gaea.api.base.ThPredicate;
+import com.tincery.gaea.api.base.TeFunction;
+import com.tincery.gaea.api.base.TePredicate;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import org.springframework.util.CollectionUtils;
@@ -10,7 +11,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -19,7 +19,7 @@ import java.util.function.Function;
  **/
 public class AssetConfigs {
 
-    private static final BiFunction<JSONObject, AssetConfigDO, AlarmMaterialData> createAlarm;
+    private static final TeFunction<JSONObject, AssetConfigDO, Boolean, AlarmMaterialData> createAlarm;
 
     private static final Function<JSONObject, Integer> getProtocol;
 
@@ -51,11 +51,11 @@ public class AssetConfigs {
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.DOMESTIC)) {
             // 境内
-            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
+            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig, true));
         }
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.OVERSEAS)) {
             // 境外
-            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
+            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig, true));
         }
         // 判断白名单 如果命中则直接返回
         if (check(assetJson, assetConfig, ListType.WHITE, OutInput.OUT, Border.DOMESTIC)) {
@@ -65,7 +65,7 @@ public class AssetConfigs {
             return null;
         }
         // 白名单没返回 则告警
-        return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
+        return Collections.singletonList(createAlarm.apply(assetJson, assetConfig,true));
     }
 
     public static List<AlarmMaterialData> detectorServer(JSONObject assetJson, AssetDetector assetDetector) {
@@ -73,11 +73,11 @@ public class AssetConfigs {
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.DOMESTIC)) {
             // 境内
-            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
+            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig,false));
         }
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.OVERSEAS)) {
             // 境外
-            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
+            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig,false));
         }
         // 判断白名单 如果命中则直接返回
         if (check(assetJson, assetConfig, ListType.WHITE, OutInput.IN, Border.DOMESTIC)) {
@@ -87,7 +87,7 @@ public class AssetConfigs {
             return null;
         }
         // 白名单没返回 则告警
-        return Collections.singletonList(createAlarm.apply(assetJson, assetConfig));
+        return Collections.singletonList(createAlarm.apply(assetJson, assetConfig,false));
     }
 
 
@@ -182,9 +182,9 @@ public class AssetConfigs {
         DOMESTIC(AssetConfigs::domesticHit),
         OVERSEAS(AssetConfigs::overseasHit);
 
-        public ThPredicate<JSONObject, AssetConfigDO.OutInputFilter, Function<JSONObject, Long>> getHitableFunction;
+        public TePredicate<JSONObject, AssetConfigDO.OutInputFilter, Function<JSONObject, Long>> getHitableFunction;
 
-        Border(ThPredicate<JSONObject, AssetConfigDO.OutInputFilter, Function<JSONObject, Long>> getHitableFunction) {
+        Border(TePredicate<JSONObject, AssetConfigDO.OutInputFilter, Function<JSONObject, Long>> getHitableFunction) {
             this.getHitableFunction = getHitableFunction;
         }
     }

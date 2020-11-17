@@ -19,10 +19,8 @@ class AssetReceiverTest {
     @Test
     public void bbb() throws JMSException {
         TextMessage activeMQMessage = new ActiveMQTextMessage();
-        activeMQMessage.setText("/Users/gongxuanzhang/workSpace/java/gaea/aaaa.json");
+        activeMQMessage.setText("D:\\gaeaData\\asset_1605489600012.json");
         receiver.receive(activeMQMessage);
     }
-
-
 
 }

@@ -7,19 +7,14 @@ import com.tincery.gaea.api.dm.AssetConfigDO;
 import com.tincery.gaea.api.src.extension.AlarmExtension;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.component.support.IpSelector;
-import com.tincery.gaea.core.base.mgt.AlarmDictionary;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 告警素材元数据类
@@ -30,6 +25,7 @@ import java.util.Set;
  */
 @Setter
 @Getter
+@ToString
 public final class AlarmMaterialData {
     /**
      * 探针标识 记录是哪个探针生成的txt
@@ -214,7 +210,7 @@ public final class AlarmMaterialData {
     /**
      * 资产需要的一个新的告警
      */
-    public AlarmMaterialData(JSONObject jsonObject,AssetConfigDO assetConfigDO){
+    public AlarmMaterialData(JSONObject jsonObject,AssetConfigDO assetConfigDO,Boolean isClient){
         jsonObject.put("alarm", true);
         this.source = jsonObject.getString("source");
         this.capTime = DateUtils.validateTime(jsonObject.getLong("capTime"));
@@ -236,31 +232,27 @@ public final class AlarmMaterialData {
 
         this.level = 2;
         this.categoryDesc = "资产告警";
-
-        //json中没有这个字段
-//        this.targetName = jsonObject.getString("targetName");
-//        this.groupName = jsonObject.getString("groupName");
-        //json中没有 不知道什么意思
-//        material.appendEventData(alarmKey);
         this.setType(5);
-//        material.setType(AssetLoaderDao.configuration.getComparison("alarm", "type", "dw"));
-        //这两个是要查库吗？
         this.setCategory(11);
-//        material.setCategory(AssetLoaderDao.configuration.getComparison("alarm", MagicKey.MONGO.CATEGORY_STRING, "asset_alert"));
         this.setAccuracy(1);
-//        material.setAccuracy(AssetLoaderDao.configuration.getComparison("alarm", MagicKey.MONGO.ACCURACY_STRING, "精确"));
-        //现在的assetConfigDO  的ip是个集合
-//        this.assetIp = assetConfigDO.getIps()
+        this.setCheckMode(8);
         this.assetLevel = assetConfigDO.getLevel();
         this.assetName = assetConfigDO.getName();
         this.assetUnit = assetConfigDO.getUnit();
         this.assetType = assetConfigDO.getType();
-        Integer assetFlag = jsonObject.getInteger("assetFlag");
-        fixAssetIp(assetFlag);
-//        this.assetIp = assetConfigDO.getIps();
-//        material.setAssetInfo(new Document(asset.getInfo()));
-        this.pattern = 3;
-
+        if (isClient){
+            this.assetIp = this.clientIp;
+        }else{
+            this.assetIp = this.serverIp;
+        }
+        /*填装eventData*/
+        if (Objects.nonNull(jsonObject.getString("alarmKey"))){
+            this.eventData = jsonObject.getString("alarmKey");
+        }else {
+            String md5 = ToolUtils.getMD5(jsonObject.toJSONString());
+            jsonObject.put("alarmKey",md5);
+            this.eventData = md5;
+        }
     }
 
     private void fixAssetIp(Integer assetFlag) {

@@ -4,7 +4,7 @@ node:
   name: gxz
 spring:
   application:
-    name: dw-commonappdetect
+    name: dw_commonappdetect
   cloud:
     nacos:
       config:

@@ -147,7 +147,7 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
         long timeStamp = startTimeLong = startTimeLong / MINUTE * MINUTE;
         endTimeLong = endTimeLong / MINUTE * MINUTE + MINUTE;
         while (timeStamp <= endTimeLong) {
-            File path = new File(rootPath + "/" + ToolUtils.stamp2Date(timeStamp, "yyyyMMdd"));
+            File path = new File(rootPath + "/" + DateUtils.format(timeStamp, "yyyyMMdd"));
             if (path.exists() && path.isDirectory()) {
                 String[] files = path.list();
                 if (null != files) {

@@ -43,6 +43,8 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
 
     private final List<AlarmMaterialData> alarmList = new CopyOnWriteArrayList<>();
 
+    private final List<JSONObject> eventDataList = new CopyOnWriteArrayList<>();
+
     private static final int ALARM_WRITE_COUNT = 20000;
 
     protected static ThreadPoolExecutor executorService;
@@ -84,7 +86,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             // 单线程执行
             for (String line : allLines) {
                 JSONObject assetJson = JSON.parseObject(line);
-                alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector));
+                alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector),assetJson);
                 AssetFlag.fillAndAdd(assetJson, assetDetector, clientAssetList, serverAssetList);
             }
         } else {
@@ -139,16 +141,35 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         assetPortDao.insert(portData);
         log.info("端口维度合并插入{}条数据", portData.size());
         writeAlarm();
+        writeEventData();
     }
 
 
-    private synchronized void alarmAdd(List<AlarmMaterialData> alarmMaterialDataList) {
+    private synchronized void alarmAdd(List<AlarmMaterialData> alarmMaterialDataList,JSONObject jsonObject) {
         if (CollectionUtils.isEmpty(alarmMaterialDataList)) {
             return;
         }
         this.alarmList.addAll(alarmMaterialDataList);
+        this.eventDataList.add(jsonObject);
         if (this.alarmList.size() > ALARM_WRITE_COUNT) {
             writeAlarm();
+        }
+        if (this.eventDataList.size() > ALARM_WRITE_COUNT){
+            writeEventData();
+        }
+    }
+    public synchronized void writeEventData() {
+        if (eventDataList.isEmpty()) {
+            return;
+        }
+        String fileName = "assetAlarm" + System.currentTimeMillis() + ".json";
+        File file = new File(NodeInfo.getEventData() + fileName);
+        try(FileWriter fileWriter = new FileWriter(file,true)) {
+            for (JSONObject jsonObject : this.eventDataList) {
+                fileWriter.write(jsonObject.toJSONString() + "\n");
+            }
+        }catch (IOException e){
+            e.printStackTrace();
         }
     }
 
@@ -254,7 +275,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             List<JSONObject> serverAssetList = new ArrayList<>();
             for (String line : lines) {
                 JSONObject assetJson = JSON.parseObject(line);
-                AssetReceiver.this.alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector));
+                AssetReceiver.this.alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector),assetJson);
                 AssetFlag.fillAndAdd(assetJson, assetDetector, clientAssetList, serverAssetList);
             }
             return new AssetResult(clientAssetList, serverAssetList);

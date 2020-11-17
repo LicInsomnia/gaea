@@ -66,7 +66,12 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
             pptpandl2tpData.setProName(HeadConst.PRONAME.OTHER);
         }
         //设置foreign
-        pptpandl2tpData.setForeign(pptpAndL2TPLineSupport.isForeign(pptpandl2tpData.getServerIp()));
+        try {
+            pptpandl2tpData.setForeign(pptpAndL2TPLineSupport.isForeign(pptpandl2tpData.getServerIp()));
+        }catch (Exception e){
+            throw new IllegalArgumentException("可能是ipv6判断过程中出错");
+        }
+
         pptpandl2tpData.setPptpAndL2tpExtension(pptpAndL2tpExtension);
         return pptpandl2tpData;
     }

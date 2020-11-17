@@ -19,7 +19,7 @@ public class DwProducer extends AbstractProducer {
 
     @Override
     public void producer(Queue queue, String category, String extension) {
-        jmsMessagingTemplate.convertAndSend(queue, "苍叔牛逼");
+        jmsMessagingTemplate.convertAndSend(queue, "dw任务");
         try {
             log.info("提交了一条dw.{}任务", queue.getQueueName());
         } catch (JMSException e) {
