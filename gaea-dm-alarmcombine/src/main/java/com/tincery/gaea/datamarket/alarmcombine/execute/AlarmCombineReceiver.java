@@ -529,7 +529,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      * @param alarmMaterialData
      * @return
      */
-    private String getAlarmKeyByPattern(String pattern,AlarmMaterialData alarmMaterialData){
+    private String getAlarmKeyByPattern(String pattern,AlarmMaterialData alarmMaterialData) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         String serverIp = alarmMaterialData.getServerIp();
         String clientIp = alarmMaterialData.getClientIp();
@@ -562,7 +562,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                 stringBuilder.append(serverIp).append(categoryDesc).append(subCategoryDesc).append(title);
                 break;
             default:
-                return null;
+                throw new IOException("没有发现对应的码表值");
         }
         return stringBuilder.toString();
     }
