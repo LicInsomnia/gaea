@@ -42,6 +42,8 @@
         <module>gaea-support-messagecomsumer</module>
         <module>gaea-support-mongostash</module>
         <module>gaea-support-pack</module>
+        <module>gaea-src-bitcoin</module>
+        <module>gaea-src-snmp</module>
     </modules>
 
 
