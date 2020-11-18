@@ -102,19 +102,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                     if (StringUtils.isEmpty(key)) {
                         continue;
                     }
-                    /* 合并map */
-                    alarmMap.merge(key,new Pair<>(newAlarm,1),(oldValue,newValue)->{
-                        Alarm oldAlarmTemp = oldValue.getKey();
-                        Alarm newAlarmTemp = newValue.getKey();
-                        Alarm merge = mergeAlarm(newAlarmTemp, oldAlarmTemp);
-                        if (Objects.isNull(merge)){
-                            //如果合并失败 分别存储
-                            resultList.add(adjustDescription(oldAlarmTemp,oldValue.getValue()));
-                            return newValue;
-                        }else{
-                            return new Pair<>(merge,newValue.getValue() + 1);
-                        }
-                    });
+                    fixAlarmMapAndResultList(alarmMap, resultList, newAlarm, key);
                 }
                 //读取完成删除文件
                 if (file.exists() && file.isFile()) {
@@ -125,6 +113,30 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
             }
         }
     }
+
+    /**
+     * 对容器中的数据进行装填和处理
+     * @param alarmMap 临时Map 用来合并
+     * @param resultList 结果集合 用来输出
+     * @param newAlarm 新的实体对象
+     * @param key 根据告警素材得到的key
+     */
+    private void fixAlarmMapAndResultList(ConcurrentHashMap<String, Pair<Alarm, Integer>> alarmMap, CopyOnWriteArrayList<Alarm> resultList, Alarm newAlarm, String key) {
+        /* 合并map */
+        alarmMap.merge(key,new Pair<>(newAlarm,1),(oldValue,newValue)->{
+            Alarm oldAlarmTemp = oldValue.getKey();
+            Alarm newAlarmTemp = newValue.getKey();
+            Alarm merge = mergeAlarm(newAlarmTemp, oldAlarmTemp);
+            if (Objects.isNull(merge)){
+                //如果合并失败 分别存储
+                resultList.add(adjustDescription(oldAlarmTemp,oldValue.getValue()));
+                return newValue;
+            }else{
+                return new Pair<>(merge,newValue.getValue() + 1);
+            }
+        });
+    }
+
     /**
      * 根据告警素材生成一个告警实体
      * @param alarmMaterialData 告警素材

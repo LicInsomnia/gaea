@@ -3,7 +3,6 @@ package com.tincery.gaea.api.src.extension;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.tincery.gaea.core.base.tool.ToolUtils;
-import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
