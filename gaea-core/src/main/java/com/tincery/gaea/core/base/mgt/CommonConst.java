@@ -18,6 +18,12 @@ public class CommonConst {
     public final static long GB = 1024 * MB;
     public final static long TB = 1024 * GB;
 
+    /**
+     * UDP 和 TCP 协议
+     */
+    public final static int TCP = 6;
+    public final static int UDP = 17;
+
     private CommonConst() {
         throw new RuntimeException();
     }

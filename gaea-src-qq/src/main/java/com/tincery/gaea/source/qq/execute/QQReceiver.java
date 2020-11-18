@@ -56,7 +56,7 @@ public class QQReceiver extends AbstractSrcReceiver<QQData> {
     //TODO  换头
     @Override
     public String getHead() {
-        return HeadConst.QQ;
+        return HeadConst.QQ_HEADER;
     }
 
     @Override

@@ -4,6 +4,7 @@ package com.tincery.gaea.source.openven.execute;
 import com.tincery.gaea.api.base.Handshake;
 import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.api.src.extension.OpenVpnExtension;
+import com.tincery.gaea.core.base.mgt.CommonConst;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -49,7 +50,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         //获得该条数据 关键变量 可能为null  为null的情况下 继续执行其他判断的方法
         Boolean isD2SServer = sureisD2SServer(elements, openVpnData);
         /*以下 根据isD2SServer 书写属性*/
-        setFixProperties(elements, openVpnData);
+        fixCommon(elements, openVpnData);
         OpenVpnExtension openVpnExtension = new OpenVpnExtension();
         if (openVpnData.getDataType() != -1) {
             //设置malformed情况下不会因为isD2SServer变动的数据 因为malformed的setMalformedPayload需要先填入端口等数据 所以不能再这里添加
@@ -59,9 +60,9 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
             } else {
                 /*这里确定不是malformed  装填其他属性
                 设置正常(非malformed)情况下 根据isD2SServer变动的基础数据*/
-                fixPropertiesByisD2SServer(elements,openVpnData,isD2SServer);
+                fixCommonNormal(elements,openVpnData,isD2SServer);
                 //设置握手和会话信息 ※
-                addOpenVpnExtension(elements, openVpnExtension, openVpnData,isD2SServer);
+                addOpenVpnExtension(elements, openVpnExtension,isD2SServer);
             }
         }
         if (openVpnData.getDataType()<0){
@@ -116,7 +117,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
     }
 
 
-    private void setFixProperties(String[] elements, OpenVpnData openVpnData) {
+    private void fixCommon(String[] elements, OpenVpnData openVpnData) {
         openVpnData.setSource(elements[16]);
         this.openVpnLineSupport.setTime(Long.parseLong(elements[2]), Long.parseLong(elements[3]), openVpnData);
         openVpnData.setSyn("1".equals(elements[0]));
@@ -130,13 +131,13 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
      * isD2SServer false: src = Server dst = Client
      * isD2SServer true： src = Client dst = Server
      */
-    private void fixPropertiesByisD2SServer(String[] elements, OpenVpnData openVpnData,Boolean isD2SServer) {
+    private void fixCommonNormal(String[] elements, OpenVpnData openVpnData,Boolean isD2SServer) {
 
         int protocol = Integer.parseInt(elements[9]);
-        if (Objects.equals(6,protocol)){
-            //TCP协议装填 按照原有逻辑 d2s为client up  s2d为server down
+        if (Objects.equals(CommonConst.TCP,protocol)){
+            //TCP协议装填 按照原有逻辑 d2s为client up  s2d为server down fixPropertiesTrue
             fixPropertiesTrue(elements,openVpnData);
-        }else if (Objects.equals(17,protocol)){
+        }else if (Objects.equals(CommonConst.UDP,protocol)){
             //UDP协议装填  要在extension之后加载 根据isD2SServer加载
             if (Objects.isNull(isD2SServer)){
                 isD2SServer = this.openVpnLineSupport.sureisD2SServerByPortAndDataType(openVpnData.getDataType(), openVpnData.getServerPort(), openVpnData.getClientPort(), isD2SServer);
@@ -157,7 +158,6 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
             }else{
                 //isD2SServer = false src = Server dst = Client
                 //d2s up  s2d down
-                //装载逻辑和TCP一致
                 fixPropertiesFalse(elements,openVpnData);
             }
         }
@@ -165,8 +165,8 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
 
     /**
      * 装载 isD2SServer 为true 的数据（和TCP数据）
-     * @param elements
-     * @param openVpnData
+     * @param elements 源
+     * @param openVpnData 实体
      */
     private void fixPropertiesTrue(String[] elements,OpenVpnData openVpnData){
         this.openVpnLineSupport.set7Tuple(
@@ -182,8 +182,8 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
     }
     /**
      * 装载 isD2SServer 为false 的数据
-     * @param elements
-     * @param openVpnData
+     * @param elements 源
+     * @param openVpnData 实体
      */
     private void fixPropertiesFalse(String[] elements,OpenVpnData openVpnData){
         this.openVpnLineSupport.set7Tuple(
@@ -199,7 +199,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         this.openVpnLineSupport.setPartiesId(elements[26], elements[27], openVpnData);
     }
 
-    private void addOpenVpnExtension(String[] elements, OpenVpnExtension openVpnExtension, OpenVpnData openVpnData,Boolean isD2SServer) throws Exception {
+    private void addOpenVpnExtension(String[] elements, OpenVpnExtension openVpnExtension,Boolean isD2SServer) throws Exception {
         Handshake handshake = null;
         Boolean flag = null;
         for (int i = 29; i < elements.length; i++) {
@@ -232,7 +232,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
      * @param element   拓展信息
      * @param handshake 握手过程
      */
-    private Boolean addHandshake(String element, OpenVpnExtension openVpnExtension, Handshake handshake,Boolean isD2SServer) throws Exception {
+    private Boolean addHandshake(String element, OpenVpnExtension openVpnExtension, Handshake handshake,Boolean isD2SServer) {
         String[] kv = element.split(":");
         String handshakeKeyword = kv[0].trim();
         int length = Integer.parseInt(kv[1].trim());

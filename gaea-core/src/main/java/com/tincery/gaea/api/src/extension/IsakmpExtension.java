@@ -219,9 +219,7 @@ public class IsakmpExtension implements Serializable {
         if (!jsonObject.isEmpty()){
             if (Objects.equals("Identity Protection (Main Mode)",jsonObject.get("Exchange Type"))){
                 Object payload = jsonObject.get("payload");
-                if (Objects.nonNull(payload)){
-                    return true;
-                }
+                return Objects.nonNull(payload);
             }
         }
         return false;
