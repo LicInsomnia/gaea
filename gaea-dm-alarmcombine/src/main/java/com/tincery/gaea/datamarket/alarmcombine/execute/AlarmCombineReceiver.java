@@ -57,7 +57,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         log.info("alarmCombine接收到了消息开始处理");
-
         ConcurrentHashMap<String, Pair<Alarm,Integer>> alarmMap = new ConcurrentHashMap<>();
         CopyOnWriteArrayList<Alarm> resultList = new CopyOnWriteArrayList<>();
         File[] fileList = getFileList();
@@ -69,6 +68,12 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         free(resultList,alarmMap);
     }
 
+    /**
+     * 解析文件列表 并把数据填入到两个集合中
+     * @param fileList 文件列表
+     * @param alarmMap 需要合并的集合
+     * @param resultList 输出的结果集合
+     */
     private void analysisFileList(File[] fileList,ConcurrentHashMap<String, Pair<Alarm,Integer>> alarmMap,CopyOnWriteArrayList<Alarm> resultList) {
         log.info("开始解析文件,共[{}]个文件", fileList.length);
         for (File file : fileList) {
@@ -82,7 +87,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
                         alarmMaterialData = JSON.parseObject(line).toJavaObject(AlarmMaterialData.class);
                         newAlarm = fixAlarm(alarmMaterialData);
                     } catch (JSONException e) {
-                        log.error("文件解析错误[{}],数据为:[{}]", file.getName(), line);
+                        log.error("数据解析错误[{}],数据为:[{}]", file.getName(), line);
                         continue;
                     }
 
@@ -120,7 +125,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
             }
         }
     }
-
     /**
      * 根据告警素材生成一个告警实体
      * @param alarmMaterialData 告警素材
@@ -131,7 +135,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         adjustAlarm(newAlarm, alarmMaterialData);
         return newAlarm;
     }
-
     /**
      * 获得指定位置的文件夹（路径由配置决定）
      * @return 文件夹下文件的数组
@@ -146,8 +149,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         }
         return fileFolder.listFiles();
     }
-
-
     /** 根据category和subCategory 确定该条告警属于哪个模块 **/
     private String getPatternByCategoryAndSubCategory(Integer category, String subCategory) {
         if (category<=6 || category == 14){
@@ -167,8 +168,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     protected void dmFileAnalysis(List<String> lines) {
 
     }
-
-
     /**
      * 输出告警信息
      * @param resultList 要输出的集合
@@ -181,7 +180,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         alarmMap.clear();
         resultList.clear();
     }
-
     /**
      * 封装元数据的码表信息  进入告警
      * 将元数据的eventData 填入告警
@@ -205,7 +203,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         eventData.add(alarmMaterialData.getEventData());
         alarm.setEventData(eventData);
     }
-
     /**
      * 填充orDefault的 description
      * @param oldAlarm 原有的数据
@@ -247,10 +244,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         }
         return oldAlarm;
     }
-
-
-
-
     /*填装五元组告警*/
     private void adjustTupleDescription(Alarm alarm, Integer times) {
         StringBuilder description = new StringBuilder();
@@ -273,7 +266,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         }
         alarm.setDescription(description.toString());
     }
-
     /*填装证书告警 不合并只填装description*/
     private void adjustCertDescription(Alarm alarm) {
         String categoryDesc = alarm.getCategoryDesc();
@@ -306,7 +298,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         }
         alarm.setDescription(description.toString());
     }
-
 /*    enum Description{
         leak("","的证书存在算法漏洞",null);
 
@@ -314,7 +305,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
 
         }
     }*/
-
     /*填装证书关联告警*/
     private void adjustCerRelateDescription(Alarm alarm, Integer times) {
         StringBuilder description = new StringBuilder();
@@ -370,9 +360,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         }
         alarm.setDescription(description.toString());
     }
-
-
-
     /*填装dns关联告警描述*/
     private void adjustDnsRelateDescription(Alarm alarm, Integer times) {
         StringBuilder stringBuilder = new StringBuilder();
