@@ -1,6 +1,5 @@
 package com.tincery.gaea.source.http.execute;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.src.HttpData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;

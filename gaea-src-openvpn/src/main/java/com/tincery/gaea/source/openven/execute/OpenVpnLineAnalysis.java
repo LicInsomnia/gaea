@@ -403,6 +403,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         }
     }
 
+
     private void addCerChain(String cer, OpenVpnExtension openVpnExtension, boolean isD2SServer) {
         List<String> cerChain;
         if (isD2SServer) {

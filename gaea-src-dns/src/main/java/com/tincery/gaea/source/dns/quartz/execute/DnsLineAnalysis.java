@@ -27,17 +27,6 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
     private SrcLineSupport srcLineSupport;
 
     /**
-     * 将一条记录包装成实体类
-     * 0.serverMac          1.clientMac         2.serverIp_n            3.clientIp_n
-     * 4.serverPort         5.clientPort        6.protocol              7.uppkt
-     * 8.downpkt            9.upbyte            10.downbyte             11.source
-     * 12.ruleName          13.capTime          14.imsi                 15.imei
-     * 16.msisdn            17.outclientip      18.outserverip          19.outclientport
-     * 20.outserverport     21.outproto         22.userid               23.serverid
-     * 24.ismac2outer       25.direct(0/1)      26.domain / upPayload   27.cname / downPayload
-     * 28.ipv4              29.ipv6
-     */
-    /**
      * 0. srcMac 1.dstMac 2.srcIp_n 3.dstIp_n 4.srcPort 5.dstPort 6.protocol
      * 7.d2spkt 8.s2dpkt 9.d2sbyte 10.s2dbyte 11.source 12.ruleName 13.time
      * 14.imsi 15.imei 16.msisdn 17.outdsttip 18.outsrcip 19.outdstport

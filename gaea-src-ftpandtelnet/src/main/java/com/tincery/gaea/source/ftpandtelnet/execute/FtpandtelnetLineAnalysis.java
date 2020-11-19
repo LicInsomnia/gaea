@@ -2,9 +2,7 @@ package com.tincery.gaea.source.ftpandtelnet.execute;
 
 
 import com.tincery.gaea.api.src.FtpandtelnetData;
-import com.tincery.gaea.api.src.Pptpandl2tpData;
 import com.tincery.gaea.api.src.extension.FtpAndTelnetExtension;
-import com.tincery.gaea.api.src.extension.PptpAndL2tpExtension;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
@@ -38,8 +36,8 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
      * 31.conflg 32.sucflg 33.content
      * --------------------------------以下是datetype = -1 的属性-------------------------------------
      * 29.upPayload 30.downPayload
-     * @param line
-     * @return
+     * @param line 源数据
+     * @return 实体
      */
 
     @Override
@@ -69,8 +67,8 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
 
     /**
      * 设置Malformed
-     * @param elements
-     * @param ftpandtelnetData
+     * @param elements 源
+     * @param ftpandtelnetData 实体
      */
     private void fixMalformed(String[] elements,FtpandtelnetData ftpandtelnetData){
         String replaceAll = elements[30].replaceAll("\u0000", "");
@@ -79,8 +77,8 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
 
     /**
      * datatype！=-1  设置ftpAndTelnetExtension
-     * @param elements
-     * @param ftpAndTelnetExtension
+     * @param elements 源
+     * @param ftpAndTelnetExtension 实体
      */
     private void fixFtpAndTelnet(String[] elements,FtpAndTelnetExtension ftpAndTelnetExtension){
         ftpAndTelnetExtension.setUserName(elements[29])
@@ -93,8 +91,8 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
 
     /**
      * 设置common属性  字段序列 0-29
-     * @param elements
-     * @param ftpandtelnetData
+     * @param elements 源
+     * @param ftpandtelnetData 实体
      */
     private void fixCommon(String[] elements,FtpandtelnetData ftpandtelnetData){
         ftpandtelnetData.setSyn(SourceFieldUtils.parseBooleanStr(elements[0]))

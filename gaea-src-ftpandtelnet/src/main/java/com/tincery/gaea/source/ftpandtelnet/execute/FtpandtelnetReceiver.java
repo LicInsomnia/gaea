@@ -10,7 +10,6 @@ import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.src.AbstractSrcReceiver;
 import com.tincery.gaea.core.src.SrcProperties;
 import com.tincery.gaea.source.ftpandtelnet.constant.FtpandtelnetConstant;
-import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -54,8 +52,6 @@ public class FtpandtelnetReceiver extends AbstractSrcReceiver<FtpandtelnetData> 
 
     @Override
     protected List<String> getLines(File file) {
-        Map<String, Pair<Integer, byte[]>> stringPairMap = FileUtils.readByteArray(file, 512, 4);
-
         return FileUtils.readByteArray(file,512,4).entrySet().stream().map(entry -> entry.getKey() +
                 FtpandtelnetConstant.FTPANDTELNET_CONSTANT + entry.getValue().getKey() +
                 FtpandtelnetConstant.FTPANDTELNET_CONSTANT + new String(entry.getValue().getValue())).collect(Collectors.toList());

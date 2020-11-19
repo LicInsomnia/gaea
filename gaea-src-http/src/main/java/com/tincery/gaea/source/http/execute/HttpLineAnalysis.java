@@ -4,7 +4,6 @@ package com.tincery.gaea.source.http.execute;
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.src.HttpData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.source.http.constant.HttpConstant;
