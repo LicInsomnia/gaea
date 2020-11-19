@@ -25,12 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -166,7 +161,7 @@ public class HttpAnalysisReceiver implements Receiver {
 
         final private List<String> lines;
 
-        private HttpAnalysisGroup httpAnalysisGroup;
+        private final HttpAnalysisGroup httpAnalysisGroup;
 
         public HttpAnalysis(List<String> lines) {
             this.lines = lines;

@@ -17,7 +17,7 @@ class SessionAdjustReceiverTest {
     private Receiver receiver;
 
     @Test
-    public void bbb() throws JMSException {
+    public void aa() throws JMSException {
         TextMessage activeMQMessage = new ActiveMQTextMessage();
         activeMQMessage.setText("D:\\data5\\datawarehouse\\json\\impsession\\impsession_0.json");
         receiver.receive(activeMQMessage);

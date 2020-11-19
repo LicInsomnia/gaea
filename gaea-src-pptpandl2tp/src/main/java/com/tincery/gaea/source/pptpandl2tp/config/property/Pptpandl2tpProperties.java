@@ -2,7 +2,6 @@ package com.tincery.gaea.source.pptpandl2tp.config.property;
 
 
 import com.tincery.gaea.core.src.SrcProperties;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

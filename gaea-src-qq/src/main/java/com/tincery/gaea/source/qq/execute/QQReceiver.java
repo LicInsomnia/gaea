@@ -1,7 +1,6 @@
 package com.tincery.gaea.source.qq.execute;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.api.src.QQData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -19,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

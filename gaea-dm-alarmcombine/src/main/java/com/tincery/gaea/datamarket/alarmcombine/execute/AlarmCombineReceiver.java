@@ -140,7 +140,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
     }
 
     @Override
-    protected void dmFileAnalysis(List<String> lines) {
+    protected void dmFileAnalysis(File file) {
 
     }
 

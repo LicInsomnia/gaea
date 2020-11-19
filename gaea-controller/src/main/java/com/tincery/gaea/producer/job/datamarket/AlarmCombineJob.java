@@ -2,8 +2,6 @@ package com.tincery.gaea.producer.job.datamarket;
 
 import com.tincery.gaea.api.base.QueueNames;
 import com.tincery.gaea.producer.producer.DmAlarmProducer;
-import com.tincery.gaea.producer.producer.DmProducer;
-import com.tincery.gaea.producer.producer.DwProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;

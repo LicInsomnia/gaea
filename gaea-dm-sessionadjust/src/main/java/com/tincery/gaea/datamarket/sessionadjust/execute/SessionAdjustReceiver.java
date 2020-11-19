@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.dm.SessionMergeData;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
+import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -44,7 +46,8 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
     }
 
     @Override
-    protected void dmFileAnalysis(List<String> allLines) {
+    protected void dmFileAnalysis(File file) {
+        List<String> allLines = FileUtils.readLine(file);
         int executor = this.dmProperties.getExecutor();
         List<SessionMergeData> sessionMergeDataList = new ArrayList<>();
         if (executor <= 1) {

@@ -1,6 +1,5 @@
 package com.tincery.gaea.source.isakmp.execute;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.src.IsakmpData;
 import com.tincery.gaea.api.src.extension.IsakmpExtension;

@@ -2,9 +2,7 @@ package com.tincery.gaea.source.ftpandtelnet.execute;
 
 
 import com.tincery.gaea.api.src.FtpandtelnetData;
-import com.tincery.gaea.api.src.Pptpandl2tpData;
 import com.tincery.gaea.api.src.extension.FtpAndTelnetExtension;
-import com.tincery.gaea.api.src.extension.PptpAndL2tpExtension;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;

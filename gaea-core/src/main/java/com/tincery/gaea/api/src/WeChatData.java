@@ -3,14 +3,9 @@ package com.tincery.gaea.api.src;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
-import com.tincery.gaea.api.base.HttpMeta;
-import com.tincery.gaea.api.src.extension.SshExtension;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**

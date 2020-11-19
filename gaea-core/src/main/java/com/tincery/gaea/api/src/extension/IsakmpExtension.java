@@ -3,14 +3,16 @@ package com.tincery.gaea.api.src.extension;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.tincery.gaea.core.base.tool.ToolUtils;
-import com.tincery.gaea.core.base.tool.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +45,8 @@ public class IsakmpExtension implements Serializable {
     private Set<JSONObject> responderVid;
     @JSONField(serialize = false)
     private Integer version;
+    @JSONField(serialize = false)
+    private String encryptedMessageProtocol;
     @JSONField(serialize = false)
     private JSONObject extension;
 
@@ -219,9 +223,7 @@ public class IsakmpExtension implements Serializable {
         if (!jsonObject.isEmpty()){
             if (Objects.equals("Identity Protection (Main Mode)",jsonObject.get("Exchange Type"))){
                 Object payload = jsonObject.get("payload");
-                if (Objects.nonNull(payload)){
-                    return true;
-                }
+                return Objects.nonNull(payload);
             }
         }
         return false;

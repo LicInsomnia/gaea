@@ -19,9 +19,11 @@ public class DmProperties {
 
     private boolean back = false;
 
+    private boolean test = false;
+
     /**
-     *  1. 安全系统
-     *  2. ZC系统
+     * 1. 安全系统
+     * 2. ZC系统
      */
     private int secure = 0;
 

@@ -6,6 +6,7 @@ import com.tincery.gaea.core.base.dao.AppDetectDao;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
+import com.tincery.gaea.core.base.plugin.csv.CsvSupport;
 import com.tincery.gaea.core.dw.AbstractDataWarehouseReceiver;
 import com.tincery.gaea.core.dw.CommonAppDetectHitSupport;
 import com.tincery.gaea.core.dw.DwProperties;
@@ -17,12 +18,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -106,7 +102,7 @@ public class CommonSearchReceiver extends AbstractDataWarehouseReceiver {
 
     private void initFiles(LocalDateTime startTime, LocalDateTime endTime) {
             this.categorySet.forEach(category->{
-                List<String> files = getCsvDataSetBySessionCategory(category, startTime, endTime);
+                List<String> files = CsvSupport.getCsvDataSetBySessionCategory(category, startTime, endTime);
                 if(!CollectionUtils.isEmpty(files)){
                     categoryFiles.put(category,files.stream().map(File::new).collect(Collectors.toList()));
                 }

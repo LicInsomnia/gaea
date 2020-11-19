@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.io.File;
 
 @Component
 public class MessageListener {
