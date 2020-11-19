@@ -4,7 +4,6 @@ package com.tincery.gaea.source.http.execute;
 import com.tincery.gaea.api.base.HttpMeta;
 import com.tincery.gaea.api.src.HttpData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.source.http.constant.HttpConstant;
@@ -63,51 +62,56 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
          index为meta的顺序
          */
         String[] split = line.split(HttpConstant.HTTP_CONSTANT);
-
         String subName = split[0];
-        String text;
-        Integer index = Integer.valueOf(split[1]);
-        if (split.length < 3) {
-            text = "";
-        } else {
-            text = split[2];
-        }
+        String text = getContentText(split);
         byte[] value = text.getBytes(StandardCharsets.ISO_8859_1);
-
-
-        /*
-         * 设置httpData的key  和 common
-         */
+        /* 设置httpData的key  和 common */
         handlePrefix(httpMetaData, subName);
-
         if (value.length < 4 || !isLegalHeader(value)) {
-            httpMetaData.setDataType(-1);
-            int copyLength = Math.min(20, value.length);
-            byte[] payloadMeta = new byte[copyLength];
-            System.arraycopy(value, 0, payloadMeta, 0, copyLength);
-            String payload = DatatypeConverter.printHexBinary(payloadMeta);
-            if (httpMetaData.getIsResponse()) {
-                httpLineSupport.setMalformedPayload(null, payload, httpMetaData);
-            } else {
-                httpLineSupport.setMalformedPayload(payload, null, httpMetaData);
-            }
+            fixMalformed(httpMetaData,value);
         } else {
-            /*
-            填装meta
-             */
-            handleSuffix(httpMetaData, subName, text, index);
+            /*填装meta*/
+            handleSuffix(httpMetaData, subName, text, Integer.valueOf(split[1]));
         }
         httpMetaData.setForeign(httpLineSupport.isForeign(httpMetaData.getServerIp()));
-
         httpMetaData.setServerLocation(this.httpLineSupport.getLocation(httpMetaData.getServerIp()));
         httpMetaData.setClientLocation(this.httpLineSupport.getLocation(httpMetaData.getClientIp()));
-
         return httpMetaData;
     }
 
     /**
+     * 填装malformed数据
+     * @param httpMetaData 实体
+     * @param value 源
+     */
+    private void fixMalformed(HttpData httpMetaData, byte[] value) {
+        httpMetaData.setDataType(-1);
+        int copyLength = Math.min(20, value.length);
+        byte[] payloadMeta = new byte[copyLength];
+        System.arraycopy(value, 0, payloadMeta, 0, copyLength);
+        String payload = DatatypeConverter.printHexBinary(payloadMeta);
+        if (httpMetaData.getIsResponse()) {
+            this.httpLineSupport.setMalformedPayload(null, payload, httpMetaData);
+        } else {
+            this.httpLineSupport.setMalformedPayload(payload, null, httpMetaData);
+        }
+    }
+
+    /**
+     * 获得content数据
+     * @param split 源
+     * @return content
+     */
+    private String getContentText(String[] split) {
+        if (split.length < 3) {
+            return "";
+        } else {
+            return split[2];
+        }
+    }
+
+    /**
      * 处理截取出来的subName 前缀的方法
-     *
      * @param httpData 要封装属性的对象
      * @param subName  截取的字符串
      */
@@ -149,7 +153,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
     private boolean isLegalHeader(byte[] bytes) {
         byte[] header = new byte[4];
         System.arraycopy(bytes, 0, header, 0, 4);
-        String head = new String(header);
+        String head = new String(header, StandardCharsets.ISO_8859_1);
         return HttpConstant.legelHeader.contains(head);
     }
 
@@ -177,8 +181,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      */
     private void fixHttpData(HttpData httpData, String subName) {
         String[] elements = subName.split(StringUtils.DEFAULT_SEP, -1);
-        httpData.setSyn(SourceFieldUtils.parseBooleanStr(elements[0]));
-        httpData.setFin(SourceFieldUtils.parseBooleanStr(elements[1]));
+        this.httpLineSupport.setSynAndFin(elements[0],elements[1],httpData);
         this.httpLineSupport.setTime(Long.parseLong(elements[2]), Long.parseLong(elements[3]), httpData);
         this.httpLineSupport.set7Tuple(null,
                 null,
@@ -200,12 +203,9 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         httpData.setSource(elements[12]);
         this.httpLineSupport.setTargetName(elements[13], httpData);
         this.httpLineSupport.setGroupName(httpData);
-        httpData.setImsi(elements[14])
-                .setImei(elements[15])
-                .setMsisdn(elements[16]);
+        this.httpLineSupport.setMobileElements(elements[14],elements[15],elements[16],httpData);
         this.httpLineSupport.set5TupleOuter(elements[17], elements[18], elements[19], elements[20], elements[21], httpData);
-        httpData.setUserId(elements[22])
-                .setServerId(elements[23]);
+        this.httpLineSupport.setPartiesId(elements[22],elements[23],httpData);
         httpData.setIsResponse("1".equals(elements[25].substring(0, 1)));
         httpData.setKey(subName.substring(0, subName.lastIndexOf(StringUtils.DEFAULT_SEP)));
         this.httpLineSupport.isForeign(httpData.getServerIp());
@@ -221,26 +221,14 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
      * @return 错误信息
      */
     private String fixSuffixData(HttpData httpData, String text, Integer index, Integer sort) {
-        HttpMeta meta;
-        /*
-        进来的时候肯定没有httpMeta？
-         */
-        if (CollectionUtils.isEmpty(httpData.getMetas())) {
-            httpData.setMetas(new ArrayList<>());
-        }
-        if (httpData.getMetas().size() > index) {
-            meta = httpData.getMetas().get(index);
-        } else {
-            meta = new HttpMeta();
-        }
+        HttpMeta meta = getHttpMeta(httpData, index);
         meta.setHasResponse(httpData.getIsResponse());
         if (text.length() < 4 || !getLegelHeader().contains(text.substring(0, 4))) {
             meta.setContent(text, httpData.getIsResponse());
             meta.addMethod("", false);
         } else {
             meta.isMalformed = false;
-            String headers = text.split("\r\n\r\n")[0];
-            String[] lines = headers.split("\n");
+            String[] lines = getContentLines(text);
             String method = lines[0].split(" ")[0].trim();
             meta.setContent(text, httpData.getIsResponse());
             meta.addMethod(method, !httpData.getIsResponse());
@@ -249,60 +237,99 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
                 meta.setUrl(lines[0].substring(method.length() + 1)
                         .replace(" HTTP/1.1", "").trim());
             }
-            for (String line : lines) {
-                if (!line.contains(":")) {
-                    continue;
-                }
-                String key = line.split(":")[0];
-                String value = line.substring(key.length() + 1).trim();
-                key = key.toLowerCase();
-                switch (key) {
-                    case "host":
-                        meta.setHost(value);
-                        break;
-                    case "content-length":
-                        if (httpData.getIsResponse()) {
-                            meta.responseContentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
-                        } else {
-                            meta.requestContentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
-                        }
-                        //meta.contentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
-                        break;
-                    case "content-type":
-                        meta.contentType = value;
-                        break;
-                    case "user-agent":
-                        meta.userAgent = value;
-                        break;
-                    case "accept-language":
-                        meta.acceptLanguage = value;
-                        break;
-                    case "from":
-                        meta.from = value;
-                        break;
-                    case "authorization":
-                        meta.authorization = value.length() > 0;
-                        break;
-                    case "proxy-authenticate":
-                        meta.proxyauth = value.length() > 0;
-                        break;
-                    case "accept-encoding":
-                        meta.acceptEncoding = value;
-                        break;
-                    default:
-                        if (httpData.getIsResponse()) {
-                            meta.setResponseHeaders(key, value);
-                        } else {
-                            meta.setRequestHeaders(key, value);
-                        }
-                        //meta.setHeaders(key, value);
-                        break;
-                }
-            }
+            fixHttpMeta(meta,lines,httpData.getIsResponse());
         }
         meta.setIndex(sort);
         httpData.getMetas().add(meta);
         return null;
+    }
+
+    /**
+     * 获得httpMeta以便装载
+     * @param httpData 实体
+     * @param index 实体顺序
+     * @return httpMeta实体
+     */
+    private HttpMeta getHttpMeta(HttpData httpData, Integer index) {
+        HttpMeta meta;
+        if (CollectionUtils.isEmpty(httpData.getMetas())) {
+            httpData.setMetas(new ArrayList<>());
+        }
+        if (httpData.getMetas().size() > index) {
+            meta = httpData.getMetas().get(index);
+        } else {
+            meta = new HttpMeta();
+        }
+        return meta;
+    }
+
+    /**
+     * 获得所有content行
+     * @param text 元数据
+     * @return content行数据
+     */
+    private String[] getContentLines(String text) {
+        String headers = text.split("\r\n\r\n")[0];
+        return headers.split("\n");
+    }
+
+    /**
+     * 装填HttpMeta
+     * @param meta 要装填的实体
+     * @param lines 数据
+     */
+    private void fixHttpMeta(HttpMeta meta, String[] lines, boolean isResponse) {
+        for (String line : lines) {
+            if (!line.contains(":")) {
+                continue;
+            }
+            String key = line.split(":")[0];
+            String value = line.substring(key.length() + 1).trim();
+            key = key.toLowerCase();
+            switch (key) {
+                case "host":
+                    meta.setHost(value);
+                    break;
+                case "content-length":
+                    int length = value.isEmpty() ? 0 : Integer.parseInt(value);
+                    if (isResponse) {
+                        meta.setResponseContentLength(length);
+                    } else {
+                        meta.setRequestContentLength(length);
+                    }
+                    //meta.contentLength = value.isEmpty() ? 0 : Integer.parseInt(value);
+                    break;
+                case "content-type":
+                    meta.setContentType(value);
+                    break;
+                case "user-agent":
+                    meta.setUserAgent(value);
+                    break;
+                case "accept-language":
+                    meta.setAcceptLanguage(value);
+                    break;
+                case "from":
+                    meta.setFrom(value);
+                    break;
+                case "authorization":
+                    meta.setAuthorization(value.length() > 0);
+                    break;
+                case "proxy-authenticate":
+                    meta.setProxyauth(value.length() > 0);
+                    break;
+                case "accept-encoding":
+                    meta.setAcceptEncoding(value);
+                    break;
+                default:
+                    if (isResponse) {
+                        meta.setResponseHeaders(key, value);
+                    } else {
+                        meta.setRequestHeaders(key, value);
+                    }
+                    //meta.setHeaders(key, value);
+                    break;
+            }
+        }
     }
 
     private Set<String> getLegelHeader() {

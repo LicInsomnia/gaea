@@ -48,33 +48,49 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
     public IsakmpData pack(String line) throws Exception {
         IsakmpData isakmpData = new IsakmpData();
         String[] elements = StringUtils.FileLineSplit(line);
-        Boolean s2dFlag = null;
         isakmpData.setDataType(Integer.parseInt(elements[8]));
         setFixProperties(elements, isakmpData);
-        if ("D2S".equals(elements[29])) {
-            s2dFlag = false;
-        }else if (Objects.equals("S2D",elements[29])){
-            s2dFlag = true;
-        }
+
+        Boolean s2dFlag = getS2DFlagByParam(elements[29]);
+
         if (!elements[30].startsWith("Is_first") && isakmpData.getDataType() != -1) {
             throw new Exception("Is_first字段标记错误");
         }
-
         if (isakmpData.getDataType() == -1){
-            s2dFlag = getS2DFlag(s2dFlag,elements);
-            fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
-            isakmpData.setIsakmpExtension(new IsakmpExtension());
+            fixCommonMalformed(isakmpData,s2dFlag,elements);
             return isakmpData;
         }
-
         if (elements[30].endsWith("0")) {
             /*使用第二种判断方式 装填common后直接返回*/
-            s2dFlag = getS2DFlag(s2dFlag,elements);
-            fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
-            isakmpData.setIsakmpExtension(new IsakmpExtension());
+            fixCommonMalformed(isakmpData,s2dFlag,elements);
             isakmpData.setDataType(-2);
             return isakmpData;
         }
+        fixCommonNormal(isakmpData,elements,s2dFlag);
+        return isakmpData;
+    }
+
+    /**
+     * 根据传递进来的参数 给出s2dFlag
+     * @param element 数据element[29]
+     * @return boolean
+     */
+    private Boolean getS2DFlagByParam(String element) {
+        if ("D2S".equals(element)) {
+            return false;
+        }else if (Objects.equals("S2D",element)){
+            return true;
+        }
+        return null;
+    }
+
+    /**
+     * 装填正常的数据
+     * @param isakmpData 实体
+     * @param elements 源
+     * @param s2dFlag 判断依据
+     */
+    private void fixCommonNormal(IsakmpData isakmpData, String[] elements, Boolean s2dFlag) throws IllegalArgumentException {
         /*根据s2dFlag 判断用什么装填方式*/
         fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
         IsakmpExtension isakmpExtension = new IsakmpExtension();
@@ -87,11 +103,22 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                 fixVersion(elements,isakmpExtension,2);
                 break;
             default:
-                throw new Exception("Version版本标记错误");
+                throw new IllegalArgumentException("Version版本标记错误");
         }
         isakmpExtension.setExtension();
         isakmpData.setIsakmpExtension(isakmpExtension);
-        return isakmpData;
+    }
+
+    /**
+     * 装填malformed属性
+     * @param isakmpData 实体
+     * @param s2dFlag 装填顺序
+     * @param elements 源
+     */
+    private void fixCommonMalformed(IsakmpData isakmpData, Boolean s2dFlag, String[] elements) {
+        s2dFlag = getS2DFlag(s2dFlag,elements);
+        fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
+        isakmpData.setIsakmpExtension(new IsakmpExtension());
     }
 
     private void fixVersion(String[] elements,IsakmpExtension isakmpExtension,Integer version){
@@ -191,11 +218,10 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                     }
                     if (s2dFlag) {
                         initiatorInformation.add((JSONObject) ToolUtils.clone(jsonObject));
-                        jsonObject = new JSONObject();
                     } else {
                         responderInformation.add((JSONObject) ToolUtils.clone(jsonObject));
-                        jsonObject = new JSONObject();
                     }
+                    jsonObject = new JSONObject();
                     break;
                 case "Vendor Id":
                     JSONObject json = new JSONObject();
@@ -237,31 +263,30 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                         break;
                     }
                 case "Cert Encoding":
-                    if (Objects.isNull(jsonObject.get("Cert Encoding"))){
+                    /*if (Objects.isNull(jsonObject.get("Cert Encoding"))){
                         ArrayList<String> cert = new ArrayList<>();
                         cert.add(isakmpExtension.convertCert(value));
-                        jsonObject.put("Cert Encoding",isakmpExtension.convertCert(value));
-                        continue;
+                        jsonObject.put("Cert Encoding",cert);
                     }else{
                         List<String> cert_encoding = (List<String>) jsonObject.get("Cert Encoding");
                         cert_encoding.add(isakmpExtension.convertCert(value));
-                        jsonObject.put("Cert Encoding",isakmpExtension.convertCert(value));
-                        continue;
-                    }
+                        jsonObject.put("Cert Encoding",cert_encoding);
+                    }*/
+                    jsonObject.put("Cert Encoding",isakmpExtension.convertCert(value));
+                    continue;
                 case "Cert":
-                    if (Objects.isNull(jsonObject.get("Cert"))){
+                    /*if (Objects.isNull(jsonObject.get("Cert"))){
                         ArrayList<String> cert = new ArrayList<>();
                         cert.add(isakmpExtension.convertCert(value));
-                        jsonObject.put("Cert",value);
-                        jsonObject.put("SHA1",fixCert(value));
-                        continue;
+                        jsonObject.put("Cert",cert);
                     }else{
                         List<String> cert_encoding = (List<String>) jsonObject.get("Cert");
                         cert_encoding.add(isakmpExtension.convertCert(value));
-                        jsonObject.put("Cert",value);
-                        jsonObject.put("SHA1",fixCert(value));
-                        continue;
-                    }
+                        jsonObject.put("Cert",cert_encoding);
+                    }*/
+                    jsonObject.put("Cert",isakmpExtension.convertCert(value));
+                    jsonObject.put("SHA1",fixCert(value));
+                    continue;
                 default:
                     break;
             }
@@ -277,6 +302,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         isakmpExtension.setVersion(version);
 
     }
+
 
     private boolean addHash(String value,JSONObject jsonObject){
         if (value.contains("Hash")){
@@ -297,6 +323,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         try {
             s2dFlag = this.isakmpLineSupport.sureisD2SServerByIsInnerIp(elements[12], elements[13], null);
         }catch (Exception e){
+            assert this.isakmpLineSupport != null;
             s2dFlag = this.isakmpLineSupport.sureisD2SServerByComparePort(Integer.parseInt(elements[14]), Integer.parseInt(elements[15]));
         }
         if (Objects.isNull(s2dFlag)){
@@ -345,9 +372,6 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             isakmpData.setUserId(elements[26])
                     .setServerId(elements[27]);
         }
-
-
-
     }
 
     private void setFixProperties(String[] elements, IsakmpData isakmpData) {
@@ -365,7 +389,6 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
 
     }
 
-
     private String fixCert(String value) {
         if (StringUtils.isEmpty(value)){
             return null;
@@ -376,8 +399,6 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         }
         return split[0];
     }
-
-
 
     private String getVid(String str) {
         if (str.contains("(") && str.endsWith(")")) {
@@ -390,16 +411,6 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             }
         }
         return str;
-    }
-
-    private String formatKey(String key) {
-        while (key.contains("(") && key.contains(")")) {
-            String[] buffer = key.split("\\(", -1);
-            key = buffer[0] + buffer[1].split("\\)", -1)[1];
-        }
-        key = key.trim();
-        key = key.replaceAll(" ", "_").replaceAll("-", "_").toLowerCase();
-        return key;
     }
 
 }

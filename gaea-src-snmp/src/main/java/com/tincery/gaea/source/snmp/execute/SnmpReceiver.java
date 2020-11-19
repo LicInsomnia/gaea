@@ -1,7 +1,8 @@
-package com.tincery.gaea.source.qq.execute;
+package com.tincery.gaea.source.snmp.execute;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.src.QQData;
+import com.tincery.gaea.api.src.SnmpData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
@@ -30,18 +31,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Setter
 @Getter
 @Service
-public class QQReceiver extends AbstractSrcReceiver<QQData> {
+public class SnmpReceiver extends AbstractSrcReceiver<SnmpData> {
 
     @Autowired
     private PassRule passrule;
     @Autowired
     private AlarmRule alarmRule;
 
-    private final CopyOnWriteArrayList<QQData> qqList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<SnmpData> qqList = new CopyOnWriteArrayList<>();
 
 
     @Autowired
-    public void setAnalysis(QQLineAnalysis analysis) {
+    public void setAnalysis(SnmpAnalysis analysis) {
         this.analysis = analysis;
     }
 
@@ -53,18 +54,12 @@ public class QQReceiver extends AbstractSrcReceiver<QQData> {
 
     @Override
     public String getHead() {
-        return HeadConst.QQ_HEADER;
+        return HeadConst.SNMP_HEADER;
     }
 
     @Override
     protected void free() {
-        HashSet<QQData> qqData = new HashSet<>(qqList);
-        for (QQData qq : qqData) {
-            this.putCsvMap(qq);
-        }
         super.free();
-        outPutJson(qqData);
-        this.qqList.clear();
     }
 
     private void outPutJson(Set<QQData> qqDataSet){
@@ -93,11 +88,11 @@ public class QQReceiver extends AbstractSrcReceiver<QQData> {
             if (StringUtils.isEmpty(line)) {
                 continue;
             }
-            QQData qqData;
+            SnmpData snmpData;
             try {
-                qqData = this.analysis.pack(line);
-                qqData.adjust();
-                this.qqList.add(qqData);
+                snmpData = this.analysis.pack(line);
+                snmpData.adjust();
+                this.qqList.add(snmpData);
             } catch (Exception e) {
                 log.error("错误SRC：{}", line);
             }

@@ -95,6 +95,10 @@ public class SrcLineSupport {
         data.setDuration((endTimeN - capTimeN) / 1000);
     }
 
+    public void setTime(String capTimeN,String endTimeN, AbstractSrcData data){
+        setTime(Long.parseLong(capTimeN),Long.parseLong(endTimeN),data);
+    }
+
     /**
      * 设置七元组
      *
