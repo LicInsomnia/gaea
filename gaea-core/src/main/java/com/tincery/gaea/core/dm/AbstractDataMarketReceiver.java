@@ -15,7 +15,6 @@ import java.io.File;
 @Slf4j
 public abstract class AbstractDataMarketReceiver implements Receiver {
 
-
     protected DmProperties dmProperties;
 
     protected abstract void setDmProperties(DmProperties dmProperties);

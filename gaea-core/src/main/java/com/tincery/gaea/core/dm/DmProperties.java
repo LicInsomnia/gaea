@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class DmProperties {
 
     /**
+     * a
      * 多线程数
      */
     private int executor = 0;
