@@ -156,8 +156,8 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
     }
 
     private void outputAssetCerChain() {
-        String cerChainFileName = NodeInfo.getDataWarehouseJsonPathByCategory("cerChain") +
-                "/cerChain_" + System.currentTimeMillis() + ".json";
+        String cerChainFileName = NodeInfo.getCerChainPath() +
+                "cerChain_" + System.currentTimeMillis() + ".json";
         FileWriter fileWriter = new FileWriter(cerChainFileName);
         for (List<String> cerChainList : this.assetCerChain) {
             String key = cerChainList.get(0);

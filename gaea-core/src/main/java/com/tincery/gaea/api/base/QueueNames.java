@@ -21,7 +21,7 @@ public class QueueNames {
 
     public final static String DW_REORGANIZATION = "dw_reorganization";
     public final static String DM_ASSET = "dm_asset";
-    public final static String DM_SESSION_LOADER = "dm_sessionloader";
+    public final static String DM_SESSION_ADJUST = "dm_sessionadjust";
     
     public static final String DM_ALARMCOMBINE = "dm_alarmcombine";
 

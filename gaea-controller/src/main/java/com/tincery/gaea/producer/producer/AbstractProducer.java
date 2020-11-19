@@ -17,18 +17,16 @@ import java.util.stream.Collectors;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Slf4j
-public abstract class AbstractProducer implements Producer{
+public abstract class AbstractProducer implements Producer {
 
 
     protected Queue queue;
-
-    private Map<String,Long> categoryLong = new HashMap<>();
-
     protected JmsMessagingTemplate jmsMessagingTemplate;
+    private final Map<String, Long> categoryLong = new HashMap<>();
 
     @Override
     public void producer(Queue queue, String category, String extension) {
-        File path = getRootFile(category,extension);
+        File path = getRootFile(category, extension);
         if (!path.exists()) {
             return;
         }
@@ -41,13 +39,13 @@ public abstract class AbstractProducer implements Producer{
             log.info("本次处理从[{}]目录中没有获取到文件", path);
             return;
         }
-        long lastTime = categoryLong.getOrDefault(category,0L);
+        long lastTime = categoryLong.getOrDefault(category, 0L);
         List<String> files = allFiles.stream()
                 .sorted(Comparator.comparingLong(File::lastModified)).filter(file -> file.lastModified() >= lastTime).map(File::getAbsolutePath)
                 .collect(Collectors.toList());
         if (!files.isEmpty()) {
             File lastFile = new File(files.get(files.size() - 1));
-            categoryLong.put(category,lastFile.lastModified());
+            categoryLong.put(category, lastFile.lastModified());
             for (String file : files) {
                 this.jmsMessagingTemplate.convertAndSend(queue, file);
             }

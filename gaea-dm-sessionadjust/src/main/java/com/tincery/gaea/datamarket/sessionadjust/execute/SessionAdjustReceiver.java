@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.dm.SessionMergeData;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
+import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
+import com.tincery.gaea.core.base.tool.util.FileWriter;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +86,13 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
     }
 
     private void output(List<SessionMergeData> list) {
-
+        String fileName = NodeInfo.getSessionAdjustPath()
+                + "sessionAdjust_" + System.currentTimeMillis() + ".json";
+        FileWriter fileWriter = new FileWriter(fileName);
+        for (SessionMergeData sessionMergeData : list) {
+            fileWriter.write(JSON.toJSONString(sessionMergeData));
+        }
+        fileWriter.close();
     }
 
     /**

@@ -14,13 +14,13 @@ public class App {
     private static final String[] MODELS = {
             "gaea-controller",
             "gaea-src-flow",
+            "gaea-src-alarm",
             "gaea-src-session",
             "gaea-src-impsession",
             "gaea-src-ssl",
             "gaea-src-openvpn",
             "gaea-src-dns",
             "gaea-src-http",
-
             "gaea-src-ssh",
             "gaea-src-ftpandtelnet",
             "gaea-src-pptpandl2tp",
@@ -32,6 +32,7 @@ public class App {
             "gaea-dw-reorganization",
             "gaea-dm-asset",
             "gaea-dm-alarmcombine",
+            "gaea-dm-sessionadjust",
             "gaea-support-mongostash"
     };
     private static String gaeaPath;

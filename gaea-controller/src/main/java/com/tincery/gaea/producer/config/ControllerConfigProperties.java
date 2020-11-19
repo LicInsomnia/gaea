@@ -44,19 +44,21 @@ public class ControllerConfigProperties {
 
     @Setter
     @Getter
-    public static class OdsConfig{
+    public static class OdsConfig {
         private String httpanalysis;
     }
 
     @Setter
     @Getter
-    public static class DmConfig{
-        private String alarmcombine;
+    public static class DmConfig {
+        private String alarmCombine;
         private String asset;
+        private String sessionAdjust;
     }
+
     @Setter
     @Getter
-    public static class SupportConfig{
+    public static class SupportConfig {
         private String mongoStash;
     }
 

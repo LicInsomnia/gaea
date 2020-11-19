@@ -2,14 +2,12 @@ package com.tincery.gaea.core.dm;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com Dm层通用配置
  **/
 @Setter
 @Getter
-@Component
 public class DmProperties {
 
     /**

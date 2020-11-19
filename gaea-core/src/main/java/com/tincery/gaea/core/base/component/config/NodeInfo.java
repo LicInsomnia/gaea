@@ -232,4 +232,16 @@ public class NodeInfo {
         return getDataWarehouseJsonPathByCategory("eventData");
     }
 
+    public static String getSessionAdjustPath() {
+        String path = getDataWarehouseJsonPath() + "/sessionAdjust/";
+        FileUtils.checkPath(path);
+        return path;
+    }
+
+    public static String getCerChainPath() {
+        String path = getDataWarehouseJsonPath() + "/cerChain/";
+        FileUtils.checkPath(path);
+        return path;
+    }
+
 }

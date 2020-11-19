@@ -13,7 +13,7 @@ import java.io.File;
  */
 @Component
 @Slf4j
-public class SrcProducer extends AbstractProducer{
+public class SrcProducer extends AbstractProducer {
 
 
     @Value("${node.src-path}")
@@ -27,7 +27,7 @@ public class SrcProducer extends AbstractProducer{
     @Override
     @Autowired
     public void setJmsMessagingTemplate(JmsMessagingTemplate jmsMessagingTemplate) {
-            this.jmsMessagingTemplate = jmsMessagingTemplate;
+        this.jmsMessagingTemplate = jmsMessagingTemplate;
     }
 
 }

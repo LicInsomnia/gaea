@@ -24,7 +24,7 @@ public class AlarmCombineJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        dmAlarmProducer.producer(this.alarmCombineQueue,"alarmMaterial",".json");
+        dmAlarmProducer.producer(this.alarmCombineQueue, "alarmMaterial", ".json");
         log.info("发送了一条数据");
     }
 }

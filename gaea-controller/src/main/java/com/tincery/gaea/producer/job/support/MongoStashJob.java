@@ -24,7 +24,7 @@ public class MongoStashJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        jmsMessagingTemplate.convertAndSend(mongoQueue,"mongoStash干活了");
+        jmsMessagingTemplate.convertAndSend(mongoQueue, "mongoStash干活了");
         log.info("给mongoStash发送了一条消息");
 
     }
