@@ -21,6 +21,7 @@ public class ControllerConfigProperties {
     @Getter
     public static class SourceConfig {
         private String flow;
+        private String alarm;
         private String session;
         private String impSession;
         private String ssl;
