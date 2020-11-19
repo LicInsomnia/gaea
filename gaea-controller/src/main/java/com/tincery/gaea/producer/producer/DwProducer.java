@@ -14,16 +14,16 @@ import javax.jms.Queue;
 @Setter
 public class DwProducer {
 
-    @Autowired
-    JmsMessagingTemplate jmsMessagingTemplate;
+@Autowired
+JmsMessagingTemplate jmsMessagingTemplate;
 
-    public void producer(Queue queue) {
-        jmsMessagingTemplate.convertAndSend(queue, "苍叔牛逼");
-        try {
-            log.info("提交了一条dw.{}任务", queue.getQueueName());
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
+public void producer(Queue queue) {
+    jmsMessagingTemplate.convertAndSend(queue, "苍叔牛逼");
+    try {
+        log.info("提交了一条dw.{}任务", queue.getQueueName());
+    } catch (JMSException e) {
+        e.printStackTrace();
     }
+}
 
 }

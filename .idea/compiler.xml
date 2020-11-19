@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="gaea-controller" />
+        <module name="gaea-core" />
+        <module name="gaea-dm-alarmcombine" />
+        <module name="gaea-dw-cer" />
+        <module name="gaea-dw-reorganization" />
+        <module name="gaea-ods-httpanalysis" />
+        <module name="gaea-plug-pack" />
+        <module name="gaea-pptpandl2tp" />
+        <module name="gaea-src-dns" />
+        <module name="gaea-src-email" />
+        <module name="gaea-src-espandah" />
+        <module name="gaea-src-flow" />
+        <module name="gaea-src-ftpandtelnet" />
+        <module name="gaea-src-http" />
+        <module name="gaea-src-impsession" />
+        <module name="gaea-src-isakmp" />
+        <module name="gaea-src-openvpn" />
+        <module name="gaea-src-qq" />
+        <module name="gaea-src-session" />
+        <module name="gaea-src-ssh" />
+        <module name="gaea-src-ssl" />
+        <module name="gaea-src-wechat" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="8">
+      <module name="gaea-controller" target="1.8" />
+      <module name="gaea-core" target="1.8" />
+      <module name="gaea-dm-alarmcombine" target="1.8" />
+      <module name="gaea-dw-cer" target="1.8" />
+      <module name="gaea-dw-reorganization" target="1.8" />
+      <module name="gaea-ods-httpanalysis" target="1.8" />
+      <module name="gaea-plug-pack" target="1.5" />
+      <module name="gaea-pptpandl2tp" target="1.8" />
+      <module name="gaea-src-dns" target="1.8" />
+      <module name="gaea-src-email" target="1.5" />
+      <module name="gaea-src-espandah" target="1.8" />
+      <module name="gaea-src-flow" target="1.8" />
+      <module name="gaea-src-ftpandtelnet" target="1.8" />
+      <module name="gaea-src-http" target="1.8" />
+      <module name="gaea-src-impsession" target="1.8" />
+      <module name="gaea-src-isakmp" target="1.8" />
+      <module name="gaea-src-openvpn" target="1.8" />
+      <module name="gaea-src-qq" target="1.5" />
+      <module name="gaea-src-session" target="1.8" />
+      <module name="gaea-src-ssh" target="1.8" />
+      <module name="gaea-src-ssl" target="1.8" />
+      <module name="gaea-src-wechat" target="1.8" />
+      <module name="gaea5" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="gaea-controller" options="-parameters" />
+      <module name="gaea-core" options="-parameters" />
+      <module name="gaea-dm-alarmcombine" options="-parameters" />
+      <module name="gaea-dw-cer" options="-parameters" />
+      <module name="gaea-dw-reorganization" options="-parameters" />
+      <module name="gaea-ods-httpanalysis" options="-parameters" />
+      <module name="gaea-pptpandl2tp" options="-parameters" />
+      <module name="gaea-src-dns" options="-parameters" />
+      <module name="gaea-src-espandah" options="-parameters" />
+      <module name="gaea-src-flow" options="-parameters" />
+      <module name="gaea-src-ftpandtelnet" options="-parameters" />
+      <module name="gaea-src-http" options="-parameters" />
+      <module name="gaea-src-impsession" options="-parameters" />
+      <module name="gaea-src-isakmp" options="-parameters" />
+      <module name="gaea-src-openvpn" options="-parameters" />
+      <module name="gaea-src-session" options="-parameters" />
+      <module name="gaea-src-ssh" options="-parameters" />
+      <module name="gaea-src-ssl" options="-parameters" />
+      <module name="gaea-src-wechat" options="-parameters" />
+    </option>
+  </component>
+</project>

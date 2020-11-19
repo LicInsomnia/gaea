@@ -1,5 +1,6 @@
 package com.tincery.gaea.producer.config;
 
+import com.tincery.gaea.producer.job.datawarehouse.CerJob;
 import com.tincery.gaea.producer.job.datawarehouse.ReorganizationJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -43,4 +44,25 @@ public class DwQuartzConfig {
                 .build();
     }
 
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "cer")
+    public JobDetail cerJob() {
+        log.info("控制器此次分发cer任务");
+        return JobBuilder.newJob(CerJob.class)
+                .withIdentity("cerJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "cer")
+    public Trigger cerJobTrigger() {
+        String cron = controllerConfigProperties.getDataWarehouse().getReorganization();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(cerJob())
+                .withIdentity("cerJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
 }

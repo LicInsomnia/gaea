@@ -18,6 +18,7 @@ public class QueueNames {
     public static final String SRC_WECHAT = "src_wechat";
     public static final String SRC_QQ = "src_qq";
     public final static String DW_REORGANIZATION = "dw_reorganization";
+    public final static String DW_CER = "dw_cer";
     public final static String DM_ASSET = "dm_asset";
 
 

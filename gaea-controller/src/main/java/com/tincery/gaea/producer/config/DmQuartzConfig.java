@@ -1,7 +1,6 @@
 package com.tincery.gaea.producer.config;
 
 import com.tincery.gaea.producer.job.datamarket.AlarmCombineJob;
-import com.tincery.gaea.producer.job.datawarehouse.ReorganizationJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;

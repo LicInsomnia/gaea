@@ -124,7 +124,6 @@ public abstract class AbstractRuleChecker {
             default:
                 return false;
         }
-
     }
 
     public Object getDepthValue(Object rootValue, String fieldName) {
