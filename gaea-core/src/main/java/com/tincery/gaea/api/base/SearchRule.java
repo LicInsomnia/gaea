@@ -1,6 +1,7 @@
 package com.tincery.gaea.api.base;
 
 import lombok.Data;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -28,5 +29,12 @@ public class SearchRule {
      */
     private Map<Integer, Integer> forward;
     private List<String> out;
+
+    public String getCategory(){
+        return match.getKey();
+    }
+    public boolean haveOut(){
+        return !CollectionUtils.isEmpty(out);
+    }
 
 }
