@@ -1,10 +1,14 @@
 package com.tincery.gaea.api.dm;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -13,29 +17,6 @@ import java.util.List;
  **/
 @Data
 public class AssetCondition extends SimpleBaseDO {
-
-    private static final int EQUALS = 1;
-    private static final int NO_EQUALS = 2;
-    private static final int CONTAIN = 3;
-    private static final int NO_CONTAIN = 4;
-    private static final int GT = 5;
-    private static final int GTE = 6;
-    private static final int LT = 7;
-    private static final int LTE = 8;
-    private static final int AFTER = 9;
-    private static final int BEFORE = 10;
-    private static final int TRUE = 11;
-    private static final int FALSE = 12;
-    private static final int EXIST = 13;
-    private static final int NO_EXIST = 14;
-
-    private static final int INT = 1;
-    private static final int LONG = 2;
-    private static final int DOUBLE = 3;
-    private static final int STRING = 4;
-    private static final int DATE = 5;
-    private static final int BOOLEAN = 6;
-    private static final int ARRAY = 7;
 
 
     @Id
@@ -47,12 +28,41 @@ public class AssetCondition extends SimpleBaseDO {
 
     private List<ConditionGroup> conditionGroup;
 
-
     @Setter
     @Getter
     public static class ConditionGroup {
         List<FieldCondition> conditions;
-        List<String> certLinks;
+        List<CerLink> certLinks;
+        String description;
+
+        public boolean hit(JSONObject assetJson,AssetCondition cerCondition) {
+            if (!conditions.stream().allMatch(fieldCondition -> fieldCondition.hit(assetJson))) {
+                return false;
+            }
+            if (CollectionUtils.isEmpty(certLinks)) {
+                return true;
+            }
+            JSONArray certChain = assetJson.getJSONArray(HeadConst.FIELD.SERVER_CER_CHAIN);
+            return certLinks.stream().allMatch(cerLink -> cerLink.certHit(certChain,cerCondition));
+        }
+
+    }
+
+    @Setter
+    @Getter
+    public static class CerLink {
+        private int cerIndex;
+        private List<Integer> cerConditionIndex;
+
+        public boolean certHit(JSONArray certChain,AssetCondition cerCondition) {
+            if (certChain == null || certChain.size() < cerIndex) {
+                return false;
+            }
+            JSONObject certJson = certChain.getJSONObject(cerIndex);
+            List<ConditionGroup> certCondition = cerCondition.getConditionGroup();
+            return cerConditionIndex.stream().map(certCondition::get)
+                    .anyMatch(certConditionGroup -> certConditionGroup.hit(certJson,cerCondition));
+        }
     }
 
 

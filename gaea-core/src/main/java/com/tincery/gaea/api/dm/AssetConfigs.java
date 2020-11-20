@@ -19,16 +19,16 @@ import java.util.function.Function;
  **/
 public class AssetConfigs {
 
-    private static final TeFunction<JSONObject, AssetConfigDO, Boolean, AlarmMaterialData> createAlarm;
+    private static final TeFunction<JSONObject, AssetConfigDO, Boolean, AlarmMaterialData> CREATE_ALARM;
 
-    private static final Function<JSONObject, Integer> getProtocol;
+    private static final Function<JSONObject, Integer> GET_PROTOCOL;
 
-    private static final Function<JSONObject, Integer> getPort;
+    private static final Function<JSONObject, Integer> GET_PORT;
 
     static {
-        createAlarm = AlarmMaterialData::new;
-        getProtocol = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.PROTOCOL);
-        getPort = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
+        CREATE_ALARM = AlarmMaterialData::new;
+        GET_PROTOCOL = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.PROTOCOL);
+        GET_PORT = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
     }
 
 
@@ -51,11 +51,11 @@ public class AssetConfigs {
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.DOMESTIC)) {
             // 境内
-            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig, true));
+            return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig, true));
         }
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.OVERSEAS)) {
             // 境外
-            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig, true));
+            return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig, true));
         }
         // 判断白名单 如果命中则直接返回
         if (check(assetJson, assetConfig, ListType.WHITE, OutInput.OUT, Border.DOMESTIC)) {
@@ -65,19 +65,21 @@ public class AssetConfigs {
             return null;
         }
         // 白名单没返回 则告警
-        return Collections.singletonList(createAlarm.apply(assetJson, assetConfig,true));
+        return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig,true));
     }
 
     public static List<AlarmMaterialData> detectorServer(JSONObject assetJson, AssetDetector assetDetector) {
         AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.SERVER_IP_N));
+        // 客户端需要匹配密码
+        assetConfig.strategyHit(assetJson);
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.DOMESTIC)) {
             // 境内
-            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig,false));
+            return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig,false));
         }
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.OVERSEAS)) {
             // 境外
-            return Collections.singletonList(createAlarm.apply(assetJson, assetConfig,false));
+            return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig,false));
         }
         // 判断白名单 如果命中则直接返回
         if (check(assetJson, assetConfig, ListType.WHITE, OutInput.IN, Border.DOMESTIC)) {
@@ -87,7 +89,7 @@ public class AssetConfigs {
             return null;
         }
         // 白名单没返回 则告警
-        return Collections.singletonList(createAlarm.apply(assetJson, assetConfig,false));
+        return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig,false));
     }
 
 
@@ -125,8 +127,8 @@ public class AssetConfigs {
         if (overseas == null) {
             return false;
         }
-        return overseas.hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
-                getPort.apply(assetJson));
+        return overseas.hit(getIp.apply(assetJson), GET_PROTOCOL.apply(assetJson),
+                GET_PORT.apply(assetJson));
     }
 
     private static boolean domesticHit(JSONObject assetJson, AssetConfigDO.OutInputFilter outInputFilter,
@@ -136,8 +138,8 @@ public class AssetConfigs {
             return false;
         }
         return domestic.stream().anyMatch(domesticFilter ->
-                domesticFilter.hit(getIp.apply(assetJson), getProtocol.apply(assetJson),
-                        getPort.apply(assetJson)));
+                domesticFilter.hit(getIp.apply(assetJson), GET_PROTOCOL.apply(assetJson),
+                        GET_PORT.apply(assetJson)));
 
     }
 
