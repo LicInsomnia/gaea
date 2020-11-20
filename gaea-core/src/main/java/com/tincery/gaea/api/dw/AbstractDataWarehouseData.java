@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class AbstractDataWarehouseData extends AbstractMetaData implements MergeAble {
+public class AbstractDataWarehouseData extends AbstractMetaData implements MergeAble<AbstractDataWarehouseData> {
 
     protected String id;
     /**
@@ -76,9 +76,10 @@ public class AbstractDataWarehouseData extends AbstractMetaData implements Merge
     public void adjust() {
     }
 
+
     @Override
-    public void merge(Object t) {
-        AbstractDataWarehouseData abstractDataWarehouseData = (AbstractDataWarehouseData) t;
+    public AbstractDataWarehouseData merge(AbstractDataWarehouseData data) {
+        return this;
     }
 
     @Override

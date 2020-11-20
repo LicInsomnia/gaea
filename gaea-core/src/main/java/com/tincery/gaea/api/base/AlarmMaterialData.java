@@ -211,7 +211,6 @@ public final class AlarmMaterialData {
      * 资产需要的一个新的告警
      */
     public AlarmMaterialData(JSONObject jsonObject,AssetConfigDO assetConfigDO,Boolean isClient){
-        jsonObject.put("alarm", true);
         this.source = jsonObject.getString("source");
         this.capTime = DateUtils.validateTime(jsonObject.getLong("capTime"));
         this.duration = jsonObject.getLong("duration");

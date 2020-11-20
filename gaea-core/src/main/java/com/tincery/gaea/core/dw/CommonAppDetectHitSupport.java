@@ -1,5 +1,6 @@
 package com.tincery.gaea.core.dw;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import com.tincery.gaea.api.base.AppDetect;
 import com.tincery.gaea.api.base.SearchCondition;
 import com.tincery.gaea.api.base.SearchRule;
@@ -7,7 +8,13 @@ import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -103,7 +110,7 @@ public class CommonAppDetectHitSupport {
 
         @Override
         public Supplier<Map<Integer, Map<String, Set<AppDetect>>>> supplier() {
-            return HashMap::new;
+            return ConcurrentHashMap::new;
         }
 
         @Override
@@ -113,8 +120,8 @@ public class CommonAppDetectHitSupport {
                 for (int i = 0; i < appStep; i++) {
                     SearchRule searchRule = app.getRules().get(i);
                     String category = searchRule.getMatch().getKey();
-                    Map<String, Set<AppDetect>> categoryMap = map.computeIfAbsent(i + 1, k -> new HashMap<>());
-                    Set<AppDetect> appDetects = categoryMap.computeIfAbsent(category, k -> new HashSet<>());
+                    Map<String, Set<AppDetect>> categoryMap = map.computeIfAbsent(i + 1, k -> new ConcurrentHashMap<>());
+                    Set<AppDetect> appDetects = categoryMap.computeIfAbsent(category, k -> new ConcurrentHashSet<>());
                     appDetects.add(app);
                 }
             };

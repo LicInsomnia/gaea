@@ -16,7 +16,6 @@ import java.io.File;
 @Slf4j
 public class DmAlarmProducer extends AbstractProducer {
 
-
     @Override
     public void producer(Queue queue, String category, String extension) {
         jmsMessagingTemplate.convertAndSend(queue, "dm层提交了一个任务");

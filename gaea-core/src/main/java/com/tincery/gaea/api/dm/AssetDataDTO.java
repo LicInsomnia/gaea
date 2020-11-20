@@ -1,6 +1,7 @@
 package com.tincery.gaea.api.dm;
 
 import com.tincery.gaea.core.base.tool.util.NumberUtils;
+import com.tincery.gaea.core.dw.MergeAble;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Data
-public class AssetDataDTO extends SimpleBaseDO {
+public class AssetDataDTO extends SimpleBaseDO implements MergeAble<AssetDataDTO> {
 
     @Id
     private String id;
@@ -41,6 +42,7 @@ public class AssetDataDTO extends SimpleBaseDO {
     private List<AssetClient> clients;
     private Map<String, Object> extensions;
 
+
     @Setter
     @Getter
     public static class AssetClient {
@@ -54,6 +56,7 @@ public class AssetDataDTO extends SimpleBaseDO {
     /****
      * 两个资产信息合并
      **/
+    @Override
     public AssetDataDTO merge(AssetDataDTO that) {
         this.byteNum = NumberUtils.sum(that.byteNum, this.byteNum);
         this.alarm = (this.alarm != null && this.alarm) || (that.alarm != null && that.alarm);
