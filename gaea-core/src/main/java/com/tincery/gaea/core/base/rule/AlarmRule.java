@@ -1,5 +1,6 @@
 package com.tincery.gaea.core.base.rule;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.SrcRuleDO;
@@ -111,7 +112,10 @@ public class AlarmRule extends BaseSimpleRule {
             alarmList.replace(md5Key, alarmMaterialData);
         } else {
             alarmList.put(md5Key, alarmMaterialData);
-            eventDataList.add(alarmMaterialData.getEventData());
+            String eventData = alarmMaterialData.getEventData();
+            JSONObject jsonObject = (JSONObject) JSON.toJSON(alarmMaterialData);
+            jsonObject.put("alarmKey", eventData);
+            eventDataList.add(JSON.toJSONString(jsonObject));
         }
     }
 

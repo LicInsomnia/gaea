@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.dm.assetextension.AssetIsakmpExtension;
 import com.tincery.gaea.api.dm.assetextension.AssetSshExtension;
 import com.tincery.gaea.api.dm.assetextension.AssetSslExtension;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.dw.MergeAble;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
@@ -25,6 +26,17 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     private List<AssetIsakmpExtension> isakmpExtensions;
 
     public static AssetExtension fromAssetJsonObject(JSONObject jsonObject) {
+        String proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
+        AssetExtension assetExtension = new AssetExtension();
+        switch (proName) {
+            case HeadConst.PRONAME.SSL:
+
+                break;
+            case HeadConst.PRONAME.SSH:
+                break;
+            default:
+                break;
+        }
         return null;
     }
 
