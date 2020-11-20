@@ -4,6 +4,9 @@ package com.tincery.gaea.api.src;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.Location;
+import com.tincery.gaea.api.src.email.EmailAuth;
+import com.tincery.gaea.api.src.email.EmailExtension;
+import com.tincery.gaea.api.src.email.EmailPart;
 import com.tincery.gaea.core.base.component.support.ApplicationCheck;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,13 +29,28 @@ public class EmailData extends AbstractSrcData implements Cloneable {
     private List<String> rcpt;
     private Location clientLocation;
     private Location serverLocation;
+    //email要素信息
+    private EmailPart part;
+    //email认证信息
+    private EmailAuth auth;
+
+    private EmailExtension extension;
+
+    private String emlName;
+    private String loginUser;
+    private String loginPass;
+    private Integer proper;
+    private Integer iDirect;
+    private String sender;
+    private String rcptTo;
+    private String ifImapPart;
+
+
 
     @Override
     public String toCsv(char splitChar) {
-        Object[] join = new Object[]{};
-//        Object[] join = new Object[]{super.toCsv(splitChar), this.durationTime, this.syn, this.fin, this.serverName, this.sha1
-//                , formatList(this.cerChain), formatList(this.clientCerChain), this.isDouble, this.random, formatList(this.version)
-//                , formatList(this.cipherSuites), this.clientCipherSuite, this.handshake, this.malformedUpPayload, this.malformedDownPayload};
+        Object[] join = new Object[]{super.toCsv(splitChar),this.malformedUpPayload, this.malformedDownPayload,
+                this.emlName,this.loginUser,this.loginPass,this.proper,this.iDirect,this.sender,this.rcptTo,this.ifImapPart};
         return Joiner.on(splitChar).useForNull("").join(join);
     }
 
@@ -48,25 +66,6 @@ public class EmailData extends AbstractSrcData implements Cloneable {
         return result;
     }
 
-
-    @Override
-    public void adjust() {
-        if ("0.0.0.0".equals(this.clientIpOuter)) {
-            this.setClientIpOuter(null);
-        }
-        if ("0.0.0.0".equals(this.serverIpOuter)) {
-            this.setServerIpOuter(null);
-        }
-        if (0 == this.clientPortOuter) {
-            this.setClientPortOuter(null);
-        }
-        if (0 == this.serverPortOuter) {
-            this.setServerPortOuter(null);
-        }
-        if (0 == this.protocolOuter) {
-            this.setProtocolOuter(null);
-        }
-    }
 
     @Override
     public EmailData clone() {
