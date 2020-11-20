@@ -37,12 +37,12 @@ public class TableConfigDao extends SimpleBaseDaoImpl<TableConfig> {
     }
 
     public List<TableConfig> getUpdate() {
-        Query query = new Query(Criteria.where("type").regex("insert"));
+        Query query = new Query(Criteria.where("type").is("production_update"));
         return findListData(query);
     }
 
     public List<TableConfig> getInsert(){
-        Query query = new Query(Criteria.where("type").is("production_update"));
+        Query query = new Query(Criteria.where("type").regex("insert"));
         return findListData(query);
     }
 

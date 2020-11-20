@@ -139,6 +139,14 @@ public class HeadConst {
     public final static String EMAIL_HEADER = BASE_COMMON_HEADER +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.EML_NAME + CSV_SEPARATOR +
+            FIELD.LOGIN_USER + CSV_SEPARATOR +
+            FIELD.LOGIN_PASS + CSV_SEPARATOR +
+            FIELD.PROPER + CSV_SEPARATOR +
+            FIELD.I_DIRECT + CSV_SEPARATOR +
+            FIELD.SENDER + CSV_SEPARATOR +
+            FIELD.RCPT_TO + CSV_SEPARATOR +
+            FIELD.IF_IMAP_PART + CSV_SEPARATOR +
             FIELD.EXTENSION;
     /* ESP&AH csv文件头 */
     public final static String ESPANDAH_HEADER = BASE_COMMON_HEADER +
@@ -332,6 +340,15 @@ public class HeadConst {
         /* SNMP */
         public static final String COMMUNITY = "community";
         public static final String PDUTYPE = "pduType";
+        /* EMAIL */
+        public static final String EML_NAME = "emlName";
+        public static final String LOGIN_USER = "loginUser";
+        public static final String LOGIN_PASS = "loginPass";
+        public static final String PROPER = "proper";
+        public static final String I_DIRECT = "iDirect";
+        public static final String SENDER = "sender";
+        public static final String RCPT_TO = "rcptTo";
+        public static final String IF_IMAP_PART = "ifImapPart";
     }
 
     public static class PRONAME {

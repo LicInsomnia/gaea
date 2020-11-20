@@ -534,7 +534,6 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
         }
         //需要合并时 先记录后一条记录的endtime的值 合并到第一条记录
         oldAlarm.setDurationEndTime(newAlarm.getDurationTime() + newAlarm.getCapTime());
-
         //合并eventData
         List<String> eventData = oldAlarm.getEventData();
         eventData.addAll(newAlarm.getEventData());
