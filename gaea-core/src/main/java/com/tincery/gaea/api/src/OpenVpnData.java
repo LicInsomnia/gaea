@@ -61,10 +61,20 @@ public class OpenVpnData extends AbstractSrcData {
         return this.protocol + "_" + this.clientIp + "_" + this.serverIp + "_" + this.clientPort + "_" + this.serverPort;
     }
 
-    public void merge(OpenVpnData openVpnData) {
+    /**
+     * 会有没有信息和握手信息的dataType = 1 的正常数据
+     * 即为 openVpnExtension有值（new出来的）  内部属性为null
+     * openVpn不合并流量
+     * @param openVpnData
+     */
+    public synchronized void merge(OpenVpnData openVpnData) {
         this.capTime = Math.min(this.capTime, openVpnData.capTime);
         this.duration = Math.max(this.capTime + this.duration, openVpnData.capTime + openVpnData.duration);
-        if (null == this.openVpnExtension) {
+
+        if (this.dataType == 1 || openVpnData.getDataType() == 1){
+            this.dataType = 1;
+        }
+        if (null == this.openVpnExtension || this.openVpnExtension.getHandshake() == null) {
             this.openVpnExtension = openVpnData.getOpenVpnExtension();
         } else {
             this.openVpnExtension.merge(openVpnData.getOpenVpnExtension());

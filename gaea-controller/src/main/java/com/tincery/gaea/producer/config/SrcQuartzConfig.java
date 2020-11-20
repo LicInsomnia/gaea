@@ -43,6 +43,28 @@ public class SrcQuartzConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "alarm")
+    public JobDetail alarmJob() {
+        log.info("控制器此次分发alarm任务");
+        return JobBuilder.newJob(AlarmJob.class)
+                .withIdentity("alarmJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "alarm")
+    public Trigger alarmJobTrigger() {
+        String cron = controllerConfigProperties.getSrc().getAlarm();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(alarmJob())
+                .withIdentity("alarmJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
+
+    @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "session")
     public JobDetail sessionJob() {
         log.info("控制器此次分发session任务");
@@ -178,7 +200,7 @@ public class SrcQuartzConfig {
     @ConditionalOnProperty(prefix = PREFIX, name = "email")
     public JobDetail emailJob() {
         log.info("控制器此次分发email任务");
-        return JobBuilder.newJob(SslJob.class)
+        return JobBuilder.newJob(EmailJob.class)
                 .withIdentity("emailJob")
                 .storeDurably()
                 .build();

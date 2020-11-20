@@ -11,8 +11,9 @@
 
     <modules>
         <module>gaea-core</module>
-        <module>gaea-plug-pack</module>
         <module>gaea-controller</module>
+        <!--SOURCE层模块-->
+        <module>gaea-src-alarm</module>
         <module>gaea-src-session</module>
         <module>gaea-src-ssl</module>
         <module>gaea-src-email</module>
@@ -25,14 +26,23 @@
         <module>gaea-src-flow</module>
         <module>gaea-src-dns</module>
         <module>gaea-src-http</module>
-        <module>gaea-dw-reorganization</module>
         <module>gaea-src-pptpandl2tp</module>
         <module>gaea-src-ftpandtelnet</module>
         <module>gaea-src-espandah</module>
-        <!--<module>gaea-ods-matchhttp</module>-->
-        <module>gaea-dm-alarmcombine</module>
+        <module>gaea-src-bitcoin</module>
+        <!--DATAWAREHOUSE层模块-->
+        <module>gaea-dw-reorganization</module>
+        <module>gaea-dw-commonappdetect</module>
+        <!--ODS层模块-->
         <module>gaea-ods-httpanalysis</module>
-        <!--        <module>gaea-dm-asset</module>-->
+        <!--DATAMARKET层模块-->
+        <module>gaea-dm-alarmcombine</module>
+        <module>gaea-dm-asset</module>
+        <module>gaea-dm-sessionadjust</module>
+        <!--SUPPORT模块-->
+        <module>gaea-support-messagecomsumer</module>
+        <module>gaea-support-mongostash</module>
+        <module>gaea-support-pack</module>
     </modules>
 
 

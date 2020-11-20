@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.io.File;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,10 +66,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      */
     protected long maxTime;
     protected SrcLineAnalysis<M> analysis;
-    protected CountDownLatch countDownLatch;
-    protected CyclicBarrier cyclicBarrier;
 
-    protected FileWriter errorFileWriter;
 
     public abstract void setProperties(SrcProperties properties);
 
@@ -86,18 +84,12 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         File file = new File(text);
         log.info("开始解析文件:[{}]", file.getName());
         long startTime = System.currentTimeMillis();
-        String errorFileName = ApplicationInfo.getCategory() + "_" + System.currentTimeMillis() + ".txt";
-        this.errorFileWriter = new FileWriter(getErrorPath() + "/" + errorFileName);
         analysisFile(file);
-        try {
-            if (countDownLatch != null) {
-                countDownLatch.await();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        long l = Instant.now().toEpochMilli();
         this.clearFile(file);
+        System.out.println("clearFile用了"+(l-Instant.now().toEpochMilli()));
         this.free();
+        System.out.println("free用了"+(l-Instant.now().toEpochMilli()));
         log.info("文件:[{}]处理完成，用时{}毫秒", file.getName(), (System.currentTimeMillis() - startTime));
     }
 
@@ -130,19 +122,25 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             analysisLine(lines);
         } else {
             List<List<String>> partitions = Lists.partition(lines, (lines.size() / executor) + 1);
-            this.countDownLatch = new CountDownLatch(partitions.size());
-            this.cyclicBarrier = new CyclicBarrier(partitions.size() + 1);
+            CountDownLatch countDownLatch = new CountDownLatch(partitions.size());
             for (List<String> partition : partitions) {
-                executorService.execute(() -> analysisLine(partition));
+                executorService.execute(() -> {
+                    try {
+                        analysisLine(partition);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.error("解析实体时出现特殊异常");
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+                });
             }
             try {
-                cyclicBarrier.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
-
     }
 
     /****
@@ -160,20 +158,10 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                 pack = this.analysis.pack(line);
                 pack.adjust();
             } catch (Exception e) {
-                this.errorFileWriter.write(line);
+                log.error("错误信息:{},错误SRC：{}", e.getMessage(),line);
                 continue;
             }
             this.putCsvMap(pack);
-        }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
-        }
-        if (this.cyclicBarrier != null) {
-            try {
-                this.cyclicBarrier.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -183,7 +171,6 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
     protected void free() {
         outputCsvData();
         outputAlarm();
-        this.errorFileWriter.close();
     }
 
     /***
@@ -210,7 +197,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
         this.appendCsvData(
                 fileName,
                 data.toCsv(HeadConst.CSV_SEPARATOR),
-                data.capTime
+                data.getCapTime()
         );
     }
 
@@ -219,11 +206,12 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
      * 清理原文件
      */
     protected void clearFile(File file) {
+        if (this.properties.isTest()) {
+            return;
+        }
         bakFile(file);
-        if (!this.properties.isTest()) {
-            if (file.delete()) {
-                log.info("删除文件{}", file.getName());
-            }
+        if (file.delete()) {
+            log.info("删除文件{}", file.getName());
         }
     }
 

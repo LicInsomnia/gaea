@@ -135,6 +135,19 @@ public class CsvRow {
         return (JSONObject) JSONObject.parse(get(index));
     }
 
+    public JSONObject toJsonObject(){
+        JSONObject jsonObject = new JSONObject();
+        this.headerMap.forEach((key,index)->{
+            String value = fields[index];
+            if(StringUtils.isNotEmpty(value)){
+                jsonObject.put(key,value);
+            }
+        });
+        if(this.extension!=null){
+            jsonObject.put("$extension",this.extension);
+        }
+        return jsonObject;
+    }
 
     @Override
     public String toString() {

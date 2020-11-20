@@ -3,6 +3,8 @@ package com.tincery.gaea.api.base;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 public class Handshake {
@@ -29,6 +31,9 @@ public class Handshake {
     }
 
     public void merge(Handshake handshake) {
+        if (Objects.isNull(handshake)){
+            return;
+        }
         if (handshake.clientHello > 0) {
             this.clientHello = handshake.clientHello;
         }

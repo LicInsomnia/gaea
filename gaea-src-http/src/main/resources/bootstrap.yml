@@ -1,7 +1,7 @@
 server:
   port: 11112
 node:
-  name: insomnia
+  name: gxz
 spring:
   application:
     name: src_http
@@ -19,7 +19,7 @@ spring:
             group: GAEA_GROUP
 
   profiles:
-    active: insomnia
+    active: gxz
 logging:
   level:
     root: info

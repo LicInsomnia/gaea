@@ -3,15 +3,12 @@ package com.tincery.gaea.source.wechat.execute;
 
 import com.tincery.gaea.api.src.WeChatData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
-import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.xml.crypto.Data;
 
 
 /**
@@ -26,50 +23,72 @@ public class WeChatLineAnalysis implements SrcLineAnalysis<WeChatData> {
     public SrcLineSupport srcLineSupport;
 
     /**
-     * 0.timeStamp 1.protocol 2.serverMac 3.clientMac
-     * 4.serverIp_n 5.clientIp_n 6.serverPort 7.clientPort
-     * 8.source 9.runleName
-     * 10.imsi 11.imei 12.msisdn
-     * 13.outclientip 14.outserverip 15.outclientport 16.outserverport 17.outproto
-     * 18.userid 19.serverid 20.ismac2outer
-     * 21.wxnum
-     * 22.Version 23.OsType
+     * 0.syn/synack 1.fin
+     * Time 2.startTime 3.endTime
+     * flow 4.uppkt(c2s) 5.upbyte(c2s) 6.downpkt(s2c) 7.downbyte(s2c)
+     * 7元组 8.protocol 9.smac 10.cMac 11.sip_n 12.cip_n 13.sport 14.cport
+     * 15.source 16.runleName
+     * 手机 17.imsi 18.imei 19.msisdn
+     * 五元组 20.outclientip 21.outserverip 22.outclientport 23.outserverport 24.outproto
+     * 25.userid 26.serverid 27.ismac2outer
+     * 28.wxnum 29.Version 30.OsType
      */
     @Override
     public WeChatData pack(String line) {
         WeChatData weChatData = new WeChatData();
         String[] elements = StringUtils.FileLineSplit(line);
-        weChatData.setCapTime(DateUtils.validateTime(Long.parseLong(elements[0])));
-        this.srcLineSupport.set7Tuple(elements[2],
-                elements[3],
-                elements[4],
-                elements[5],
-                elements[6],
-                elements[7],
-                elements[1],
+        fixCommon(weChatData,elements);
+        fixOther(weChatData,elements);
+        return weChatData;
+    }
+
+    /**
+     * 设置wechat的本身属性
+     * @param weChatData 实体
+     * @param elements 数据源
+     */
+    private void fixOther(WeChatData weChatData, String[] elements) {
+        weChatData.setWxNum(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[28])))
+                .setVersion(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[29])))
+                .setOsType(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[30])));
+    }
+
+    /**
+     * 设置common属性
+     * @param weChatData 实体
+     * @param elements 数据源
+     */
+    private void fixCommon(WeChatData weChatData, String[] elements) {
+        this.srcLineSupport.setSynAndFin(elements[0],elements[1],weChatData);
+        this.srcLineSupport.setTime(Long.parseLong(elements[2]),Long.parseLong(elements[3]),weChatData);
+        this.srcLineSupport.setFlow(elements[4],elements[5],elements[6],elements[7],weChatData);
+        this.srcLineSupport.set7Tuple(elements[9],
+                elements[10],
+                elements[11],
+                elements[12],
+                elements[13],
+                elements[14],
+                elements[8],
                 // proName 赋默认值  如果匹配到了相关application 会替换掉proName
                 HeadConst.PRONAME.WECHAT,
                 weChatData
         );
-        weChatData.setSource(SourceFieldUtils.parseStringStrEmptyToNull(elements[8]));
-        this.srcLineSupport.setTargetName(elements[9], weChatData);
+        weChatData.setSource(SourceFieldUtils.parseStringStrEmptyToNull(elements[15]));
+        this.srcLineSupport.setTargetName(elements[16], weChatData);
         this.srcLineSupport.setGroupName(weChatData);
-        weChatData.setImsi(SourceFieldUtils.parseStringStrEmptyToNull(elements[10]))
-                .setImei(SourceFieldUtils.parseStringStrEmptyToNull(elements[11]))
-                .setMsisdn(SourceFieldUtils.parseStringStrEmptyToNull(elements[12]));
-        srcLineSupport.set5TupleOuter(elements[13], elements[14], elements[15], elements[16], elements[17], weChatData);
-        weChatData.setUserId(elements[18])
-                .setServerId(elements[19]);
-        weChatData.setWxNum(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[21])))
-                .setVersion(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[22])))
-                .setOsType(SourceFieldUtils.parseStringStrEmptyToNull(paramSplit(elements[23])));
-        return weChatData;
+        this.srcLineSupport.setMobileElements(elements[17],elements[18],elements[19],weChatData);
+        this.srcLineSupport.set5TupleOuter(elements[20], elements[21], elements[22], elements[23], elements[24], weChatData);
+        this.srcLineSupport.setPartiesId(elements[25],elements[26],weChatData);
+        this.srcLineSupport.setIsMac2Outer(elements[27],weChatData);
     }
 
     public String paramSplit(String param){
         if (!StringUtils.isEmpty(param)) {
             if (param.contains(":")) {
-                return param.split(":")[1];
+                String[] split = param.split(":");
+                if (split.length==2){
+                    return split[1];
+                }
             }
         }
         return null;

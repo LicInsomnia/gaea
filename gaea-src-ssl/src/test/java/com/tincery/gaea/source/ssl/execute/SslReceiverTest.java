@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.ssl.execute;
+package java.com.tincery.gaea.source.ssl.execute;
 
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.source.ssl.GaeaSourceSslApplication;
@@ -18,7 +18,7 @@ class SslReceiverTest {
     @Test
     public void aa() throws Exception{
         ActiveMQTextMessage activeMQTextMessage = new ActiveMQTextMessage();
-        activeMQTextMessage.setText("/Users/gongxuanzhang/Downloads/ssl_0.txt");
+        activeMQTextMessage.setText("D:/data5/src/ssl/ssl_0.txt");
         receiver.receive(activeMQTextMessage);
     }
 

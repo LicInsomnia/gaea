@@ -4,9 +4,11 @@ import com.google.common.base.Joiner;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class PptpAndL2tpExtension {
+public class PptpAndL2tpExtension implements Serializable {
 
     /**
      * 响应
@@ -49,7 +51,7 @@ public class PptpAndL2tpExtension {
 
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{
-                this.challenge,this.challengeName, this.response,  this.responseName,  this.authProtocol, this.authAlgo, this.successMesg, this.encAlog
+                this.challenge, this.challengeName, this.response,  this.responseName,  this.authProtocol, this.authAlgo, this.successMesg, this.encAlog
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

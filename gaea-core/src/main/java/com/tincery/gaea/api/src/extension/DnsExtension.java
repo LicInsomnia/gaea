@@ -5,11 +5,12 @@ import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Getter
 @Setter
-public class DnsExtension {
+public class DnsExtension implements Serializable {
 
     /**
      * DNS请求域名

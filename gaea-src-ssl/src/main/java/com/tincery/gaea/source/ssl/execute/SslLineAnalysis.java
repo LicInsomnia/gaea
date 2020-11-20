@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author gxz
@@ -43,7 +42,6 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
         SslExtension sslExtension = new SslExtension();
         if (sslData.getDataType() == -1) {
             this.sslLineSupport.setMalformedPayload(elements[29], elements[30], sslData);
-            return sslData;
         } else {
             if (elements[29].contains("malformed")) {
                 sslData.setDataType(-2);
@@ -109,12 +107,12 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
     /**
      * 解析拓展信息中的握手相关会话
      *
-     * @param element   拓展信息
+     * @param elements  拓展信息
      * @param handshake 握手过程
      * @return 是否进行客户端服务端切换
      */
-    private boolean addHandshake(String element, SslExtension sslExtension, Handshake handshake) throws Exception {
-        String[] kv = element.split(":");
+    private boolean addHandshake(String elements, SslExtension sslExtension, Handshake handshake) throws Exception {
+        String[] kv = elements.split(":");
         if (kv.length != 2) {
             throw new Exception("握手会话数据格式有误...");
         }
@@ -130,7 +128,6 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
             default:
                 throw new Exception("握手会话数据格式有误...");
         }
-
         String handshakeKeyword = kv[0].trim();
         int length = Integer.parseInt(kv[1].trim());
         switch (handshakeKeyword) {

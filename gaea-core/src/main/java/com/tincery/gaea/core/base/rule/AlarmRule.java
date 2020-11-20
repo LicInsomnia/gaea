@@ -188,8 +188,6 @@ public class AlarmRule extends BaseSimpleRule {
                     }
                 }
                 AlarmMaterialData alarmMaterialData = new AlarmMaterialData(data, this.source, context, AlarmRule.this.ipSelector);
-                /*alarmRule 是 src告警*/
-                alarmMaterialData.setPattern(1);
                 pushAlarm(alarmMaterialData, null);
             }
             return false;

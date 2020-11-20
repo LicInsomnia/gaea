@@ -39,7 +39,6 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
                 .setSyn("1".equals(elements[0]))
                 .setFin("1".equals(elements[1]))
                 .setDataType(Integer.parseInt(elements[8]));
-
         this.srcLineSupport.setMobileElements(elements[18], elements[19], elements[20], impSessionData);
         this.srcLineSupport.setPartiesId(elements[26], elements[27], impSessionData);
         this.srcLineSupport.setTargetName(elements[17], impSessionData);
@@ -51,7 +50,12 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
         if (needCorrect(elements)) {
             modifyImpSessionData(impSessionData, elements);
         }
-        impSessionData.setForeign(this.srcLineSupport.isForeign(impSessionData.getServerIp()));
+        try {
+            impSessionData.setForeign(this.srcLineSupport.isForeign(impSessionData.getServerIp()));
+        }catch (Exception e){
+            throw new IllegalArgumentException("无法判断ipv6内外网");
+        }
+
         return impSessionData;
     }
 

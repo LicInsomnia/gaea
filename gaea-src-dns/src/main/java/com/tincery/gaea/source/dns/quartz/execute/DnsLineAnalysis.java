@@ -27,17 +27,6 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
     private SrcLineSupport srcLineSupport;
 
     /**
-     * 将一条记录包装成实体类
-     * 0.serverMac          1.clientMac         2.serverIp_n            3.clientIp_n
-     * 4.serverPort         5.clientPort        6.protocol              7.uppkt
-     * 8.downpkt            9.upbyte            10.downbyte             11.source
-     * 12.ruleName          13.capTime          14.imsi                 15.imei
-     * 16.msisdn            17.outclientip      18.outserverip          19.outclientport
-     * 20.outserverport     21.outproto         22.userid               23.serverid
-     * 24.ismac2outer       25.direct(0/1)      26.domain / upPayload   27.cname / downPayload
-     * 28.ipv4              29.ipv6
-     */
-    /**
      * 0. srcMac 1.dstMac 2.srcIp_n 3.dstIp_n 4.srcPort 5.dstPort 6.protocol
      * 7.d2spkt 8.s2dpkt 9.d2sbyte 10.s2dbyte 11.source 12.ruleName 13.time
      * 14.imsi 15.imei 16.msisdn 17.outdsttip 18.outsrcip 19.outdstport
@@ -51,7 +40,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
      */
 
     @Override
-    public DnsData pack(String line) {
+    public DnsData pack(String line) throws Exception {
         DnsData dnsData = new DnsData();
         String[] elements = StringUtils.FileLineSplit(line);
 
@@ -64,7 +53,7 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         this.srcLineSupport.setGroupName(dnsData);
 
         Integer s2dFlag = Integer.parseInt(elements[25]);
-        Integer dataType = Integer.parseInt(elements[26]);
+        int dataType = Integer.parseInt(elements[26]);
         dnsData.setDataType(dataType);
         /*
         根据s2dFlag 和dataType判断  装载顺序
@@ -91,18 +80,15 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
                 break;
             case -1:
                 /*
-                s2dport<= d2sport fixD2S(elements,dnsData);
-                s2dport > d2sport fixS2D(elements,dnsData);
+                  D2S Client = false  S2D Client = true;
                  */
-                int srcPort = Integer.parseInt(elements[4]);
-                int dstPort = Integer.parseInt(elements[5]);
-                if (srcPort<=dstPort){
+                boolean flag = malformedDataGetIsServer(elements);
+                if (flag){
                     fixD2S(elements,dnsData);
-                    this.srcLineSupport.setMalformedPayload(elements[28],elements[27],dnsData);
                 }else{
                     fixS2D(elements,dnsData);
-                    this.srcLineSupport.setMalformedPayload(elements[27],elements[28],dnsData);
                 }
+                this.srcLineSupport.setMalformedPayload(elements[27],elements[28],dnsData);
                 break;
         }
         this.srcLineSupport.setMobileElements(elements[14], elements[15], elements[16], dnsData);
@@ -117,6 +103,27 @@ public class DnsLineAnalysis implements SrcLineAnalysis<DnsData> {
         dnsData.setDnsExtension(dnsExtension);
         return dnsData;
     }
+
+    /**
+     * dataType = -1时 装载的顺序
+     */
+    private Boolean malformedDataGetIsServer(String[] elements){
+        //TODO 这里内外网检测的方法无法检测ipv6 如果出现ipv6的情况会解析失败
+        Boolean flag = null;
+        try {
+            flag = this.srcLineSupport.sureisD2SServerByIsInnerIp(elements[2], elements[3], null);
+        }catch (Exception e){
+            // 这里可能遇到内外网检测方法无法检测ipv6  跳过进行端口检测
+            flag =  this.srcLineSupport.sureisD2SServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
+            return flag;
+        }
+        if (Objects.isNull(flag)){
+           flag =  this.srcLineSupport.sureisD2SServerByComparePort(Integer.parseInt(elements[4]),Integer.parseInt(elements[5]));
+        }
+        return flag;
+    }
+
+
     /*根据s2dFLag 和datatype 处理   s2dFlag 1 dataType 0   s2dFlag 2 dataType 1*/
     private void fixS2D(String[] elements,DnsData dnsData){
         this.srcLineSupport.set7Tuple(

@@ -71,9 +71,8 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
     protected void analysisLine(List<String> lines) {
         for (String line : lines) {
             if (StringUtils.isNotEmpty(line)) {
-                ImpSessionData impSessionData;
                 try {
-                    impSessionData = this.analysis.pack(line);
+                    ImpSessionData impSessionData = this.analysis.pack(line);
                     impSessionData.adjust();
                     String key = impSessionData.getKey();
                     String pairKey = impSessionData.getPairKey();
@@ -84,9 +83,10 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
                     } else {
                         this.impSessionMap.put(key, impSessionData);
                     }
-                } catch (Exception e) {
-                    this.errorFileWriter.write(line);
+                 } catch (Exception e) {
+                    log.error("错误信息:{},错误SRC：{}", e.getMessage(),line);
                 }
+
             }
         }
     }
@@ -108,7 +108,7 @@ public class ImpSessionReceiver extends AbstractSrcReceiver<ImpSessionData> {
         String fileName = impSessionData.getDateSetFileName(category);
         this.appendCsvData(fileName,
                 impSessionData.toCsv(HeadConst.CSV_SEPARATOR),
-                impSessionData.capTime);
+                impSessionData.getCapTime());
     }
 
     @Override

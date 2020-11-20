@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: gxz gongxuanzhang@foxmail.comHOME
+ * @author: gxz gongxuanzhang@foxmail.com
+ * HOME
  * ├── config #各模块运行所需配置文件，不用修改
  * │   ├── dgaSource
  * │   ├── geo2ip
@@ -207,6 +208,12 @@ public class NodeInfo {
         return path;
     }
 
+    public static String getDataMarketBakByCategory(String category) {
+        String path = getBak() + "/dataMarket/" + category + "/";
+        FileUtils.checkPath(path);
+        return path;
+    }
+
     public static String getError() {
         return NODE_MAP.get(ERROR);
     }
@@ -223,6 +230,18 @@ public class NodeInfo {
 
     public static String getEventData() {
         return getDataWarehouseJsonPathByCategory("eventData");
+    }
+
+    public static String getSessionAdjustPath() {
+        String path = getDataWarehouseJsonPath() + "/sessionAdjust/";
+        FileUtils.checkPath(path);
+        return path;
+    }
+
+    public static String getCerChainPath() {
+        String path = getDataWarehouseJsonPath() + "/cerChain/";
+        FileUtils.checkPath(path);
+        return path;
     }
 
 }

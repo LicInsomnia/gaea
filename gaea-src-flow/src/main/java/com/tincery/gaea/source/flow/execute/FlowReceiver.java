@@ -51,35 +51,32 @@ public class FlowReceiver extends AbstractSrcReceiver<FlowData> {
     protected void analysisLine(List<String> lines) {
         for (String line : lines) {
             if (StringUtils.isNotEmpty(line)) {
-                FlowData flowData;
+                FlowData flowData = null;
                 try {
                     flowData = this.analysis.pack(line);
-                    if (null == flowData) {
-                        continue;
-                    }
-                    String key = flowData.getFlowKey();
-                    if (flowData.getFlowStatistic().getImp()) {
-                        if (this.impFlowDataMap.containsKey(key)) {
-                            FlowData buffer = this.impFlowDataMap.get(key);
-                            buffer.merge(flowData);
-                        } else {
-                            this.impFlowDataMap.put(key, flowData);
-                        }
-                    } else {
-                        if (this.flowDataMap.containsKey(key)) {
-                            FlowData buffer = this.flowDataMap.get(key);
-                            buffer.merge(flowData);
-                        } else {
-                            this.flowDataMap.put(key, flowData);
-                        }
-                    }
                 } catch (Exception e) {
-                    this.errorFileWriter.write(line);
+                    log.error("错误SRC：{}", line);
+                }
+                if (null == flowData) {
+                    continue;
+                }
+                String key = flowData.getFlowKey();
+                if (flowData.getFlowStatistic().getImp()) {
+                    if (this.impFlowDataMap.containsKey(key)) {
+                        FlowData buffer = this.impFlowDataMap.get(key);
+                        buffer.merge(flowData);
+                    } else {
+                        this.impFlowDataMap.put(key, flowData);
+                    }
+                } else {
+                    if (this.flowDataMap.containsKey(key)) {
+                        FlowData buffer = this.flowDataMap.get(key);
+                        buffer.merge(flowData);
+                    } else {
+                        this.flowDataMap.put(key, flowData);
+                    }
                 }
             }
-        }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
         }
     }
 

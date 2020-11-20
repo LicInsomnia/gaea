@@ -42,7 +42,7 @@ public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
 
     @Override
     public String getHead() {
-        return HeadConst.SESSION_HEADER;
+        return HeadConst.ISAKMP_HEADER;
     }
 
     @Autowired
@@ -70,11 +70,8 @@ public class IsakmpReceiver extends AbstractSrcReceiver<IsakmpData> {
                 isakmpData.adjust();
                 this.putCsvMap(isakmpData);
             } catch (Exception e) {
-                this.errorFileWriter.write(line);
+                log.error("错误SRC：{}", line);
             }
-        }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
         }
     }
 

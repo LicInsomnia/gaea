@@ -3,45 +3,48 @@ package com.tincery.gaea.api.dm;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-@Setter
-@Getter
+@Data
 public class FieldCondition {
 
-    private static final int EQUALS = 1;
-    private static final int NO_EQUALS = 2;
-    private static final int CONTAIN = 3;
-    private static final int NO_CONTAIN = 4;
-    private static final int GT = 5;
-    private static final int GTE = 6;
-    private static final int LT = 7;
-    private static final int LTE = 8;
-    private static final int AFTER = 9;
-    private static final int BEFORE = 10;
-    private static final int TRUE = 11;
-    private static final int FALSE = 12;
-    private static final int EXIST = 13;
-    private static final int NO_EXIST = 14;
+    protected static final int EQUALS = 1;
+    protected static final int NO_EQUALS = 2;
+    protected static final int CONTAIN = 3;
+    protected static final int NO_CONTAIN = 4;
+    protected static final int GT = 5;
+    protected static final int GTE = 6;
+    protected static final int LT = 7;
+    protected static final int LTE = 8;
+    protected static final int AFTER = 9;
+    protected static final int BEFORE = 10;
+    protected static final int TRUE = 11;
+    protected static final int FALSE = 12;
+    protected static final int EXIST = 13;
+    protected static final int NO_EXIST = 14;
+    protected static final int START_WITH = 15;
+    protected static final int END_WITH = 16;
+    protected static final int IN = 17;
 
-    private static final int INT = 1;
-    private static final int LONG = 2;
-    private static final int DOUBLE = 3;
-    private static final int STRING = 4;
-    private static final int DATE = 5;
-    private static final int BOOLEAN = 6;
-    private static final int ARRAY = 7;
 
-    private String field;
-    private Object value;
-    private int operator;
-    private int type;
+    protected static final int INT = 1;
+    protected static final int LONG = 2;
+    protected static final int DOUBLE = 3;
+    protected static final int STRING = 4;
+    protected static final int DATE = 5;
+    protected static final int BOOLEAN = 6;
+    protected static final int ARRAY = 7;
+
+    protected String field;
+    protected Object value;
+    protected int operator;
+    protected int type;
 
     public boolean hit(JSONObject jsonObject) {
         if (!jsonObject.containsKey(field)) {
@@ -128,9 +131,9 @@ public class FieldCondition {
         double targetValue = Double.parseDouble(this.value.toString());
         switch (operator) {
             case EQUALS:
-                return value == targetValue;
+                return Objects.equals(value,targetValue);
             case NO_EQUALS:
-                return value != targetValue;
+                return !Objects.equals(value,targetValue);
             case GT:
                 return value > targetValue;
             case GTE:
@@ -190,6 +193,10 @@ public class FieldCondition {
                 return value.contains(targetValue);
             case NO_CONTAIN:
                 return !value.contains(targetValue);
+            case START_WITH:
+                return value.startsWith(targetValue);
+            case END_WITH:
+                return value.endsWith(targetValue);
             default:
                 throw new IllegalArgumentException("String operator can't is " + operator);
         }

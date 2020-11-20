@@ -30,7 +30,8 @@ public class ApplicationInfo {
         String[] buffer = applicationName.split("_");
         if (buffer.length != 2) {
             log.error("加载applicationName失败");
-            throw new InitException("加载applicationName失败  请检查[spring.application.name]配置");
+            throw new InitException("加载applicationName失败  " +
+                    "请检查[spring.application.name]配置 需要使用[层_模块名]");
         }
         GLOBAL_MAP.put(APPLICATION_NAME, applicationName);
         GLOBAL_MAP.put(LAYER, buffer[0]);
@@ -89,6 +90,10 @@ public class ApplicationInfo {
 
     public static String getBakByCategory() {
         return NodeInfo.getBakByCategory(getCategory());
+    }
+
+    public static String getDataMarketBakByCategory() {
+        return NodeInfo.getDataMarketBakByCategory(getCategory());
     }
 
     public static String getErrorByCategory() {

@@ -1,27 +1,29 @@
 package com.tincery.gaea.core.base.component.support;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.DnsRequestBO;
+import com.tincery.gaea.api.src.DnsData;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
-import com.tincery.gaea.core.base.component.config.RunConfig;
-import com.tincery.gaea.core.base.plugin.csv.CsvReader;
-import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
-import com.tincery.starter.base.InitializationRequired;
+import com.tincery.gaea.core.base.tool.util.FileWriter;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
-public class DnsRequest implements InitializationRequired {
+public class DnsRequest {
 
-
-    private Map<String, List<DnsRequestBO>> dnsRequestMap;
+    private static final String CATEGORY = "dnsRequest";
     private boolean empty = true;
+    private Map<String, List<DnsRequestBO>> dnsRequestMap = new ConcurrentHashMap<>();
+    private Long minTime = Long.MAX_VALUE;
+    private String dnsRequestPath;
 
     public final int size() {
         return this.dnsRequestMap.size();
@@ -43,37 +45,27 @@ public class DnsRequest implements InitializationRequired {
         return null;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void init() {
-        if (RunConfig.isEmpty()) {
-            return;
-        }
-        Date startTime = RunConfig.getDate("starttime");
-        long startTimeLong;
-        if (startTime == null) {
-            startTimeLong = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
-        } else {
-            startTimeLong = startTime.getTime() - (15 * DateUtils.MINUTE);
-        }
+    public void initializePath() {
+        this.dnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(CATEGORY);
+        FileUtils.checkPath(this.dnsRequestPath);
+    }
 
-        String category = "impdnsrequest";
-        String impDnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(category);
-        List<File> files = FileUtils.searchFiles(impDnsRequestPath, category, null, null, 0);
+    public void initialize(LocalDateTime endTime) {
+        initializePath();
+        long startTime = DateUtils.LocalDateTime2Long(endTime.minusHours(3));
+        List<File> files = FileUtils.searchFiles(dnsRequestPath, CATEGORY, null, ".json", 0);
         for (File file : files) {
             long time = Long.parseLong(file.getName().split("\\.")[0].split("_")[1]);
-            if (time > startTimeLong) {
-                try {
-                    CsvReader csvReader = CsvReader.builder().file(file).build();
-                    CsvRow csvRow;
-                    List<DnsRequestBO> list = new ArrayList<>();
-                    while ((csvRow = csvReader.nextRow()) != null) {
-                        list.add(new DnsRequestBO(csvRow.get(0), csvRow.get(1), csvRow.getLong(4)));
+            if (time > startTime) {
+                List<String> lines = FileUtils.readLine(file);
+                List<DnsRequestBO> list = new ArrayList<>();
+                for (String line : lines) {
+                    DnsRequestBO dnsRequestBO = JSONObject.parseObject(line, DnsRequestBO.class);
+                    if (null != dnsRequestBO) {
+                        list.add(dnsRequestBO);
                     }
-                    this.dnsRequestMap = list.stream().collect(Collectors.groupingBy(DnsRequestBO::getKey));
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
                 }
+                this.dnsRequestMap = list.stream().collect(Collectors.groupingBy(DnsRequestBO::getKey));
             }
         }
         if (CollectionUtil.isNotEmpty(this.dnsRequestMap)) {
@@ -81,4 +73,59 @@ public class DnsRequest implements InitializationRequired {
             this.empty = false;
         }
     }
+
+    public void append(DnsData dnsData) {
+        if (null == dnsData.getImp()) {
+            return;
+        }
+        if (!dnsData.getImp()) {
+            return;
+        }
+        if (dnsData.getDataType() != 1) {
+            return;
+        }
+        String domain = dnsData.getDnsExtension().getDomain();
+        Set<String> responseIps = dnsData.getDnsExtension().getResponseIp();
+        if (null == domain || null == responseIps) {
+            return;
+        }
+        for (String responseIp : responseIps) {
+            String key = dnsData.getUserId() + "_" + responseIp;
+            Long capTimeN = dnsData.getCapTime();
+            DnsRequestBO dnsRequestBO = new DnsRequestBO(key, domain, capTimeN);
+            List<DnsRequestBO> dnsRequestBOList;
+            if (this.dnsRequestMap.containsKey(key)) {
+                dnsRequestBOList = this.dnsRequestMap.get(key);
+                dnsRequestBOList.add(dnsRequestBO);
+            } else {
+                dnsRequestBOList = new ArrayList<>();
+                dnsRequestBOList.add(dnsRequestBO);
+                this.dnsRequestMap.put(key, dnsRequestBOList);
+            }
+            this.minTime = Math.min(this.minTime, capTimeN);
+        }
+        this.empty = false;
+    }
+
+    public void clear() {
+        this.dnsRequestMap.clear();
+    }
+
+    public void output() {
+        if (this.empty) {
+            return;
+        }
+        String outputFile = this.dnsRequestPath + "/" + CATEGORY + "_" + this.minTime + ".json";
+        try (FileWriter fileWriter = new FileWriter(outputFile)) {
+            for (List<DnsRequestBO> dnsRequestBOList : this.dnsRequestMap.values()) {
+                for (DnsRequestBO dnsRequestBO : dnsRequestBOList) {
+                    fileWriter.write(JSONObject.toJSONString(dnsRequestBO));
+                }
+            }
+        }
+        this.clear();
+        this.minTime = Long.MAX_VALUE;
+        this.empty = true;
+    }
+
 }

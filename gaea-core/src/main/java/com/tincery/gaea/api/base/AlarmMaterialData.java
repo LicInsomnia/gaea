@@ -1,20 +1,20 @@
 package com.tincery.gaea.api.base;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.dm.AssetConfigDO;
-import com.tincery.gaea.core.base.component.config.ApplicationInfo;
+import com.tincery.gaea.api.src.extension.AlarmExtension;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.tool.ToolUtils;
+import com.tincery.gaea.core.base.tool.util.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 告警素材元数据类
@@ -25,6 +25,7 @@ import java.util.Set;
  */
 @Setter
 @Getter
+@ToString
 public final class AlarmMaterialData {
     /**
      * 探针标识 记录是哪个探针生成的txt
@@ -113,7 +114,7 @@ public final class AlarmMaterialData {
     /**
      * 会话持续时间（默认为0，仅在TCP时有可能会大于0）
      */
-    protected long durationTime;
+    protected long duration;
     /**
      * 这次会话的结束时间（对比与第一条数据的结束时间）。告警合并用
      */
@@ -206,7 +207,70 @@ public final class AlarmMaterialData {
         this.source = metaData.getSource();
     }
 
+    /**
+     * 资产需要的一个新的告警
+     */
+    public AlarmMaterialData(JSONObject jsonObject,AssetConfigDO assetConfigDO,Boolean isClient){
+        jsonObject.put("alarm", true);
+        this.source = jsonObject.getString("source");
+        this.capTime = DateUtils.validateTime(jsonObject.getLong("capTime"));
+        this.duration = jsonObject.getLong("duration");
 
+        this.userId = jsonObject.getString("userId");
+        this.serverId = jsonObject.getString("serverId");
+
+        this.clientIp = jsonObject.getString("clientIp");
+        this.clientLocation = JSON.parseObject(jsonObject.getString("clientLocation"),Location.class);
+        this.serverIp = jsonObject.getString("serverIp");
+        this.serverLocation = JSON.parseObject(jsonObject.getString("serverLocation"),Location.class);
+        this.clientPort = jsonObject.getInteger("clientPort");
+        this.serverPort = jsonObject.getInteger("serverPort");
+        this.protocol = jsonObject.getInteger("protocol");
+        this.proName = jsonObject.getString("proName");
+        this.isSystem = true;
+        this.createUser = "system";
+
+        this.level = 2;
+        this.categoryDesc = "资产告警";
+        this.setType(5);
+        this.setCategory(11);
+        this.setAccuracy(1);
+        this.setCheckMode(8);
+        this.assetLevel = assetConfigDO.getLevel();
+        this.assetName = assetConfigDO.getName();
+        this.assetUnit = assetConfigDO.getUnit();
+        this.assetType = assetConfigDO.getType();
+        if (isClient){
+            this.assetIp = this.clientIp;
+        }else{
+            this.assetIp = this.serverIp;
+        }
+        /*填装eventData*/
+        if (Objects.nonNull(jsonObject.getString("alarmKey"))){
+            this.eventData = jsonObject.getString("alarmKey");
+        }else {
+            String md5 = ToolUtils.getMD5(jsonObject.toJSONString());
+            jsonObject.put("alarmKey",md5);
+            this.eventData = md5;
+        }
+    }
+
+    private void fixAssetIp(Integer assetFlag) {
+        switch (assetFlag){
+            case 1:
+                //CLIENT_ASSET
+                this.assetIp = this.clientIp;
+                break;
+            case 2:
+                //SERVER_ASSET
+                this.assetIp = this.serverIp;
+                break;
+            case 3:
+                //CLIENT_ASSET & SERVER_ASSET
+                this.assetIp = this.clientIp + ";" + this.serverIp;
+                break;
+        }
+    }
 
     public AlarmMaterialData(AbstractMetaData metaData, SrcRuleDO alarmRule, String context, IpSelector ipSelector) {
         this.targetName = metaData.getTargetName();
@@ -261,9 +325,27 @@ public final class AlarmMaterialData {
         this.clientLocationOuter = ipSelector.getCommonInformation(this.clientIpOuter);
     }
 
+    public void appendExtension(AlarmExtension alarmExtension) {
+        this.orgLink = alarmExtension.getOrgLink();
+        this.isSystem = alarmExtension.getIsSystem();
+        this.type = alarmExtension.getType();
+        this.ruleName = alarmExtension.getRuleName();
+        this.createUser = alarmExtension.getCreateUser();
+        this.viewUsers = alarmExtension.getViewUsers();
+        this.category = alarmExtension.getCategory();
+        this.categoryDesc = alarmExtension.getCategoryDesc();
+        this.subCategory = alarmExtension.getSubCategory();
+        this.subCategoryDesc = alarmExtension.getSubCategoryDesc();
+        this.title = alarmExtension.getTitle();
+        this.level = alarmExtension.getLevel();
+        this.task = alarmExtension.getTask();
+        this.remark = alarmExtension.getRemark();
+        this.checkMode = alarmExtension.getCheckMode();
+        this.accuracy = alarmExtension.getAccuracy();
+        this.publisher = alarmExtension.getPublisher();
+    }
 
-
-    private void setKey() {
+    public void setKey() {
         Object[] join = {this.userId, this.serverId, this.createUser, this.categoryDesc, this.subCategoryDesc, this.title, this.capTime};
         String joinString = Joiner.on(";").useForNull("").join(join);
         this.key = ToolUtils.getMD5(joinString);
@@ -280,9 +362,9 @@ public final class AlarmMaterialData {
 
     public final void merge(AlarmMaterialData alarmMaterialData) {
         long minCaptime = Math.min(this.capTime, alarmMaterialData.capTime);
-        long endTime = Math.max(this.capTime + this.durationTime, alarmMaterialData.capTime + alarmMaterialData.durationTime);
+        long endTime = Math.max(this.capTime + this.duration, alarmMaterialData.capTime + alarmMaterialData.duration);
         this.capTime = minCaptime;
-        this.durationTime = endTime - capTime;
+        this.duration = endTime - capTime;
     }
 
 

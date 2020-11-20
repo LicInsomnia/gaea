@@ -78,7 +78,7 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
             try {
                 openVpnData = this.analysis.pack(line);
                 String key = openVpnData.getKey();
-                if (openVpnData.getDataType() == -1) {
+                if (openVpnData.getDataType() <= -1) {
                     putCsvMap(openVpnData);
                     continue;
                 }
@@ -89,11 +89,8 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
                     this.openVpnMap.put(key, openVpnData);
                 }
             } catch (Exception e) {
-                this.errorFileWriter.write(line);
+                log.error("错误SRC：{}", line);
             }
-        }
-        if (this.countDownLatch != null) {
-            this.countDownLatch.countDown();
         }
     }
 

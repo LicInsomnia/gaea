@@ -4,21 +4,22 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
 import com.tincery.gaea.api.src.extension.*;
-import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
-import com.tincery.gaea.core.base.component.support.CerSelector;
-import com.tincery.gaea.core.base.component.support.DnsRequest;
-import com.tincery.gaea.core.base.component.support.IpSelector;
+import com.tincery.gaea.core.base.component.support.*;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
+import com.tincery.gaea.core.base.plugin.csv.CsvSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
 
+/**
+ * @author Insomnia
+ */
 @Slf4j
+@Component
 public class SessionFactory {
 
     @Autowired
@@ -29,6 +30,20 @@ public class SessionFactory {
     private ApplicationProtocol applicationProtocol;
     @Autowired
     private DnsRequest dnsRequest;
+
+    private EspAndAhSupport espAndAhSupport;
+
+    public void initialize(LocalDateTime startTime, LocalDateTime endTime) {
+        this.dnsRequest.initialize(endTime);
+        List<String> espAndAhPaths = CsvSupport.getCsvDataSetBySessionCategory("espandah", startTime, endTime);
+        this.espAndAhSupport = new EspAndAhSupport();
+        this.espAndAhSupport.initialize(espAndAhPaths);
+    }
+
+    public void clear() {
+        this.dnsRequest.clear();
+        this.espAndAhSupport.clear();
+    }
 
     /**
      * 从csv数据中抽象
@@ -123,7 +138,9 @@ public class SessionFactory {
                 .setDuration(csvRow.getLong(HeadConst.FIELD.DURATION))
                 .setSyn(csvRow.getBoolean(HeadConst.FIELD.SYN_FLAG))
                 .setFin(csvRow.getBoolean(HeadConst.FIELD.FIN_FLAG));
-        data.setDataSource(category);
+        data.setDataSource(category)
+                .setClientIpN(csvRow.getLong(HeadConst.FIELD.CLIENT_IP_N))
+                .setServerIpN(csvRow.getLong(HeadConst.FIELD.SERVER_IP_N));
         String caseTags = csvRow.get(HeadConst.FIELD.CASE_TAGS);
         if (null != caseTags && !caseTags.isEmpty()) {
             data.setCaseTags(new HashSet<>(Arrays.asList(caseTags.split(";"))));
@@ -138,7 +155,8 @@ public class SessionFactory {
                 data.getServerPort(),
                 data.getCapTime()
         });
-        return data.setId(id);
+        data.setId(id);
+        return data;
     }
 
     private void adjust(AbstractDataWarehouseData data) {
@@ -287,6 +305,8 @@ public class SessionFactory {
 
     private void append4Isakmp(CsvRow csvRow, AbstractDataWarehouseData data) {
         IsakmpExtension extension = JSONObject.toJavaObject(csvRow.getJsonObject(HeadConst.FIELD.EXTENSION), IsakmpExtension.class);
+        String encryptedMessageProtocol = this.espAndAhSupport.checkEncryptionMessageProtocol(data);
+        extension.setEncryptedMessageProtocol(encryptedMessageProtocol);
         data.setIsakmpExtension(extension);
         data.setExtensionFlag(data.getDataSource());
     }

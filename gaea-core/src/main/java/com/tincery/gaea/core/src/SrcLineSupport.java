@@ -15,6 +15,8 @@ import com.tincery.starter.base.util.NetworkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class SrcLineSupport {
 
@@ -90,7 +92,11 @@ public class SrcLineSupport {
 
     public void setTime(Long capTimeN, Long endTimeN, AbstractSrcData data) {
         data.setCapTime(DateUtils.validateTime(capTimeN));
-        data.setDuration(endTimeN - capTimeN);
+        data.setDuration((endTimeN - capTimeN) / 1000);
+    }
+
+    public void setTime(String capTimeN,String endTimeN, AbstractSrcData data){
+        setTime(Long.parseLong(capTimeN),Long.parseLong(endTimeN),data);
     }
 
     /**
@@ -219,4 +225,122 @@ public class SrcLineSupport {
         return this.ipChecker.isForeign(ip);
     }
 
+    /**
+     * 设置isMac2Outer
+     * @param isMac2Outer isMac2Outer
+     * @param data  SRC层的数据
+     */
+    public void setIsMac2Outer(String isMac2Outer,AbstractSrcData data){
+        data.setMacOuter("1".equals(isMac2Outer));
+    }
+
+
+    /**
+     * 设置syn 和 fin
+     * @param syn syn
+     * @param fin fin
+     * @param data 数据实体
+     */
+    public void setSynAndFin(String syn,String fin,AbstractMetaData data){
+        data.setSyn("1".equals(syn))
+                .setFin("0".equals(fin));
+    }
+
+    /**
+     * 判断是否是服务端
+     * @param elements 判断依据1. 数据中是否有D2S Client等字符串出现
+     * @param index 从数组何处开始循环
+     * @param data 此处的data需要装载dataType  和 serverPort(为srcPort) clientPort(为dstPort) 这里的这两个属性是临时装填的  后面会根据情况被替换
+     * @return boolean D2S Client = false  S2D Client = true;
+     */
+    public Boolean judgeisD2SServer(String[] elements,Integer index,AbstractSrcData data) throws Exception {
+        Boolean isServer = null;
+        Integer dataType = data.getDataType();
+        if (dataType>=0){
+            for (int i = index; i < elements.length; i++) {
+                if (StringUtils.isEmpty(elements[i])) {
+                    continue;
+                }
+                //第一个判断依据 数据中是否有符合标准的数据
+                isServer = sureIsD2SServerByElements(elements[i]);
+                if (Objects.nonNull(isServer)){
+                    return isServer;
+                }
+            }
+        }
+
+        return isServer;
+    }
+
+    /**
+     * 临时装载以下属性 为了判断是否是服务端
+     * @param data 被装载的对象
+     * @param dataType int
+     * @param srcPort String->int 对应ServerPort
+     * @param dstPort String->int 对应ClientPort
+     */
+    public void fixForJudgeIsServer(AbstractSrcData data,Integer dataType,String srcPort,String dstPort){
+        data.setDataType(dataType)
+                .setServerPort(Integer.parseInt(srcPort))
+                .setClientPort(Integer.parseInt(dstPort));
+    }
+    /**
+     * 该方法是确定isServer关键变量的值的。。因为要遍历所有的握手信息才能获得该变量值，然后根据该变量去装填其他属性
+     * @param element 根据该元素判断
+     * @return isServer
+     */
+    public Boolean sureIsD2SServerByElements(String element) throws Exception {
+        Boolean isD2SServer = null;
+        String[] kv = element.split(":");
+        if (kv.length != 2) {
+            throw new Exception("握手会话数据格式有误...");
+        }
+        // 该数据形如 D2S Client Hello || S2D Server Hello || Apllication...
+        String start = kv[0];
+        if (start.startsWith("S2D Client")){
+            isD2SServer = true;
+        }else if (start.startsWith("D2S Client")){
+            isD2SServer = false;
+        }else if (start.startsWith("S2D Server")){
+            isD2SServer = false;
+        }else if (start.startsWith("D2S Server")){
+            isD2SServer = true;
+        }
+        return isD2SServer;
+    }
+
+    /**
+     * 判断依据二  根据端口和dataType判断
+     */
+    public Boolean sureisD2SServerByPortAndDataType(Integer dataType,Integer srcPort,Integer dstPort , Boolean isD2SServer){
+        if (!Objects.equals(-1,dataType)){
+            if ( Objects.equals(1194,srcPort) && (!Objects.equals(1194,dstPort))){
+                isD2SServer = false;
+            }else if ((!Objects.equals(1194,srcPort)) && Objects.equals(1194,dstPort)){
+                isD2SServer = true;
+            }
+        }
+        return isD2SServer;
+    }
+
+    /**
+     * 判断依据三  根据内外网ip地址 判断
+     */
+    public Boolean sureisD2SServerByIsInnerIp(String srcIp,String dstIp,Boolean isD2SServer){
+        boolean srcInner = isInnerIp(srcIp);
+        boolean dstInner = isInnerIp(dstIp);
+        if (srcInner && (!dstInner)){
+            isD2SServer = true;
+        }else if ((!srcInner) && dstInner){
+            isD2SServer = false;
+        }
+        return isD2SServer;
+    }
+
+    /**
+     * 判断依据四 根据端口大小判断
+     */
+    public Boolean sureisD2SServerByComparePort(Integer serverPort,Integer clientPort){
+        return serverPort > clientPort;
+    }
 }

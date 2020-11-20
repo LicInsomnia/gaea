@@ -4,12 +4,16 @@ import com.google.common.io.Files;
 import com.tincery.gaea.core.base.mgt.CommonConst;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.archivers.zip.Zip64Mode;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 文件相关操作类（静态操作）
@@ -25,7 +29,23 @@ public class FileUtils {
     /***默认的时间间距  1分钟一个文件*/
     private static final int TIME_SPACE = 1;
 
+    private static final String ZIP_SUFFIX = ".zip";
+
     private FileUtils() {
+    }
+
+    public static File getLastFile(String pathName, String prefix, String contains, String extension) {
+        File path = new File(pathName);
+        if (!path.exists() || !path.isDirectory()) {
+            return null;
+        }
+        File[] files = path.listFiles((dir, name) -> StringUtils.checkStr(name, prefix, contains, extension));
+        if (null == files || files.length == 0) {
+            return null;
+        }
+        List<File> fileList = Arrays.asList(files);
+        Collections.sort(fileList);
+        return fileList.get(0);
     }
 
     /*****
@@ -38,7 +58,7 @@ public class FileUtils {
      * @param delayTime 目标文件最后修改时间距离当前需要超过多少秒
      * @return 子文件集合
      **/
-    public static List<File> searchFiles(String filePath, String prefix, String contains, String extension, int delayTime) {
+    public static List<File> searchFiles(String filePath, String prefix, String contains, String extension, long delayTime) {
         List<File> result = new ArrayList<>();
         File root = new File(filePath);
         if (!root.exists()) {
@@ -138,7 +158,7 @@ public class FileUtils {
      * value 为content 是比较大的byte[] 内容
      */
     public static Map<String, Pair<Integer, byte[]>> readByteArray(File file) {
-        Map<String, Pair<Integer, byte[]>> mapContent = new LinkedHashMap<>();
+        Map<String, Pair<Integer, byte[]>> mapContent = new HashMap<>();
         if (null == file || (!file.exists()) || file.isDirectory()) {
             return new HashMap<>();
         }
@@ -282,5 +302,89 @@ public class FileUtils {
         }
         return returnValue;
     }
+
+    /**
+     * 把文件压缩成zip格式
+     *
+     * @param files       需要压缩的文件
+     * @param zipFilePath 压缩后的zip文件路径   ,如"D:/test/aa.zip";
+     */
+    public static void compressFiles2Zip(File[] files, String zipFilePath) {
+        if (files != null && files.length > 0) {
+            if (org.springframework.util.StringUtils.endsWithIgnoreCase(zipFilePath, ZIP_SUFFIX)) {
+                File zipFile = new File(zipFilePath);
+                try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(zipFile)) {
+                    //Use Zip64 extensions for all entries where they are required
+                    zipArchiveOutputStream.setUseZip64(Zip64Mode.AsNeeded);
+                    //再用ZipArchiveOutputStream写到压缩文件中
+                    for (File file : files) {
+                        if (file != null) {
+                            ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(file, file.getName());
+                            zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
+                            try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+                                byte[] buffer = new byte[1024 * 5];
+                                int len;
+                                while ((len = is.read(buffer)) != -1) {
+                                    //把缓冲区的字节写入到ZipArchiveEntry
+                                    zipArchiveOutputStream.write(buffer, 0, len);
+                                }
+                                //Writes all necessary data for this entry.
+                                zipArchiveOutputStream.closeArchiveEntry();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    zipArchiveOutputStream.finish();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+        }
+    }
+    public static void compress(File sourceFile, ZipOutputStream zos, String name,
+                                 boolean KeepDirStructure) throws Exception{
+        byte[] buf = new byte[1024];
+        if(sourceFile.isFile()){
+            // 向zip输出流中添加一个zip实体，构造器中name为zip实体的文件的名字
+            zos.putNextEntry(new ZipEntry(name));
+            // copy文件到zip输出流中
+            int len;
+            FileInputStream in = new FileInputStream(sourceFile);
+            while ((len = in.read(buf)) != -1){
+                zos.write(buf, 0, len);
+            }
+            // Complete the entry
+            zos.closeEntry();
+            in.close();
+        } else {
+            File[] listFiles = sourceFile.listFiles();
+            if(listFiles == null || listFiles.length == 0){
+                // 需要保留原来的文件结构时,需要对空文件夹进行处理
+                if(KeepDirStructure){
+                    // 空文件夹的处理
+                    zos.putNextEntry(new ZipEntry(name + "/"));
+                    // 没有文件，不需要文件的copy
+                    zos.closeEntry();
+                }
+
+            }else {
+                for (File file : listFiles) {
+                    // 判断是否需要保留原来的文件结构
+                    if (KeepDirStructure) {
+                        // 注意：file.getName()前面需要带上父文件夹的名字加一斜杠,
+                        // 不然最后压缩包中就不能保留原来的文件结构,即：所有文件都跑到压缩包根目录下了
+                        compress(file, zos, name + "/" + file.getName(),KeepDirStructure);
+                    } else {
+                        compress(file, zos, file.getName(),KeepDirStructure);
+                    }
+
+                }
+            }
+        }
+    }
+
 
 }

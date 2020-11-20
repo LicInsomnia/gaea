@@ -96,5 +96,22 @@ public class ActiveMqConfig {
     }
 
     @Bean(name = QueueNames.DM_ALARMCOMBINE)
-    public Queue getAlarmCombine(){return new ActiveMQQueue(QueueNames.DM_ALARMCOMBINE);}
+    public Queue getAlarmCombine() {
+        return new ActiveMQQueue(QueueNames.DM_ALARMCOMBINE);
+    }
+
+    @Bean(name = QueueNames.DM_ASSET)
+    public Queue getAsset() {
+        return new ActiveMQQueue(QueueNames.DM_ASSET);
+    }
+
+    @Bean(name = QueueNames.DM_SESSION_ADJUST)
+    public Queue getSessionAdjust() {
+        return new ActiveMQQueue(QueueNames.DM_SESSION_ADJUST);
+    }
+
+    @Bean(name = QueueNames.SUPPORT_MONGO_STASH)
+    public Queue getSupportMongoStash() {
+        return new ActiveMQQueue(QueueNames.SUPPORT_MONGO_STASH);
+    }
 }

@@ -188,7 +188,6 @@ public class IpSelector implements InitializationRequired {
 
     /**
      * 获取ip通用信息
-     *
      * @param ip 待查询ip地址
      * @return 错误 null 正确 key:country;region;city;lng;lat;connection_type;isp;organization;autonomous_system_Organization
      */
