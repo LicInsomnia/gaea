@@ -14,32 +14,32 @@ import java.util.Objects;
 @Data
 public class FieldCondition {
 
-    protected static final int EQUALS = 1;
-    protected static final int NO_EQUALS = 2;
-    protected static final int CONTAIN = 3;
-    protected static final int NO_CONTAIN = 4;
-    protected static final int GT = 5;
-    protected static final int GTE = 6;
-    protected static final int LT = 7;
-    protected static final int LTE = 8;
-    protected static final int AFTER = 9;
-    protected static final int BEFORE = 10;
-    protected static final int TRUE = 11;
-    protected static final int FALSE = 12;
-    protected static final int EXIST = 13;
-    protected static final int NO_EXIST = 14;
-    protected static final int START_WITH = 15;
-    protected static final int END_WITH = 16;
-    protected static final int IN = 17;
+    public static final int EQUALS = 1;
+    public static final int NO_EQUALS = 2;
+    public static final int CONTAIN = 3;
+    public static final int NO_CONTAIN = 4;
+    public static final int GT = 5;
+    public static final int GTE = 6;
+    public static final int LT = 7;
+    public static final int LTE = 8;
+    public static final int AFTER = 9;
+    public static final int BEFORE = 10;
+    public static final int TRUE = 11;
+    public static final int FALSE = 12;
+    public static final int EXIST = 13;
+    public static final int NO_EXIST = 14;
+    public static final int START_WITH = 15;
+    public static final int END_WITH = 16;
+    public static final int IN = 17;
 
 
-    protected static final int INT = 1;
-    protected static final int LONG = 2;
-    protected static final int DOUBLE = 3;
-    protected static final int STRING = 4;
-    protected static final int DATE = 5;
-    protected static final int BOOLEAN = 6;
-    protected static final int ARRAY = 7;
+    public static final int INT = 1;
+    public static final int LONG = 2;
+    public static final int DOUBLE = 3;
+    public static final int STRING = 4;
+    public static final int DATE = 5;
+    public static final int BOOLEAN = 6;
+    public static final int ARRAY = 7;
 
     protected String field;
     protected Object value;

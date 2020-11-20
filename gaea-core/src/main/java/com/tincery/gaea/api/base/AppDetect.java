@@ -3,6 +3,7 @@ package com.tincery.gaea.api.base;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Data
+@Document(collection = "app_detect")
 public class AppDetect extends SimpleBaseDO {
     @Id
     private String id;
