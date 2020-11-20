@@ -70,6 +70,7 @@ public class SessionAdjustFactory {
             application = new ApplicationInformationBO();
             application.setTitle(data.getKeyWord());
             application.setType(type);
+            application.setIgnore(false);
             addApplicationElements(application, applicationElements, HeadConst.APPLICATION_DETECT_MODE.KEYOWRD_TO_APP_STRING);
         }
         /* 基于证书的会话应用识别 */
@@ -131,13 +132,13 @@ public class SessionAdjustFactory {
         if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.PAYLOAD_STRING)) {
             application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.PAYLOAD_STRING);
             checkMode = HeadConst.APPLICATION_DETECT_MODE.PAYLOAD_STRING;
-            if (!sessionMergeData.getProName().equalsIgnoreCase(HeadConst.PRONAME.DNS)) {
+            if (!sessionMergeData.getProName().equals(HeadConst.PRONAME.DNS)) {
                 this.contextCache.append(sessionMergeData.targetSessionKey(), application);
             }
         } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.DYNAMIC_STRING)) {
             application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.DYNAMIC_STRING);
             checkMode = HeadConst.APPLICATION_DETECT_MODE.DYNAMIC_STRING;
-            if (!sessionMergeData.getProName().equalsIgnoreCase(HeadConst.PRONAME.DNS)) {
+            if (!sessionMergeData.getProName().equals(HeadConst.PRONAME.DNS)) {
                 this.contextCache.append(sessionMergeData.targetSessionKey(), application);
             }
         } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.HTTP_DETECTOR_STRING)) {
@@ -147,19 +148,19 @@ public class SessionAdjustFactory {
         } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.KEYOWRD_STRING)) {
             application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.KEYOWRD_STRING);
             checkMode = HeadConst.APPLICATION_DETECT_MODE.KEYOWRD_STRING;
-            if (!sessionMergeData.getProName().equalsIgnoreCase(HeadConst.PRONAME.DNS)) {
+            if (!sessionMergeData.getProName().equals(HeadConst.PRONAME.DNS)) {
                 this.contextCache.append(sessionMergeData.targetSessionKey(), application);
             }
         } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.KEYOWRD_TO_APP_STRING)) {
             application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.KEYOWRD_TO_APP_STRING);
             checkMode = HeadConst.APPLICATION_DETECT_MODE.KEYOWRD_TO_APP_STRING;
-            if (!sessionMergeData.getProName().equalsIgnoreCase(HeadConst.PRONAME.DNS)) {
+            if (!sessionMergeData.getProName().equals(HeadConst.PRONAME.DNS)) {
                 this.contextCache.append(sessionMergeData.targetSessionKey(), application);
             }
         } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.CER_STRING)) {
             application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.CER_STRING);
             checkMode = HeadConst.APPLICATION_DETECT_MODE.CER_STRING;
-            if (!sessionMergeData.getProName().equalsIgnoreCase(HeadConst.PRONAME.DNS)) {
+            if (!sessionMergeData.getProName().equals(HeadConst.PRONAME.DNS)) {
                 this.contextCache.append(sessionMergeData.targetSessionKey(), application);
             }
         } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.DPI_STRING)) {

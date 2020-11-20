@@ -25,7 +25,7 @@ public class SessionAdjustJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        dmProducer.producer(this.assetQueue, "impSessionMerge", ".json");
+        dmProducer.producer(this.assetQueue, "impsession", ".json");
     }
 
 }

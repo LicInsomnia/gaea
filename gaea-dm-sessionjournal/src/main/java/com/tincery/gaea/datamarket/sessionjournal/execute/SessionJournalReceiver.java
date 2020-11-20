@@ -1,9 +1,8 @@
-package com.tincery.gaea.datamarket.sessionadjust.execute;
+package com.tincery.gaea.datamarket.sessionjournal.execute;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.dm.SessionMergeData;
-import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
@@ -23,10 +22,7 @@ import java.util.concurrent.*;
  */
 @Slf4j
 @Component
-public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
-
-    @Autowired
-    private SessionAdjustFactory sessionAdjustFactory;
+public class SessionJournalReceiver extends AbstractDataMarketReceiver {
 
     protected static ThreadPoolExecutor executorService;
 
@@ -61,12 +57,11 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
                     if (line.isEmpty()) {
                         continue;
                     }
-                    AbstractDataWarehouseData data = JSON.parseObject(line, AbstractDataWarehouseData.class);
+                    SessionMergeData data = JSON.parseObject(line, SessionMergeData.class);
                     if (null == data) {
                         log.error("无法解析Json序列化的记录：{}", line);
                         continue;
                     }
-                    sessionMergeDataList.add(this.sessionAdjustFactory.adjustSessionData(data));
                 } catch (Exception e) {
                     log.error("异常错误的记录：{}", line);
                 }
@@ -76,7 +71,7 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
             List<List<String>> partitions = Lists.partition(allLines, allLines.size() / executor + 1);
             List<Future<List<SessionMergeData>>> futures = new ArrayList<>();
             for (List<String> lines : partitions) {
-                futures.add(executorService.submit(new SessionMergeProducer(lines, this.sessionAdjustFactory)));
+//                futures.add(executorService.submit(new SessionMergeProducer(lines, this.sessionAdjustFactory)));
             }
             for (Future<List<SessionMergeData>> future : futures) {
                 try {
@@ -105,41 +100,5 @@ public class SessionAdjustReceiver extends AbstractDataMarketReceiver {
         }
         fileWriter.close();
     }
-
-    /**
-     * @author Insomnia
-     */
-    private static class SessionMergeProducer implements Callable<List<SessionMergeData>> {
-
-        private final List<String> lines;
-        private final SessionAdjustFactory sessionAdjustFactory;
-
-        public SessionMergeProducer(List<String> lines, SessionAdjustFactory sessionAdjustFactory) {
-            this.lines = lines;
-            this.sessionAdjustFactory = sessionAdjustFactory;
-        }
-
-        @Override
-        public List<SessionMergeData> call() {
-            List<SessionMergeData> list = new ArrayList<>();
-            for (String line : lines) {
-                try {
-                    if (line.isEmpty()) {
-                        continue;
-                    }
-                    AbstractDataWarehouseData data = JSON.parseObject(line, AbstractDataWarehouseData.class);
-                    if (null == data) {
-                        log.error("无法解析Json序列化的记录：{}", line);
-                        continue;
-                    }
-                    list.add(sessionAdjustFactory.adjustSessionData(data));
-                } catch (Exception e) {
-                    log.error("异常错误的记录：{}", line);
-                }
-            }
-            return list;
-        }
-    }
-
 
 }

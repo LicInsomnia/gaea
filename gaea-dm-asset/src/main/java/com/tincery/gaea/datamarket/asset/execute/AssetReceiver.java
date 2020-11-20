@@ -4,16 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.base.AlarmMaterialData;
-import com.tincery.gaea.api.dm.AssetConfigDO;
-import com.tincery.gaea.api.dm.AssetConfigs;
-import com.tincery.gaea.api.dm.AssetDataDTO;
-import com.tincery.gaea.api.dm.AssetGroupSupport;
+import com.tincery.gaea.api.dm.*;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
-import com.tincery.gaea.core.base.dao.AssetIpDao;
-import com.tincery.gaea.core.base.dao.AssetPortDao;
-import com.tincery.gaea.core.base.dao.AssetProtocolDao;
-import com.tincery.gaea.core.base.dao.AssetUnitDao;
+import com.tincery.gaea.core.base.dao.*;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
@@ -77,6 +71,9 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
 
     @Autowired
     private AssetPortDao assetPortDao;
+
+    @Autowired
+    private AssetExtensionDao assetExtensionDao;
 
     @Override
     protected void dmFileAnalysis(File file) {
@@ -142,6 +139,10 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 AssetGroupSupport::portDataFrom);
         assetPortDao.insert(portData);
         log.info("端口维度合并插入{}条数据", portData.size());
+        // todo 修改144行的 后面这个lambda  把一个jsonobject(asset会话) 变成一个你需要的实体
+        List<AssetExtension> saveExtension = AssetGroupSupport.getSaveExtension(allAsset, AssetExtension::fromAssetJsonObject);
+        AssetGroupSupport.rechecking(assetExtensionDao, saveExtension);
+
         writeAlarm();
         writeEventData();
     }
