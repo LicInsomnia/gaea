@@ -25,6 +25,6 @@ public class AssetJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        dmProducer.producer(this.assetQueue,"asset",".json");
+        dmProducer.producer(this.assetQueue, "asset", ".json");
     }
 }

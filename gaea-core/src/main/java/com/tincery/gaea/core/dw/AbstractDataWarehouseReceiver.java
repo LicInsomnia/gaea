@@ -7,7 +7,6 @@ import com.tincery.gaea.core.base.component.config.RunConfig;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.plugin.csv.CsvFilter;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
-import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,7 +16,6 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,9 +24,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import static com.tincery.gaea.core.base.tool.util.DateUtils.DAY;
-import static com.tincery.gaea.core.base.tool.util.DateUtils.MINUTE;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com 此模块内容形式： 默认执行 将一行CSV传递给子类 子类需要对CSV进行处理
@@ -137,38 +132,6 @@ public abstract class AbstractDataWarehouseReceiver implements Receiver {
     public void dataWarehouseAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
         throw new UnsupportedOperationException();
     }
-
-
-    protected List<String> getCsvDataSetBySessionCategory(String sessionCategory, LocalDateTime startTime, LocalDateTime endTime) {
-        long endTimeLong = DateUtils.LocalDateTime2Long(endTime);
-        long startTimeLong = DateUtils.LocalDateTime2Long(startTime);
-        String rootPath = NodeInfo.getDataWarehouseCsvPathByCategory(sessionCategory);
-        List<String> list = new ArrayList<>();
-        long timeStamp = startTimeLong = startTimeLong / MINUTE * MINUTE;
-        endTimeLong = endTimeLong / MINUTE * MINUTE + MINUTE;
-        while (timeStamp <= endTimeLong) {
-            File path = new File(rootPath + "/" + DateUtils.format(timeStamp, "yyyyMMdd"));
-            if (path.exists() && path.isDirectory()) {
-                String[] files = path.list();
-                if (null != files) {
-                    for (String fileName : files) {
-                        if (!fileName.startsWith(sessionCategory)) {
-                            continue;
-                        }
-                        String[] elements = fileName.split("\\.")[0].split("_");
-                        String timeStampStr = elements[elements.length - 1];
-                        long ts = ToolUtils.date2Stamp(timeStampStr, "yyyyMMddHHmm");
-                        if (startTimeLong <= ts && endTimeLong > ts) {
-                            list.add(path + "/" + fileName);
-                        }
-                    }
-                }
-            }
-            timeStamp += DAY;
-        }
-        return list;
-    }
-
 
     protected List<CsvFilter> registryFilter(CsvFilter... csvFilterList) {
         if (null == this.csvFilterList) {

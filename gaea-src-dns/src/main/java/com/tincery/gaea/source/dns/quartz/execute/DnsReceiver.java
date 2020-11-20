@@ -98,7 +98,7 @@ public class DnsReceiver extends AbstractSrcReceiver<DnsData> {
         // loadGroup();
         registryRules(passRule);
         registryRules(alarmRule);
-        this.dnsRequest.init();
+        this.dnsRequest.initializePath();
     }
 
     public void registryRules(Rule rule) {

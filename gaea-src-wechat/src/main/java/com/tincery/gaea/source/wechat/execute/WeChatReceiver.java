@@ -18,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -56,19 +58,25 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
 
     @Override
     protected void free() {
+
+        HashSet<WeChatData> weChatData = new HashSet<>(weChatList);
+        for (WeChatData weChat : weChatData) {
+            this.putCsvMap(weChat);
+        }
         super.free();
-        outPutJson();
+        outPutJson(weChatData);
+        this.weChatList.clear();
     }
 
-    private void outPutJson(){
+    private void outPutJson(Set<WeChatData> weChatDataSet){
         String dataWarehouseJsonFile = ApplicationInfo.getDataWarehouseJsonPathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
                 System.currentTimeMillis() + ".json";
         FileWriter dataWarehouseJsonFileWriter = new FileWriter(dataWarehouseJsonFile);
-        for (WeChatData weChatData : this.weChatList) {
+        for (WeChatData weChatData : weChatDataSet) {
             putJson(weChatData.toJsonObjects(), dataWarehouseJsonFileWriter);
         }
         dataWarehouseJsonFileWriter.close();
-        this.weChatList.clear();
+        weChatDataSet.clear();
     }
 
     private void putJson(JSONObject jsonObjects, FileWriter fileWriter) {
@@ -91,7 +99,6 @@ public class WeChatReceiver extends AbstractSrcReceiver<WeChatData> {
                 weChatData = this.analysis.pack(line);
                 weChatData.adjust();
                 this.weChatList.add(weChatData);
-                this.putCsvMap(weChatData);
             } catch (Exception e) {
                 log.error("错误SRC：{}", line);
             }

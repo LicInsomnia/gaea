@@ -24,7 +24,7 @@ public class ReorganizationJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        dwProducer.producer(reorganizationQueue,null,null);
+        dwProducer.producer(reorganizationQueue, null, null);
         log.info("发送了一条数据");
     }
 }

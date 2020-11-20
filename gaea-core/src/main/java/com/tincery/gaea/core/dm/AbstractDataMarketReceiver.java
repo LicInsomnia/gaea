@@ -8,14 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.io.File;
-import java.util.List;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Slf4j
 public abstract class AbstractDataMarketReceiver implements Receiver {
-
 
     protected DmProperties dmProperties;
 
@@ -28,14 +26,16 @@ public abstract class AbstractDataMarketReceiver implements Receiver {
             log.warn("{}已经被处理", file.getPath());
             return;
         }
-        List<String> allLines = FileUtils.readLine(file);
-        dmFileAnalysis(allLines);
+        dmFileAnalysis(file);
         freeFile(file);
     }
 
-    protected abstract void dmFileAnalysis(List<String> lines);
+    protected abstract void dmFileAnalysis(File file);
 
     protected void freeFile(File file) {
+        if (this.dmProperties.isTest()) {
+            return;
+        }
         /* 删除或备份原始文件 */
         if (this.dmProperties.isBack()) {
             String src = file.getAbsolutePath();

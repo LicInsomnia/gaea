@@ -140,10 +140,6 @@ public class SessionAdjustFactory {
             if (!sessionMergeData.getProName().equalsIgnoreCase(HeadConst.PRONAME.DNS)) {
                 this.contextCache.append(sessionMergeData.targetSessionKey(), application);
             }
-        } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.DPI_STRING)) {
-            application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.DPI_STRING);
-            checkMode = HeadConst.APPLICATION_DETECT_MODE.DPI_STRING;
-            this.contextCache.append(sessionMergeData.targetSessionKey(), application);
         } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.HTTP_DETECTOR_STRING)) {
             application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.HTTP_DETECTOR_STRING);
             checkMode = HeadConst.APPLICATION_DETECT_MODE.HTTP_DETECTOR_STRING;
@@ -166,6 +162,10 @@ public class SessionAdjustFactory {
             if (!sessionMergeData.getProName().equalsIgnoreCase(HeadConst.PRONAME.DNS)) {
                 this.contextCache.append(sessionMergeData.targetSessionKey(), application);
             }
+        } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.DPI_STRING)) {
+            application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.DPI_STRING);
+            checkMode = HeadConst.APPLICATION_DETECT_MODE.DPI_STRING;
+            this.contextCache.append(sessionMergeData.targetSessionKey(), application);
         } else if (applicationElements.containsKey(HeadConst.APPLICATION_DETECT_MODE.CONTEXT_STRING)) {
             application = applicationElements.get(HeadConst.APPLICATION_DETECT_MODE.CONTEXT_STRING);
             checkMode = HeadConst.APPLICATION_DETECT_MODE.CONTEXT_STRING;

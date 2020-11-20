@@ -11,6 +11,7 @@ public class HeadConst {
     /* 分割线 http分割请求响应用 */
     public static final String GORGEOUS_DIVIDING_LINE = "|------------------------------------------------------------------------------|";
 
+
     /* 通用csv文件头 */
     private final static String BASE_COMMON_HEADER = FIELD.GROUP_NAME + CSV_SEPARATOR +
             FIELD.TARGET_NAME + CSV_SEPARATOR +
@@ -176,9 +177,12 @@ public class HeadConst {
             FIELD.WXNUM + CSV_SEPARATOR +
             FIELD.VERSION + CSV_SEPARATOR +
             FIELD.OSTYPE;
-    public final static String QQ = BASE_COMMON_HEADER +
+    public final static String QQ_HEADER = BASE_COMMON_HEADER +
             FIELD.QQ;
-
+    public final static String SNMP_HEADER = BASE_COMMON_HEADER +
+            FIELD.VERSION + CSV_SEPARATOR +
+            FIELD.COMMUNITY + CSV_SEPARATOR +
+            FIELD.PDUTYPE;
 
     private HeadConst() {
         throw new RuntimeException();
@@ -323,7 +327,11 @@ public class HeadConst {
         public final static String FINAL_PUBLIC_KEY_ALGORITHMS = "finalPublicKeyAlgorithms";
         /* CER */
         public final static String SUBJECT_CN_STRING = "subject_cn";
+        /* QQ */
         public static final String QQ = "qq";
+        /* SNMP */
+        public static final String COMMUNITY = "community";
+        public static final String PDUTYPE = "pduType";
     }
 
     public static class PRONAME {

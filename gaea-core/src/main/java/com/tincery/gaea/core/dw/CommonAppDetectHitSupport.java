@@ -2,16 +2,12 @@ package com.tincery.gaea.core.dw;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.tincery.gaea.api.base.AppDetect;
-import com.tincery.gaea.api.base.ApplicationInformationBO;
-import com.tincery.gaea.api.base.KV;
 import com.tincery.gaea.api.base.SearchCondition;
 import com.tincery.gaea.api.base.SearchRule;
 import com.tincery.gaea.core.base.plugin.csv.CsvRow;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,9 +20,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-
-import static com.tincery.gaea.api.dm.FieldCondition.NO_EXIST;
-import static com.tincery.gaea.api.dm.FieldCondition.STRING;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
@@ -151,28 +144,6 @@ public class CommonAppDetectHitSupport {
         public Set<Characteristics> characteristics() {
             return Collections.emptySet();
         }
-
-    }
-
-    public static void main(String[] args) {
-        AppDetect appDetect = new AppDetect();
-        AppDetect.AlertInfo info = new AppDetect.AlertInfo();
-        info.setCategory("dynamic").setSubcategoryDesc("TorVpn")
-                .setSubcategory("special_app").setCategoryDesc("VPN翻墙").setLevel(3).setAccuracy("疑似").setRemark("准确率90%，一步，ssl");
-        appDetect.setId("TorVpn_forwin").setAlertInfo(info);
-        ApplicationInformationBO applicationInformationBO = new ApplicationInformationBO();
-        applicationInformationBO.setType(Arrays.asList("重点关注@重点关注","日常生活@VPN翻墙")).setSpecialTag(Arrays.asList("VPN翻墙"))
-                .setTitle("TorVpn_forwin");
-        appDetect.setAppInfo(applicationInformationBO);
-        List<SearchCondition> list = new ArrayList<>();
-        list.add((SearchCondition)new SearchCondition().setOrder(1).setField("servername").setValue("ajax.aspnetcdn.com").setType(4).setOperator(1));
-        list.add((SearchCondition)new SearchCondition().setOrder(2).setField("serverCerchain").setType(STRING).setOperator(NO_EXIST));
-        list.add((SearchCondition)new SearchCondition().setOrder(3).setField("clientCerchain").setType(STRING).setOperator(NO_EXIST));
-        appDetect.setConditions(list);
-        List<SearchRule> ruleList = new ArrayList<>();
-        KV<String,List<String>> kv = new KV<>("ssl",Arrays.asList("1","2","3"));
-        ruleList.add(new SearchRule().setMatch(kv).setCount(1));
-        appDetect.setRules(ruleList);
 
     }
 }

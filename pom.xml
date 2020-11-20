@@ -29,6 +29,7 @@
         <module>gaea-src-pptpandl2tp</module>
         <module>gaea-src-ftpandtelnet</module>
         <module>gaea-src-espandah</module>
+        <module>gaea-src-bitcoin</module>
         <!--DATAWAREHOUSE层模块-->
         <module>gaea-dw-reorganization</module>
         <module>gaea-dw-commonappdetect</module>

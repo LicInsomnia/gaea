@@ -8,7 +8,6 @@ import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.FileWriter;
-import com.tincery.starter.base.InitializationRequired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -18,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
-public class DnsRequest implements InitializationRequired {
+public class DnsRequest {
 
     private static final String CATEGORY = "dnsRequest";
     private boolean empty = true;
@@ -46,10 +45,14 @@ public class DnsRequest implements InitializationRequired {
         return null;
     }
 
-    @Override
-    public void init() {
+    public void initializePath() {
+        this.dnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(CATEGORY);
+        FileUtils.checkPath(this.dnsRequestPath);
+    }
+
+    public void initialize(LocalDateTime endTime) {
         initializePath();
-        long startTime = DateUtils.LocalDateTime2Long(LocalDateTime.now().minusHours(3));
+        long startTime = DateUtils.LocalDateTime2Long(endTime.minusHours(3));
         List<File> files = FileUtils.searchFiles(dnsRequestPath, CATEGORY, null, ".json", 0);
         for (File file : files) {
             long time = Long.parseLong(file.getName().split("\\.")[0].split("_")[1]);
@@ -72,7 +75,13 @@ public class DnsRequest implements InitializationRequired {
     }
 
     public void append(DnsData dnsData) {
-        if ((dnsData.getImp() != null && dnsData.getImp()) || dnsData.getDataType() != 1) {
+        if (null == dnsData.getImp()) {
+            return;
+        }
+        if (!dnsData.getImp()) {
+            return;
+        }
+        if (dnsData.getDataType() != 1) {
             return;
         }
         String domain = dnsData.getDnsExtension().getDomain();
@@ -98,6 +107,10 @@ public class DnsRequest implements InitializationRequired {
         this.empty = false;
     }
 
+    public void clear() {
+        this.dnsRequestMap.clear();
+    }
+
     public void output() {
         if (this.empty) {
             return;
@@ -110,14 +123,9 @@ public class DnsRequest implements InitializationRequired {
                 }
             }
         }
-        this.dnsRequestMap.clear();
+        this.clear();
         this.minTime = Long.MAX_VALUE;
         this.empty = true;
-    }
-
-    private void initializePath() {
-        this.dnsRequestPath = NodeInfo.getDataWarehouseCsvPathByCategory(CATEGORY);
-        FileUtils.checkPath(this.dnsRequestPath);
     }
 
 }

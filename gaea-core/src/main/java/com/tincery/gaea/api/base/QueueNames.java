@@ -3,6 +3,7 @@ package com.tincery.gaea.api.base;
 public class QueueNames {
 
     public final static String SRC_FLOW = "src_flow";
+    public final static String SRC_ALARM = "src_alarm";
     public final static String SRC_SESSION = "src_session";
     public final static String SRC_IMPSESSION = "src_impsession";
     public final static String SRC_SSL = "src_ssl";
@@ -17,14 +18,16 @@ public class QueueNames {
     public static final String SRC_PPTPANDL2TP = "src_pptpandl2tp";
     public static final String SRC_WECHAT = "src_wechat";
     public static final String SRC_QQ = "src_qq";
+    public static final String SRC_SNMP = "src_snmp";
+
     public final static String DW_REORGANIZATION = "dw_reorganization";
     public final static String DM_ASSET = "dm_asset";
-    public final static String DM_SESSION_LOADER = "dm_sessionloader";
-
-
+    public final static String DM_SESSION_ADJUST = "dm_sessionadjust";
+    
     public static final String DM_ALARMCOMBINE = "dm_alarmcombine";
 
     public static final String ODS_HTTPANALYSIS = "ods_httpanalysis";
 
     public static final String SUPPORT_MONGO_STASH  = "support_mongostash";
+
 }

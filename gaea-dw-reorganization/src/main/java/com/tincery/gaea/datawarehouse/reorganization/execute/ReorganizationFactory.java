@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Administrator
  */
@@ -20,7 +22,14 @@ public class ReorganizationFactory implements InitializationRequired {
 
     @Override
     public void init() {
+    }
 
+    public void initialize(LocalDateTime startTime, LocalDateTime endTime) {
+        this.sessionFactory.initialize(startTime, endTime);
+    }
+
+    public void clear() {
+        this.sessionFactory.clear();
     }
 
 }

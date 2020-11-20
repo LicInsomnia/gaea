@@ -37,4 +37,5 @@ public class DmAlarmProducer extends AbstractProducer {
     public void setJmsMessagingTemplate(JmsMessagingTemplate jmsMessagingTemplate) {
         this.jmsMessagingTemplate = jmsMessagingTemplate;
     }
+
 }

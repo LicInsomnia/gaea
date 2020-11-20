@@ -1,7 +1,6 @@
 package com.tincery.gaea.source.qq.execute;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.api.src.QQData;
 import com.tincery.gaea.core.base.component.config.ApplicationInfo;
 import com.tincery.gaea.core.base.mgt.HeadConst;
@@ -19,8 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -51,27 +51,31 @@ public class QQReceiver extends AbstractSrcReceiver<QQData> {
         this.properties = properties;
     }
 
-    //TODO  换头
     @Override
     public String getHead() {
-        return HeadConst.QQ;
+        return HeadConst.QQ_HEADER;
     }
 
     @Override
     protected void free() {
+        HashSet<QQData> qqData = new HashSet<>(qqList);
+        for (QQData qq : qqData) {
+            this.putCsvMap(qq);
+        }
         super.free();
-        outPutJson();
+        outPutJson(qqData);
+        this.qqList.clear();
     }
 
-    private void outPutJson(){
+    private void outPutJson(Set<QQData> qqDataSet){
         String dataWarehouseJsonFile = ApplicationInfo.getDataWarehouseJsonPathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
                 System.currentTimeMillis() + ".json";
         FileWriter dataWarehouseJsonFileWriter = new FileWriter(dataWarehouseJsonFile);
-        for (QQData qqData : this.qqList) {
+        for (QQData qqData : qqDataSet) {
             putJson(qqData.toJsonObjects(), dataWarehouseJsonFileWriter);
         }
         dataWarehouseJsonFileWriter.close();
-        this.qqList.clear();
+        qqDataSet.clear();
     }
 
     private void putJson(JSONObject jsonObjects, FileWriter fileWriter) {
@@ -94,7 +98,6 @@ public class QQReceiver extends AbstractSrcReceiver<QQData> {
                 qqData = this.analysis.pack(line);
                 qqData.adjust();
                 this.qqList.add(qqData);
-                this.putCsvMap(qqData);
             } catch (Exception e) {
                 log.error("错误SRC：{}", line);
             }

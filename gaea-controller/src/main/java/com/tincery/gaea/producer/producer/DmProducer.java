@@ -13,7 +13,7 @@ import java.io.File;
  */
 @Component
 @Slf4j
-public class DmProducer extends AbstractProducer{
+public class DmProducer extends AbstractProducer {
 
     @Value("${node.data-path}")
     private String dataPath;
@@ -23,10 +23,10 @@ public class DmProducer extends AbstractProducer{
         return new File(dataPath + "/datawarehouse/json/" + category);
     }
 
-
     @Override
     @Autowired
     public void setJmsMessagingTemplate(JmsMessagingTemplate jmsMessagingTemplate) {
         this.jmsMessagingTemplate = jmsMessagingTemplate;
     }
+
 }

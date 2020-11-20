@@ -235,6 +235,7 @@ public final class AlarmMaterialData {
         this.setType(5);
         this.setCategory(11);
         this.setAccuracy(1);
+        this.setCheckMode(8);
         this.assetLevel = assetConfigDO.getLevel();
         this.assetName = assetConfigDO.getName();
         this.assetUnit = assetConfigDO.getUnit();

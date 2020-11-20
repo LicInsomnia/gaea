@@ -15,6 +15,7 @@ import com.tincery.gaea.core.base.dao.AssetPortDao;
 import com.tincery.gaea.core.base.dao.AssetProtocolDao;
 import com.tincery.gaea.core.base.dao.AssetUnitDao;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +79,8 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
     private AssetPortDao assetPortDao;
 
     @Override
-    protected void dmFileAnalysis(List<String> allLines) {
+    protected void dmFileAnalysis(File file) {
+        List<String> allLines = FileUtils.readLine(file);
         List<JSONObject> clientAssetList = new ArrayList<>();
         List<JSONObject> serverAssetList = new ArrayList<>();
         int executor = this.dmProperties.getExecutor();
@@ -86,7 +88,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             // 单线程执行
             for (String line : allLines) {
                 JSONObject assetJson = JSON.parseObject(line);
-                alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector),assetJson);
+                alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector), assetJson);
                 AssetFlag.fillAndAdd(assetJson, assetDetector, clientAssetList, serverAssetList);
             }
         } else {
