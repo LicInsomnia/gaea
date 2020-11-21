@@ -152,24 +152,24 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
                 .setFinalKexAlgorithms(getFinalAlgorithm(c_kex_algorithms, s_kex_algorithms));
         String c_encryption_algorithms_server_to_client = extension.getOrDefault("c_encryption_algorithms_server_to_client", null);
         String s_encryption_algorithms_server_to_client = extension.getOrDefault("s_encryption_algorithms_server_to_client", null);
-        sshExtension.setClientEncryptionAlgorithmsServerToClient(c_encryption_algorithms_server_to_client)
-                .setServerEncryptionAlgorithmsServerToClient(s_encryption_algorithms_server_to_client)
-                .setFinalEncryptionAlgorithmsServerToClient(getFinalAlgorithm(c_encryption_algorithms_server_to_client, s_encryption_algorithms_server_to_client));
+        sshExtension.setClientEncryptionAlgorithmsServer2Client(c_encryption_algorithms_server_to_client)
+                .setServerEncryptionAlgorithmsServer2Client(s_encryption_algorithms_server_to_client)
+                .setFinalEncryptionAlgorithmsServer2Client(getFinalAlgorithm(c_encryption_algorithms_server_to_client, s_encryption_algorithms_server_to_client));
         String c_encryption_algorithms_client_to_server = extension.getOrDefault("c_encryption_algorithms_client_to_server", null);
         String s_encryption_algorithms_client_to_server = extension.getOrDefault("s_encryption_algorithms_client_to_server", null);
-        sshExtension.setClientEncryptionAlgorithmsClientToServer(c_encryption_algorithms_client_to_server)
-                .setServerEncryptionAlgorithmsClientToServer(s_encryption_algorithms_client_to_server)
-                .setFinalEncryptionAlgorithmsClientToServer(getFinalAlgorithm(c_encryption_algorithms_client_to_server, s_encryption_algorithms_client_to_server));
+        sshExtension.setClientEncryptionAlgorithmsClient2Server(c_encryption_algorithms_client_to_server)
+                .setServerEncryptionAlgorithmsClient2Server(s_encryption_algorithms_client_to_server)
+                .setFinalEncryptionAlgorithmsClient2Server(getFinalAlgorithm(c_encryption_algorithms_client_to_server, s_encryption_algorithms_client_to_server));
         String c_mac_algorithms_client_to_server = extension.getOrDefault("c_mac_algorithms_client_to_server", null);
         String s_mac_algorithms_client_to_server = extension.getOrDefault("s_mac_algorithms_client_to_server", null);
-        sshExtension.setClientMacAlgorithmsClientToServer(c_mac_algorithms_client_to_server)
-                .setServerMacAlgorithmsClientToServer(s_mac_algorithms_client_to_server)
-                .setFinalMacAlgorithmsClientToServer(getFinalAlgorithm(c_mac_algorithms_client_to_server, s_mac_algorithms_client_to_server));
+        sshExtension.setClientMacAlgorithmsClient2Server(c_mac_algorithms_client_to_server)
+                .setServerMacAlgorithmsClient2Server(s_mac_algorithms_client_to_server)
+                .setFinalMacAlgorithmsClient2Server(getFinalAlgorithm(c_mac_algorithms_client_to_server, s_mac_algorithms_client_to_server));
         String c_mac_algorithms_server_to_client = extension.getOrDefault("c_mac_algorithms_server_to_client", null);
         String s_mac_algorithms_server_to_client = extension.getOrDefault("s_mac_algorithms_server_to_client", null);
-        sshExtension.setClientMacAlgorithmsServerToClient(c_mac_algorithms_server_to_client)
-                .setServerMacAlgorithmsServerToClient(s_mac_algorithms_server_to_client)
-                .setFinalMacAlgorithmsServerToClient(getFinalAlgorithm(c_mac_algorithms_server_to_client, s_mac_algorithms_server_to_client));
+        sshExtension.setClientMacAlgorithmsServer2Client(c_mac_algorithms_server_to_client)
+                .setServerMacAlgorithmsServer2Client(s_mac_algorithms_server_to_client)
+                .setFinalMacAlgorithmsServer2Client(getFinalAlgorithm(c_mac_algorithms_server_to_client, s_mac_algorithms_server_to_client));
         String c_server_host_key_algorithms = extension.getOrDefault("c_server_host_key_algorithms", null);
         String s_server_host_key_algorithms = extension.getOrDefault("s_server_host_key_algorithms", null);
         sshExtension.setClientServerHostKeyAlgorithms(c_server_host_key_algorithms)
@@ -177,24 +177,24 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
                 .setFinalServerHostKeyAlgorithms(getFinalAlgorithm(c_server_host_key_algorithms, s_server_host_key_algorithms));
         String c_compression_algorithms_client_to_server = extension.getOrDefault("c_compression_algorithms_client_to_server", null);
         String s_compression_algorithms_client_to_server = extension.getOrDefault("s_compression_algorithms_client_to_server", null);
-        sshExtension.setClientCompressionAlgorithmsClientToServer(c_compression_algorithms_client_to_server)
-                .setServerCompressionAlgorithmsClientToServer(s_compression_algorithms_client_to_server)
-                .setFinalCompressionAlgorithmsClientToServer(getFinalAlgorithm(c_compression_algorithms_client_to_server, s_compression_algorithms_client_to_server));
+        sshExtension.setClientCompressionAlgorithmsClient2Server(c_compression_algorithms_client_to_server)
+                .setServerCompressionAlgorithmsClient2Server(s_compression_algorithms_client_to_server)
+                .setFinalCompressionAlgorithmsClient2Server(getFinalAlgorithm(c_compression_algorithms_client_to_server, s_compression_algorithms_client_to_server));
         String c_compression_algorithms_server_to_client = extension.getOrDefault("c_compression_algorithms_server_to_client", null);
         String s_compression_algorithms_server_to_client = extension.getOrDefault("s_compression_algorithms_server_to_client", null);
-        sshExtension.setClientCompressionAlgorithmsServerToClient(c_compression_algorithms_server_to_client)
-                .setServerCompressionAlgorithmsServerToClient(s_compression_algorithms_server_to_client)
-                .setFinalCompressionAlgorithmsServerToClient(getFinalAlgorithm(c_compression_algorithms_server_to_client, s_compression_algorithms_server_to_client));
+        sshExtension.setClientCompressionAlgorithmsServer2Client(c_compression_algorithms_server_to_client)
+                .setServerCompressionAlgorithmsServer2Client(s_compression_algorithms_server_to_client)
+                .setFinalCompressionAlgorithmsServer2Client(getFinalAlgorithm(c_compression_algorithms_server_to_client, s_compression_algorithms_server_to_client));
         String c_publicKey_dh_e = extension.getOrDefault("c_publicKey_dh_e", null);
         String s_publicKey_df_f = extension.getOrDefault("s_publicKey_df_f", null);
         sshExtension.setClientPublicKey(c_publicKey_dh_e)
                 .setServerPublicKey(s_publicKey_df_f)
-                .setFinalPublicKeyAlgorithms(getFinalAlgorithm(c_publicKey_dh_e,s_publicKey_df_f));
+                .setFinalPublicKeyAlgorithms(getFinalAlgorithm(c_publicKey_dh_e, s_publicKey_df_f));
     }
 
 
     private String getFinalAlgorithm(String clientAlgorithmStr, String serverAlgorithmStr) {
-        String finalAlgorithm = "";
+        String finalAlgorithm;
         if (StringUtils.isEmpty(clientAlgorithmStr) || StringUtils.isEmpty(serverAlgorithmStr)) {
             return null;
         }
