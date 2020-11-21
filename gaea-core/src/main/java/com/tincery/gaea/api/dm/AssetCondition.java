@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -32,18 +31,18 @@ public class AssetCondition extends SimpleBaseDO {
     @Getter
     public static class ConditionGroup {
         List<FieldCondition> conditions;
-        List<CerLink> certLinks;
+        CerLink certLinks;
         String description;
 
-        public boolean hit(JSONObject assetJson,AssetCondition cerCondition) {
+        public boolean hit(JSONObject assetJson, AssetCondition cerCondition) {
             if (!conditions.stream().allMatch(fieldCondition -> fieldCondition.hit(assetJson))) {
                 return false;
             }
-            if (CollectionUtils.isEmpty(certLinks)) {
+            if (certLinks == null) {
                 return true;
             }
             JSONArray certChain = assetJson.getJSONArray(HeadConst.FIELD.SERVER_CER_CHAIN);
-            return certLinks.stream().allMatch(cerLink -> cerLink.certHit(certChain,cerCondition));
+            return certLinks.certHit(certChain, cerCondition);
         }
 
     }
@@ -54,14 +53,14 @@ public class AssetCondition extends SimpleBaseDO {
         private int cerIndex;
         private List<Integer> cerConditionIndex;
 
-        public boolean certHit(JSONArray certChain,AssetCondition cerCondition) {
+        public boolean certHit(JSONArray certChain, AssetCondition cerCondition) {
             if (certChain == null || certChain.size() < cerIndex) {
                 return false;
             }
             JSONObject certJson = certChain.getJSONObject(cerIndex);
             List<ConditionGroup> certCondition = cerCondition.getConditionGroup();
             return cerConditionIndex.stream().map(certCondition::get)
-                    .anyMatch(certConditionGroup -> certConditionGroup.hit(certJson,cerCondition));
+                    .anyMatch(certConditionGroup -> certConditionGroup.hit(certJson, cerCondition));
         }
     }
 
