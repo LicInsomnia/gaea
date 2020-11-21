@@ -1,10 +1,11 @@
 package com.tincery.gaea.api.dm.assetextension;
 
-import com.tincery.gaea.core.dw.MergeAble;
+import com.alibaba.fastjson.JSONObject;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import lombok.Data;
 
 @Data
-public class AssetSshExtension implements MergeAble<AssetSshExtension> {
+public class AssetSshExtension extends BaseAssetExtension {
 
     private String protocol;
     private String version;
@@ -12,12 +13,18 @@ public class AssetSshExtension implements MergeAble<AssetSshExtension> {
 
 
     @Override
-    public AssetSshExtension merge(AssetSshExtension assetSslExtension) {
+    public String getId() {
         return null;
     }
 
     @Override
-    public String getId() {
-        return null;
+    public void create(JSONObject jsonObject) {
+        JSONObject sshExtension = jsonObject.getJSONObject(HeadConst.FIELD.SSH_EXTENSION);
+        System.out.println(1);
+    }
+
+    @Override
+    public void setKey() {
+
     }
 }

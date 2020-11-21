@@ -13,9 +13,6 @@ import java.util.List;
 @Data
 public class AssetSslExtension extends BaseAssetExtension {
 
-    /**
-     * 表格行中字段，用于去重
-     */
     private String serverName;
     private String protocolKey;
     private String versionKey;
@@ -32,7 +29,8 @@ public class AssetSslExtension extends BaseAssetExtension {
 
     private JSONObject handshake;
 
-    public void append(JSONObject jsonObject) {
+    @Override
+    public void create(JSONObject jsonObject) {
         JSONObject sslExtension = jsonObject.getJSONObject(HeadConst.FIELD.SSL_EXTENSION);
         this.protocolKey = jsonObject.getString(HeadConst.FIELD.PRONAME);
         this.serverName = sslExtension.getString(HeadConst.FIELD.SERVER_NAME);
@@ -82,12 +80,6 @@ public class AssetSslExtension extends BaseAssetExtension {
         this.handshakeKey = ToolUtils.getMD5(clientHello + "_" + serverHello + "_" + serverCertificate + "_" + serverKeyExchange + "_" +
                 serverCertificateRequest + "_" + serverHelloDone + "_" + clientCertificate + "_" + clientKeyExchange + "_" + clientCertificateVerify + "_" +
                 clientFinished + "_" + serverFinished + "_" + clientChangeCipherSpec + "_" + serverChangeCipherSpec);
-    }
-
-    @Override
-    public BaseAssetExtension merge(BaseAssetExtension that) {
-        super.merge(that);
-        return this;
     }
 
     @Override

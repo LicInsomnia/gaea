@@ -291,6 +291,26 @@ public class HeadConst {
         public final static String RESPONDER_INFORMATION = "responderInformation";
         public final static String INITIATOR_VIDS = "initiatorVid";
         public final static String RESPONDER_VID = "responderVid";
+        public final static String FIRST_MODE = "firstMode";
+        public final static String SECOND_MODE = "secondMode";
+        public final static String ENCRYPTION_MESSAGE_PROTOCOL = "encryptedMessageProtocol";
+        public final static String RESPONDER_SECOND_COMPLETE = "secondComplete";
+        public final static String RESPONDER_FIRST_COMPLETE = "responderFirstComplete";
+        public final static String RESPONDER_ENCRYPTION_ALGORITM = "responderEncryptionAlgorithm";
+        public final static String RESPONDER_KEY_LENGTH = "responderKeyLength";
+        public final static String RESPONDER_HASH_ALGORITHM = "responderHashAlgorithm";
+        public final static String RESPONDER_AUTHENTICATION_METHOD = "responderAuthenticationMethod";
+        public final static String RESPONDER_KEY_EXCHANGE = "responderKeyExchange";
+        public final static String RESPONDER_LIFE_DURATION = "responderLifeDuration";
+        public final static String RESPONDER_ISAKMP_CER = "responderIsakmpCer";
+        public final static String INITIATOR_FIRST_COMPLETE = "initiatorFirstComplete";
+        public final static String INITIATOR_ENCRYPTION_ALGORITM = "initiatorEncryptionAlgorithm";
+        public final static String INITIATOR_KEY_LENGTH = "initiatorKeyLength";
+        public final static String INITIATOR_HASH_ALGORITHM = "initiatorHashAlgorithm";
+        public final static String INITIATOR_AUTHENTICATION_METHOD = "initiatorAuthenticationMethod";
+        public final static String INITIATOR_KEY_EXCHANGE = "initiatorKeyExchange";
+        public final static String INITIATOR_LIFE_DURATION = "initiatorLifeDuration";
+        public final static String INITIATOR_ISAKMP_CER = "initiatorIsakmpCer";
         /* PPTPANDL2TP */
         public final static String PPTP_L2TP_EXTENSION = "pptpAndL2tpExtension";
         public final static String RESPONSE = "response";
@@ -308,6 +328,7 @@ public class HeadConst {
         public final static String CLIENT_LOCATION = "clientLocation";
         public final static String SERVER_LOCATION = "serverLocation";
         /* SSH */
+        public final static String SSH_EXTENSION = "sshExtension";
         public final static String CLIENT_PROTOCOL = "clientProtocol";
         public final static String SERVER_PROTOCOL = "serverProtocol";
         public final static String CLIENT_KEX_ALGORITHMS = "clientKexAlgorithms";
