@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,7 @@ public class AssetGroupSupport {
 
     public static List<AssetExtension> getSaveExtension(List<JSONObject> allData, Function<JSONObject, AssetExtension> map) {
         Map<String, AssetExtension> result = new HashMap<>(16);
-        allData.stream().map(map).forEach(assetExtension -> result.merge(assetExtension.getId(), assetExtension, (k, v) -> v.merge(assetExtension)));
+        allData.stream().map(map).filter(Objects::nonNull).forEach(assetExtension -> result.merge(assetExtension.getId(), assetExtension, (k, v) -> v.merge(assetExtension)));
         return new ArrayList<>(result.values());
     }
 
