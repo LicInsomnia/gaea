@@ -4,6 +4,9 @@ package com.tincery.gaea.api.src;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.Location;
+import com.tincery.gaea.api.src.email.EmailAuth;
+import com.tincery.gaea.api.src.email.EmailExtension;
+import com.tincery.gaea.api.src.email.EmailPart;
 import com.tincery.gaea.core.base.component.support.ApplicationCheck;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,11 +30,11 @@ public class EmailData extends AbstractSrcData implements Cloneable {
     private Location clientLocation;
     private Location serverLocation;
 //    //email要素信息
-//    private EmailPart part;
+    private EmailPart part;
 //    //email认证信息
-//    private EmailAuth auth;
+    private EmailAuth auth;
 //
-//    private EmailExtension extension;
+    private EmailExtension extension;
 
     private String emlName;
     private String loginUser;

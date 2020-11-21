@@ -184,7 +184,7 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
         InputStream inMsg = zipFile.getInputStream(zipEntry);
         MimeMessage msg = new MimeMessage(session, inMsg);
         EmailData emailData = new EmailData();
-        fixEmailContent(emailData,msg);
+        fixEmailContent(emailData,msg ,zipEntry);
         return emailData;
     }
 
@@ -193,7 +193,7 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
      * @param emailData 要封装的数据
      * @param msg email信息
      */
-    private void fixEmailContent(EmailData emailData, MimeMessage msg) throws Exception {
+    private void fixEmailContent(EmailData emailData, MimeMessage msg , ZipEntry zipEntry) throws Exception {
 
         /*依次装载emailData的几个附属属性*/
         //①1.装载认证属性
@@ -207,7 +207,7 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
         fixEmailAnnex(emailAnnexDetail,msg);
         //②4.装载邮件要素信息属性
         EmailPart emailPart = new EmailPart();
-        fixEmailPart(emailPart,msg);
+        fixEmailPart(emailPart,msg,zipEntry);
         emailPart.setAnnexDetail(emailAnnexDetail);
         emailPart.setTransceiverRelationship(relationship);
         //③1.装载邮件拓展属性
@@ -223,8 +223,14 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
      * 装载邮件要素信息
      * @param emailPart 实体
      * @param msg 数据
+     *            TODO 部分要素信息不明确
      */
-    private void fixEmailPart(EmailPart emailPart, Message msg) {
+    private void fixEmailPart(EmailPart emailPart, Message msg , ZipEntry zipEntry) {
+
+        emailPart.setFileName(zipEntry.getName());
+        //是否满足布控预警？不明确 emailPart.setMatchFlag(0);
+        //当前时间  不明确 Header： Date头  和Received头中都有时间 还是解读压缩包的时间？
+        //emailPart.setUploadDate()
     }
 
     /**
@@ -239,6 +245,7 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
      * 装载邮件附件属性
      * @param emailAnnexDetail 附件
      * @param msg 数据
+     *            TODO 部分附件属性不明确
      */
     private void fixEmailAnnex(EmailAnnexDetail emailAnnexDetail, MimeMessage msg) throws Exception {
         // getContent() 是获取包裹内容, Part相当于外包装
@@ -341,6 +348,7 @@ public class EmailReceiver extends AbstractSrcReceiver<EmailData> {
                 String suffix = split[split.length-1];
 
                 //是否加密
+
             }
             System.out.println("内容类型: "+ MimeUtility.decodeText(part.getContentType()));
             System.out.println("附件内容:" + part.getContent());
