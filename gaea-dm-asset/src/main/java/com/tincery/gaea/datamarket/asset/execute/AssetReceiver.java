@@ -275,16 +275,26 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         }
 
         @Override
-        public AssetResult call() throws Exception {
+        public AssetResult call() {
             List<JSONObject> clientAssetList = new ArrayList<>();
             List<JSONObject> serverAssetList = new ArrayList<>();
             for (String line : lines) {
-                JSONObject assetJson = JSON.parseObject(line);
-                AssetReceiver.this.alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector),assetJson);
+                if (line.isEmpty()) {
+                    continue;
+                }
+                JSONObject assetJson = null;
+                try {
+                    assetJson = JSON.parseObject(line);
+                } catch (Exception e) {
+                    log.error("资产会话JSON序列化失败，错误JSON：{}", line);
+                    continue;
+                }
+                AssetReceiver.this.alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector), assetJson);
                 AssetFlag.fillAndAdd(assetJson, assetDetector, clientAssetList, serverAssetList);
             }
             return new AssetResult(clientAssetList, serverAssetList);
         }
     }
+
 
 }

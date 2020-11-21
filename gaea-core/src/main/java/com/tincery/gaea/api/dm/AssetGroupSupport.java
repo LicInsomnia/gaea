@@ -42,7 +42,7 @@ public class AssetGroupSupport {
 
     public static List<AssetExtension> getSaveExtension(List<JSONObject> allData, Function<JSONObject, AssetExtension> map) {
         Map<String, AssetExtension> result = new HashMap<>(16);
-        allData.stream().map(map).forEach(assetDataDTO -> result.merge(assetDataDTO.getId(), assetDataDTO, (k, v) -> v.merge(assetDataDTO)));
+        allData.stream().map(map).forEach(assetExtension -> result.merge(assetExtension.getId(), assetExtension, (k, v) -> v.merge(assetExtension)));
         return new ArrayList<>(result.values());
     }
 
@@ -222,7 +222,7 @@ public class AssetGroupSupport {
      **/
     public static <T extends SimpleBaseDO & MergeAble<T>> void rechecking(SimpleBaseDaoImpl<T> assetDao, List<T> list) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("_id").in(list.stream().map(T::getId).collect(Collectors.toList())));
+        query.addCriteria(Criteria.where("_id").in(list.stream().map(data -> data.getId()).collect(Collectors.toList())));
         List<T> mongoData = assetDao.findListData(query);
         if (!CollectionUtils.isEmpty(mongoData)) {
             list.forEach(asset -> {

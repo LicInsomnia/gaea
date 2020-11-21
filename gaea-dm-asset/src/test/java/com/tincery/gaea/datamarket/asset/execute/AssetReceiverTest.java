@@ -19,7 +19,7 @@ class AssetReceiverTest {
     @Test
     public void bbb() throws JMSException {
         TextMessage activeMQMessage = new ActiveMQTextMessage();
-        activeMQMessage.setText("D:\\data5\\datawarehouse\\json\\asset\\asset_0.json");
+        activeMQMessage.setText("D:\\data5\\datawarehouse\\json\\asset\\asset_1.json");
         receiver.receive(activeMQMessage);
     }
 

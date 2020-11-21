@@ -62,6 +62,9 @@ public class AssetConfigDO extends SimpleBaseDO {
         if (CollectionUtils.isEmpty(assetStrategyCondition)) {
             return;
         }
+        assetServerJson.put("$assetUnit", this.unit);
+        assetServerJson.put("$assetName", this.name);
+        assetServerJson.put("alarm", true);
         String proName = assetServerJson.getString(HeadConst.FIELD.PRONAME);
         AssetCondition target = null;
         for (AssetCondition assetCondition : assetStrategyCondition) {
@@ -74,9 +77,8 @@ public class AssetConfigDO extends SimpleBaseDO {
             return;
         }
         for (AssetCondition.ConditionGroup conditionGroup : target.getConditionGroup()) {
-            if(conditionGroup.hit(assetServerJson,assetCertStrategy)){
-                assetServerJson.put("$description",conditionGroup.getDescription());
-                assetServerJson.put("alarm",true);
+            if (conditionGroup.hit(assetServerJson, assetCertStrategy)) {
+                assetServerJson.put("$description", conditionGroup.getDescription());
                 return;
             }
         }

@@ -34,43 +34,43 @@ public class Handshake {
         if (Objects.isNull(that)) {
             return;
         }
-        if (that.clientHello > 0) {
+        if (that.clientHello >= 0) {
             this.clientHello = that.clientHello;
         }
-        if (that.serverHello > 0) {
+        if (that.serverHello >= 0) {
             this.serverHello = that.serverHello;
         }
-        if (that.serverCertificate > 0) {
+        if (that.serverCertificate >= 0) {
             this.serverCertificate = that.serverCertificate;
         }
-        if (that.serverKeyExchange > 0) {
+        if (that.serverKeyExchange >= 0) {
             this.serverKeyExchange = that.serverKeyExchange;
         }
-        if (that.serverCertificateRequest > 0) {
+        if (that.serverCertificateRequest >= 0) {
             this.serverCertificateRequest = that.serverCertificateRequest;
         }
-        if (that.serverHelloDone > 0) {
+        if (that.serverHelloDone >= 0) {
             this.serverHelloDone = that.serverHelloDone;
         }
-        if (that.clientCertificate > 0) {
+        if (that.clientCertificate >= 0) {
             this.clientCertificate = that.clientCertificate;
         }
-        if (that.clientKeyExchange > 0) {
+        if (that.clientKeyExchange >= 0) {
             this.clientKeyExchange = that.clientKeyExchange;
         }
-        if (that.clientCertificateVerify > 0) {
+        if (that.clientCertificateVerify >= 0) {
             this.clientCertificateVerify = that.clientCertificateVerify;
         }
-        if (that.clientFinished > 0) {
+        if (that.clientFinished >= 0) {
             this.clientFinished = that.clientFinished;
         }
-        if (that.serverFinished > 0) {
+        if (that.serverFinished >= 0) {
             this.serverFinished = that.serverFinished;
         }
-        if (that.clientChangeCipherSpec > 0) {
+        if (that.clientChangeCipherSpec >= 0) {
             this.clientChangeCipherSpec = that.clientChangeCipherSpec;
         }
-        if (that.serverChangeCipherSpec > 0) {
+        if (that.serverChangeCipherSpec >= 0) {
             this.serverChangeCipherSpec = that.serverChangeCipherSpec;
         }
     }

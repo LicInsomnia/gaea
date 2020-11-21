@@ -20,24 +20,34 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
 
     @Id
     private String id;
+    private String assetUnit;
+    private String assetName;
 
     private List<AssetSslExtension> sslExtensions;
     private List<AssetSshExtension> sshExtensions;
     private List<AssetIsakmpExtension> isakmpExtensions;
 
     public static AssetExtension fromAssetJsonObject(JSONObject jsonObject) {
-        String proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
         AssetExtension assetExtension = new AssetExtension();
+        assetExtension.setAssetUnit(jsonObject.getString("$assetUnit"));
+        assetExtension.setAssetName(jsonObject.getString("$assetName"));
+        assetExtension.setId();
+        String proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
         switch (proName) {
             case HeadConst.PRONAME.SSL:
-
+                AssetSslExtension extension = new AssetSslExtension();
+                extension.append(jsonObject);
                 break;
             case HeadConst.PRONAME.SSH:
                 break;
             default:
                 break;
         }
-        return null;
+        return assetExtension;
+    }
+
+    public void setId() {
+        this.id = this.assetUnit + "_" + this.assetName;
     }
 
     @Override

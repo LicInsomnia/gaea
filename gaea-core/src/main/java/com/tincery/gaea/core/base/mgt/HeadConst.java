@@ -198,6 +198,7 @@ public class HeadConst {
 
     public static class FIELD {
         /* COMMON */
+        public final static String ID = "id";
         public final static String GROUP_NAME = "groupName";
         public final static String TARGET_NAME = "targetName";
         public final static String USER_ID = "userId";
@@ -243,6 +244,7 @@ public class HeadConst {
         public final static String DOMAIN = "domain";
         public final static String CNAMES = "cname";
         /* SSL */
+        public final static String SSL_EXTENSION = "sslExtension";
         public final static String HANDSHAKE = "handshake";
         public final static String COMPLETE_SESSION = "completeSession";
         public final static String HAS_APPLICATION_DATA = "hasApplicationData";

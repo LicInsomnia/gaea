@@ -70,16 +70,19 @@ public class AssetConfigs {
 
     public static List<AlarmMaterialData> detectorServer(JSONObject assetJson, AssetDetector assetDetector) {
         AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.SERVER_IP_N));
+        if (null == assetConfig) {
+            return null;
+        }
         // 客户端需要匹配密码
         assetConfig.strategyHit(assetJson);
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.DOMESTIC)) {
             // 境内
-            return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig,false));
+            return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig, false));
         }
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.IN, Border.OVERSEAS)) {
             // 境外
-            return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig,false));
+            return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig, false));
         }
         // 判断白名单 如果命中则直接返回
         if (check(assetJson, assetConfig, ListType.WHITE, OutInput.IN, Border.DOMESTIC)) {
