@@ -127,8 +127,10 @@ public class AssetGroupSupport {
         AssetDataDTO assetDataDTO = serverProtocolDataFrom(jsonObject);
         String key = assetDataDTO.getKey();
         int i = key.lastIndexOf("_");
-        key = key.substring(0, i) + "_" + jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT) + "_" + key.substring(i);
+        int serverPort = jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
+        key = key.substring(0, i) + "_" + serverPort + "_" + key.substring(i);
         assetDataDTO.setKey(key);
+        assetDataDTO.setPort(serverPort);
         assetDataDTO.setClients(serverIpGetClient(jsonObject));
         assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
         assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
