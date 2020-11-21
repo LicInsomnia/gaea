@@ -48,6 +48,7 @@ public class MongoStashReceiver implements Receiver {
         List<TableConfig> insertConfig = tableConfigDao.getInsert();
         update(updateConfig);
         insert(insertConfig);
+        log.info("执行完成");
     }
 
     private void update(List<TableConfig> updateConfig) {
