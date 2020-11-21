@@ -2,6 +2,7 @@ package com.tincery.gaea.source.isakmp.execute;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.src.IsakmpData;
+import com.tincery.gaea.api.src.extension.IsakmpCer;
 import com.tincery.gaea.api.src.extension.IsakmpExtension;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
@@ -131,10 +132,25 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         Set<JSONObject> responderInformation = new LinkedHashSet<>();
         Set<JSONObject> initiatorVid = new LinkedHashSet<>();
         Set<JSONObject> responderVid = new LinkedHashSet<>();
+        Set<IsakmpCer> responderIsakmpCer = new LinkedHashSet<>();
+        Set<IsakmpCer> initiatorIsakmpCer = new LinkedHashSet<>();
+        Set<JSONObject> responderLifeDuration = new LinkedHashSet<>();
+        Set<JSONObject> initiatorLifeDuration = new LinkedHashSet<>();
+        Set<JSONObject> responderKeyExchange = new LinkedHashSet<>();
+        Set<JSONObject> initiatorKeyExchange = new LinkedHashSet<>();
+        Set<JSONObject> responderAuthenticationMethod = new LinkedHashSet<>();
+        Set<JSONObject> initiatorAuthenticationMethod = new LinkedHashSet<>();
+        Set<JSONObject> responderHashAlgorithm = new LinkedHashSet<>();
+        Set<JSONObject> initiatorHashAlgorithm = new LinkedHashSet<>();
+        Set<JSONObject> responderKeyLength = new LinkedHashSet<>();
+        Set<JSONObject> initiatorKeyLength = new LinkedHashSet<>();
+        Set<JSONObject> responderEncryptionAlgorithm = new LinkedHashSet<>();
+        Set<JSONObject> initiatorEncryptionAlgorithm = new LinkedHashSet<>();
+
+        IsakmpCer isakmpCer = new IsakmpCer();
 
         isakmpExtension.setInitiatorSPI(elements[31].split(":")[1]);
         isakmpExtension.setResponderSPI(elements[32].split(":")[1]);
-
         //version2 独有
         JSONObject vidJsonObject = new JSONObject();
         /*取值*/
@@ -149,11 +165,13 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                         initiatorInformation.add((JSONObject) ToolUtils.clone(jsonObject));
                         jsonObject = new JSONObject();
                     }
+                    isakmpCer = addIsakmpCerElement(initiatorIsakmpCer,isakmpCer);
                 } else {
                     if (!jsonObject.isEmpty()) {
                         responderInformation.add((JSONObject) ToolUtils.clone(jsonObject));
                         jsonObject = new JSONObject();
                     }
+                    isakmpCer = addIsakmpCerElement(responderIsakmpCer,isakmpCer);
                 }
                 s2dFlag = elements[i].equals(sdFlag);
                 continue;
@@ -200,6 +218,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                             initiatorInformation.add((JSONObject) ToolUtils.clone(jsonObject));
                             jsonObject = new JSONObject();
                         }
+                        isakmpCer = addIsakmpCerElement(initiatorIsakmpCer,isakmpCer);
                     } else {
                         messageList.add("responder:" + value);
                         if (!jsonObject.isEmpty()) {
@@ -207,6 +226,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                             responderInformation.add((JSONObject) ToolUtils.clone(jsonObject));
                             jsonObject = new JSONObject();
                         }
+                        isakmpCer = addIsakmpCerElement(responderIsakmpCer,isakmpCer);
                     }
                     if (flag){
                         continue;
@@ -263,30 +283,77 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                         break;
                     }
                 case "Cert Encoding":
-                    /*if (Objects.isNull(jsonObject.get("Cert Encoding"))){
-                        ArrayList<String> cert = new ArrayList<>();
-                        cert.add(isakmpExtension.convertCert(value));
-                        jsonObject.put("Cert Encoding",cert);
-                    }else{
-                        List<String> cert_encoding = (List<String>) jsonObject.get("Cert Encoding");
-                        cert_encoding.add(isakmpExtension.convertCert(value));
-                        jsonObject.put("Cert Encoding",cert_encoding);
-                    }*/
+
                     jsonObject.put("Cert Encoding",isakmpExtension.convertCert(value));
+                    isakmpCer.setCertEncoding(isakmpExtension.convertCert(value));
                     continue;
                 case "Cert":
-                    /*if (Objects.isNull(jsonObject.get("Cert"))){
-                        ArrayList<String> cert = new ArrayList<>();
-                        cert.add(isakmpExtension.convertCert(value));
-                        jsonObject.put("Cert",cert);
-                    }else{
-                        List<String> cert_encoding = (List<String>) jsonObject.get("Cert");
-                        cert_encoding.add(isakmpExtension.convertCert(value));
-                        jsonObject.put("Cert",cert_encoding);
-                    }*/
                     jsonObject.put("Cert",isakmpExtension.convertCert(value));
                     jsonObject.put("SHA1",fixCert(value));
+                    isakmpCer.setSha1(fixCert(value));
                     continue;
+                case "Life-Duration":
+                    JSONObject lifeDuration = new JSONObject();
+                    if (s2dFlag){
+                        lifeDuration.put("initiatorLifeDuration",value);
+                        initiatorLifeDuration.add(lifeDuration);
+                    }else{
+                        lifeDuration.put("responderLifeDuration",value);
+                        responderLifeDuration.add(lifeDuration);
+                    }
+                    continue;
+
+                case "Key Exchange":
+                    JSONObject keyExchange = new JSONObject();
+                    if (s2dFlag){
+                        keyExchange.put("initiatorKeyExchange",value);
+                        initiatorKeyExchange.add(keyExchange);
+                    }else{
+                        keyExchange.put("responderKeyExchange",value);
+                        responderKeyExchange.add(keyExchange);
+                    }
+                    continue;
+                case "Authentication-Method":
+                    JSONObject authMethod = new JSONObject();
+                    if (s2dFlag){
+                        authMethod.put("initiatorKeyExchange",value);
+                        initiatorAuthenticationMethod.add(authMethod);
+                    }else{
+                        authMethod.put("responderKeyExchange",value);
+                        responderAuthenticationMethod.add(authMethod);
+                    }
+                    continue;
+                case "Hash-Algorithm":
+                    JSONObject hashAlgorithm = new JSONObject();
+                    if (s2dFlag){
+                        hashAlgorithm.put("initiatorKeyExchange",value);
+                        initiatorHashAlgorithm.add(hashAlgorithm);
+                    }else{
+                        hashAlgorithm.put("responderKeyExchange",value);
+                        responderHashAlgorithm.add(hashAlgorithm);
+                    }
+                    continue;
+                case "Key Length":
+                    JSONObject keyLength = new JSONObject();
+                    if (s2dFlag){
+                        keyLength.put("initiatorKeyLength",value);
+                        initiatorKeyLength.add(keyLength);
+                    }else{
+                        keyLength.put("responderKeyLength",value);
+                        responderKeyLength.add(keyLength);
+                    }
+                    continue;
+                case "Encryption-Algorithm":
+                    JSONObject encryptionAlgorithm = new JSONObject();
+                    if (s2dFlag){
+                        encryptionAlgorithm.put("initiatorEncryptionAlgorithm",value);
+                        initiatorEncryptionAlgorithm.add(encryptionAlgorithm);
+                    }else{
+                        encryptionAlgorithm.put("responderEncryptionAlgorithm",value);
+                        responderEncryptionAlgorithm.add(encryptionAlgorithm);
+                    }
+                    continue;
+
                 default:
                     break;
             }
@@ -300,7 +367,30 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         isakmpExtension.setInitiatorVid(initiatorVid);
         isakmpExtension.setResponderVid(responderVid);
         isakmpExtension.setVersion(version);
+        isakmpExtension.setInitiatorIsakmpCer(initiatorIsakmpCer);
+        isakmpExtension.setResponderIsakmpCer(responderIsakmpCer);
+        isakmpExtension.setResponderLifeDuration(responderLifeDuration);
+        isakmpExtension.setInitiatorLifeDuration(initiatorLifeDuration);
 
+        isakmpExtension.setResponderKeyExchange(responderKeyExchange);
+        isakmpExtension.setInitiatorKeyExchange(initiatorKeyExchange)
+                .setResponderAuthenticationMethod(responderAuthenticationMethod)
+                .setInitiatorAuthenticationMethod(initiatorAuthenticationMethod)
+                .setResponderHashAlgorithm(responderHashAlgorithm)
+                .setInitiatorHashAlgorithm(initiatorHashAlgorithm)
+                .setResponderKeyLength(responderKeyLength)
+                .setInitiatorKeyLength(initiatorKeyLength)
+                .setResponderEncryptionAlgorithm(responderEncryptionAlgorithm)
+                .setInitiatorEncryptionAlgorithm(initiatorEncryptionAlgorithm);
+
+    }
+
+    private IsakmpCer addIsakmpCerElement(Set<IsakmpCer> set,IsakmpCer isakmpCer){
+        if (isakmpCer.isNotEmpty()){
+            set.add(isakmpCer);
+            return new IsakmpCer();
+        }
+        return isakmpCer;
     }
 
 

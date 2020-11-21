@@ -1,5 +1,7 @@
 package com.tincery.gaea.api.src.extension;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.tincery.gaea.core.base.tool.ToolUtils;
@@ -9,10 +11,7 @@ import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +48,43 @@ public class IsakmpExtension implements Serializable {
     private String encryptedMessageProtocol;
     @JSONField(serialize = false)
     private JSONObject extension;
+    @JSONField(serialize = false)
+    private Set<IsakmpCer> responderIsakmpCer;
+    @JSONField(serialize = false)
+    private Set<IsakmpCer> initiatorIsakmpCer;
+
+
+    @JSONField(serialize = false)
+    private Set<JSONObject> responderLifeDuration;
+
+    @JSONField(serialize = false)
+    private Set<JSONObject> initiatorLifeDuration;
+
+    @JSONField(serialize = false)
+    private Set<JSONObject> responderKeyExchange ;
+
+    @JSONField(serialize = false)
+    private Set<JSONObject> initiatorKeyExchange ;
+
+    @JSONField(serialize = false)
+    private Set<JSONObject> responderAuthenticationMethod ;
+
+    @JSONField(serialize = false)
+    private Set<JSONObject> initiatorAuthenticationMethod ;
+
+    @JSONField(serialize = false)
+    private Set<JSONObject> responderHashAlgorithm ;
+    @JSONField(serialize = false)
+    private Set<JSONObject> initiatorHashAlgorithm ;
+    @JSONField(serialize = false)
+    private Set<JSONObject> responderKeyLength ;
+    @JSONField(serialize = false)
+    private Set<JSONObject> initiatorKeyLength ;
+    @JSONField(serialize = false)
+    private Set<JSONObject> responderEncryptionAlgorithm ;
+    @JSONField(serialize = false)
+    private Set<JSONObject> initiatorEncryptionAlgorithm ;
+
 
     public void setExtension() {
         this.extension = new JSONObject();
@@ -95,6 +131,90 @@ public class IsakmpExtension implements Serializable {
         if (null != this.version){
             this.extension.put("version",this.version);
         }
+        if (!CollectionUtils.isEmpty(this.responderIsakmpCer)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderIsakmpCer);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("responderIsakmpCer" , jsonString);
+        }
+        if (!CollectionUtils.isEmpty(this.initiatorIsakmpCer)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorIsakmpCer);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("initiatorIsakmpCer" , jsonString);
+        }
+
+        if (!CollectionUtils.isEmpty(this.responderLifeDuration)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderLifeDuration);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("responderLifeDuration" , jsonString);
+        }
+
+        if (!CollectionUtils.isEmpty(this.initiatorLifeDuration)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorLifeDuration);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("initiatorLifeDuration" , jsonString);
+        }
+        if (!CollectionUtils.isEmpty(this.responderKeyExchange)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderKeyExchange);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("responderKeyExchange" , jsonString);
+        }
+
+        if (!CollectionUtils.isEmpty(this.responderKeyExchange)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderKeyExchange);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("responderKeyExchange" , jsonString);
+        }
+
+        if (!CollectionUtils.isEmpty(this.initiatorKeyExchange)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorKeyExchange);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("initiatorKeyExchange" , jsonString);
+        }
+
+        if (!CollectionUtils.isEmpty(this.responderAuthenticationMethod)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderAuthenticationMethod);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("responderAuthenticationMethod" , jsonString);
+        }
+
+        if (!CollectionUtils.isEmpty(this.initiatorAuthenticationMethod)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorAuthenticationMethod);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("initiatorAuthenticationMethod" , jsonString);
+        }
+
+        if (!CollectionUtils.isEmpty(this.responderHashAlgorithm)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderHashAlgorithm);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("responderHashAlgorithm" , jsonString);
+        }
+        if (!CollectionUtils.isEmpty(this.initiatorHashAlgorithm)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorHashAlgorithm);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("initiatorHashAlgorithm" , jsonString);
+        }
+
+        if (!CollectionUtils.isEmpty(this.responderKeyLength)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderKeyLength);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("responderKeyLength" , jsonString);
+        }
+        if (!CollectionUtils.isEmpty(this.initiatorKeyLength)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorKeyLength);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("initiatorKeyLength" , jsonString);
+        }
+        if (!CollectionUtils.isEmpty(this.responderEncryptionAlgorithm)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderEncryptionAlgorithm);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("responderEncryptionAlgorithm" , jsonString);
+        }
+        if (!CollectionUtils.isEmpty(this.initiatorEncryptionAlgorithm)){
+            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorEncryptionAlgorithm);
+            String jsonString = isakmpCer.toJSONString();
+            this.extension.put("initiatorEncryptionAlgorithm" , jsonString);
+        }
+
     }
 
     /**
