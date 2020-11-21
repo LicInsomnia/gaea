@@ -95,35 +95,6 @@ public class HeadConst {
     public final static String SSH_HEADER = BASE_COMMON_HEADER +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            FIELD.CLIENT_PROTOCOL + CSV_SEPARATOR +
-            FIELD.SERVER_PROTOCOL + CSV_SEPARATOR +
-            FIELD.CLIENT_KEX_ALGORITHMS + CSV_SEPARATOR +
-            FIELD.SERVER_KEX_ALGORITHMS + CSV_SEPARATOR +
-            FIELD.FINAL_KEX_ALGORITHMS + CSV_SEPARATOR +
-            FIELD.CLIENT_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
-            FIELD.SERVER_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
-            FIELD.FINAL_SERVER_HOST_KEY_ALGORITHMS + CSV_SEPARATOR +
-            FIELD.CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER + CSV_SEPARATOR +
-            FIELD.SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT + CSV_SEPARATOR +
-            FIELD.SERVER_PUBLIC_KEY + CSV_SEPARATOR +
-            FIELD.CLIENT_PUBLIC_KEY + CSV_SEPARATOR +
-            FIELD.FINAL_PUBLIC_KEY_ALGORITHMS + CSV_SEPARATOR +
             FIELD.EXTENSION;
     /* isakmp csv文件头 */
     public final static String ISAKMP_HEADER = BASE_COMMON_HEADER +
@@ -337,24 +308,24 @@ public class HeadConst {
         public final static String CLIENT_SERVER_HOST_KEY_ALGORITHMS = "clientServerHostKeyAlgorithms";
         public final static String SERVER_SERVER_HOST_KEY_ALGORITHMS = "serverServerHostKeyAlgorithms";
         public final static String FINAL_SERVER_HOST_KEY_ALGORITHMS = "finalServerHostKeyAlgorithms";
-        public final static String CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "clientEncryptionAlgorithmsClientToServer";
-        public final static String SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "serverEncryptionAlgorithmsClientToServer";
-        public final static String FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "finalEncryptionAlgorithmsClientToServer";
-        public final static String CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "clientEncryptionAlgorithmsServerToClient";
-        public final static String SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "serverEncryptionAlgorithmsServerToClient";
-        public final static String FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "finalEncryptionAlgorithmsServerToClient";
-        public final static String CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER = "clientMacAlgorithmsClientToServer";
-        public final static String SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER = "serverMacAlgorithmsClientToServer";
-        public final static String FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER = "finalMacAlgorithmsClientToServer";
-        public final static String CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT = "clientMacAlgorithmsServerToClient";
-        public final static String SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT = "serverMacAlgorithmsServerToClient";
-        public final static String FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT = "finalMacAlgorithmsServerToClient";
-        public final static String CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "clientCompressionAlgorithmsClientToServer";
-        public final static String SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "serverCompressionAlgorithmsClientToServer";
-        public final static String FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "finalCompressionAlgorithmsClientToServer";
-        public final static String SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "serverCompressionAlgorithmsServerToClient";
-        public final static String CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "clientCompressionAlgorithmsServerToClient";
-        public final static String FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "finalCompressionAlgorithmsServerToClient";
+        public final static String CLIENT_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "clientEncryptionAlgorithmsClient2Server";
+        public final static String SERVER_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "serverEncryptionAlgorithmsClient2Server";
+        public final static String FINAL_ENCRYPTION_ALGORITHMS_CLIENT_TO_SERVER = "finalEncryptionAlgorithmsClient2Server";
+        public final static String CLIENT_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "clientEncryptionAlgorithmsServer2Client";
+        public final static String SERVER_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "serverEncryptionAlgorithmsServer2Client";
+        public final static String FINAL_ENCRYPTION_ALGORITHMS_SERVER_TO_CLIENT = "finalEncryptionAlgorithmsServer2Client";
+        public final static String CLIENT_MAC_ALGORITHMS_CLIENT_TO_SERVER = "clientMacAlgorithmsClient2Server";
+        public final static String SERVER_MAC_ALGORITHMS_CLIENT_TO_SERVER = "serverMacAlgorithmsClient2Server";
+        public final static String FINAL_MAC_ALGORITHMS_CLIENT_TO_SERVER = "finalMacAlgorithmsClient2Server";
+        public final static String CLIENT_MAC_ALGORITHMS_SERVER_TO_CLIENT = "clientMacAlgorithmsServer2Client";
+        public final static String SERVER_MAC_ALGORITHMS_SERVER_TO_CLIENT = "serverMacAlgorithmsServer2Client";
+        public final static String FINAL_MAC_ALGORITHMS_SERVER_TO_CLIENT = "finalMacAlgorithmsServer2Client";
+        public final static String CLIENT_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "clientCompressionAlgorithmsClient2Server";
+        public final static String SERVER_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "serverCompressionAlgorithmsClient2Server";
+        public final static String FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER = "finalCompressionAlgorithmsClient2Server";
+        public final static String SERVER_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "serverCompressionAlgorithmsServer2Client";
+        public final static String CLIENT_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "clientCompressionAlgorithmsServer2Client";
+        public final static String FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT = "finalCompressionAlgorithmsServer2Client";
         public final static String SERVER_PUBLIC_KEY = "clientPublicKey";
         public final static String CLIENT_PUBLIC_KEY = "serverPublicKey";
         public final static String FINAL_PUBLIC_KEY_ALGORITHMS = "finalPublicKeyAlgorithms";

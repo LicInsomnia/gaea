@@ -13,7 +13,10 @@ import java.util.List;
 @Data
 public class AssetIsakmpExtension extends BaseAssetExtension {
 
-    private String protocolKey;
+    /**
+     * 通信协议
+     */
+    private String proName;
     /**
      * 密钥交换第一阶段模式
      */
@@ -64,9 +67,12 @@ public class AssetIsakmpExtension extends BaseAssetExtension {
     private List<Object> responderIsakmpCer;
 
     @Override
-    public void create(JSONObject jsonObject) {
+    public boolean create(JSONObject jsonObject) {
         JSONObject isakmpExtension = jsonObject.getJSONObject(HeadConst.FIELD.IASKMP_EXTENSION);
-        this.protocolKey = jsonObject.getString(HeadConst.FIELD.PRONAME);
+        if (null == isakmpExtension) {
+            return false;
+        }
+        this.proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
         this.firstMode = isakmpExtension.getString(HeadConst.FIELD.FIRST_MODE);
         this.secondMode = isakmpExtension.getString(HeadConst.FIELD.SECOND_MODE);
         this.encryptedMessageProtocol = isakmpExtension.getString(HeadConst.FIELD.ENCRYPTION_MESSAGE_PROTOCOL);
@@ -80,16 +86,12 @@ public class AssetIsakmpExtension extends BaseAssetExtension {
         this.secondComplete = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_SECOND_COMPLETE);
         this.responderIsakmpCer = isakmpExtension.getJSONArray(HeadConst.FIELD.RESPONDER_ISAKMP_CER);
         setKey();
-    }
-
-    @Override
-    public String getId() {
-        return null;
+        return true;
     }
 
     @Override
     public void setKey() {
-        this.id = ToolUtils.getMD5(this.protocolKey + "_" + this.firstMode + "_" + this.secondMode + "_" +
+        this.id = ToolUtils.getMD5(this.proName + "_" + this.firstMode + "_" + this.secondMode + "_" +
                 this.encryptedMessageProtocol + "_" + this.responderFirstComplete + "_" +
                 this.responderEncryptionAlgorithm + "_" + this.responderKeyLength + "_" +
                 this.responderHashAlgorithm + "_" + this.responderAuthenticationMethod + "_" +

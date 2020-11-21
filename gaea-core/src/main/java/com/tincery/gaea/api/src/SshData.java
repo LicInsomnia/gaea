@@ -23,16 +23,14 @@ public class SshData extends AbstractSrcData {
 
     @Override
     public String toCsv(char splitChar) {
-        String extensionElements = null;
         String extension = null;
         if (null == this.sshExtension) {
-            extensionElements = this.sshExtension.toCsv(splitChar);
             extension = JSONObject.toJSONString(this.sshExtension);
         }
         Object[] join = new Object[]{
                 super.toCsv(splitChar),
                 this.malformedUpPayload, this.malformedDownPayload,
-                extensionElements, extension
+                extension
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

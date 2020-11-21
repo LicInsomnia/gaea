@@ -13,28 +13,47 @@ import java.util.List;
 @Data
 public class AssetSslExtension extends BaseAssetExtension {
 
+    /**
+     * 通信协议
+     */
+    private String proName;
+    /**
+     * 服务名
+     */
     private String serverName;
-    private String protocolKey;
-    private String versionKey;
-    private String handshakeDescription;
+    /**
+     * 协议版本
+     */
+    private String version;
+    /**
+     * 握手流程
+     */
+    private JSONObject handshake;
     private String handshakeKey;
+    private String handshakeDescription;
+    /**
+     * 协商服务器选择算法套件
+     */
     private JSONObject cipherSuite;
     private String cipherSuiteKey;
     private String keyExchangeAlgorithm;
     private String authenticationAlgorithm;
     private String encryptionAlgorithm;
     private String messageAuthenticationCodesAlgorithm;
-
+    /**
+     * 服务器证书
+     */
     private String cerChainKey;
 
-    private JSONObject handshake;
-
     @Override
-    public void create(JSONObject jsonObject) {
+    public boolean create(JSONObject jsonObject) {
         JSONObject sslExtension = jsonObject.getJSONObject(HeadConst.FIELD.SSL_EXTENSION);
-        this.protocolKey = jsonObject.getString(HeadConst.FIELD.PRONAME);
+        if (null == sslExtension) {
+            return false;
+        }
+        this.proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
         this.serverName = sslExtension.getString(HeadConst.FIELD.SERVER_NAME);
-        this.versionKey = sslExtension.getString(HeadConst.FIELD.VERSION);
+        this.version = sslExtension.getString(HeadConst.FIELD.VERSION);
         this.handshake = sslExtension.getJSONObject(HeadConst.FIELD.HANDSHAKE);
         this.cipherSuite = sslExtension.getJSONObject(HeadConst.FIELD.CIPHER_SUITES);
         if (null != this.cipherSuite) {
@@ -53,11 +72,13 @@ public class AssetSslExtension extends BaseAssetExtension {
         this.cerChainKey = stringBuilder.toString();
         setHandshakeDescription();
         setKey();
+        return true;
     }
 
     private void setHandshakeDescription() {
         if (null == this.handshake) {
             this.handshakeDescription = "未见握手过程";
+            return;
         }
         boolean clientHello = this.handshake.getInteger("clientHello") >= 0;
         boolean serverHello = this.handshake.getInteger("serverHello") >= 0;
@@ -84,8 +105,8 @@ public class AssetSslExtension extends BaseAssetExtension {
 
     @Override
     public void setKey() {
-        this.id = ToolUtils.getMD5(this.serverName + "_" + this.protocolKey + "_" +
-                this.versionKey + "_" + this.handshakeKey + "_" + this.cipherSuiteKey + this.cerChainKey);
+        this.id = ToolUtils.getMD5(this.serverName + "_" + this.proName + "_" +
+                this.version + "_" + this.handshakeKey + "_" + this.cipherSuiteKey + this.cerChainKey);
     }
 
 }

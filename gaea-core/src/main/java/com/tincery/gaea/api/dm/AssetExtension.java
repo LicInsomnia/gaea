@@ -37,17 +37,23 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
         switch (proName) {
             case HeadConst.PRONAME.SSL:
                 AssetSslExtension sslExtension = new AssetSslExtension();
-                sslExtension.create(jsonObject);
+                if (!sslExtension.create(jsonObject)) {
+                    return null;
+                }
                 assetExtension.appendSslExtension(sslExtension);
                 break;
             case HeadConst.PRONAME.SSH:
                 AssetSshExtension sshExtension = new AssetSshExtension();
-                sshExtension.create(jsonObject);
+                if (!sshExtension.create(jsonObject)) {
+                    return null;
+                }
                 assetExtension.appendSshExtension(sshExtension);
                 break;
             case HeadConst.PRONAME.ISAKMP:
                 AssetIsakmpExtension isakmpExtension = new AssetIsakmpExtension();
-                isakmpExtension.create(jsonObject);
+                if (!isakmpExtension.create(jsonObject)) {
+                    return null;
+                }
                 assetExtension.appendIsakmpExtension(isakmpExtension);
                 break;
             default:

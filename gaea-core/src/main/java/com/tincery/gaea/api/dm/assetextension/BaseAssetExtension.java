@@ -22,7 +22,7 @@ public abstract class BaseAssetExtension implements MergeAble<BaseAssetExtension
         return this;
     }
 
-    public abstract void create(JSONObject jsonObject);
+    public abstract boolean create(JSONObject jsonObject);
 
     public abstract void setKey();
 
