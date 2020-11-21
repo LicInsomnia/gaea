@@ -285,12 +285,14 @@ public class HeadConst {
         public final static String C2S_SPI = "c2sSpi";
         public final static String S2C_SPI = "s2cSpi";
         /* ISAKMP */
+        public final static String IASKMP_EXTENSION = "isakmpExtension";
         public final static String MESSAGE_LIST = "messageList";
         public final static String INITIATOR_INFORMATION = "initiatorInformation";
         public final static String RESPONDER_INFORMATION = "responderInformation";
         public final static String INITIATOR_VIDS = "initiatorVid";
         public final static String RESPONDER_VID = "responderVid";
         /* PPTPANDL2TP */
+        public final static String PPTP_L2TP_EXTENSION = "pptpAndL2tpExtension";
         public final static String RESPONSE = "response";
         public final static String CHALLENGE = "challenge";
         public final static String RESPONSE_NAME = "responseName";

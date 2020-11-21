@@ -61,6 +61,10 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
         this.sslExtensions.forEach(ssl -> assetSslExtensionMap.merge(ssl.getId(), ssl, (k, v) -> (AssetSslExtension) v.merge(ssl)));
         that.sslExtensions.forEach(ssl -> assetSslExtensionMap.merge(ssl.getId(), ssl, (k, v) -> (AssetSslExtension) v.merge(ssl)));
         this.sslExtensions = new ArrayList<>(assetSslExtensionMap.values());
+        Map<String, AssetIsakmpExtension> assetIsakmpExtensionMap = new HashMap<>();
+        this.isakmpExtensions.forEach(isakmp -> assetIsakmpExtensionMap.merge(isakmp.getId(), isakmp, (k, v) -> v.merge(isakmp)));
+        that.isakmpExtensions.forEach(isakmp -> assetIsakmpExtensionMap.merge(isakmp.getId(), isakmp, (k, v) -> v.merge(isakmp)));
+        this.isakmpExtensions = new ArrayList<>(assetIsakmpExtensionMap.values());
         return this;
     }
 
