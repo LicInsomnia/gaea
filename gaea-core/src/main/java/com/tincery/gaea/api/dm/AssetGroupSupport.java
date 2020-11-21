@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.ProtocolType;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.gaea.core.base.tool.util.NumberUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.dw.MergeAble;
 import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
@@ -73,6 +74,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(timeTag);
         assetDataDTO.setSessionCount(1L);
         assetDataDTO.setKey(assetDataDTO.getId());
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
         return assetDataDTO;
     }
 
@@ -96,6 +99,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(timeTag);
         assetDataDTO.setSessionCount(1L);
         assetDataDTO.setName(name);
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
         return assetDataDTO;
     }
 
@@ -125,6 +130,8 @@ public class AssetGroupSupport {
         key = key.substring(0, i) + "_" + jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT) + "_" + key.substring(i);
         assetDataDTO.setKey(key);
         assetDataDTO.setClients(serverIpGetClient(jsonObject));
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
         return assetDataDTO.setId(null);
     }
 
@@ -193,6 +200,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(LocalDateTime.ofInstant(Instant.ofEpochMilli(capTime), ZoneOffset.systemDefault()));
         String key = StringUtils.fillString("{}_{}_{}_{}", assetDataDTO.getUnit(), assetDataDTO.getName(),
                 assetDataDTO.getProname(), capTime);
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
         return assetDataDTO.setKey(key).setId(null);
     }
 

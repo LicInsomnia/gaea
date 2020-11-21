@@ -1,8 +1,10 @@
 package com.tincery.gaea.api.dm;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.IpGroup;
 import com.tincery.gaea.api.base.IpHitable;
 import com.tincery.gaea.api.base.IpRange;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,6 +57,31 @@ public class AssetConfigDO extends SimpleBaseDO {
 
     private AssetCondition assetCertStrategy;
 
+
+    public void strategyHit(JSONObject assetServerJson) {
+        if (CollectionUtils.isEmpty(assetStrategyCondition)) {
+            return;
+        }
+        String proName = assetServerJson.getString(HeadConst.FIELD.PRONAME);
+        AssetCondition target = null;
+        for (AssetCondition assetCondition : assetStrategyCondition) {
+            if (Objects.equals(proName, assetCondition.getProname())) {
+                target = assetCondition;
+                break;
+            }
+        }
+        if (target == null) {
+            return;
+        }
+        for (AssetCondition.ConditionGroup conditionGroup : target.getConditionGroup()) {
+            if(conditionGroup.hit(assetServerJson,assetCertStrategy)){
+                assetServerJson.put("$description",conditionGroup.getDescription());
+                assetServerJson.put("alarm",true);
+                return;
+            }
+        }
+
+    }
 
     /****
      * 黑白名单列表
