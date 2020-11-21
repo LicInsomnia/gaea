@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * @author Insomnia
+ */
 @Data
 public class AssetSslExtension extends BaseAssetExtension {
 
@@ -14,8 +17,8 @@ public class AssetSslExtension extends BaseAssetExtension {
      * 表格行中字段，用于去重
      */
     private String serverName;
-    private String protocolDescription;
-    private String versionDescription;
+    private String protocolKey;
+    private String versionKey;
     private String handshakeDescription;
     private String handshakeKey;
     private JSONObject cipherSuite;
@@ -25,31 +28,33 @@ public class AssetSslExtension extends BaseAssetExtension {
     private String encryptionAlgorithm;
     private String messageAuthenticationCodesAlgorithm;
 
-
-    private String cerChainDescription;
+    private String cerChainKey;
 
     private JSONObject handshake;
 
     public void append(JSONObject jsonObject) {
         JSONObject sslExtension = jsonObject.getJSONObject(HeadConst.FIELD.SSL_EXTENSION);
-        this.protocolDescription = jsonObject.getString(HeadConst.FIELD.PRONAME);
+        this.protocolKey = jsonObject.getString(HeadConst.FIELD.PRONAME);
         this.serverName = sslExtension.getString(HeadConst.FIELD.SERVER_NAME);
-        this.versionDescription = sslExtension.getString(HeadConst.FIELD.VERSION);
+        this.versionKey = sslExtension.getString(HeadConst.FIELD.VERSION);
         this.handshake = sslExtension.getJSONObject(HeadConst.FIELD.HANDSHAKE);
         this.cipherSuite = sslExtension.getJSONObject(HeadConst.FIELD.CIPHER_SUITES);
-        this.cipherSuiteKey = cipherSuite.getString(HeadConst.FIELD.ID);
-        this.keyExchangeAlgorithm = cipherSuite.getString(HeadConst.FIELD.KEY_EXCHANGE_ALGORITHM);
-        this.authenticationAlgorithm = cipherSuite.getString(HeadConst.FIELD.AUTHENTICATION_ALGORITHM);
-        this.encryptionAlgorithm = cipherSuite.getString(HeadConst.FIELD.ENCRYPTION_ALGORITHM);
-        this.messageAuthenticationCodesAlgorithm = cipherSuite.getString(HeadConst.FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM);
+        if (null != this.cipherSuite) {
+            this.cipherSuiteKey = cipherSuite.getString(HeadConst.FIELD.ID);
+            this.keyExchangeAlgorithm = cipherSuite.getString(HeadConst.FIELD.KEY_EXCHANGE_ALGORITHM);
+            this.authenticationAlgorithm = cipherSuite.getString(HeadConst.FIELD.AUTHENTICATION_ALGORITHM);
+            this.encryptionAlgorithm = cipherSuite.getString(HeadConst.FIELD.ENCRYPTION_ALGORITHM);
+            this.messageAuthenticationCodesAlgorithm = cipherSuite.getString(HeadConst.FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM);
+        }
         List<String> serverCerChain = (List<String>) sslExtension.get(HeadConst.FIELD.SERVER_CER_CHAIN);
         StringBuilder stringBuilder = new StringBuilder();
         for (String s : serverCerChain) {
-            stringBuilder.append(s.split("_")[0]).append("_");
+            stringBuilder.append(s.split("_")[0]).append(";");
         }
         stringBuilder.setLength(stringBuilder.length() - 1);
-        this.cerChainDescription = stringBuilder.toString();
+        this.cerChainKey = stringBuilder.toString();
         setHandshakeDescription();
+        setKey();
     }
 
     private void setHandshakeDescription() {
@@ -83,6 +88,12 @@ public class AssetSslExtension extends BaseAssetExtension {
     public BaseAssetExtension merge(BaseAssetExtension that) {
         super.merge(that);
         return this;
+    }
+
+    @Override
+    public void setKey() {
+        this.id = ToolUtils.getMD5(this.serverName + "_" + this.protocolKey + "_" +
+                this.versionKey + "_" + this.handshakeKey + "_" + this.cipherSuiteKey + this.cerChainKey);
     }
 
 }

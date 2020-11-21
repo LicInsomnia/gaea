@@ -2,11 +2,13 @@ package com.tincery.gaea.api.dm.assetextension;
 
 import com.tincery.gaea.core.dw.MergeAble;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 @Data
 public abstract class BaseAssetExtension implements MergeAble<BaseAssetExtension> {
 
-    protected String key;
+    @Id
+    protected String id;
     protected Long count;
     protected Long pkt;
     protected Long byteNum;
@@ -19,8 +21,6 @@ public abstract class BaseAssetExtension implements MergeAble<BaseAssetExtension
         return this;
     }
 
-    @Override
-    public String getId() {
-        return this.key;
-    }
+    public abstract void setKey();
+
 }

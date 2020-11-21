@@ -1,19 +1,19 @@
 package com.tincery.gaea.api.dm.assetextension;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.dw.MergeAble;
 import lombok.Data;
 
 @Data
 public class AssetIsakmpExtension implements MergeAble<AssetIsakmpExtension> {
 
-    private String protocol;
-    private String version;
-    private String handshake;
+    public void append(JSONObject jsonObject) {
 
+    }
 
     @Override
-    public AssetIsakmpExtension merge(AssetIsakmpExtension assetSslExtension) {
-        return null;
+    public AssetIsakmpExtension merge(AssetIsakmpExtension that) {
+        return this;
     }
 
     @Override

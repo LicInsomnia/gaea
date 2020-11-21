@@ -251,7 +251,7 @@ public class HeadConst {
         public final static String SERVER_NAME = "serverName";
         public final static String DAUL_AUTH = "daulAuth";
         public final static String VERSION = "version";
-        public final static String CIPHER_SUITES = "cipherSuites";
+        public final static String CIPHER_SUITES = "cipherSuite";
         public final static String KEY_EXCHANGE_ALGORITHM = "keyExchangeAlgorithm";
         public final static String AUTHENTICATION_ALGORITHM = "authenticationAlgorithm";
         public final static String ENCRYPTION_ALGORITHM = "encryptionAlgorithm";

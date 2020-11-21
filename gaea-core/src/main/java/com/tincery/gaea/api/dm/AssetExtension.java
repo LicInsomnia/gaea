@@ -28,6 +28,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     private List<AssetIsakmpExtension> isakmpExtensions;
 
     public static AssetExtension fromAssetJsonObject(JSONObject jsonObject) {
+        int assetFlag = jsonObject.getInteger(HeadConst.FIELD.ASSET_FLAG);
         AssetExtension assetExtension = new AssetExtension();
         assetExtension.setAssetUnit(jsonObject.getString("$assetUnit"));
         assetExtension.setAssetName(jsonObject.getString("$assetName"));
@@ -35,10 +36,14 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
         String proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
         switch (proName) {
             case HeadConst.PRONAME.SSL:
-                AssetSslExtension extension = new AssetSslExtension();
-                extension.append(jsonObject);
+                AssetSslExtension sslExtension = new AssetSslExtension();
+                sslExtension.append(jsonObject);
                 break;
             case HeadConst.PRONAME.SSH:
+                break;
+            case HeadConst.PRONAME.ISAKMP:
+                AssetIsakmpExtension isakmpExtension = new AssetIsakmpExtension();
+                isakmpExtension.append(jsonObject);
                 break;
             default:
                 break;
@@ -53,8 +58,8 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     @Override
     public AssetExtension merge(AssetExtension that) {
         Map<String, AssetSslExtension> assetSslExtensionMap = new HashMap<>();
-        this.sslExtensions.forEach(ssl -> assetSslExtensionMap.merge(ssl.getKey(), ssl, (k, v) -> (AssetSslExtension) v.merge(ssl)));
-        that.sslExtensions.forEach(ssl -> assetSslExtensionMap.merge(ssl.getKey(), ssl, (k, v) -> (AssetSslExtension) v.merge(ssl)));
+        this.sslExtensions.forEach(ssl -> assetSslExtensionMap.merge(ssl.getId(), ssl, (k, v) -> (AssetSslExtension) v.merge(ssl)));
+        that.sslExtensions.forEach(ssl -> assetSslExtensionMap.merge(ssl.getId(), ssl, (k, v) -> (AssetSslExtension) v.merge(ssl)));
         this.sslExtensions = new ArrayList<>(assetSslExtensionMap.values());
         return this;
     }
