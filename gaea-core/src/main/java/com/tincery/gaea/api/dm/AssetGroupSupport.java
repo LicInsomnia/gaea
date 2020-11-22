@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.ProtocolType;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
+import com.tincery.gaea.core.base.tool.util.NumberUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.dw.MergeAble;
 import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,7 @@ public class AssetGroupSupport {
 
     public static List<AssetExtension> getSaveExtension(List<JSONObject> allData, Function<JSONObject, AssetExtension> map) {
         Map<String, AssetExtension> result = new HashMap<>(16);
-        allData.stream().map(map).forEach(assetDataDTO -> result.merge(assetDataDTO.getId(), assetDataDTO, (k, v) -> v.merge(assetDataDTO)));
+        allData.stream().map(map).filter(Objects::nonNull).forEach(assetExtension -> result.merge(assetExtension.getId(), assetExtension, (k, v) -> v.merge(assetExtension)));
         return new ArrayList<>(result.values());
     }
 
@@ -73,6 +75,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(timeTag);
         assetDataDTO.setSessionCount(1L);
         assetDataDTO.setKey(assetDataDTO.getId());
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
         return assetDataDTO;
     }
 
@@ -96,6 +100,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(timeTag);
         assetDataDTO.setSessionCount(1L);
         assetDataDTO.setName(name);
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
         return assetDataDTO;
     }
 
@@ -122,9 +128,13 @@ public class AssetGroupSupport {
         AssetDataDTO assetDataDTO = serverProtocolDataFrom(jsonObject);
         String key = assetDataDTO.getKey();
         int i = key.lastIndexOf("_");
-        key = key.substring(0, i) + "_" + jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT) + "_" + key.substring(i);
+        int serverPort = jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
+        key = key.substring(0, i) + "_" + serverPort + "_" + key.substring(i);
         assetDataDTO.setKey(key);
+        assetDataDTO.setPort(serverPort);
         assetDataDTO.setClients(serverIpGetClient(jsonObject));
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
         return assetDataDTO.setId(null);
     }
 
@@ -193,6 +203,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(LocalDateTime.ofInstant(Instant.ofEpochMilli(capTime), ZoneOffset.systemDefault()));
         String key = StringUtils.fillString("{}_{}_{}_{}", assetDataDTO.getUnit(), assetDataDTO.getName(),
                 assetDataDTO.getProname(), capTime);
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
         return assetDataDTO.setKey(key).setId(null);
     }
 
@@ -222,7 +234,7 @@ public class AssetGroupSupport {
      **/
     public static <T extends SimpleBaseDO & MergeAble<T>> void rechecking(SimpleBaseDaoImpl<T> assetDao, List<T> list) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("_id").in(list.stream().map(T::getId).collect(Collectors.toList())));
+        query.addCriteria(Criteria.where("_id").in(list.stream().map(data -> data.getId()).collect(Collectors.toList())));
         List<T> mongoData = assetDao.findListData(query);
         if (!CollectionUtils.isEmpty(mongoData)) {
             list.forEach(asset -> {

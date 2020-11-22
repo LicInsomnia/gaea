@@ -30,48 +30,48 @@ public class Handshake {
                                 this.serverFinished = this.clientChangeCipherSpec = this.serverChangeCipherSpec = -1;
     }
 
-    public void merge(Handshake handshake) {
-        if (Objects.isNull(handshake)){
+    public void merge(Handshake that) {
+        if (Objects.isNull(that)) {
             return;
         }
-        if (handshake.clientHello > 0) {
-            this.clientHello = handshake.clientHello;
+        if (that.clientHello >= 0) {
+            this.clientHello = that.clientHello;
         }
-        if (handshake.serverHello > 0) {
-            this.serverHello = handshake.serverHello;
+        if (that.serverHello >= 0) {
+            this.serverHello = that.serverHello;
         }
-        if (handshake.serverCertificate > 0) {
-            this.serverCertificate = handshake.serverCertificate;
+        if (that.serverCertificate >= 0) {
+            this.serverCertificate = that.serverCertificate;
         }
-        if (handshake.serverKeyExchange > 0) {
-            this.serverKeyExchange = handshake.serverKeyExchange;
+        if (that.serverKeyExchange >= 0) {
+            this.serverKeyExchange = that.serverKeyExchange;
         }
-        if (handshake.serverCertificateRequest > 0) {
-            this.serverCertificateRequest = handshake.serverCertificateRequest;
+        if (that.serverCertificateRequest >= 0) {
+            this.serverCertificateRequest = that.serverCertificateRequest;
         }
-        if (handshake.serverHelloDone > 0) {
-            this.serverHelloDone = handshake.serverHelloDone;
+        if (that.serverHelloDone >= 0) {
+            this.serverHelloDone = that.serverHelloDone;
         }
-        if (handshake.clientCertificate > 0) {
-            this.clientCertificate = handshake.clientCertificate;
+        if (that.clientCertificate >= 0) {
+            this.clientCertificate = that.clientCertificate;
         }
-        if (handshake.clientKeyExchange > 0) {
-            this.clientKeyExchange = handshake.clientKeyExchange;
+        if (that.clientKeyExchange >= 0) {
+            this.clientKeyExchange = that.clientKeyExchange;
         }
-        if (handshake.clientCertificateVerify > 0) {
-            this.clientCertificateVerify = handshake.clientCertificateVerify;
+        if (that.clientCertificateVerify >= 0) {
+            this.clientCertificateVerify = that.clientCertificateVerify;
         }
-        if (handshake.clientFinished > 0) {
-            this.clientFinished = handshake.clientFinished;
+        if (that.clientFinished >= 0) {
+            this.clientFinished = that.clientFinished;
         }
-        if (handshake.serverFinished > 0) {
-            this.serverFinished = handshake.serverFinished;
+        if (that.serverFinished >= 0) {
+            this.serverFinished = that.serverFinished;
         }
-        if (handshake.clientChangeCipherSpec > 0) {
-            this.clientChangeCipherSpec = handshake.clientChangeCipherSpec;
+        if (that.clientChangeCipherSpec >= 0) {
+            this.clientChangeCipherSpec = that.clientChangeCipherSpec;
         }
-        if (handshake.serverChangeCipherSpec > 0) {
-            this.serverChangeCipherSpec = handshake.serverChangeCipherSpec;
+        if (that.serverChangeCipherSpec >= 0) {
+            this.serverChangeCipherSpec = that.serverChangeCipherSpec;
         }
     }
 }

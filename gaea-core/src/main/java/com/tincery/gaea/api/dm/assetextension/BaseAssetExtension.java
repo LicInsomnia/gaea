@@ -1,15 +1,18 @@
 package com.tincery.gaea.api.dm.assetextension;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.dw.MergeAble;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 @Data
 public abstract class BaseAssetExtension implements MergeAble<BaseAssetExtension> {
 
-    protected String key;
-    protected Long count;
-    protected Long pkt;
-    protected Long byteNum;
+    @Id
+    protected String id;
+    protected long count;
+    protected long pkt;
+    protected long byteNum;
 
     @Override
     public BaseAssetExtension merge(BaseAssetExtension that) {
@@ -19,8 +22,8 @@ public abstract class BaseAssetExtension implements MergeAble<BaseAssetExtension
         return this;
     }
 
-    @Override
-    public String getId() {
-        return this.key;
-    }
+    public abstract boolean create(JSONObject jsonObject);
+
+    public abstract void setKey();
+
 }

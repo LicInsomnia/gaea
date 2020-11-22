@@ -16,7 +16,7 @@
         <module>gaea-src-alarm</module>
         <module>gaea-src-session</module>
         <module>gaea-src-ssl</module>
-        <module>gaea-src-email</module>
+<!--        <module>gaea-src-email</module>-->
         <module>gaea-src-impsession</module>
         <module>gaea-src-qq</module>
         <module>gaea-src-wechat</module>

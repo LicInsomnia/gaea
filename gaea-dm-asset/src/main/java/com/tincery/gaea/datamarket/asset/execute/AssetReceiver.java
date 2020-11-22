@@ -56,7 +56,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
     }
 
 
-
     @Autowired
     private AssetDetector assetDetector;
 
@@ -139,16 +138,19 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 AssetGroupSupport::portDataFrom);
         assetPortDao.insert(portData);
         log.info("端口维度合并插入{}条数据", portData.size());
+
         // todo 修改144行的 后面这个lambda  把一个jsonobject(asset会话) 变成一个你需要的实体
-        List<AssetExtension> saveExtension = AssetGroupSupport.getSaveExtension(allAsset, AssetExtension::fromAssetJsonObject);
+        List<AssetExtension> saveExtension = AssetGroupSupport.getSaveExtension(allAsset,
+                AssetExtension::fromAssetJsonObject);
         AssetGroupSupport.rechecking(assetExtensionDao, saveExtension);
+        log.info("拓展信息合并插入{}条数据", saveExtension.size());
 
         writeAlarm();
         writeEventData();
     }
 
 
-    private synchronized void alarmAdd(List<AlarmMaterialData> alarmMaterialDataList,JSONObject jsonObject) {
+    private synchronized void alarmAdd(List<AlarmMaterialData> alarmMaterialDataList, JSONObject jsonObject) {
         if (CollectionUtils.isEmpty(alarmMaterialDataList)) {
             return;
         }
@@ -157,21 +159,22 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         if (this.alarmList.size() > ALARM_WRITE_COUNT) {
             writeAlarm();
         }
-        if (this.eventDataList.size() > ALARM_WRITE_COUNT){
+        if (this.eventDataList.size() > ALARM_WRITE_COUNT) {
             writeEventData();
         }
     }
+
     public synchronized void writeEventData() {
         if (eventDataList.isEmpty()) {
             return;
         }
         String fileName = "assetAlarm" + System.currentTimeMillis() + ".json";
         File file = new File(NodeInfo.getEventData() + fileName);
-        try(FileWriter fileWriter = new FileWriter(file,true)) {
+        try (FileWriter fileWriter = new FileWriter(file, true)) {
             for (JSONObject jsonObject : this.eventDataList) {
                 fileWriter.write(jsonObject.toJSONString() + "\n");
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -229,19 +232,28 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             AssetConfigDO serverConfig = assetDetector.getAsset(serverIp);
             switch (findByFlag(assetJson.getIntValue("assetFlag"))) {
                 case CLIENT_ASSET:
-                    fillAsset(assetJson, clientConfig, clientIp);
-                    clientList.add(assetJson);
+                    if (clientConfig != null) {
+                        fillAsset(assetJson, clientConfig, clientIp);
+                        clientList.add(assetJson);
+                    }
                     break;
                 case SERVER_ASSET:
-                    fillAsset(assetJson, serverConfig, serverIp);
-                    serverList.add(assetJson);
+                    if (serverConfig != null) {
+                        fillAsset(assetJson, serverConfig, serverIp);
+                        serverList.add(assetJson);
+                    }
                     break;
                 case SERVER_AND_CLIENT_ASSET:
-                    fillAsset(assetJson, clientConfig, clientIp);
+                    if (clientConfig != null) {
+                        fillAsset(assetJson, clientConfig, clientIp);
+                        clientList.add(assetJson);
+                    }
                     JSONObject clone = (JSONObject) assetJson.clone();
-                    fillAsset(clone, serverConfig, serverIp);
-                    clientList.add(assetJson);
-                    serverList.add(clone);
+                    if (serverConfig != null) {
+                        fillAsset(clone, serverConfig, serverIp);
+                        serverList.add(clone);
+                    }
+
                 default:
                     break;
             }
@@ -273,15 +285,38 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         }
 
         @Override
-        public AssetResult call() throws Exception {
+        public AssetResult call() {
             List<JSONObject> clientAssetList = new ArrayList<>();
             List<JSONObject> serverAssetList = new ArrayList<>();
             for (String line : lines) {
-                JSONObject assetJson = JSON.parseObject(line);
-                AssetReceiver.this.alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector),assetJson);
+                if (line.isEmpty()) {
+                    continue;
+                }
+                JSONObject assetJson = null;
+                try {
+                    assetJson = JSON.parseObject(line);
+                } catch (Exception e) {
+                    log.error("资产会话JSON序列化失败，错误JSON：{}", line);
+                    continue;
+                }
+                AssetReceiver.this.alarmAdd(AssetFlag.jsonRun(assetJson, assetDetector), assetJson);
                 AssetFlag.fillAndAdd(assetJson, assetDetector, clientAssetList, serverAssetList);
             }
             return new AssetResult(clientAssetList, serverAssetList);
+        }
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 100; i++) {
+            try {
+                System.out.println(i);
+                int i1 = i / (i - 50);
+                System.out.println();
+            } catch (Exception e) {
+                System.out.println("出错了");
+                continue;
+            }
+            System.out.println("有没有");
         }
     }
 
