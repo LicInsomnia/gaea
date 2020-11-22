@@ -95,6 +95,8 @@ public class CerReceiver implements Receiver {
 
     private Map<String, ModuleConnection> getTopolgy() {
         ModuleTopology topology = new ModuleTopology();
+        topology.addOutputTag("DataSourceCheckSigModule", "test");
+
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerComplianceModule");
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerReliabilityModule");
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerGmComplianceModule");
