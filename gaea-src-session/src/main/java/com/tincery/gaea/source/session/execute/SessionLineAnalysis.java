@@ -8,8 +8,11 @@ import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 
 /**
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@Slf4j
 public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
 
     @Autowired
@@ -100,7 +104,13 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
                 HeadConst.PRONAME.OTHER,
                 sessionData);
         //设置境内外要在设置7元组之后,要不然没有serverIp
-        sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
+        try {
+            sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
+        }catch (RuntimeException e){
+            sessionData.setForeign(false);
+            log.error("无法解析内外网ipv6地址，数据为{}", Arrays.asList(element));
+        }
+
         this.srcLineSupport.setFlow(element[4], element[5], element[6], element[7], sessionData);
         String serverKey = element[8] + "_" + element[13];
         return this.srcLineSupport.setProName(serverKey, sessionData);

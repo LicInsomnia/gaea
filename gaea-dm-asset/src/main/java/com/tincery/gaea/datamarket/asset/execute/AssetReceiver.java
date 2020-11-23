@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.BiFunction;
 
 
@@ -73,6 +74,8 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
 
     @Autowired
     private AssetExtensionDao assetExtensionDao;
+
+    private static LongAdder longAdder = new LongAdder();
 
     @Override
     protected void dmFileAnalysis(File file) {
@@ -172,6 +175,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             for (JSONObject jsonObject : this.eventDataList) {
                 fileWriter.write(jsonObject.toJSONString() + "\n");
             }
+            this.eventDataList.clear();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -221,8 +225,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
 
         public static List<AlarmMaterialData> jsonRun(JSONObject assetJson, AssetDetector assetDetector) {
             int flag = assetJson.getIntValue("assetFlag");
-            // 默认添加一个未告警
-            assetJson.put("alarm", false);
             return findByFlag(flag).function.apply(assetJson, assetDetector);
         }
 
@@ -259,12 +261,15 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 default:
                     break;
             }
+            longAdder.increment();
+            System.out.println(longAdder.intValue());
         }
 
         private static void fillAsset(JSONObject assetJson, AssetConfigDO config, long targetIp) {
             assetJson.put("ip", targetIp);
             assetJson.put("unit", config.getUnit());
             assetJson.put("name", config.getName());
+            assetJson.put("alarm", false);
         }
     }
 
@@ -297,6 +302,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 JSONObject assetJson = null;
                 try {
                     assetJson = JSON.parseObject(line);
+                    System.out.println(Thread.currentThread().getName()+"完成了");
                 } catch (Exception e) {
                     log.error("资产会话JSON序列化失败，错误JSON：{}", line);
                     continue;

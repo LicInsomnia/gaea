@@ -7,6 +7,7 @@ import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import java.util.*;
  * @author gongxuanzhang
  */
 @Component
+@Slf4j
 public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
 
     @Autowired
@@ -326,7 +328,12 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         this.isakmpLineSupport.set7TupleAndFlow(s2dFlag, elements[10], elements[11], elements[12], elements[13],
                 elements[14], elements[15], elements[4], elements[5], elements[6], elements[7], isakmpData
         );
-        isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
+        try {
+            isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
+        }catch (RuntimeException e){
+            log.error("无法解析ipv6内外网地址，数据为{}", Arrays.asList(elements));
+        }
+
 
         if (s2dFlag){
             if (isakmpData.getDataType() == -1){
