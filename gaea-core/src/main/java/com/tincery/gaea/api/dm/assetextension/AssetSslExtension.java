@@ -64,14 +64,17 @@ public class AssetSslExtension extends BaseAssetExtension {
             this.messageAuthenticationCodesAlgorithm = cipherSuite.getString(HeadConst.FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM);
         }
         List<String> serverCerChain = (List<String>) sslExtension.get(HeadConst.FIELD.SERVER_CER_CHAIN);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String s : serverCerChain) {
-            stringBuilder.append(s.split("_")[0]).append(";");
+        if (null != serverCerChain) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String s : serverCerChain) {
+                stringBuilder.append(s.split("_")[0]).append(";");
+            }
+            stringBuilder.setLength(stringBuilder.length() - 1);
+            this.cerChainKey = stringBuilder.toString();
         }
-        stringBuilder.setLength(stringBuilder.length() - 1);
-        this.cerChainKey = stringBuilder.toString();
         setHandshakeDescription();
         setKey();
+        appendFlow(jsonObject);
         return true;
     }
 

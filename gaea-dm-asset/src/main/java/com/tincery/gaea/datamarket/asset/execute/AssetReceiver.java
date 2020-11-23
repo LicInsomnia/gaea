@@ -75,7 +75,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
     @Autowired
     private AssetExtensionDao assetExtensionDao;
 
-    private static LongAdder longAdder = new LongAdder();
+    private static final LongAdder longAdder = new LongAdder();
 
     @Override
     protected void dmFileAnalysis(File file) {
@@ -108,7 +108,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             }
 
         }
-//        free(clientAssetList, serverAssetList);
+        free(clientAssetList, serverAssetList);
     }
 
     @Override
@@ -141,11 +141,13 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         assetPortDao.insert(portData);
         log.info("端口维度合并插入{}条数据", portData.size());
 
-        // todo 修改144行的 后面这个lambda  把一个jsonobject(asset会话) 变成一个你需要的实体
-        List<AssetExtension> saveExtension = AssetGroupSupport.getSaveExtension(allAsset,
+        List<AssetExtension> extensionList
+                = AssetGroupSupport.getSaveExtension(allAsset,
                 AssetExtension::fromAssetJsonObject);
-        AssetGroupSupport.rechecking(assetExtensionDao, saveExtension);
-        log.info("拓展信息合并插入{}条数据", saveExtension.size());
+        AssetGroupSupport.rechecking(assetExtensionDao, extensionList);
+        extensionList.forEach(assetExtensionDao::saveOrUpdate);
+        log.info("拓展信息合并插入{}条数据", extensionList.size());
+
         writeAlarm();
         writeEventData();
     }
@@ -302,7 +304,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 JSONObject assetJson = null;
                 try {
                     assetJson = JSON.parseObject(line);
-                    System.out.println(Thread.currentThread().getName()+"完成了");
                 } catch (Exception e) {
                     log.error("资产会话JSON序列化失败，错误JSON：{}", line);
                     continue;

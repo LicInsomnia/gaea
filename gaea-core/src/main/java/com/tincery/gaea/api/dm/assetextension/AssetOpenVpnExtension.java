@@ -61,6 +61,7 @@ public class AssetOpenVpnExtension extends BaseAssetExtension {
         this.finalCompressionAlgorithmsClient2Server = sshExtension.getString(HeadConst.FIELD.FINAL_COMPRESSION_ALGORITHMS_CLIENT_TO_SERVER);
         this.finalCompressionAlgorithmsServer2Client = sshExtension.getString(HeadConst.FIELD.FINAL_COMPRESSION_ALGORITHMS_SERVER_TO_CLIENT);
         setKey();
+        appendFlow(jsonObject);
         return true;
     }
 

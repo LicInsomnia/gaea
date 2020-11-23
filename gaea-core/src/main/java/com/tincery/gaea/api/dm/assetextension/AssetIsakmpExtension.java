@@ -86,6 +86,7 @@ public class AssetIsakmpExtension extends BaseAssetExtension {
         this.secondComplete = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_SECOND_COMPLETE);
         this.responderIsakmpCer = isakmpExtension.getJSONArray(HeadConst.FIELD.RESPONDER_ISAKMP_CER);
         setKey();
+        appendFlow(jsonObject);
         return true;
     }
 

@@ -166,7 +166,7 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
                 .setChallenge(subExtension(elements[29]))
                 .setResponseName(subExtension(elements[32]))
                 .setChallengeName(subExtension(elements[31]))
-                .setAuthProtocol(subExtension(elements[33]))
+                .setAuthenticationProtocol(subExtension(elements[33]))
                 .setAuthenticationAlgorithm(subExtension(elements[34]))
                 .setSuccessMessage(subExtension(elements[35]))
                 .setEncryptionAlgorithm(subExtension(elements[36]));
