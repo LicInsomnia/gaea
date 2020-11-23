@@ -38,20 +38,20 @@ public class PptpAndL2tpExtension implements Serializable {
     /**
      * 认证算法
      */
-    private String authAlgo;
+    private String authenticationAlgorithm;
 
     /**
      * 成功消息
      */
-    private String successMesg;
+    private String successMessage;
     /**
      * alog是对话  enc不知道
      */
-    private String encAlog;
+    private String encryptionAlgorithm;
 
     public String toCsv(char splitChar) {
         Object[] join = new Object[]{
-                this.challenge, this.challengeName, this.response,  this.responseName,  this.authProtocol, this.authAlgo, this.successMesg, this.encAlog
+                this.challenge, this.challengeName, this.response, this.responseName, this.authProtocol, this.authenticationAlgorithm, this.successMessage, this.encryptionAlgorithm
         };
         return Joiner.on(splitChar).useForNull("").join(join);
     }

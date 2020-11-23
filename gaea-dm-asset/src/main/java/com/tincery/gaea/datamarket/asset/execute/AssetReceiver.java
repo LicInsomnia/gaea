@@ -306,18 +306,4 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         }
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 100; i++) {
-            try {
-                System.out.println(i);
-                int i1 = i / (i - 50);
-                System.out.println();
-            } catch (Exception e) {
-                System.out.println("出错了");
-                continue;
-            }
-            System.out.println("有没有");
-        }
-    }
-
 }

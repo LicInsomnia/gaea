@@ -142,14 +142,6 @@ public class HeadConst {
     public final static String PPTPANDL2TP_HEADER = BASE_COMMON_HEADER +
             FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
             FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
-            FIELD.CHALLENGE + CSV_SEPARATOR +
-            FIELD.CHALLENGE_NAME + CSV_SEPARATOR +
-            FIELD.RESPONSE + CSV_SEPARATOR +
-            FIELD.RESPONSE_NAME + CSV_SEPARATOR +
-            FIELD.AUTH_PROTOCOL + CSV_SEPARATOR +
-            FIELD.AUTH_ALGO + CSV_SEPARATOR +
-            FIELD.SUCCESS_MESG + CSV_SEPARATOR +
-            FIELD.ENC_ALOG + CSV_SEPARATOR +
             FIELD.EXTENSION;
     /* wechat csv文件头 */
     public final static String WECHAT_HEADER = BASE_COMMON_HEADER +
@@ -288,10 +280,10 @@ public class HeadConst {
         public final static String CHALLENGE = "challenge";
         public final static String RESPONSE_NAME = "responseName";
         public final static String CHALLENGE_NAME = "challengeName";
-        public final static String AUTH_PROTOCOL = "authProtocol";
-        public final static String AUTH_ALGO = "authAlgo";
-        public final static String SUCCESS_MESG = "successMesg";
-        public final static String ENC_ALOG = "encAlog";
+        public final static String AUTHENTICATION_PROTOCOL = "authenticationProtocol";
+        public final static String PPTP_AND_L2TP_AUTHENTICATION_ALGORITHM = "authenticationAlgorithm";
+        public final static String SUCCESS_MESSAGE = "successMessage";
+        public final static String PPTP_AND_L2TP_ENCRYPTION_ALGORITHM = "encryptionAlgorithm";
         /* WECHAT */
         public final static String WXNUM = "wxNum";
         public final static String OSTYPE = "osType";
@@ -362,7 +354,6 @@ public class HeadConst {
         public final static String AH = "AH";
         public final static String MALFORMED = "MALFORMED";
         public final static String OTHER = "OTHER";
-        public final static String PPTPANDL2TP = "PPTPANDL2TP";
         public final static String WECHAT = "WECHAT";
         public final static String PPTP = "PPTP";
         public final static String L2TP = "L2TP";
