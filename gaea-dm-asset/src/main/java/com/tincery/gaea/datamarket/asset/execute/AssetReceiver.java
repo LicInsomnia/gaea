@@ -105,7 +105,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             }
 
         }
-        free(clientAssetList, serverAssetList);
+//        free(clientAssetList, serverAssetList);
     }
 
     @Override
@@ -113,7 +113,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
     protected void setDmProperties(DmProperties dmProperties) {
         this.dmProperties = dmProperties;
     }
-
 
     private void free(List<JSONObject> clientAssetList, List<JSONObject> serverAssetList) {
         List<JSONObject> allAsset = new ArrayList<>(clientAssetList);
@@ -144,7 +143,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 AssetExtension::fromAssetJsonObject);
         AssetGroupSupport.rechecking(assetExtensionDao, saveExtension);
         log.info("拓展信息合并插入{}条数据", saveExtension.size());
-
         writeAlarm();
         writeEventData();
     }

@@ -77,26 +77,6 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
         return assetExtension;
     }
 
-    private void appendSslExtension(AssetSslExtension sslExtension) {
-        this.sslExtensions.add(sslExtension);
-    }
-
-    private void appendOpenVpnExtension(AssetOpenVpnExtension openVpnExtension) {
-        this.openVpnExtensions.add(openVpnExtension);
-    }
-
-    private void appendSshExtension(AssetSshExtension sshExtension) {
-        this.sshExtensions.add(sshExtension);
-    }
-
-    private void appendIsakmpExtension(AssetIsakmpExtension isakmpExtension) {
-        this.isakmpExtensions.add(isakmpExtension);
-    }
-
-    private void appendPptpAndL2tpExtension(AssetPptpAndL2tpExtension pptpAndL2tpExtension) {
-        this.pptpAndL2tpExtensions.add(pptpAndL2tpExtension);
-    }
-
     public void setId() {
         this.id = this.assetUnit + "_" + this.assetName;
     }
@@ -124,6 +104,26 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
         that.pptpAndL2tpExtensions.forEach(pptpAndL2tp -> assetPptpAndL2tpExtensionMap.merge(pptpAndL2tp.getId(), pptpAndL2tp, (k, v) -> (AssetPptpAndL2tpExtension) v.merge(pptpAndL2tp)));
         this.pptpAndL2tpExtensions = new ArrayList<>(assetPptpAndL2tpExtensionMap.values());
         return this;
+    }
+
+    private void appendSslExtension(AssetSslExtension sslExtension) {
+        this.sslExtensions.add(sslExtension);
+    }
+
+    private void appendOpenVpnExtension(AssetOpenVpnExtension openVpnExtension) {
+        this.openVpnExtensions.add(openVpnExtension);
+    }
+
+    private void appendSshExtension(AssetSshExtension sshExtension) {
+        this.sshExtensions.add(sshExtension);
+    }
+
+    private void appendIsakmpExtension(AssetIsakmpExtension isakmpExtension) {
+        this.isakmpExtensions.add(isakmpExtension);
+    }
+
+    private void appendPptpAndL2tpExtension(AssetPptpAndL2tpExtension pptpAndL2tpExtension) {
+        this.pptpAndL2tpExtensions.add(pptpAndL2tpExtension);
     }
 
 }

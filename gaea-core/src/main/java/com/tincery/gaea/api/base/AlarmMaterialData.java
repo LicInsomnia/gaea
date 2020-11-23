@@ -319,7 +319,7 @@ public final class AlarmMaterialData {
         }
         this.publisher = alarmRule.getPublisher();
         this.serverLocation = ipSelector.getCommonInformation(this.serverIp);
-        this.serverLocation = ipSelector.getCommonInformation(this.serverIp);
+        this.clientLocation = ipSelector.getCommonInformation(this.clientIp);
         this.serverLocationOuter = ipSelector.getCommonInformation(this.serverIpOuter);
         this.clientLocationOuter = ipSelector.getCommonInformation(this.clientIpOuter);
     }
