@@ -160,11 +160,9 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         this.alarmList.addAll(alarmMaterialDataList);
         this.eventDataList.add(jsonObject);
         if (this.alarmList.size() > ALARM_WRITE_COUNT) {
-            System.out.println("执行alarm");
             writeAlarm();
         }
         if (this.eventDataList.size() > ALARM_WRITE_COUNT) {
-            System.out.println("执行event");
             writeEventData();
         }
     }
