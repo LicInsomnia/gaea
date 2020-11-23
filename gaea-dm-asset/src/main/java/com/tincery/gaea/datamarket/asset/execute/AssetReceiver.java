@@ -219,8 +219,12 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             return first.orElse(null);
         }
 
+
+
         public static List<AlarmMaterialData> jsonRun(JSONObject assetJson, AssetDetector assetDetector) {
             int flag = assetJson.getIntValue("assetFlag");
+            // 默认添加一个未告警
+            assetJson.put("alarm", false);
             return findByFlag(flag).function.apply(assetJson, assetDetector);
         }
 
