@@ -62,8 +62,6 @@ public class AssetConfigDO extends SimpleBaseDO {
         if (CollectionUtils.isEmpty(assetStrategyCondition)) {
             return;
         }
-        assetServerJson.put("$assetUnit", this.unit);
-        assetServerJson.put("$assetName", this.name);
         String proName = assetServerJson.getString(HeadConst.FIELD.PRONAME);
         AssetCondition target = null;
         for (AssetCondition assetCondition : assetStrategyCondition) {

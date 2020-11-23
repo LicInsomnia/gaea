@@ -30,8 +30,8 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     public static AssetExtension fromAssetJsonObject(JSONObject jsonObject) {
         int assetFlag = jsonObject.getInteger(HeadConst.FIELD.ASSET_FLAG);
         AssetExtension assetExtension = new AssetExtension();
-        assetExtension.setAssetUnit(jsonObject.getString("$assetUnit"));
-        assetExtension.setAssetName(jsonObject.getString("$assetName"));
+        assetExtension.setAssetUnit(jsonObject.getString("unit"));
+        assetExtension.setAssetName(jsonObject.getString("name"));
         assetExtension.setId();
         String proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
         switch (proName) {
