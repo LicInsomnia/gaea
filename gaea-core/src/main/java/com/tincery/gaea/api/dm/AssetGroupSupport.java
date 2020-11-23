@@ -220,6 +220,7 @@ public class AssetGroupSupport {
             client.setCountry("-").setForeign(false);
         } else {
             String country = location.getString("country");
+            client.setCountry(StringUtils.isEmpty(country)?"-":country);
             client.setForeign(!"China".equals(country));
         }
         client.setClientIp(clientIp).setValue(1L);
