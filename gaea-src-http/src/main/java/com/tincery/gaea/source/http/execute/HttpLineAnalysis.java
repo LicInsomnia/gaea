@@ -139,7 +139,7 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
             String textError = fixSuffixData(httpData, req, i - blank, sort);
             if (null != textError) {
                 //TODO 输出错误日志
-                throw new Exception(textError + ":\n" + subName + "\n" + req + "\n");
+//                throw new Exception(textError + ":\n" + subName + "\n" + req + "\n");
             }
         }
     }
