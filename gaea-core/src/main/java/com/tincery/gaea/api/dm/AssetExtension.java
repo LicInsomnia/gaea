@@ -56,6 +56,8 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                 }
                 assetExtension.appendIsakmpExtension(isakmpExtension);
                 break;
+            case HeadConst.PRONAME.PPTP:
+
             default:
                 break;
         }

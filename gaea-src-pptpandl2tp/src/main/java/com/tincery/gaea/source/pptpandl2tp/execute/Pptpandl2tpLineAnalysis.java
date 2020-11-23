@@ -163,9 +163,9 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
                 .setResponseName(subExtension(elements[32]))
                 .setChallengeName(subExtension(elements[31]))
                 .setAuthProtocol(subExtension(elements[33]))
-                .setAuthAlgo(subExtension(elements[34]))
-                .setSuccessMesg(subExtension(elements[35]))
-                .setEncAlog(subExtension(elements[36]));
+                .setAuthenticationAlgorithm(subExtension(elements[34]))
+                .setSuccessMessage(subExtension(elements[35]))
+                .setEncryptionAlgorithm(subExtension(elements[36]));
     }
 
     private String subExtension(String extension){
