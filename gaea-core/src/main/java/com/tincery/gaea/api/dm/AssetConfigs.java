@@ -48,6 +48,7 @@ public class AssetConfigs {
      **/
     public static List<AlarmMaterialData> detectorClient(JSONObject assetJson, AssetDetector assetDetector) {
         AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.CLIENT_IP_N));
+        assetJson.put("isClient",true);
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.DOMESTIC)) {
             // 境内
@@ -70,6 +71,7 @@ public class AssetConfigs {
 
     public static List<AlarmMaterialData> detectorServer(JSONObject assetJson, AssetDetector assetDetector) {
         AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.SERVER_IP_N));
+        assetJson.put("isClient",false);
         if (null == assetConfig) {
             return null;
         }
