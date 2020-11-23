@@ -157,7 +157,6 @@ public final class AlarmMaterialData {
     private Integer checkMode;
     private Integer accuracy;
     private String description;
-    private Integer pattern;
     private String publisher;
     /**
      * 告警资产信息相关
@@ -205,6 +204,12 @@ public final class AlarmMaterialData {
         this.serverPortOuter = metaData.getServerPortOuter();
         this.eventData = metaData.getEventData();
         this.source = metaData.getSource();
+        this.upPkt = metaData.getUpPkt();
+        this.downPkt = metaData.getDownPkt();
+        this.upByte = metaData.getUpByte();
+        this.downByte = metaData.getDownByte();
+        this.duration = metaData.getDuration();
+        this.durationEndTime = metaData.getCapTime() + metaData.getDuration();
     }
 
     /**

@@ -238,14 +238,6 @@ public class Alarm  extends SimpleBaseDO {
         this.clientLocationOuter = alarmMaterialData.getClientLocationOuter();
         this.viewUsers = alarmMaterialData.getViewUsers();
         this.extension = alarmMaterialData.getExtension();
-
-//        this.category = alarmMaterialData.getCategory(); //码表填装
-//        this.level = alarmMaterialData.getLevel(); //码表填装
-//        this.checkMode = alarmMaterialData.getCheckMode(); //码表填装
-//        this.accuracy = alarmMaterialData.getAccuracy(); //码表填装
-//        this.type = alarmMaterialData.getType(); //码表填装
-//        this.pattern = alarmMaterialData.getPattern(); //码表填装
-//        this.eventData = alarmMaterialData.getEventData(); //String变为List<String>
-
     }
+
 }
