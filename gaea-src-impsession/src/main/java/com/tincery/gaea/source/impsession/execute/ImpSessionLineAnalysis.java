@@ -5,6 +5,7 @@ import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
 import com.tincery.starter.base.util.NetworkUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * @author gongxuanzhang
  */
 @Component
+@Slf4j
 public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
 
     @Autowired
@@ -52,8 +54,9 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
         }
         try {
             impSessionData.setForeign(this.srcLineSupport.isForeign(impSessionData.getServerIp()));
-        }catch (Exception e){
-            throw new IllegalArgumentException("无法判断ipv6内外网");
+        }catch (RuntimeException e){
+            impSessionData.setForeign(false);
+            log.error("无法判断ipv6内外网，默认设置为false，数据为{}",line);
         }
 
         return impSessionData;

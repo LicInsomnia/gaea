@@ -206,7 +206,9 @@ public class HttpLineAnalysis implements SrcLineAnalysis<HttpData> {
         this.httpLineSupport.setMobileElements(elements[14],elements[15],elements[16],httpData);
         this.httpLineSupport.set5TupleOuter(elements[17], elements[18], elements[19], elements[20], elements[21], httpData);
         this.httpLineSupport.setPartiesId(elements[22],elements[23],httpData);
-        httpData.setIsResponse("1".equals(elements[25].substring(0, 1)));
+        if (StringUtils.isNotEmpty(elements[25]) && elements[25].length()>=1){
+            httpData.setIsResponse("1".equals(elements[25].substring(0, 1)));
+        }
         httpData.setKey(subName.substring(0, subName.lastIndexOf(StringUtils.DEFAULT_SEP)));
         this.httpLineSupport.isForeign(httpData.getServerIp());
     }

@@ -52,7 +52,13 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
         /*以下 根据isD2SServer 书写属性*/
         fixCommon(elements, openVpnData);
         OpenVpnExtension openVpnExtension = fixOtherCommonAndExtension(openVpnData, elements, isD2SServer);
-        openVpnData.setForeign(this.openVpnLineSupport.isForeign(openVpnData.getServerIp()));
+        try {
+            openVpnData.setForeign(this.openVpnLineSupport.isForeign(openVpnData.getServerIp()));
+        }catch (RuntimeException e){
+            openVpnData.setForeign(false);
+            log.error("无法判断ipv6内外网，默认设置为false，数据为{}",line);
+        }
+
         openVpnData.setOpenVpnExtension(openVpnExtension);
         return openVpnData;
     }
