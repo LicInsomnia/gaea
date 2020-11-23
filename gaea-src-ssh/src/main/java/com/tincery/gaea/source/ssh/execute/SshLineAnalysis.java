@@ -52,6 +52,7 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
         SshExtension sshExtension = new SshExtension();
         if (sshData.getDataType() == -1) {
             srcLineSupport.setMalformedPayload(elements[29], elements[30], sshData);
+            return sshData;
         } else {
             setExtension(elements, sshExtension);
         }

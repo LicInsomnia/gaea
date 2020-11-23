@@ -1,4 +1,5 @@
-import com.tincery.gaea.source.isakmp.GaeaSourceIsakmpApplication;
+package com.tincery.gaea.source.isakmp;
+
 import com.tincery.gaea.source.isakmp.execute.IsakmpReceiver;
 import com.tincery.gaea.source.isakmp.execute.MessageListener;
 import org.apache.activemq.command.ActiveMQTextMessage;
