@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 import com.tincery.gaea.core.base.dao.TableConfigDao;
 import com.tincery.starter.base.model.TableConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -21,6 +22,7 @@ import java.util.Set;
  * @author gxz gongxuanzhang@foxmail.com
  **/
 @Configuration
+@Slf4j
 public class ValidaMongoIndex implements ApplicationListener<ApplicationReadyEvent> {
 
 
@@ -51,6 +53,7 @@ public class ValidaMongoIndex implements ApplicationListener<ApplicationReadyEve
         }
         index.forEach((key,in)->{
            if(!currentAllIndex.contains(key)){
+               log.info("表{},创建{}索引{}",tableConfig.getName(),key,in);
                collection.createIndex(new Document(key,in),new IndexOptions().background(false).name(tableConfig.getName()+"_"+key));
            }
         });
