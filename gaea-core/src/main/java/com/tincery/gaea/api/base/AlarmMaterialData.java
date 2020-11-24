@@ -286,12 +286,8 @@ public final class AlarmMaterialData {
         this.proName = metaData.getProName();
         this.clientMac = metaData.getClientMac();
         this.serverMac = metaData.getServerMac();
-        this.clientIp = metaData.getClientIp();
-        this.serverIp = metaData.getServerIp();
         this.clientPort = metaData.getClientPort();
         this.serverPort = metaData.getServerPort();
-        this.clientIpOuter = metaData.getClientIpOuter();
-        this.serverIpOuter = metaData.getServerIpOuter();
         this.clientPortOuter = metaData.getClientPortOuter();
         this.serverPortOuter = metaData.getServerPortOuter();
         this.eventData = metaData.getEventData();
@@ -323,10 +319,24 @@ public final class AlarmMaterialData {
             this.caseTags.addAll(caseTags);
         }
         this.publisher = alarmRule.getPublisher();
-        this.serverLocation = ipSelector.getCommonInformation(this.serverIp);
-        this.clientLocation = ipSelector.getCommonInformation(this.clientIp);
-        this.serverLocationOuter = ipSelector.getCommonInformation(this.serverIpOuter);
-        this.clientLocationOuter = ipSelector.getCommonInformation(this.clientIpOuter);
+
+        if((this.clientIp = metaData.getClientIp())!=null){
+            this.clientLocation = ipSelector.getCommonInformation(this.clientIp);
+        }
+        if((this.serverIp = metaData.getServerIp())!=null){
+            this.serverLocation = ipSelector.getCommonInformation(this.serverIp);
+        }
+        if((this.serverIpOuter = metaData.getServerIpOuter())!=null){
+            this.serverLocationOuter = ipSelector.getCommonInformation(this.serverIpOuter);
+        }
+        if((this.clientIpOuter = metaData.getClientIpOuter())!=null){
+            this.clientLocationOuter = ipSelector.getCommonInformation(this.clientIpOuter);
+        }
+
+
+
+
+
     }
 
     public void appendExtension(AlarmExtension alarmExtension) {
