@@ -224,7 +224,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                     }
                     jsonObject = new JSONObject();
                     break;
-                case "Vendor Id":
+                case "Vendor ID":
                     JSONObject json = new JSONObject();
                     if (s2dFlag) {
                         if (Objects.equals(1,version)){
