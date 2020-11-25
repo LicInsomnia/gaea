@@ -45,7 +45,7 @@ public class SslExtension implements Serializable {
     /**
      * 客户端证书链 cert
      */
-    protected List<String> clientCerChain;
+    protected List<SslCer> clientCerChain;
     /**
      * 客户端JA3 JA3
      */
@@ -67,7 +67,7 @@ public class SslExtension implements Serializable {
     /**
      * 服务端证书链 cert
      */
-    protected List<String> serverCerChain;
+    protected List<SslCer> serverCerChain;
     /**
      * 服务端JA3 JA3S
      */

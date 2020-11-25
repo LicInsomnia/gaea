@@ -29,7 +29,7 @@ public class CerSelector implements InitializationRequired {
     private CertDao certDao;
     private String[] cerKeys;
 
-    public Map<String, Object> selector(String sha1) {
+    public JSONObject selector(String sha1) {
         if (cache.containsKey(sha1)) {
             return this.cache.get(sha1);
         } else {

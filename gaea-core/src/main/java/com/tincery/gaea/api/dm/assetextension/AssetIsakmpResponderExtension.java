@@ -1,11 +1,10 @@
 package com.tincery.gaea.api.dm.assetextension;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.ToolUtils;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author Insomnia
@@ -56,7 +55,7 @@ public class AssetIsakmpResponderExtension extends BaseAssetExtension {
     /**
      * 生存期时间
      */
-    private String responderLifeDuration;
+    private JSONObject responderLife;
     /**
      * 第二阶段密钥交换完整性
      */
@@ -64,7 +63,7 @@ public class AssetIsakmpResponderExtension extends BaseAssetExtension {
     /**
      * 密钥交换第一阶段证书
      */
-    private List<Object> responderIsakmpCer;
+    private JSONArray responderIsakmpCer;
     private String protocolVersion;
     private String version;
 
@@ -84,7 +83,7 @@ public class AssetIsakmpResponderExtension extends BaseAssetExtension {
         this.responderHashAlgorithm = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_HASH_ALGORITHM);
         this.responderAuthenticationMethod = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_AUTHENTICATION_METHOD);
         this.responderKeyExchange = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_KEY_EXCHANGE);
-        this.responderLifeDuration = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_LIFE_DURATION);
+        this.responderLife = isakmpExtension.getJSONObject(HeadConst.FIELD.RESPONDER_LIFE);
         this.secondComplete = isakmpExtension.getString(HeadConst.FIELD.SECOND_COMPLETE);
         this.responderIsakmpCer = isakmpExtension.getJSONArray(HeadConst.FIELD.RESPONDER_ISAKMP_CER);
         this.protocolVersion = isakmpExtension.getString(HeadConst.FIELD.PROTOCOL_VERSION);
@@ -100,7 +99,7 @@ public class AssetIsakmpResponderExtension extends BaseAssetExtension {
                 this.encryptedMessageProtocol + "_" + this.responderFirstComplete + "_" +
                 this.responderEncryptionAlgorithm + "_" + this.responderKeyLength + "_" +
                 this.responderHashAlgorithm + "_" + this.responderAuthenticationMethod + "_" +
-                this.responderKeyExchange + "_" + this.responderLifeDuration + "_" +
+                this.responderKeyExchange + "_" + this.responderLife + "_" +
                 this.secondComplete + "_" + this.responderIsakmpCer + "_" +
                 this.protocolVersion + "_" + this.version);
     }

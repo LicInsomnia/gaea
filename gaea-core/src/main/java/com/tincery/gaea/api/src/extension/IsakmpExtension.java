@@ -28,12 +28,14 @@ public class IsakmpExtension implements Serializable {
     private Set<JSONObject> responderVid;
     private Integer version;
     private String encryptedMessageProtocol;
+    private String initiatorSPI;
+    private String responderSPI;
 
     /**
      * initiator属性
      */
     private Set<IsakmpCer> initiatorIsakmpCer;
-    private Integer initiatorLifeDuration;
+    private Life initiatorLife;
     private String initiatorKeyExchange;
     private String initiatorAuthenticationMethod;
     private String initiatorHashAlgorithm;
@@ -44,15 +46,12 @@ public class IsakmpExtension implements Serializable {
      * responder属性
      */
     private Set<IsakmpCer> responderIsakmpCer;
-    private Integer responderLifeDuration;
+    private Life responderLife;
     private String responderKeyExchange;
     private String responderAuthenticationMethod;
     private String responderHashAlgorithm;
     private Integer responderKeyLength;
     private String responderEncryptionAlgorithm;
-    private String initiatorSPI;
-    private String responderSPI;
-    private String responderLifeType;
 
     public void setExtension() {
         setInitiator();
@@ -136,8 +135,8 @@ public class IsakmpExtension implements Serializable {
                 }
                 this.initiatorIsakmpCer.add(isakmpCer);
             }
-            if (jsonObject.containsKey("Life-Duration")) {
-                this.initiatorLifeDuration = jsonObject.getInteger("Life-Duration");
+            if (jsonObject.containsKey("Life-Duration") && jsonObject.containsKey("Life-Type")) {
+                this.initiatorLife = new Life(jsonObject.getLong("Life-Duration"), jsonObject.getString("Life-Type"));
             }
             if (jsonObject.containsKey("Key-exchange")) {
                 this.initiatorKeyExchange = jsonObject.getString("Key-exchange");
@@ -154,9 +153,6 @@ public class IsakmpExtension implements Serializable {
             if (jsonObject.containsKey("Encryption-Algorithm")) {
                 this.initiatorEncryptionAlgorithm = jsonObject.getString("Encryption-Algorithm");
             }
-            if (jsonObject.containsKey("Life-Type")){
-                this.initiatorLifeType = jsonObject.getString("Life-Type");
-            }
         }
     }
 
@@ -172,8 +168,8 @@ public class IsakmpExtension implements Serializable {
                 }
                 this.responderIsakmpCer.add(isakmpCer);
             }
-            if (jsonObject.containsKey("Life-Duration")) {
-                this.responderLifeDuration = jsonObject.getInteger("Life-Duration");
+            if (jsonObject.containsKey("Life-Duration") && jsonObject.containsKey("Life-Type")) {
+                this.responderLife = new Life(jsonObject.getLong("Life-Duration"), jsonObject.getString("Life-Type"));
             }
             if (jsonObject.containsKey("Key-exchange")) {
                 this.responderKeyExchange = jsonObject.getString("Key-exchange");
@@ -189,9 +185,6 @@ public class IsakmpExtension implements Serializable {
             }
             if (jsonObject.containsKey("Encryption-Algorithm")) {
                 this.responderEncryptionAlgorithm = jsonObject.getString("Encryption-Algorithm");
-            }
-            if (jsonObject.containsKey("Life-Type")){
-                this.responderLifeType = jsonObject.getString("Life-Type");
             }
         }
     }

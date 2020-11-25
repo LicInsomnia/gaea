@@ -54,7 +54,7 @@ public class OpenVpnData extends AbstractSrcData {
         if (null == this.openVpnExtension.getServerCerChain()) {
             return;
         }
-        this.openVpnExtension.setSha1(this.openVpnExtension.getServerCerChain().get(0).split("_")[0]);
+        this.openVpnExtension.setSha1(this.openVpnExtension.getServerCerChain().get(0).getSha1());
     }
 
     public String getKey() {
