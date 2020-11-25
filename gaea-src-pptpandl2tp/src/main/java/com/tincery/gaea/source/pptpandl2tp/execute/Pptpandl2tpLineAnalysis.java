@@ -7,6 +7,7 @@ import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import java.util.Objects;
  */
 
 @Component
+@Slf4j
 public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData> {
 
 
@@ -38,6 +40,7 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
      * -----------------------------datatype = -1 ----------------------------------
      * 29.upPayload 30.downPayload
      */
+
     @Override
     public Pptpandl2tpData pack(String line) throws Exception {
         Pptpandl2tpData pptpandl2tpData = new Pptpandl2tpData();
@@ -68,8 +71,9 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
         //设置foreign
         try {
             pptpandl2tpData.setForeign(pptpAndL2TPLineSupport.isForeign(pptpandl2tpData.getServerIp()));
-        }catch (Exception e){
-            throw new IllegalArgumentException("可能是ipv6判断过程中出错");
+        }catch (RuntimeException e){
+            pptpandl2tpData.setForeign(false);
+            log.error("无法判断ipv6内外网，默认设置为false，数据为{}",line);
         }
 
         pptpandl2tpData.setPptpAndL2tpExtension(pptpAndL2tpExtension);
@@ -162,10 +166,10 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
                 .setChallenge(subExtension(elements[29]))
                 .setResponseName(subExtension(elements[32]))
                 .setChallengeName(subExtension(elements[31]))
-                .setAuthProtocol(subExtension(elements[33]))
-                .setAuthAlgo(subExtension(elements[34]))
-                .setSuccessMesg(subExtension(elements[35]))
-                .setEncAlog(subExtension(elements[36]));
+                .setAuthenticationProtocol(subExtension(elements[33]))
+                .setAuthenticationAlgorithm(subExtension(elements[34]))
+                .setSuccessMessage(subExtension(elements[35]))
+                .setEncryptionAlgorithm(subExtension(elements[36]));
     }
 
     private String subExtension(String extension){

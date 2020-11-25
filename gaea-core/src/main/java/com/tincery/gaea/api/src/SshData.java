@@ -47,7 +47,7 @@ public class SshData extends AbstractSrcData {
     @Override
     public String toCsv(char splitChar) {
         String extension = null;
-        if (null == this.sshExtension) {
+        if (null != this.sshExtension) {
             extension = JSONObject.toJSONString(this.sshExtension);
         }
         Object[] join = new Object[]{

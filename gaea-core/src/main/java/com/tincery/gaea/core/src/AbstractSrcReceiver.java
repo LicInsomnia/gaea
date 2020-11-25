@@ -129,6 +129,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
                         analysisLine(partition);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        log.error(e.getMessage());
                         log.error("解析实体时出现特殊异常");
                     } finally {
                         countDownLatch.countDown();
@@ -210,9 +211,9 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             return;
         }
         bakFile(file);
-       /* if (file.delete()) {
+        if (file.delete()) {
             log.info("删除文件{}", file.getName());
-        }*/
+        }
     }
 
     /****

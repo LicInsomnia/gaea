@@ -46,6 +46,9 @@ public class MongoStashReceiver implements Receiver {
         long jmsTimestamp = textMessage.getJMSTimestamp();
         List<TableConfig> updateConfig = tableConfigDao.getUpdate();
         List<TableConfig> insertConfig = tableConfigDao.getInsert();
+        insertConfig.forEach(item->{
+            log.info(item.getName());
+        });
         update(updateConfig);
         insert(insertConfig);
         log.info("执行完成");
@@ -103,6 +106,7 @@ public class MongoStashReceiver implements Receiver {
             String cacheByCategory = NodeInfo.getCacheByCategory(id);
             String name = tableConfig.getName();
             File categoryCacheFile = new File(cacheByCategory);
+            log.info("开始检索文件夹{}",categoryCacheFile.getName());
             if (!categoryCacheFile.exists()) {
                 continue;
             }

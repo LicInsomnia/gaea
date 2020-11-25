@@ -1,17 +1,16 @@
 package com.tincery.gaea.api.src.extension;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.tincery.gaea.core.base.tool.ToolUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -22,199 +21,40 @@ import java.util.stream.Collectors;
 @ToString
 public class IsakmpExtension implements Serializable {
 
-    @JSONField(serialize = false)
-    private String messageListStr = null;
-    @JSONField(serialize = false)
-    private String initiatorInformationStr = null;
-    @JSONField(serialize = false)
-    private String responderInformationStr = null;
-    @JSONField(serialize = false)
-    private String initiatorVidStr = null;
-    @JSONField(serialize = false)
-    private String responderVidStr = null;
-    @JSONField(serialize = false)
     private List<String> messageList;
-    @JSONField(serialize = false)
     private Set<JSONObject> initiatorInformation;
-    @JSONField(serialize = false)
     private Set<JSONObject> responderInformation;
-    @JSONField(serialize = false)
     private Set<JSONObject> initiatorVid;
-    @JSONField(serialize = false)
     private Set<JSONObject> responderVid;
-    @JSONField(serialize = false)
     private Integer version;
-    @JSONField(serialize = false)
     private String encryptedMessageProtocol;
-    @JSONField(serialize = false)
-    private JSONObject extension;
-    @JSONField(serialize = false)
-    private Set<IsakmpCer> responderIsakmpCer;
-    @JSONField(serialize = false)
+
+    /**
+     * initiator属性
+     */
     private Set<IsakmpCer> initiatorIsakmpCer;
-
-
-    @JSONField(serialize = false)
-    private Set<JSONObject> responderLifeDuration;
-
-    @JSONField(serialize = false)
-    private Set<JSONObject> initiatorLifeDuration;
-
-    @JSONField(serialize = false)
-    private Set<JSONObject> responderKeyExchange ;
-
-    @JSONField(serialize = false)
-    private Set<JSONObject> initiatorKeyExchange ;
-
-    @JSONField(serialize = false)
-    private Set<JSONObject> responderAuthenticationMethod ;
-
-    @JSONField(serialize = false)
-    private Set<JSONObject> initiatorAuthenticationMethod ;
-
-    @JSONField(serialize = false)
-    private Set<JSONObject> responderHashAlgorithm ;
-    @JSONField(serialize = false)
-    private Set<JSONObject> initiatorHashAlgorithm ;
-    @JSONField(serialize = false)
-    private Set<JSONObject> responderKeyLength ;
-    @JSONField(serialize = false)
-    private Set<JSONObject> initiatorKeyLength ;
-    @JSONField(serialize = false)
-    private Set<JSONObject> responderEncryptionAlgorithm ;
-    @JSONField(serialize = false)
-    private Set<JSONObject> initiatorEncryptionAlgorithm ;
-
+    private Integer initiatorLifeDuration;
+    private String initiatorKeyExchange;
+    private String initiatorAuthenticationMethod;
+    private String initiatorHashAlgorithm;
+    private Integer initiatorKeyLength;
+    private String initiatorEncryptionAlgorithm;
+    /**
+     * responder属性
+     */
+    private Set<IsakmpCer> responderIsakmpCer;
+    private Integer responderLifeDuration;
+    private String responderKeyExchange;
+    private String responderAuthenticationMethod;
+    private String responderHashAlgorithm;
+    private Integer responderKeyLength;
+    private String responderEncryptionAlgorithm;
+    private String initiatorSPI;
+    private String responderSPI;
 
     public void setExtension() {
-        this.extension = new JSONObject();
-        if (null != this.messageList && !this.messageList.isEmpty()) {
-            this.extension.put("messageList", this.messageList);
-            this.messageListStr = ToolUtils.convertString(this.messageList, ";");
-        }
-        if (null != this.initiatorInformation && !this.initiatorInformation.isEmpty()) {
-            this.extension.put("initiatorInformation", this.initiatorInformation);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (JSONObject jsonObject : this.initiatorInformation) {
-                stringBuilder.append(JSONObject.toJSONString(jsonObject)).append(";");
-            }
-            stringBuilder.setLength(stringBuilder.length() - 1);
-            this.initiatorInformationStr = stringBuilder.toString();
-        }
-        if (null != this.responderInformation && !this.responderInformation.isEmpty()) {
-            this.extension.put("responderInformation", this.responderInformation);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (JSONObject jsonObject : this.responderInformation) {
-                stringBuilder.append(JSONObject.toJSONString(jsonObject)).append(";");
-            }
-            stringBuilder.setLength(stringBuilder.length() - 1);
-            this.responderInformationStr = stringBuilder.toString();
-        }
-        if (null != this.initiatorVid && !this.initiatorVid.isEmpty()) {
-            this.extension.put("initiatorVid", this.initiatorVid);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (JSONObject jsonObject : this.initiatorVid) {
-                stringBuilder.append(JSONObject.toJSONString(jsonObject)).append(";");
-            }
-            stringBuilder.setLength(stringBuilder.length() - 1);
-            this.initiatorVidStr = stringBuilder.toString();
-        }
-        if (null != this.responderVid && !this.responderVid.isEmpty()) {
-            this.extension.put("responderVid", this.responderVid);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (JSONObject jsonObject : this.responderVid) {
-                stringBuilder.append(JSONObject.toJSONString(jsonObject)).append(";");
-            }
-            stringBuilder.setLength(stringBuilder.length() - 1);
-            this.responderVidStr = stringBuilder.toString();
-        }
-        if (null != this.version){
-            this.extension.put("version",this.version);
-        }
-        if (!CollectionUtils.isEmpty(this.responderIsakmpCer)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderIsakmpCer);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("responderIsakmpCer" , jsonString);
-        }
-        if (!CollectionUtils.isEmpty(this.initiatorIsakmpCer)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorIsakmpCer);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("initiatorIsakmpCer" , jsonString);
-        }
-
-        if (!CollectionUtils.isEmpty(this.responderLifeDuration)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderLifeDuration);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("responderLifeDuration" , jsonString);
-        }
-
-        if (!CollectionUtils.isEmpty(this.initiatorLifeDuration)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorLifeDuration);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("initiatorLifeDuration" , jsonString);
-        }
-        if (!CollectionUtils.isEmpty(this.responderKeyExchange)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderKeyExchange);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("responderKeyExchange" , jsonString);
-        }
-
-        if (!CollectionUtils.isEmpty(this.responderKeyExchange)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderKeyExchange);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("responderKeyExchange" , jsonString);
-        }
-
-        if (!CollectionUtils.isEmpty(this.initiatorKeyExchange)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorKeyExchange);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("initiatorKeyExchange" , jsonString);
-        }
-
-        if (!CollectionUtils.isEmpty(this.responderAuthenticationMethod)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderAuthenticationMethod);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("responderAuthenticationMethod" , jsonString);
-        }
-
-        if (!CollectionUtils.isEmpty(this.initiatorAuthenticationMethod)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorAuthenticationMethod);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("initiatorAuthenticationMethod" , jsonString);
-        }
-
-        if (!CollectionUtils.isEmpty(this.responderHashAlgorithm)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderHashAlgorithm);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("responderHashAlgorithm" , jsonString);
-        }
-        if (!CollectionUtils.isEmpty(this.initiatorHashAlgorithm)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorHashAlgorithm);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("initiatorHashAlgorithm" , jsonString);
-        }
-
-        if (!CollectionUtils.isEmpty(this.responderKeyLength)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderKeyLength);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("responderKeyLength" , jsonString);
-        }
-        if (!CollectionUtils.isEmpty(this.initiatorKeyLength)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorKeyLength);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("initiatorKeyLength" , jsonString);
-        }
-        if (!CollectionUtils.isEmpty(this.responderEncryptionAlgorithm)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.responderEncryptionAlgorithm);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("responderEncryptionAlgorithm" , jsonString);
-        }
-        if (!CollectionUtils.isEmpty(this.initiatorEncryptionAlgorithm)){
-            JSONArray isakmpCer = (JSONArray)JSON.toJSON(this.initiatorEncryptionAlgorithm);
-            String jsonString = isakmpCer.toJSONString();
-            this.extension.put("initiatorEncryptionAlgorithm" , jsonString);
-        }
-
+        setInitiator();
+        setResponder();
     }
 
     /**
@@ -282,10 +122,71 @@ public class IsakmpExtension implements Serializable {
      */
     private Boolean encryptedAuthenticationData;
 
+    private void setInitiator() {
+        if (null == this.initiatorInformation) {
+            return;
+        }
+        for (JSONObject jsonObject : this.initiatorInformation) {
+            if (jsonObject.containsKey("SHA1") && jsonObject.containsKey("Cert-Encoding")) {
+                IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("SHA1"), jsonObject.getString("Cert-Encoding"));
+                if (null == this.initiatorIsakmpCer) {
+                    this.initiatorIsakmpCer = new HashSet<>();
+                }
+                this.initiatorIsakmpCer.add(isakmpCer);
+            }
+            if (jsonObject.containsKey("Life-Duration")) {
+                this.initiatorLifeDuration = jsonObject.getInteger("Life-Duration");
+            }
+            if (jsonObject.containsKey("Key-exchange")) {
+                this.initiatorKeyExchange = jsonObject.getString("Key-exchange");
+            }
+            if (jsonObject.containsKey("Authentication-Method")) {
+                this.initiatorAuthenticationMethod = jsonObject.getString("Authentication-Method");
+            }
+            if (jsonObject.containsKey("Hash-Algorithm")) {
+                this.initiatorHashAlgorithm = jsonObject.getString("Hash-Algorithm");
+            }
+            if (jsonObject.containsKey("Key-Length")) {
+                this.initiatorKeyLength = jsonObject.getInteger("Key-Length");
+            }
+            if (jsonObject.containsKey("Encryption-Algorithm")) {
+                this.initiatorEncryptionAlgorithm = jsonObject.getString("Encryption-Algorithm");
+            }
+        }
+    }
 
-    private String InitiatorSPI;
-
-    private String ResponderSPI;
+    private void setResponder() {
+        if (null == this.responderInformation) {
+            return;
+        }
+        for (JSONObject jsonObject : this.responderInformation) {
+            if (jsonObject.containsKey("SHA1") && jsonObject.containsKey("Cert-Encoding")) {
+                IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("SHA1"), jsonObject.getString("Cert-Encoding"));
+                if (null == this.responderIsakmpCer) {
+                    this.responderIsakmpCer = new HashSet<>();
+                }
+                this.responderIsakmpCer.add(isakmpCer);
+            }
+            if (jsonObject.containsKey("Life-Duration")) {
+                this.responderLifeDuration = jsonObject.getInteger("Life-Duration");
+            }
+            if (jsonObject.containsKey("Key-exchange")) {
+                this.responderKeyExchange = jsonObject.getString("Key-exchange");
+            }
+            if (jsonObject.containsKey("Authentication-Method")) {
+                this.responderAuthenticationMethod = jsonObject.getString("Authentication-Method");
+            }
+            if (jsonObject.containsKey("Hash-Algorithm")) {
+                this.responderHashAlgorithm = jsonObject.getString("Hash-Algorithm");
+            }
+            if (jsonObject.containsKey("Key-Length")) {
+                this.responderKeyLength = jsonObject.getInteger("Key-Length");
+            }
+            if (jsonObject.containsKey("Encryption-Algorithm")) {
+                this.responderEncryptionAlgorithm = jsonObject.getString("Encryption-Algorithm");
+            }
+        }
+    }
 
     public void adjust(boolean malformed, int protocol, int serverPort) {
         adjustProtocolVersion(malformed, protocol, serverPort);
@@ -301,11 +202,11 @@ public class IsakmpExtension implements Serializable {
      * 第二阶段密钥完整性
      */
     private void adjustSecondComplete() {
-        HashSet<JSONObject> resultSet = new HashSet<>(this.initiatorInformation);
+        Set<JSONObject> resultSet = new HashSet<>(this.initiatorInformation);
         resultSet.addAll(this.responderInformation);
         List<JSONObject> collect = resultSet.stream().filter(item -> Objects.equals("Quick Mode", item.get("Exchange Type")))
                 .collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(collect)){
+        if (CollectionUtils.isEmpty(collect)) {
             this.secondComplete = "-";
         }
         List<String> list = collect.stream().map(item -> {
@@ -316,9 +217,9 @@ public class IsakmpExtension implements Serializable {
             }
             return null;
         }).filter(Objects::nonNull).distinct().collect(Collectors.toList());
-        if (!list.isEmpty() && list.size()>1){
+        if (!list.isEmpty() && list.size() > 1) {
             this.secondComplete = "完整";
-        }else{
+        } else {
             this.secondComplete = "不完整";
         }
 
@@ -326,22 +227,22 @@ public class IsakmpExtension implements Serializable {
 
     /*是否存在加密鉴别数据 */
     private void adjustEncryptionDiscernData() {
-        HashSet<JSONObject> resultSet = new HashSet<>(this.initiatorInformation);
+        Set<JSONObject> resultSet = new HashSet<>(this.initiatorInformation);
         resultSet.addAll(this.responderInformation);
-        resultSet.stream().filter(item->Objects.nonNull(item.get("Exchange Type")))
+        resultSet.stream().filter(item -> Objects.nonNull(item.get("Exchange Type")))
                 .forEach(jsonObject -> {
-                    if (encryptionDiscernData(jsonObject)){
+                    if (encryptionDiscernData(jsonObject)) {
                         this.encryptedAuthenticationData = true;
                     }
                 });
-        if (!Objects.equals(this.encryptedAuthenticationData,true)){
+        if (!Objects.equals(this.encryptedAuthenticationData, true)) {
             this.encryptedAuthenticationData = false;
         }
     }
 
-    private boolean encryptionDiscernData(JSONObject jsonObject){
-        if (!jsonObject.isEmpty()){
-            if (Objects.equals("Identity Protection (Main Mode)",jsonObject.get("Exchange Type"))){
+    private boolean encryptionDiscernData(JSONObject jsonObject) {
+        if (!jsonObject.isEmpty()) {
+            if (Objects.equals("Identity Protection (Main Mode)", jsonObject.get("Exchange Type"))) {
                 Object payload = jsonObject.get("payload");
                 return Objects.nonNull(payload);
             }
@@ -360,7 +261,7 @@ public class IsakmpExtension implements Serializable {
     }
 
     private void adjustFirstMode() {
-        if (this.messageList.contains("initiator:Aggressive")||this.messageList.contains("responder:Aggressive")) {
+        if (this.messageList.contains("initiator:Aggressive") || this.messageList.contains("responder:Aggressive")) {
             this.firstMode = "野蛮模式";
         } else if (this.messageList.contains("initiator:Identity Protection (Main Mode)") || this.messageList.contains("responder:Identity Protection (Main Mode)")) {
             this.firstMode = "主模式";
@@ -370,13 +271,12 @@ public class IsakmpExtension implements Serializable {
     }
 
     private void adjustSecondMode() {
-        if (this.messageList.contains("initiator:Quick Mode")||this.messageList.contains("responder:Quick Mode")) {
+        if (this.messageList.contains("initiator:Quick Mode") || this.messageList.contains("responder:Quick Mode")) {
             this.secondMode = "快速模式";
         } else {
             this.secondMode = "-";
         }
     }
-
 
 
     private void adjustInitiatorFirstComplete(boolean malformed) {
@@ -414,8 +314,8 @@ public class IsakmpExtension implements Serializable {
         }
     }
 
-    public String convertCert(String value){
-        switch (value){
+    public String convertCert(String value) {
+        switch (value) {
             case "PKCS #7 wrapped X.509 certificate":
                 value = "PKCS#7包装的X.509证书";
                 break;
@@ -445,6 +345,8 @@ public class IsakmpExtension implements Serializable {
                 break;
             case "X.509 Certificate - Attribute":
                 value = "X.509属性证书";
+                break;
+            default:
                 break;
         }
         return value;

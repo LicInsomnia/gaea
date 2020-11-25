@@ -4,6 +4,7 @@ import com.tincery.gaea.api.src.EspAndAhData;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  * @author Insomnia
  */
 @Component
+@Slf4j
 public class EspAndAhLineAnalysis implements SrcLineAnalysis<EspAndAhData> {
 
     @Autowired
@@ -47,7 +49,13 @@ public class EspAndAhLineAnalysis implements SrcLineAnalysis<EspAndAhData> {
         data.setEndTime(data.getCapTime());
         this.espAndAhLineSupport.setTargetName(elements[9], data);
         this.espAndAhLineSupport.setGroupName(data);
-        data.setForeign(this.espAndAhLineSupport.isForeign(data.getServerIp()));
+        try {
+            data.setForeign(this.espAndAhLineSupport.isForeign(data.getServerIp()));
+        }catch (RuntimeException e){
+            data.setForeign(false);
+            log.error("无法进行ipv6内外网判断，默认为false");
+        }
+
     }
 
 }

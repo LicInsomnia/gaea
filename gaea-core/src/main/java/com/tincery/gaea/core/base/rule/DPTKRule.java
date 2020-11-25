@@ -182,8 +182,6 @@ public class DPTKRule extends BaseSimpleRule {
                     }
                 }
                 AlarmMaterialData alarmMaterialData = new AlarmMaterialData(data, this.source, context, DPTKRule.this.ipSelector);
-                /*alarmRule 是 src告警*/
-                alarmMaterialData.setPattern(1);
                 pushAlarm(alarmMaterialData, null);
             }
             return false;

@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.BiFunction;
 
 
@@ -74,6 +75,8 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
     @Autowired
     private AssetExtensionDao assetExtensionDao;
 
+    private static final LongAdder longAdder = new LongAdder();
+
     @Override
     protected void dmFileAnalysis(File file) {
         List<String> allLines = FileUtils.readLine(file);
@@ -114,7 +117,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         this.dmProperties = dmProperties;
     }
 
-
     private void free(List<JSONObject> clientAssetList, List<JSONObject> serverAssetList) {
         List<JSONObject> allAsset = new ArrayList<>(clientAssetList);
         allAsset.addAll(serverAssetList);
@@ -139,11 +141,12 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         assetPortDao.insert(portData);
         log.info("端口维度合并插入{}条数据", portData.size());
 
-        // todo 修改144行的 后面这个lambda  把一个jsonobject(asset会话) 变成一个你需要的实体
-        List<AssetExtension> saveExtension = AssetGroupSupport.getSaveExtension(allAsset,
+        List<AssetExtension> extensionList
+                = AssetGroupSupport.getSaveExtension(allAsset,
                 AssetExtension::fromAssetJsonObject);
-        AssetGroupSupport.rechecking(assetExtensionDao, saveExtension);
-        log.info("拓展信息合并插入{}条数据", saveExtension.size());
+        AssetGroupSupport.rechecking(assetExtensionDao, extensionList);
+        extensionList.forEach(assetExtensionDao::saveOrUpdate);
+        log.info("拓展信息合并插入{}条数据", extensionList.size());
 
         writeAlarm();
         writeEventData();
@@ -174,6 +177,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             for (JSONObject jsonObject : this.eventDataList) {
                 fileWriter.write(jsonObject.toJSONString() + "\n");
             }
+            this.eventDataList.clear();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -219,6 +223,8 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             return first.orElse(null);
         }
 
+
+
         public static List<AlarmMaterialData> jsonRun(JSONObject assetJson, AssetDetector assetDetector) {
             int flag = assetJson.getIntValue("assetFlag");
             return findByFlag(flag).function.apply(assetJson, assetDetector);
@@ -257,12 +263,15 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 default:
                     break;
             }
+            longAdder.increment();
+            System.out.println(longAdder.intValue());
         }
 
         private static void fillAsset(JSONObject assetJson, AssetConfigDO config, long targetIp) {
             assetJson.put("ip", targetIp);
             assetJson.put("unit", config.getUnit());
             assetJson.put("name", config.getName());
+            assetJson.put("alarm", false);
         }
     }
 
@@ -303,20 +312,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 AssetFlag.fillAndAdd(assetJson, assetDetector, clientAssetList, serverAssetList);
             }
             return new AssetResult(clientAssetList, serverAssetList);
-        }
-    }
-
-    public static void main(String[] args) {
-        for (int i = 0; i < 100; i++) {
-            try {
-                System.out.println(i);
-                int i1 = i / (i - 50);
-                System.out.println();
-            } catch (Exception e) {
-                System.out.println("出错了");
-                continue;
-            }
-            System.out.println("有没有");
         }
     }
 

@@ -8,13 +8,11 @@ import com.tincery.gaea.core.base.tool.util.SourceFieldUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -22,6 +20,7 @@ import java.util.Map;
  */
 
 @Component
+@Slf4j
 public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
 
 
@@ -52,6 +51,7 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
         SshExtension sshExtension = new SshExtension();
         if (sshData.getDataType() == -1) {
             srcLineSupport.setMalformedPayload(elements[29], elements[30], sshData);
+            return sshData;
         } else {
             setExtension(elements, sshExtension);
         }
@@ -85,7 +85,13 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
                 .setMsisdn(elements[20]);
         sshData.setUserId(elements[26])
                 .setServerId(elements[27]);
-        sshData.setForeign(this.srcLineSupport.isForeign(sshData.getServerIp()));
+        try {
+            sshData.setForeign(this.srcLineSupport.isForeign(sshData.getServerIp()));
+        }catch (RuntimeException e){
+            sshData.setForeign(false);
+            log.error("无法解析内外网ipv6，数据为{}", Arrays.asList(elements));
+        }
+
         srcLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], sshData);
     }
 

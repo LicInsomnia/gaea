@@ -8,6 +8,7 @@ import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
 import com.tincery.gaea.source.ftpandtelnet.constant.FtpandtelnetConstant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
+@Slf4j
 public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetData> {
 
 
@@ -58,8 +60,11 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
                 ftpandtelnetData.setProName("TELNET");
             }
             fixFtpAndTelnet(elements,ftpAndTelnetExtension);
-            String content = split[2];
-            ftpAndTelnetExtension.setContent(content.replaceAll("\r\n","<br/>"));
+            if (split.length>2){
+                //说明有content
+                String content = split[2];
+                ftpAndTelnetExtension.setContent(content.replaceAll("\r\n","<br/>"));
+            }
         }
         ftpandtelnetData.setFtpAndTelnetExtension(ftpAndTelnetExtension);
         return ftpandtelnetData;
@@ -119,7 +124,12 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
         ftpandtelnetData.setUserId(elements[26])
                 .setServerId(elements[27]);
         ftpandtelnetData.setMacOuter("1".equals(elements[28]));
-        ftpandtelnetData.setForeign(srcLineSupport.isForeign(ftpandtelnetData.getServerIp()));
+        try {
+            ftpandtelnetData.setForeign(srcLineSupport.isForeign(ftpandtelnetData.getServerIp()));
+        }catch (RuntimeException e){
+            log.error("无法判断ipv6内外网，默认设置为false");
+        }
+
     }
 
 

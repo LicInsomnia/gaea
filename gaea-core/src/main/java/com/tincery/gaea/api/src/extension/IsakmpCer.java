@@ -5,15 +5,19 @@ import lombok.Setter;
 
 import java.util.Objects;
 
+/**
+ * @author Insomnia
+ */
 @Getter
 @Setter
 public class IsakmpCer {
 
-    String sha1;
-    String certEncoding;
+    private final String sha1;
+    private final String certEncoding;
 
-    public boolean isNotEmpty() {
-        return null != this.sha1 && null != this.certEncoding;
+    public IsakmpCer(String sha1, String certEncoding) {
+        this.sha1 = sha1;
+        this.certEncoding = certEncoding;
     }
 
     @Override

@@ -27,4 +27,5 @@ public class AlarmDao extends SimpleBaseDaoImpl<Alarm> {
     protected void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
+
 }

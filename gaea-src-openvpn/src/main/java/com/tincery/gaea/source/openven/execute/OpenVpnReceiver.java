@@ -89,6 +89,8 @@ public class OpenVpnReceiver extends AbstractSrcReceiver<OpenVpnData> {
                     this.openVpnMap.put(key, openVpnData);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
+                log.error(e.getMessage());
                 log.error("错误SRC：{}", line);
             }
         }

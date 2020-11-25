@@ -31,6 +31,11 @@ public class AssetConfigs {
         GET_PORT = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
     }
 
+    public static int NONE = 0;
+    public static int NEW_IP = 1;
+    public static int NEW_RITHMETIC = 1 << 1;
+    public static int NEW_PORT = 1 << 2;
+
 
     /***
      * ***********************************************************
@@ -48,6 +53,8 @@ public class AssetConfigs {
      **/
     public static List<AlarmMaterialData> detectorClient(JSONObject assetJson, AssetDetector assetDetector) {
         AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.CLIENT_IP_N));
+        assetJson.put("isClient", true);
+        assetJson.put("newFlag",assetConfig.isRange()?NEW_IP:NONE);
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.DOMESTIC)) {
             // 境内
@@ -61,18 +68,20 @@ public class AssetConfigs {
         if (check(assetJson, assetConfig, ListType.WHITE, OutInput.OUT, Border.DOMESTIC)) {
             return null;
         }
-        if (check(assetJson, assetConfig, ListType.WHITE, OutInput.OUT, Border.OVERSEAS)) {
+        if (check(assetJson, assetConfig,   ListType.WHITE, OutInput.OUT, Border.OVERSEAS)) {
             return null;
         }
         // 白名单没返回 则告警
-        return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig,true));
+        return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig, true));
     }
 
     public static List<AlarmMaterialData> detectorServer(JSONObject assetJson, AssetDetector assetDetector) {
         AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.SERVER_IP_N));
+        assetJson.put("isClient", false);
         if (null == assetConfig) {
             return null;
         }
+        assetJson.put("newFlag",assetConfig.isRange()?NEW_IP:NONE);
         // 客户端需要匹配密码
         assetConfig.strategyHit(assetJson);
         // 先判断黑名单 命中告警
@@ -92,7 +101,7 @@ public class AssetConfigs {
             return null;
         }
         // 白名单没返回 则告警
-        return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig,false));
+        return Collections.singletonList(CREATE_ALARM.apply(assetJson, assetConfig, false));
     }
 
 

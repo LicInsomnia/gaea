@@ -57,14 +57,16 @@ public class AssetConfigDO extends SimpleBaseDO {
 
     private AssetCondition assetCertStrategy;
 
+    /**
+     * 这是一个位运算的标记  通过位运算标识这个资产到底是什么信息
+     **/
+    private transient boolean range;
+
 
     public void strategyHit(JSONObject assetServerJson) {
         if (CollectionUtils.isEmpty(assetStrategyCondition)) {
             return;
         }
-        assetServerJson.put("$assetUnit", this.unit);
-        assetServerJson.put("$assetName", this.name);
-        assetServerJson.put("alarm", true);
         String proName = assetServerJson.getString(HeadConst.FIELD.PRONAME);
         AssetCondition target = null;
         for (AssetCondition assetCondition : assetStrategyCondition) {
@@ -79,6 +81,7 @@ public class AssetConfigDO extends SimpleBaseDO {
         for (AssetCondition.ConditionGroup conditionGroup : target.getConditionGroup()) {
             if (conditionGroup.hit(assetServerJson, assetCertStrategy)) {
                 assetServerJson.put("$description", conditionGroup.getDescription());
+                assetServerJson.put("alarm", true);
                 return;
             }
         }
