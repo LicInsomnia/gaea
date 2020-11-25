@@ -19,10 +19,11 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     @Id
     private String id;
     private String unit;
+    private Long ip;
     private String name;
     private String proName;
+    private String proTag;
     private Integer port;
-    private String dataSource;
 
     private List<AssetSslExtension> sslExtensions;
     private List<AssetOpenVpnExtension> openVpnExtensions;
@@ -44,7 +45,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                     return null;
                 }
                 assetExtension.appendSslExtension(sslExtension);
-                assetExtension.setDataSource(proName);
+                assetExtension.setProTag(proName);
                 break;
             case HeadConst.PRONAME.OPENVPN:
                 AssetOpenVpnExtension openVpnExtension = new AssetOpenVpnExtension();
@@ -52,7 +53,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                     return null;
                 }
                 assetExtension.appendOpenVpnExtension(openVpnExtension);
-                assetExtension.setDataSource(proName);
+                assetExtension.setProTag(proName);
                 break;
             case HeadConst.PRONAME.SSH:
                 AssetSshExtension sshExtension = new AssetSshExtension();
@@ -60,7 +61,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                     return null;
                 }
                 assetExtension.appendSshExtension(sshExtension);
-                assetExtension.setDataSource(proName);
+                assetExtension.setProTag(proName);
                 break;
             case HeadConst.PRONAME.ISAKMP:
                 boolean isClient = jsonObject.getBoolean("isClient");
@@ -70,14 +71,14 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                         return null;
                     }
                     assetExtension.appendIsakmpInitiatorExtension(isakmpInitiatorExtension);
-                    assetExtension.setDataSource(proName + "Initiator");
+                    assetExtension.setProTag(proName + "Initiator");
                 } else {
                     AssetIsakmpResponderExtension isakmpResponderExtension = new AssetIsakmpResponderExtension();
                     if (!isakmpResponderExtension.create(jsonObject)) {
                         return null;
                     }
                     assetExtension.appendIsakmpResponderExtension(isakmpResponderExtension);
-                    assetExtension.setDataSource(proName + "Responder");
+                    assetExtension.setProTag(proName + "Responder");
                 }
                 break;
             case HeadConst.PRONAME.PPTP:
@@ -87,17 +88,18 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                     return null;
                 }
                 assetExtension.appendPptpAndL2tpExtension(pptpAndL2tpExtension);
-                assetExtension.setDataSource(proName);
+                assetExtension.setProTag(proName);
                 break;
             default:
                 return null;
         }
+        assetExtension.setProName(proName);
         return assetExtension;
     }
 
     @Override
     public AssetExtension merge(AssetExtension that) {
-        switch (this.dataSource) {
+        switch (this.proTag) {
             case HeadConst.PRONAME.SSL:
                 Map<String, AssetSslExtension> assetSslExtensionMap = new HashMap<>();
                 this.sslExtensions.forEach(ssl -> assetSslExtensionMap.merge(ssl.getId(), ssl, (k, v) -> (AssetSslExtension) v.merge(ssl)));
@@ -143,8 +145,9 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
 
     private boolean appendCommonInformation(JSONObject jsonObject) {
         boolean isClient = jsonObject.getBoolean("isClient");
-        String proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
-        if (isClient && !HeadConst.PRONAME.ISAKMP.equals(proName)) {
+        this.proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
+        this.ip = jsonObject.getLong("ip");
+        if (isClient && !HeadConst.PRONAME.ISAKMP.equals(this.proName)) {
             return false;
         }
         //测试_测试(192.168.1.234)_TCP(作为服务端)_22__1606114800000
@@ -153,21 +156,21 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
         int protocol = jsonObject.getInteger(HeadConst.FIELD.PROTOCOL);
         if (protocol == 6) {
             if (isClient) {
-                this.proName = "TCP(作为客户端)";
+                this.proTag = "TCP(作为客户端)";
             } else {
-                this.proName = "TCP(作为服务端)";
+                this.proTag = "TCP(作为服务端)";
             }
         } else if (protocol == 17) {
             if (isClient) {
-                this.proName = "UDP(作为客户端)";
+                this.proTag = "UDP(作为客户端)";
             } else {
-                this.proName = "UDP(作为服务端)";
+                this.proTag = "UDP(作为服务端)";
             }
         } else {
             return false;
         }
         this.port = jsonObject.getInteger(HeadConst.FIELD.SERVER_PORT);
-        this.id = this.unit + "_" + this.name + "_" + this.proName + "_" + this.port;
+        this.id = this.unit + "_" + this.name + "(" + this.ip + ")_" + this.proTag + "_" + this.port;
         return true;
     }
 

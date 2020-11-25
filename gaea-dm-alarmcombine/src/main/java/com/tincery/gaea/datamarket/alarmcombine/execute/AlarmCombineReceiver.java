@@ -9,6 +9,7 @@ import com.tincery.gaea.api.base.Location;
 import com.tincery.gaea.api.dm.Alarm;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.AlarmDao;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
@@ -482,10 +483,10 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
 
     private void fixServerCountry(Alarm oldAlarm,StringBuilder stringBuilder){
         Location serverLocation = oldAlarm.getServerLocation();
-        if (Objects.isNull(serverLocation)){
+        if (Objects.isNull(serverLocation)) {
             return;
         }
-        if (!"other".equals(serverLocation.getCountry())){
+        if (!HeadConst.PRONAME.OTHER.equals(serverLocation.getCountry())) {
             stringBuilder.append(",服务端位于").append(serverLocation.getCountry());
         }
     }

@@ -1,6 +1,5 @@
 package com.tincery.gaea.datamarket.alarmstatistic.execute;
 
-
 import com.tincery.gaea.api.dm.Alarm;
 import com.tincery.gaea.core.base.dao.AlarmDao;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
@@ -11,7 +10,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.io.File;
 import java.util.List;
@@ -34,12 +32,11 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
 
     /**
      * @param textMessage 接收到的消息  存放要扫描的目录名
-     * @throws JMSException 扫描的文件夹NodeInfo.getAlarmMaterial
      */
     @Override
-    public void receive(TextMessage textMessage) throws JMSException {
+    public void receive(TextMessage textMessage) {
         log.info("alarmStatistic接收到了消息开始处理");
-        Query query = new Query(Criteria.where("handle").ne(true));
+        Query query = new Query(Criteria.where("handle").is(false));
         List<Alarm> list = alarmDao.findListData(query);
         log.info("检测到最新告警{}条", list.size());
         System.out.println(1);
@@ -50,11 +47,9 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
 
     }
 
-
     @Override
     public void init() {
 
     }
-
 
 }

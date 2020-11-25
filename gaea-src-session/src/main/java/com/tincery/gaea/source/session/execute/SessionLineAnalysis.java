@@ -51,7 +51,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
         if (!tryGetServerProName(elements, sessionMetaData)) {
             tryGetClientProName(elements, sessionMetaData);
         }
-        sessionMetaData.setDataType("other".equals(sessionMetaData.getProName()) ? 0 : 1);
+        sessionMetaData.setDataType(HeadConst.PRONAME.OTHER.equals(sessionMetaData.getProName()) ? 0 : 1);
         return sessionMetaData;
     }
 

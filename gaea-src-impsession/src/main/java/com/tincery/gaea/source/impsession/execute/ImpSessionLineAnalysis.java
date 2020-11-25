@@ -1,6 +1,7 @@
 package com.tincery.gaea.source.impsession.execute;
 
 import com.tincery.gaea.api.src.ImpSessionData;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
@@ -81,7 +82,7 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
                 element[13],
                 element[14],
                 element[15],
-                "other",
+                HeadConst.PRONAME.OTHER,
                 impSessionData
         );
         this.srcLineSupport.setFlow(
