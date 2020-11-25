@@ -256,8 +256,10 @@ public class HeadConst {
         public final static String RESPONDER_VID = "responderVid";
         public final static String FIRST_MODE = "firstMode";
         public final static String SECOND_MODE = "secondMode";
+        public final static String PROTOCOL_VERSION = "protocolVersion";
+        public final static String ISAKMP_VERSION = "version";
         public final static String ENCRYPTION_MESSAGE_PROTOCOL = "encryptedMessageProtocol";
-        public final static String RESPONDER_SECOND_COMPLETE = "secondComplete";
+        public final static String SECOND_COMPLETE = "secondComplete";
         public final static String RESPONDER_FIRST_COMPLETE = "responderFirstComplete";
         public final static String RESPONDER_ENCRYPTION_ALGORITM = "responderEncryptionAlgorithm";
         public final static String RESPONDER_KEY_LENGTH = "responderKeyLength";

@@ -11,7 +11,7 @@ import java.util.List;
  * @author Insomnia
  */
 @Data
-public class AssetIsakmpExtension extends BaseAssetExtension {
+public class AssetIsakmpResponderExtension extends BaseAssetExtension {
 
     /**
      * 通信协议
@@ -65,6 +65,8 @@ public class AssetIsakmpExtension extends BaseAssetExtension {
      * 密钥交换第一阶段证书
      */
     private List<Object> responderIsakmpCer;
+    private String protocolVersion;
+    private String version;
 
     @Override
     public boolean create(JSONObject jsonObject) {
@@ -83,8 +85,10 @@ public class AssetIsakmpExtension extends BaseAssetExtension {
         this.responderAuthenticationMethod = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_AUTHENTICATION_METHOD);
         this.responderKeyExchange = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_KEY_EXCHANGE);
         this.responderLifeDuration = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_LIFE_DURATION);
-        this.secondComplete = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_SECOND_COMPLETE);
+        this.secondComplete = isakmpExtension.getString(HeadConst.FIELD.SECOND_COMPLETE);
         this.responderIsakmpCer = isakmpExtension.getJSONArray(HeadConst.FIELD.RESPONDER_ISAKMP_CER);
+        this.protocolVersion = isakmpExtension.getString(HeadConst.FIELD.PROTOCOL_VERSION);
+        this.version = isakmpExtension.getString(HeadConst.FIELD.ISAKMP_VERSION);
         setKey();
         appendFlow(jsonObject);
         return true;
@@ -97,7 +101,8 @@ public class AssetIsakmpExtension extends BaseAssetExtension {
                 this.responderEncryptionAlgorithm + "_" + this.responderKeyLength + "_" +
                 this.responderHashAlgorithm + "_" + this.responderAuthenticationMethod + "_" +
                 this.responderKeyExchange + "_" + this.responderLifeDuration + "_" +
-                this.secondComplete + "_" + this.responderIsakmpCer);
+                this.secondComplete + "_" + this.responderIsakmpCer + "_" +
+                this.protocolVersion + "_" + this.version);
     }
 
 }

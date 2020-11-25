@@ -18,8 +18,8 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
 
     @Id
     private String id;
-    private String assetUnit;
-    private String assetName;
+    private String unit;
+    private String name;
     private String proName;
     private Integer port;
     private String dataSource;
@@ -27,7 +27,8 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     private List<AssetSslExtension> sslExtensions;
     private List<AssetOpenVpnExtension> openVpnExtensions;
     private List<AssetSshExtension> sshExtensions;
-    private List<AssetIsakmpExtension> isakmpExtensions;
+    private List<AssetIsakmpInitiatorExtension> isakmpInitiatorExtensions;
+    private List<AssetIsakmpResponderExtension> isakmpResponderExtensions;
     private List<AssetPptpAndL2tpExtension> pptpAndL2tpExtensions;
 
     public static AssetExtension fromAssetJsonObject(JSONObject jsonObject) {
@@ -43,6 +44,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                     return null;
                 }
                 assetExtension.appendSslExtension(sslExtension);
+                assetExtension.setDataSource(proName);
                 break;
             case HeadConst.PRONAME.OPENVPN:
                 AssetOpenVpnExtension openVpnExtension = new AssetOpenVpnExtension();
@@ -50,6 +52,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                     return null;
                 }
                 assetExtension.appendOpenVpnExtension(openVpnExtension);
+                assetExtension.setDataSource(proName);
                 break;
             case HeadConst.PRONAME.SSH:
                 AssetSshExtension sshExtension = new AssetSshExtension();
@@ -57,13 +60,25 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                     return null;
                 }
                 assetExtension.appendSshExtension(sshExtension);
+                assetExtension.setDataSource(proName);
                 break;
             case HeadConst.PRONAME.ISAKMP:
-                AssetIsakmpExtension isakmpExtension = new AssetIsakmpExtension();
-                if (!isakmpExtension.create(jsonObject)) {
-                    return null;
+                boolean isClient = jsonObject.getBoolean("isClient");
+                if (isClient) {
+                    AssetIsakmpInitiatorExtension isakmpInitiatorExtension = new AssetIsakmpInitiatorExtension();
+                    if (!isakmpInitiatorExtension.create(jsonObject)) {
+                        return null;
+                    }
+                    assetExtension.appendIsakmpInitiatorExtension(isakmpInitiatorExtension);
+                    assetExtension.setDataSource(proName + "Initiator");
+                } else {
+                    AssetIsakmpResponderExtension isakmpResponderExtension = new AssetIsakmpResponderExtension();
+                    if (!isakmpResponderExtension.create(jsonObject)) {
+                        return null;
+                    }
+                    assetExtension.appendIsakmpResponderExtension(isakmpResponderExtension);
+                    assetExtension.setDataSource(proName + "Responder");
                 }
-                assetExtension.appendIsakmpExtension(isakmpExtension);
                 break;
             case HeadConst.PRONAME.PPTP:
             case HeadConst.PRONAME.L2TP:
@@ -72,11 +87,11 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                     return null;
                 }
                 assetExtension.appendPptpAndL2tpExtension(pptpAndL2tpExtension);
+                assetExtension.setDataSource(proName);
                 break;
             default:
                 return null;
         }
-        assetExtension.setDataSource(proName);
         return assetExtension;
     }
 
@@ -101,11 +116,17 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
                 that.sshExtensions.forEach(ssh -> assetSshExtensionMap.merge(ssh.getId(), ssh, (k, v) -> (AssetSshExtension) v.merge(ssh)));
                 this.sshExtensions = new ArrayList<>(assetSshExtensionMap.values());
                 break;
-            case HeadConst.PRONAME.ISAKMP:
-                Map<String, AssetIsakmpExtension> assetIsakmpExtensionMap = new HashMap<>();
-                this.isakmpExtensions.forEach(isakmp -> assetIsakmpExtensionMap.merge(isakmp.getId(), isakmp, (k, v) -> (AssetIsakmpExtension) v.merge(isakmp)));
-                that.isakmpExtensions.forEach(isakmp -> assetIsakmpExtensionMap.merge(isakmp.getId(), isakmp, (k, v) -> (AssetIsakmpExtension) v.merge(isakmp)));
-                this.isakmpExtensions = new ArrayList<>(assetIsakmpExtensionMap.values());
+            case HeadConst.PRONAME.ISAKMP + "Initiator":
+                Map<String, AssetIsakmpInitiatorExtension> assetIsakmpInitiatorExtensionMap = new HashMap<>();
+                this.isakmpInitiatorExtensions.forEach(isakmp -> assetIsakmpInitiatorExtensionMap.merge(isakmp.getId(), isakmp, (k, v) -> (AssetIsakmpInitiatorExtension) v.merge(isakmp)));
+                that.isakmpInitiatorExtensions.forEach(isakmp -> assetIsakmpInitiatorExtensionMap.merge(isakmp.getId(), isakmp, (k, v) -> (AssetIsakmpInitiatorExtension) v.merge(isakmp)));
+                this.isakmpInitiatorExtensions = new ArrayList<>(assetIsakmpInitiatorExtensionMap.values());
+                break;
+            case HeadConst.PRONAME.ISAKMP + "Responder":
+                Map<String, AssetIsakmpResponderExtension> assetIsakmpResponderExtensionMap = new HashMap<>();
+                this.isakmpResponderExtensions.forEach(isakmp -> assetIsakmpResponderExtensionMap.merge(isakmp.getId(), isakmp, (k, v) -> (AssetIsakmpResponderExtension) v.merge(isakmp)));
+                that.isakmpResponderExtensions.forEach(isakmp -> assetIsakmpResponderExtensionMap.merge(isakmp.getId(), isakmp, (k, v) -> (AssetIsakmpResponderExtension) v.merge(isakmp)));
+                this.isakmpResponderExtensions = new ArrayList<>(assetIsakmpResponderExtensionMap.values());
                 break;
             case HeadConst.PRONAME.PPTP:
             case HeadConst.PRONAME.L2TP:
@@ -127,8 +148,8 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
             return false;
         }
         //测试_测试(192.168.1.234)_TCP(作为服务端)_22__1606114800000
-        this.assetUnit = jsonObject.getString("unit");
-        this.assetName = jsonObject.getString("name");
+        this.unit = jsonObject.getString("unit");
+        this.name = jsonObject.getString("name");
         int protocol = jsonObject.getInteger(HeadConst.FIELD.PROTOCOL);
         if (protocol == 6) {
             if (isClient) {
@@ -146,7 +167,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
             return false;
         }
         this.port = jsonObject.getInteger(HeadConst.FIELD.SERVER_PORT);
-        this.id = this.assetUnit + "_" + this.assetName + "_" + this.proName + "_" + this.port;
+        this.id = this.unit + "_" + this.name + "_" + this.proName + "_" + this.port;
         return true;
     }
 
@@ -171,11 +192,18 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
         this.sshExtensions.add(sshExtension);
     }
 
-    private void appendIsakmpExtension(AssetIsakmpExtension isakmpExtension) {
-        if (null == this.isakmpExtensions) {
-            this.isakmpExtensions = new ArrayList<>();
+    private void appendIsakmpInitiatorExtension(AssetIsakmpInitiatorExtension isakmpInitiatorExtension) {
+        if (null == this.isakmpInitiatorExtensions) {
+            this.isakmpInitiatorExtensions = new ArrayList<>();
         }
-        this.isakmpExtensions.add(isakmpExtension);
+        this.isakmpInitiatorExtensions.add(isakmpInitiatorExtension);
+    }
+
+    private void appendIsakmpResponderExtension(AssetIsakmpResponderExtension isakmpResponderExtension) {
+        if (null == this.isakmpResponderExtensions) {
+            this.isakmpResponderExtensions = new ArrayList<>();
+        }
+        this.isakmpResponderExtensions.add(isakmpResponderExtension);
     }
 
     private void appendPptpAndL2tpExtension(AssetPptpAndL2tpExtension pptpAndL2tpExtension) {

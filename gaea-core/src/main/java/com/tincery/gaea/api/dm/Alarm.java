@@ -163,6 +163,10 @@ public class Alarm  extends SimpleBaseDO {
     private String sha1;
 
     private Map<String, Object> extension;
+    /**
+     * 标识句柄，用于告警统计，默认入库为false，告警统计处理后变为true
+     */
+    private Boolean handle = false;
 
     /**
      * 码表转换 category int->String

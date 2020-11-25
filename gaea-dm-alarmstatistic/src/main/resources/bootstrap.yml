@@ -1,0 +1,25 @@
+server:
+  port: 11112
+node:
+  name: insomnia
+spring:
+  application:
+    name: dm_alarmstatistic
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.16.1.102:8848
+        name: gaea
+        file-extension: yml
+        group: GAEA_GROUP
+        extension-configs:
+          - dataId: gaea_environment.yml
+            group: GAEA_GROUP
+          - dataId: common_config.yml
+            group: GAEA_GROUP
+
+  profiles:
+    active: insomnia
+logging:
+  level:
+    root: info
