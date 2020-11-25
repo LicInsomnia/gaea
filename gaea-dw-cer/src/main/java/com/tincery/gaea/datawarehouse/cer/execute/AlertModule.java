@@ -41,11 +41,11 @@ public class AlertModule extends BaseModule implements BaseModuleInterface {
     public void run() {
         System.out.println("AlertModule starts.");
         DataQueue queueInput = queuesInput.get(0);
+        init();
         while (true) {
             if (queueInput.size() != 0) {
                 CerData doc = (CerData) queueInput.poll();
                 try {
-                    init();
                     RuleRegistry.getInstance().matchLoop(doc);
                 } catch (Exception e) {
                     e.printStackTrace();

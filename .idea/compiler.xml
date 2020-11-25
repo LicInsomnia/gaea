@@ -21,7 +21,6 @@
         <module name="gaea-src-alarm" />
         <module name="gaea-src-bitcoin" />
         <module name="gaea-src-dns" />
-        <module name="gaea-src-email" />
         <module name="gaea-src-espandah" />
         <module name="gaea-src-flow" />
         <module name="gaea-src-ftpandtelnet" />

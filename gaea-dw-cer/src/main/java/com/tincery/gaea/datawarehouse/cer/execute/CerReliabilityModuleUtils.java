@@ -57,9 +57,9 @@ public class CerReliabilityModuleUtils {
         double score = 0D;
         String detail;
         isSelfSigned = false;
-        if (cer.getSubject_cn() != null && cer.getIssuer_cn() != null) {
-            String subjectCN = cer.getSubject_cn();
-            String issuerCN = cer.getIssuer_cn();
+        if (cer.getSubjectCommonName() != null && cer.getIssuerCommonName() != null) {
+            String subjectCN = cer.getSubjectCommonName();
+            String issuerCN = cer.getIssuerCommonName();
             if (subjectCN.equals(issuerCN)) {
                 String sha1 = cer.getId();
                 if (rootCaList != null && !rootCaList.contains(sha1)) {
@@ -82,25 +82,25 @@ public class CerReliabilityModuleUtils {
         int reliabilityType = 0;
         double score = 0D;
         String detail;
-        if (cer.getSubject_cn() != null) {
+        if (cer.getSubjectCommonName() != null) {
             score += 0.1;
         } else {
             detail = "证书信息缺失：subject_cn信息缺失";
             detailList.set(bLessInfo, detailList.get(bLessInfo) + detail);
         }
-        if (cer.getSubject_o() != null) {
+        if (cer.getSubjectOrganizationName() != null) {
             score += 0.1;
         } else {
             detail = "证书信息缺失：subject_o信息缺失";
             detailList.set(bLessInfo, detailList.get(bLessInfo) + detail);
         }
-        if (cer.getSubject_c() != null) {
+        if (cer.getSubjectCountryName() != null) {
             score += 0.1;
         } else {
             detail = "证书信息缺失：subject_c信息缺失";
             detailList.set(bLessInfo, detailList.get(bLessInfo) + detail);
         }
-        if (cer.getSubject_l() != null) {
+        if (cer.getSubjectLocalityName() != null) {
             score += 0.1;
         } else {
             detail = "证书信息缺失：subject_l信息缺失";
@@ -120,8 +120,8 @@ public class CerReliabilityModuleUtils {
         String detail;
         int reliabilityType = 0;
         double score = 0D;
-        if (cer.getSubject_cn() != null) {
-            String url = cer.getSubject_cn();
+        if (cer.getSubjectCommonName() != null) {
+            String url = cer.getSubjectCommonName();
             url = url.replace("*", "a");
             url = url.replace("?", "a");
             if (IsUrl(url)) {
@@ -143,8 +143,8 @@ public class CerReliabilityModuleUtils {
         List<String> fasCaList = new ArrayList<>(((Map<Integer, String>)Config.cerProperties.getDefaultConfig().get("FASList")).values());
         double score = 0D;
         inFAS = false;
-        String subCN = cer.getSubject_cn();
-        if (cer.getSubject_cn() != null) {
+        String subCN = cer.getSubjectCommonName();
+        if (cer.getSubjectCommonName() != null) {
             if (fasCaList.contains(subCN)) {
                 inFAS = true;
                 score += 0.25;
@@ -163,8 +163,8 @@ public class CerReliabilityModuleUtils {
         int reliabilityType = 0;
         double score = 0D;
         String subCN;
-        if (cer.getSubject_cn() != null) {
-            subCN = cer.getSubject_cn();
+        if (cer.getSubjectCommonName() != null) {
+            subCN = cer.getSubjectCommonName();
             if (faasCaList != null && faasCaList.contains(subCN)) {
                 reliabilityType = reliabilityType | (1 << bInFAAS);
                 score -= 0.25;
@@ -185,10 +185,10 @@ public class CerReliabilityModuleUtils {
         double score = 0D;
         String temp;
         long validBefore = (long) 0, validLength = (long) 0;
-        if (cer.getValidbefore() != null) {
-            temp = cer.getValidbefore().toString();
+        if (cer.getValidBefore() != null) {
+            temp = cer.getValidBefore().toString();
             if (temp.length() > 0 && temp.length() < 14) {
-                validBefore = cer.getValidbefore();
+                validBefore = cer.getValidBefore();
             } else {
                 score -= -0.25;
                 reliabilityType = reliabilityType | (1 << bErrorValid);
@@ -200,10 +200,10 @@ public class CerReliabilityModuleUtils {
                 return result;
             }
         }
-        if (cer.getValidlength() != null) {
-            temp = cer.getValidlength().toString();
+        if (cer.getValidLength() != null) {
+            temp = cer.getValidLength().toString();
             if (temp.length() > 0 && temp.length() < 14) {
-                validLength = cer.getValidlength();
+                validLength = cer.getValidLength();
             } else {
                 score -= -0.25;
                 reliabilityType = reliabilityType | (1 << bErrorValid);
@@ -239,7 +239,7 @@ public class CerReliabilityModuleUtils {
         if (isSelfSigned && inFAS) {
             score -= 0.75;
             reliabilityType = reliabilityType | (1 << bSelfSignedInFAS);
-            String subCN = cer.getSubject_cn();
+            String subCN = cer.getSubjectCommonName();
             detail = "subject_cn属于常见可信集合，但为自签名，为" + subCN;
             detailList.set(bSelfSignedInFAS, detailList.get(bSelfSignedInFAS) + detail);
         }
@@ -261,7 +261,7 @@ public class CerReliabilityModuleUtils {
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         //System.out.println(cer.get("sha1").toString());
         boolean authFlagLoose = false;
-        if (cer.getIssuer_cn() != null && caList.contains(cer.getIssuer_cn())) {
+        if (cer.getIssuerCommonName() != null && caList.contains(cer.getIssuerCommonName())) {
             authFlagLoose = true;
         }
         /*

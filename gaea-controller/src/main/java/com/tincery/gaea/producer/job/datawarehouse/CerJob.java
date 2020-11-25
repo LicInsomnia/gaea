@@ -22,7 +22,7 @@ public class CerJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        dwProducer.producer(cerQueue);
+        dwProducer.producer(cerQueue, null, null);
         log.info("发送了一条数据");
     }
 }

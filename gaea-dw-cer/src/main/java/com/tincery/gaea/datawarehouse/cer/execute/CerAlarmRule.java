@@ -184,7 +184,7 @@ public class CerAlarmRule extends AlarmRule {
                     flag = matchValue.endsWith(this.ruleValue.toLowerCase());
                     break;
                 case 4:
-                    int selfsigned = data.getSelfsigned();
+                    int selfsigned = data.getSelfSigned();
                     flag = (selfsigned == 1 && matchValue.contains(ruleValue));
                     alarmMaterialData.setPattern(Config.alarmDictionary.valueOf("pattern", "CERT"));
                     alarmMaterialData.setSha1(data.getId());

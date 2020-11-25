@@ -9,7 +9,6 @@ import com.tincery.gaea.core.base.tool.moduleframe.BaseModuleInterface;
 import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import org.springframework.beans.BeanUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -28,13 +27,17 @@ public class DataSourceCheckSigModule extends BaseModule implements BaseModuleIn
     @Override
     public void run() {
         System.out.println("DataSourceCheckSigModule starts.");
-        List<String> sha1List = prepareData();
-        List<CertDo> dataList = Config.certDao.getDataList();
+        Map<String, Set<String>> toCheckMap = prepareData();
+        Set<String> sha1List = toCheckMap.keySet();
+        List<CertDo> dataList = Config.certDao.getDataList(sha1List);
         for(CertDo certDo : dataList) {
             CerData data = new CerData();
             BeanUtils.copyProperties(certDo, data);
-            for (DataQueue queue : queuesOutput) {
-                queue.put(data);
+            if(data.getSignatureCheck() == null || !data.getSignatureCheck()) {
+                data.setCerChain(toCheckMap.get(data.getId()));
+                for (DataQueue queue : queuesOutput) {
+                    queue.put(data);
+                }
             }
         }
         for (DataQueue queue : queuesOutput) {
@@ -43,18 +46,21 @@ public class DataSourceCheckSigModule extends BaseModule implements BaseModuleIn
         System.out.println("DataSourceCheckSigModule ends.");
     }
 
-    private List<String> prepareData() {
+    private Map<String, Set<String>> prepareData() {
         String filePath = NodeInfo.getCerChainPath();
-        String toCheckFileName = "toCheckCerChain.json";
-        String oldFileName = "oldCerChain.json";
+        String waitFileName = "wait.json";
+        String finishFileName = "finish.json";
         FileUtils.checkPath(filePath);
-        List<File> newFileList = FileUtils.searchFiles(filePath, "cerChain", "", "json", 0);
-        List<File> toCheckFileList = FileUtils.searchFiles(filePath, "", toCheckFileName, "", 0);
-        List<File> oldFileList = FileUtils.searchFiles(filePath, "", oldFileName, "", 0);
-        File toCheckFile = toCheckFileList.size() == 1 ? toCheckFileList.get(0) : null;
-        File oldFile = oldFileList.size() == 1 ? oldFileList.get(0) : null;
-        Map<String, Set<String>> baseMap = getToCheckCerChain(toCheckFile, newFileList);
-        return null;
+        List<File> newFileList = FileUtils.searchFiles(filePath, "cerChain", "", "json", 600);
+        List<File> waitFileList = FileUtils.searchFiles(filePath, "", waitFileName, "", 0);
+        List<File> finishFileList = FileUtils.searchFiles(filePath, "", finishFileName, "", 0);
+        File waitFile = waitFileList.size() == 1 ? waitFileList.get(0) : null;
+        File finishFile = finishFileList.size() == 1 ? finishFileList.get(0) : null;
+        return getToCheckCerChain(finishFile, waitFile, newFileList);
+    }
+
+    private String getRealSha(String sha) {
+        return sha.substring(0, sha.indexOf("_"));
     }
 
     private Map<String, Set<String>> getSha1ChainMap(File file) {
@@ -63,10 +69,11 @@ public class DataSourceCheckSigModule extends BaseModule implements BaseModuleIn
         for(String cerChainStr : CerChainStrList) {
             Map cerChain = jsonStr2Document(cerChainStr);
             String key = cerChain.get("key").toString();
-            Set<String> cerChainSet = sha1ChainMap.getOrDefault(key,new HashSet<>());
+            String realKey = getRealSha(key);
+            Set<String> cerChainSet = sha1ChainMap.getOrDefault(realKey,new HashSet<>());
             List<String> chain = (List<String>)cerChain.get("cerChain");
             cerChainSet.add(mergeChain(chain));
-            sha1ChainMap.put(key, cerChainSet);
+            sha1ChainMap.put(realKey, cerChainSet);
         }
         return sha1ChainMap;
     }
@@ -80,22 +87,28 @@ public class DataSourceCheckSigModule extends BaseModule implements BaseModuleIn
         return strMerge.toString();
     }
 
-    private void merge(Map<String, Set<String>> baseMap, Map<String, Set<String>> newMap) {
+    private void mergeMap(Map<String, Set<String>> baseMap, Map<String, Set<String>> newMap) {
         for(String key : newMap.keySet()) {
-            if(baseMap.containsKey(key)) {
-                Set<String> valueSet = baseMap.get(key);
-                valueSet.addAll(newMap.get(key));
-                baseMap.put(key, valueSet);
-            }
+            Set<String> valueSet = baseMap.getOrDefault(key, new HashSet<>());
+            valueSet.addAll(newMap.get(key));
+            baseMap.put(key, valueSet);
         }
     }
 
-    private Map<String, Set<String>> getToCheckCerChain(File toCheckFile, List<File> newFileList) {
-        Map<String, Set<String>> baseMap = getSha1ChainMap(toCheckFile);
+    private Map<String, Set<String>> getToCheckCerChain(File finishFile, File waitFile, List<File> newFileList) {
+        Map<String, Set<String>> toCheckMap = new HashMap<>();
+        Map<String, Set<String>> finishMap = getSha1ChainMap(finishFile);
+        Map<String, Set<String>> waitMap = getSha1ChainMap(waitFile);
         for(File fp : newFileList) {
-            merge(baseMap, getSha1ChainMap(fp));
+            mergeMap(waitMap, getSha1ChainMap(fp));
+            fp.delete();
         }
-        return baseMap;
+        for(String key : waitMap.keySet()) {
+            if(!finishMap.keySet().contains(key)) {
+                toCheckMap.put(key, waitMap.get(key));
+            }
+        }
+        return toCheckMap;
     }
 
     public static Map jsonStr2Document(String jsonStr) {

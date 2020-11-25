@@ -37,9 +37,9 @@ public class CerGmComplianceModule extends BaseModule implements BaseModuleInter
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                cer.setGmcompliancetype(complianceType);
+                cer.setGmcomplianceType(complianceType);
                 List<String> list = cerUtils.getDetailList();
-                cer.setGmcompliancedetail(list.toArray(new String[list.size()]));
+                cer.setGmcomplianceDetail(list.toArray(new String[list.size()]));
                 queueOutput.put(cer);
             }
             if (queueInput.isEnd()) {

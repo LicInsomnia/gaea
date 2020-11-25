@@ -37,7 +37,7 @@ public class CerGmComplianceModuleUtils {
         int complianceType = 0;
         List<String> issuerWhiteList = new ArrayList<>(((Map<Integer, String>)Config.cerProperties.getGmConfig().get("issuerWhite")).values());
         List<String> issuerBlackList = new ArrayList<>(((Map<Integer, String>)Config.cerProperties.getGmConfig().get("issuerBlack")).values());
-        String issuer = cer.getIssuer_cn() == null ? "" : cer.getIssuer_cn();
+        String issuer = cer.getIssuerCommonName() == null ? "" : cer.getIssuerCommonName();
         if(issuerWhiteList != null && issuerWhiteList.size() > 0) {
             if(!issuerWhiteList.contains(issuer)) {
                 complianceType = complianceType | (1 << bUnauthIssuer);
@@ -60,9 +60,9 @@ public class CerGmComplianceModuleUtils {
         String detail;
         int complianceType = 0;
         int subjectPublicKeyLength = 0;
-        if (cer.getSubjectpublickeylength() != null) {
+        if (cer.getSubjectPublicKeyInfoLength() != null) {
             try {
-                subjectPublicKeyLength = cer.getSubjectpublickeylength();
+                subjectPublicKeyLength = cer.getSubjectPublicKeyInfoLength();
             } catch (Exception e) {
                 complianceType = complianceType | (1 << typeNum);
             }
@@ -70,14 +70,14 @@ public class CerGmComplianceModuleUtils {
             complianceType = complianceType | (1 << typeNum);
         }
         String subjectPublicKeyAlgoOid = "";
-        if (cer.getSubjectpublickeyalgooid() != null && cer.getSubjectpublickeyalgooid().length() > 10) {
-            subjectPublicKeyAlgoOid = cer.getSubjectpublickeyalgooid();
+        if (cer.getSubjectPublicKeyInfoAlgorithmOid() != null && cer.getSubjectPublicKeyInfoAlgorithmOid().length() > 10) {
+            subjectPublicKeyAlgoOid = cer.getSubjectPublicKeyInfoAlgorithmOid();
         } else {
             complianceType = complianceType | (1 << typeNum);
         }
         String subjectPublicKeyAlgo = "";
-        if (cer.getSubjectpublickeyalgo() != null) {
-            subjectPublicKeyAlgo = cer.getSubjectpublickeyalgo();
+        if (cer.getSubjectPublicKeyInfoAlgorithm() != null) {
+            subjectPublicKeyAlgo = cer.getSubjectPublicKeyInfoAlgorithm();
         }
         if (gmPublicKeyOidLengthMap != null && gmPublicKeyOidLengthMap.containsKey(subjectPublicKeyAlgoOid) && !subjectPublicKeyAlgoOid.equals("")) {
             if (subjectPublicKeyLength <= gmPublicKeyOidLengthMap.get(subjectPublicKeyAlgoOid)) {
@@ -92,14 +92,14 @@ public class CerGmComplianceModuleUtils {
         }
 
         String signatureAlgooid = "";
-        if (cer.getSignaturealgooid() != null && cer.getSignaturealgooid().length() > 10) {
-            signatureAlgooid = cer.getSignaturealgooid();
+        if (cer.getSignatureAlgorithmOid() != null && cer.getSignatureAlgorithmOid().length() > 10) {
+            signatureAlgooid = cer.getSignatureAlgorithmOid();
         }else {
             complianceType = complianceType | (1 << typeNum);
         }
         String signatureAlgo = "";
-        if (cer.getSignaturealgo() != null) {
-            signatureAlgo = cer.getSignaturealgo();
+        if (cer.getSignatureAlgorithm() != null) {
+            signatureAlgo = cer.getSignatureAlgorithm();
         }
         if (gmAlgoWhiteList != null && !gmAlgoWhiteList.contains(signatureAlgooid) && !signatureAlgooid.equals("")) {
             complianceType = complianceType | (1 << bWeakAlgo);
@@ -113,10 +113,10 @@ public class CerGmComplianceModuleUtils {
         int complianceType = 0;
         String detail;
         try{
-            long capTime = cer.getCaptime_n() == null ? 0L : cer.getCaptime_n();
+            long capTime = cer.getCapTime() == null ? 0L : cer.getCapTime();
             //long capTime = (long)cer.get("captime_n");
-            if (cer.getValidafter() != null) {
-                long valid = cer.getValidafter() == null ? 0L : cer.getValidafter();
+            if (cer.getValidAfter() != null) {
+                long valid = cer.getValidAfter() == null ? 0L : cer.getValidAfter();
                 if (valid > 0 && valid < capTime) {
                     complianceType = complianceType | (1 << bValidExpire);
                     detail = "有效期过期：结束时间为" + ToolUtils.stamp2Date(valid);

@@ -10,15 +10,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class DatabaseUpdateModule extends BaseModule implements BaseModuleInterface {
-    private Integer writeMongoLimit = 1000;
-
     public DatabaseUpdateModule() {
         super();
     }
 
     @Override
     public boolean setInput(List<DataQueue> queues) {
-        return super.setInput(queues, 1);
+        return super.setInput(queues, 2);
     }
 
     @Override
@@ -32,102 +30,63 @@ public class DatabaseUpdateModule extends BaseModule implements BaseModuleInterf
             System.out.println("DatabaseUpdateModule starts.");
             BulkWriteOptions options = new BulkWriteOptions();
             options.ordered(false);
-            DataQueue queueInput = queuesInput.get(0);
+            boolean markFlag = false;
+            boolean sigFlag = false;
             while (true) {
-                CerData cer = (CerData)queueInput.poll(1, TimeUnit.SECONDS);
-                if(cer != null) {
-                    Document doc = new Document();
-                    doc.put("selfsigned", cer.getSelfsigned());
-                    doc.append("compliance", cer.getCompliance());
-                    doc.append("compliancetype", cer.getCompliancetype());
-                    doc.append("reliability", cer.getReliability());
-                    doc.append("reliabilitytype", cer.getReliabilitytype());
-                    doc.append("casetags", cer.getCasetags());
-                    doc.append("compliancetags", cer.getCompliancetags());
-                    doc.append("reliabilitytags", cer.getReliabilitytags());
-                    doc.append("compliancedetail", cer.getCompliancedetail());
-                    doc.append("reliabilitydetail", cer.getReliabilitydetail());
-                    doc.append("gmcompliancetype", cer.getGmcompliancetype());
-                    doc.append("gmcompliancedetail", cer.getGmcompliancedetail());
-                    doc.append("gmcompliancetags", cer.getGmcompliancetags());
-                    doc.append("altnamenum", cer.getAltnamenum());
-                    doc.append("altnamewhitenum", cer.getAltnamewhitenum());
-                    doc.append("altnamedganum", cer.getAltnamedganum());
-                    doc.append("malicious_website", cer.getMalicious_website());
-                    Config.certDao.updateData(cer.getId(), doc);
+                for (DataQueue queueInput : queuesInput) {
+                    if(queueInput.getTag().equals("MarkModule->DatabaseUpdateModule") && markFlag) {
+                        continue;
+                    }
+                    if(queueInput.getTag().equals("CerCheckSigModule->DatabaseUpdateModule") && sigFlag) {
+                        continue;
+                    }
+                    CerData cer = (CerData) queueInput.poll(1, TimeUnit.SECONDS);
+                    if (cer != null) {
+                        Document doc = new Document();
+                        switch (queueInput.getTag()) {
+                            case "MarkModule->DatabaseUpdateModule":
+                                doc.put("selfSigned", cer.getSelfSigned());
+                                doc.append("compliance", cer.getCompliance());
+                                doc.append("complianceType", cer.getComplianceType());
+                                doc.append("reliability", cer.getReliability());
+                                doc.append("reliabilityType", cer.getReliabilityType());
+                                doc.append("caseTags", cer.getCaseTags());
+                                doc.append("complianceTags", cer.getComplianceTags());
+                                doc.append("reliabilityTags", cer.getReliabilityTags());
+                                doc.append("complianceDetail", cer.getComplianceDetail());
+                                doc.append("reliabilityDetail", cer.getReliabilityDetail());
+                                doc.append("gmcomplianceType", cer.getGmcomplianceType());
+                                doc.append("gmcomplianceDetail", cer.getGmcomplianceDetail());
+                                doc.append("gmcomplianceTags", cer.getGmcomplianceTags());
+                                doc.append("altNameNum", cer.getAltNameNum());
+                                doc.append("altNameWhiteNum", cer.getAltNameWhiteNum());
+                                doc.append("altNameDgaNum", cer.getAltNameDgaNum());
+                                doc.append("maliciousWebsite", cer.getMaliciousWebsite());
+                                break;
+                            case "CerCheckSigModule->DatabaseUpdateModule":
+                                doc.append("signatureCheck", cer.getSignatureCheck());
+                                break;
+                        }
+                        Config.certDao.updateData(cer.getId(), doc);
+                    }
+                    if (queueInput.isEnd()) {
+                        switch (queueInput.getTag()) {
+                            case "MarkModule->DatabaseUpdateModule":
+                                markFlag = true;
+                                break;
+                            case "CerCheckSigModule->DatabaseUpdateModule":
+                                sigFlag = true;
+                                break;
+                        }
+                    }
                 }
-                if (queueInput.isEnd()) {
+                if (markFlag && sigFlag) {
                     break;
                 }
             }
-//            getReliabilityStatis();
-//            getComplianceStatis();
             System.out.println("DatabaseUpdateModule ends");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-//
-//    private void getReliabilityStatis() {
-//        BasicDBObject newReliabilityObj = new BasicDBObject();
-//        BulkWriteOptions options = new BulkWriteOptions();
-//        options.ordered(false);
-//        List<String> reliabilityTagType = Arrays.asList("可信", "不可信", "待证实");
-//        MongoCollection<Document> table = config.getProductionMongoCollection(MongoCollectionIDs.SRC_CER_COLLECTION_ID);
-//        List<BasicDBObject> bsonList = new ArrayList<>();
-//        for(String type : reliabilityTagType) {
-//            BasicDBObject searchQuery = new BasicDBObject();
-//            searchQuery.put("reliabilitytags", type);
-//            long count = MongoUtils.count(table, searchQuery);
-//            BasicDBObject bson = new BasicDBObject();
-//            bson.put("name", type);
-//            bson.put("count", count);
-//            bsonList.add(bson);
-//        }
-//        newReliabilityObj.put("details", bsonList);
-//        newReliabilityObj.put("type", "reliability");
-//        newReliabilityObj.put("_id", 1);
-//        MongoCollection<Document> statisTable = config.getProductionMongoCollection(MongoCollectionIDs.SRC_CER_STATIS_COLLECTION_ID);
-//        BasicDBObject findObj = new BasicDBObject();
-//        findObj.put("type", "reliability");
-//        findObj.put("_id", 1);
-//        ArrayList<UpdateOneModel<Document>> updateList = new ArrayList<>();
-//        updateList.add(new UpdateOneModel<>(findObj, new BasicDBObject("$set", newReliabilityObj), new UpdateOptions().upsert(true)));
-//        BulkWriteResult result = statisTable.bulkWrite(updateList, options);
-//        if(result.getModifiedCount() > 0 ) {
-//            System.out.println("Reliability statis have been updated!");
-//        }
-//    }
-//
-//    private void getComplianceStatis() {
-//        BasicDBObject newComplianceObj = new BasicDBObject();
-//        BulkWriteOptions options = new BulkWriteOptions();
-//        options.ordered(false);
-//        List<String> complianceTagType = descriptionList;
-//        MongoCollection<Document> table = config.getProductionMongoCollection(MongoCollectionIDs.SRC_CER_COLLECTION_ID);
-//        List<BasicDBObject> bsonList = new ArrayList<>();
-//        for(String type : complianceTagType) {
-//            BasicDBObject searchQuery = new BasicDBObject();
-//            searchQuery.put("compliancetags", type);
-//            long count = MongoUtils.count(table, searchQuery);
-//            BasicDBObject bson = new BasicDBObject();
-//            bson.put("name", type);
-//            bson.put("count", count);
-//            bsonList.add(bson);
-//        }
-//        newComplianceObj.put("details", bsonList);
-//        newComplianceObj.put("type", "compliance");
-//        newComplianceObj.put("_id", 2);
-//        MongoCollection<Document> statisTable = config.getProductionMongoCollection(MongoCollectionIDs.SRC_CER_STATIS_COLLECTION_ID);
-//        BasicDBObject findObj = new BasicDBObject();
-//        findObj.put("type", "compliance");
-//        findObj.put("_id", 2);
-//        ArrayList<UpdateOneModel<Document>> updateList = new ArrayList<>();
-//        updateList.add(new UpdateOneModel<>(findObj, new BasicDBObject("$set", newComplianceObj), new UpdateOptions().upsert(true)));
-//        BulkWriteResult result = statisTable.bulkWrite(updateList, options);
-//        if(result.getModifiedCount() > 0 ) {
-//            System.out.println("Compliance statis have been updated!");
-//        }
-//    }
-
 }

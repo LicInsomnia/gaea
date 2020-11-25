@@ -44,19 +44,19 @@ public class CerReliabilityModule extends BaseModule implements BaseModuleInterf
                     Double reliabilityScore = Double.valueOf(analysisResult.get("score").toString());
                     Integer reliabilityType = Integer.valueOf(analysisResult.get("type").toString());
                     cer.setReliability(reliabilityScore);
-                    cer.setReliabilitytype(reliabilityType);
+                    cer.setReliabilityType(reliabilityType);
                     List<String> list = cerObj.getDetailList();
-                    cer.setReliabilitydetail(list.toArray(new String[list.size()]));
+                    cer.setReliabilityDetail(list.toArray(new String[list.size()]));
                     ArrayList<String> subjectAltNameList = checkAltName(cer);
                     int altNameNum = subjectAltNameList.size();
-                    cer.setAltnamenum(altNameNum);
+                    cer.setAltNameNum(altNameNum);
                     ArrayList<String> subjectAltNameWhiteList = checkAltNameWhite(subjectAltNameList);
                     int altNameWhiteNum = subjectAltNameWhiteList.size();
-                    cer.setAltnamewhitenum(altNameWhiteNum);
+                    cer.setAltNameWhiteNum(altNameWhiteNum);
                     ArrayList<String> subjectAltNameDgaList = checkAltNameDga(subjectAltNameList);
                     int altNameDgaNum = subjectAltNameDgaList.size();
-                    cer.setAltnamedganum(altNameDgaNum);
-                    cer.setMalicious_website(checkMalicious(reliabilityScore, altNameNum, altNameDgaNum, altNameWhiteNum));
+                    cer.setAltNameDgaNum(altNameDgaNum);
+                    cer.setMaliciousWebsite(checkMalicious(reliabilityScore, altNameNum, altNameDgaNum, altNameWhiteNum));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -73,10 +73,10 @@ public class CerReliabilityModule extends BaseModule implements BaseModuleInterf
     public ArrayList<String> checkAltName(CerData doc) {
         ArrayList<String> subjectAltNameList = new ArrayList<>();
         try {
-            if(doc.getEx_subjectaltname() == null) {
+            if(doc.getExSubjectAltName() == null) {
                 return new ArrayList<>();
             }
-            String subjectAltNameStr = doc.getEx_subjectaltname();
+            String subjectAltNameStr = doc.getExSubjectAltName();
             if(subjectAltNameStr.startsWith("[") && subjectAltNameStr.endsWith("]")) {
                 subjectAltNameStr = subjectAltNameStr.substring(1, subjectAltNameStr.length() - 1);
             }

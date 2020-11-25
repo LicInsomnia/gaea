@@ -91,8 +91,8 @@ public class CerComplianceModuleUtils {
         String serialNum;
         String detail;
         int maxLength = 40;
-        if (cer.getSerialnum() != null) {
-            serialNum = cer.getSerialnum();
+        if (cer.getSerialNumber() != null) {
+            serialNum = cer.getSerialNumber();
             if (serialNum.length() > 2 && serialNum.substring(0, 2).equals("0x")) {
                 serialNum = serialNum.substring(2);
             }
@@ -126,14 +126,14 @@ public class CerComplianceModuleUtils {
         long validLength = 0;
         String temp;
         String detail;
-        capTime = cer.getCaptime_n();
+        capTime = cer.getCapTime();
         if (capTime / 1000000000000000L >= 1) {
-            capTime = cer.getCaptime_n() / 1000;
+            capTime = cer.getCapTime() / 1000;
         } else {
-            capTime = cer.getCaptime_n();
+            capTime = cer.getCapTime();
         }
-        if (cer.getValidbefore() != null) {
-            temp = cer.getValidbefore().toString();
+        if (cer.getValidBefore() != null) {
+            temp = cer.getValidBefore().toString();
             if (temp.length() > 0 && temp.length() < 14) {
                 validBefore = Long.parseLong(temp);
             } else {
@@ -146,8 +146,8 @@ public class CerComplianceModuleUtils {
             detail = "有效期错误：无开始时间";
             detailList.set(bErrorValid, detailList.get(bErrorValid) + detail);
         }
-        if (cer.getValidafter() != null) {
-            temp = cer.getValidafter().toString();
+        if (cer.getValidAfter() != null) {
+            temp = cer.getValidAfter().toString();
             if (temp.length() > 0 && temp.length() < 14) {
                 validAfter = Long.parseLong(temp);
             } else {
@@ -160,8 +160,8 @@ public class CerComplianceModuleUtils {
             detail = "有效期错误：无结束时间";
             detailList.set(bErrorValid, detailList.get(bErrorValid) + detail);
         }
-        if (cer.getValidlength() != null) {
-            temp = cer.getValidlength().toString();
+        if (cer.getValidLength() != null) {
+            temp = cer.getValidLength().toString();
             if (temp.length() > 0 && temp.length() < 14) {
                 validLength = Long.parseLong(temp);
             } else {
@@ -213,12 +213,12 @@ public class CerComplianceModuleUtils {
         String detail;
         int complianceType = 0;
         int subjectPublicKeyLength = 0;
-        if (cer.getSubjectpublickeylength() != null) {
-            subjectPublicKeyLength = cer.getSubjectpublickeylength();
+        if (cer.getSubjectPublicKeyInfoLength() != null) {
+            subjectPublicKeyLength = cer.getSubjectPublicKeyInfoLength();
         }
         String subjectPublicKeyAlgoOid = "";
-        if (cer.getSubjectpublickeyalgooid() != null) {
-            subjectPublicKeyAlgoOid = cer.getSubjectpublickeyalgooid() ;
+        if (cer.getSubjectPublicKeyInfoAlgorithmOid() != null) {
+            subjectPublicKeyAlgoOid = cer.getSubjectPublicKeyInfoAlgorithmOid() ;
         }
         if (publicKeyAlgoMap != null && publicKeyAlgoMap.containsKey(subjectPublicKeyAlgoOid)) {
             if (subjectPublicKeyLength <= publicKeyAlgoMap.get(subjectPublicKeyAlgoOid)) {
@@ -243,8 +243,8 @@ public class CerComplianceModuleUtils {
         int complianceType = 0;
         String detail;
         String signatureAlgooid = "";
-        if (cer.getSignaturealgooid() != null) {
-            signatureAlgooid = cer.getSignaturealgooid();
+        if (cer.getSignatureAlgorithmOid() != null) {
+            signatureAlgooid = cer.getSignatureAlgorithmOid();
         }
         if (signAlgoOidList != null && !signAlgoOidList.contains(signatureAlgooid)) {
             complianceType = complianceType | (1 << bWeakSignAlgo);
@@ -262,11 +262,11 @@ public class CerComplianceModuleUtils {
         Boolean isSelfSigned = Boolean.FALSE;
         String issuerCN = "";
         String subjectCN = "";
-        if (cer.getIssuer_cn() != null) {
-            issuerCN = cer.getIssuer_cn();
+        if (cer.getIssuerCommonName() != null) {
+            issuerCN = cer.getIssuerCommonName();
         }
-        if (cer.getSubject_cn() != null) {
-            subjectCN = cer.getSubject_cn();
+        if (cer.getSubjectCommonName() != null) {
+            subjectCN = cer.getSubjectCommonName();
         }
         if (issuerCN.equals(subjectCN)) {
             isSelfSigned = Boolean.TRUE;
@@ -279,8 +279,8 @@ public class CerComplianceModuleUtils {
         int complianceType = 0;
         String subjectCN = "";
         String detail;
-        if (cer.getSubject_cn() != null) {
-            subjectCN = cer.getSubject_cn();
+        if (cer.getSubjectCommonName() != null) {
+            subjectCN = cer.getSubjectCommonName();
         }
 
         if (subjectCNList != null && subjectCNList.contains(subjectCN)) {

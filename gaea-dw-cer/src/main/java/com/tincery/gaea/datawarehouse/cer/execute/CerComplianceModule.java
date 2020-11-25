@@ -37,17 +37,17 @@ public class CerComplianceModule extends BaseModule implements BaseModuleInterfa
                     complianceType = cerObj.checkVersion() | cerObj.checkSerialNum() | cerObj.checkValidTime() |
                             cerObj.checkPublicKey() | cerObj.checkSignKey() | cerObj.checkSubjectCN();
                     if (cerObj.checkSelfSigned()) {
-                        cer.setSelfsigned(1);
+                        cer.setSelfSigned(1);
                     } else {
-                        cer.setSelfsigned(0);
+                        cer.setSelfSigned(0);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 cer.setCompliance(complianceType == 0 ? 0 : 1);
-                cer.setCompliancetype(complianceType);
+                cer.setComplianceType(complianceType);
                 List<String> list = cerObj.getDetailList();
-                cer.setCompliancedetail(list.toArray(new String[list.size()]));
+                cer.setComplianceDetail(list.toArray(new String[list.size()]));
                 queueOutput.put(cer);
             }
             if (queueInput.isEnd()) {

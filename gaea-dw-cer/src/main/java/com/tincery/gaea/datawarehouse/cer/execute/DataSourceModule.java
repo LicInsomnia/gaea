@@ -14,7 +14,7 @@ import java.util.List;
 
 public class DataSourceModule extends BaseModule implements BaseModuleInterface {
 
-    private Integer readMongoLimit = 1000;
+    private int readMongoLimit = 10000;
 
     public DataSourceModule() {
         super();
@@ -33,7 +33,7 @@ public class DataSourceModule extends BaseModule implements BaseModuleInterface 
     @Override
     public void run() {
         System.out.println("DataSourceModule starts.");
-        List<CertDo> dataList = Config.certDao.getDataList();
+        List<CertDo> dataList = Config.certDao.getDataList(readMongoLimit);
         for(CertDo certDo : dataList) {
             CerData data = new CerData();
             BeanUtils.copyProperties(certDo, data);

@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
@@ -58,17 +59,29 @@ public class CertDao extends SimpleBaseDaoImpl<CertDo> {
     }
 
 
-    public List<CertDo> getDataList(){
+    public List<CertDo> getDataList(int limit){
         List<CertDo> list = new ArrayList<>();
         try {
             Query query = new Query();
             query.addCriteria(Criteria.where("compliance").is(-1));
             query.addCriteria(Criteria.where("reliability").is(-1));
-            list.addAll(findListData(query));
+            list.addAll(findListData(query.limit(limit)));
         } catch (Exception e) {
             e.printStackTrace();
         }
        return list;
+    }
+
+    public List<CertDo> getDataList(Set<String> sha1List){
+        List<CertDo> list = new ArrayList<>();
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").in(sha1List));
+            list.addAll(findListData(query));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public Long updateData(String id, Document doc) {

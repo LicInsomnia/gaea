@@ -63,8 +63,6 @@ public class CerReceiver implements Receiver {
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println(textMessage.getText());
-        //List<CertDo> aa = certDao.aa();
-        //System.out.println(RunConfig.getString("aaa"));
         run(null);
         System.out.println("spring 结束了");
     }
@@ -95,7 +93,11 @@ public class CerReceiver implements Receiver {
 
     private Map<String, ModuleConnection> getTopolgy() {
         ModuleTopology topology = new ModuleTopology();
-        topology.addOutputTag("DataSourceCheckSigModule", "test");
+        topology.addOutputTag("DataSourceCheckSigModule", "DataSourceCheckSigModule->CerCheckSigModule");
+        topology.addInputTag("CerCheckSigModule", "DataSourceCheckSigModule->CerCheckSigModule");
+
+        topology.addOutputTag("CerCheckSigModule", "CerCheckSigModule->DatabaseUpdateModule");
+        topology.addInputTag("DatabaseUpdateModule", "CerCheckSigModule->DatabaseUpdateModule");
 
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerComplianceModule");
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerReliabilityModule");

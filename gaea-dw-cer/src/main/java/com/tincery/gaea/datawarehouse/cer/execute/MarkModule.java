@@ -56,12 +56,12 @@ public class MarkModule extends BaseModule implements BaseModuleInterface {
             //Set<String> caseTags = this.markRuleUtils.check(doc);
             Set<String> caseTags = new HashSet<>();
             String subjectPublicKeyAlgoOid = "";
-            if (doc.getSubjectpublickeyalgooid() != null) {
-                subjectPublicKeyAlgoOid = doc.getSubjectpublickeyalgooid();
+            if (doc.getSubjectPublicKeyInfoAlgorithmOid() != null) {
+                subjectPublicKeyAlgoOid = doc.getSubjectPublicKeyInfoAlgorithmOid();
             }
             String signatureAlgooid = "";
-            if (doc.getSignaturealgooid() != null) {
-                signatureAlgooid = doc.getSignaturealgooid();
+            if (doc.getSignatureAlgorithmOid() != null) {
+                signatureAlgooid = doc.getSignatureAlgorithmOid();
             }
             if (this.stateSecretList.contains(subjectPublicKeyAlgoOid) || this.stateSecretList.contains(signatureAlgooid)) {
                 caseTags.add("国密");
@@ -87,7 +87,7 @@ public class MarkModule extends BaseModule implements BaseModuleInterface {
         }
         public Set<String> checkCompliance(CerData doc) {
             Set<String> tags = new HashSet<>();
-            Integer complianceType = doc.getCompliancetype();
+            Integer complianceType = doc.getComplianceType();
             for(int i=0;i<CerComplianceModuleUtils.typeNum;i++) {
                 int result = complianceType & (1 << i);
                 if(result != 0) {
@@ -98,7 +98,7 @@ public class MarkModule extends BaseModule implements BaseModuleInterface {
         }
         public Set<String> checkGmCompliance(CerData doc) {
             Set<String> tags = new HashSet<>();
-            Integer gmcomplianceType = doc.getGmcompliancetype();
+            Integer gmcomplianceType = doc.getGmcomplianceType();
             for(int i=0;i<CerGmComplianceModuleUtils.typeNum;i++) {
                 int result = gmcomplianceType & (1 << i);
                 if(result != 0) {
@@ -110,13 +110,13 @@ public class MarkModule extends BaseModule implements BaseModuleInterface {
 
         public CerData setTags(CerData doc) {
             Set<String> caseTags = checkCase(doc);
-            doc.setCasetags(caseTags.toArray(new String[caseTags.size()]));
+            doc.setCaseTags(caseTags);
             Set<String> complianceTags = checkCompliance(doc);
-            doc.setCompliancetags(complianceTags.toArray(new String[complianceTags.size()]));
+            doc.setComplianceTags(complianceTags.toArray(new String[complianceTags.size()]));
             Set<String> reliabilityTags = checkReliability(doc);
-            doc.setReliabilitytags(reliabilityTags.toArray(new String[reliabilityTags.size()]));
+            doc.setReliabilityTags(reliabilityTags.toArray(new String[reliabilityTags.size()]));
             Set<String> gmcomplianceTags = checkGmCompliance(doc);
-            doc.setGmcompliancetags(gmcomplianceTags.toArray(new String[gmcomplianceTags.size()]));
+            doc.setGmcomplianceTags(gmcomplianceTags.toArray(new String[gmcomplianceTags.size()]));
             return doc;
         }
     }
