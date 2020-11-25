@@ -6,6 +6,7 @@ import com.tincery.gaea.api.base.ApplicationInformationBO;
 import com.tincery.gaea.api.base.PayloadDetectorDO;
 import com.tincery.gaea.api.dm.SessionMergeData;
 import com.tincery.gaea.core.base.dao.PayloadDetectorDao;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.starter.base.InitializationRequired;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +93,7 @@ public class PayloadDetector implements InitializationRequired {
             return maybeHit.get().getProName();
         }
         maybeHit = hasProNameDontHaveProtocolPort.stream().filter(p -> p.hitPayload(downPayLoad, upPayLoad)).findFirst();
-        return maybeHit.map(PayloadDetectorDO::getProName).orElse("other");
+        return maybeHit.map(PayloadDetectorDO::getProName).orElse(HeadConst.PRONAME.OTHER);
     }
 
 

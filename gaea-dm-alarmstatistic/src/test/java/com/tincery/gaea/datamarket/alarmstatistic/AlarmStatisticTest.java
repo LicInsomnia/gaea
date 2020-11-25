@@ -10,7 +10,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 @SpringBootTest(classes = GaeaAlarmStatisticApplication.class)
-class AssetReceiverTest {
+class AlarmStatisticTest {
 
     @Autowired
     private Receiver receiver;

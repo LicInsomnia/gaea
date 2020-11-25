@@ -8,6 +8,7 @@ import com.tincery.gaea.api.src.extension.SessionExtension;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
+import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,7 +44,7 @@ public class ImpSessionData extends AbstractSrcData {
         String key = this.protocol + "_" + this.serverPort;
         String proName = payloadDetector.getProName(this.protocol, this.serverPort, this.clientPort,
                 this.sessionExtension.getUpPayLoad(), this.sessionExtension.getDownPayLoad());
-        if ("other".equals(proName)) {
+        if (HeadConst.PRONAME.OTHER.equals(proName)) {
             ApplicationInformationBO applicationInformation = applicationProtocol.getApplication(key);
             if (null != applicationInformation) {
                 this.proName = applicationInformation.getProName();

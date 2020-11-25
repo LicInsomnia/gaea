@@ -39,6 +39,7 @@ public class IsakmpExtension implements Serializable {
     private String initiatorHashAlgorithm;
     private Integer initiatorKeyLength;
     private String initiatorEncryptionAlgorithm;
+    private String initiatorLifeType;
     /**
      * responder属性
      */
@@ -51,6 +52,7 @@ public class IsakmpExtension implements Serializable {
     private String responderEncryptionAlgorithm;
     private String initiatorSPI;
     private String responderSPI;
+    private String responderLifeType;
 
     public void setExtension() {
         setInitiator();
@@ -152,6 +154,9 @@ public class IsakmpExtension implements Serializable {
             if (jsonObject.containsKey("Encryption-Algorithm")) {
                 this.initiatorEncryptionAlgorithm = jsonObject.getString("Encryption-Algorithm");
             }
+            if (jsonObject.containsKey("Life-Type")){
+                this.initiatorLifeType = jsonObject.getString("Life-Type");
+            }
         }
     }
 
@@ -184,6 +189,9 @@ public class IsakmpExtension implements Serializable {
             }
             if (jsonObject.containsKey("Encryption-Algorithm")) {
                 this.responderEncryptionAlgorithm = jsonObject.getString("Encryption-Algorithm");
+            }
+            if (jsonObject.containsKey("Life-Type")){
+                this.responderLifeType = jsonObject.getString("Life-Type");
             }
         }
     }
