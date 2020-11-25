@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author liuming
+ */
 public class NgramUtils implements Serializable {
     private String accepted_chars;
     private Map<String, Integer> posMap;

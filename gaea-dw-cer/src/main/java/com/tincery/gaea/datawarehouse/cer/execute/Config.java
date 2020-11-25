@@ -9,6 +9,9 @@ import com.tincery.gaea.core.base.dao.SrcRuleDao;
 import com.tincery.gaea.core.base.mgt.AlarmDictionary;
 import com.tincery.gaea.datawarehouse.cer.config.property.CerProperties;
 
+/**
+ * @author liuming
+ */
 public class Config {
     public static CertDao certDao;
     public static CerProperties cerProperties;

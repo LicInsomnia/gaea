@@ -7,6 +7,9 @@ import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author liuming
+ */
 public class CerGmComplianceModule extends BaseModule implements BaseModuleInterface {
 
     public CerGmComplianceModule() {

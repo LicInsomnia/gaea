@@ -4,10 +4,12 @@ import com.tincery.gaea.api.src.CerData;
 import com.tincery.gaea.core.base.tool.moduleframe.BaseModule;
 import com.tincery.gaea.core.base.tool.moduleframe.BaseModuleInterface;
 import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
-
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author liuming
+ */
 public class MarkModule extends BaseModule implements BaseModuleInterface {
     public MarkModule() {
         super();

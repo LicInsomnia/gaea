@@ -1,7 +1,6 @@
 package com.tincery.gaea.datawarehouse.cer.execute;
 
 import com.tincery.gaea.api.src.CerData;
-import com.tincery.gaea.core.base.component.support.WebCheck;
 import com.tincery.gaea.core.base.tool.moduleframe.BaseModule;
 import com.tincery.gaea.core.base.tool.moduleframe.BaseModuleInterface;
 import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
@@ -9,6 +8,9 @@ import org.bson.Document;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author liuming
+ */
 public class CerReliabilityModule extends BaseModule implements BaseModuleInterface {
 
     private final Map<String, Object> sha1WithChain = new HashMap<>();//key:证书sha1值;value:证书对应的证书链数据

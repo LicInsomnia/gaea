@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * @author liuming
+ */
 public class DataSourceCheckSigModule extends BaseModule implements BaseModuleInterface {
     @Override
     public boolean setInput(List<DataQueue> queues) {

@@ -9,9 +9,11 @@ import com.tincery.gaea.core.base.tool.moduleframe.BaseModuleInterface;
 import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
 import org.bson.Document;
 import org.springframework.beans.BeanUtils;
-
 import java.util.List;
 
+/**
+ * @author liuming
+ */
 public class DataSourceModule extends BaseModule implements BaseModuleInterface {
 
     private int readMongoLimit = 10000;

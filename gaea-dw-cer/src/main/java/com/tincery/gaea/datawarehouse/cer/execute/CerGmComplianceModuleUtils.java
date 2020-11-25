@@ -2,13 +2,14 @@ package com.tincery.gaea.datawarehouse.cer.execute;
 
 import com.tincery.gaea.api.src.CerData;
 import com.tincery.gaea.core.base.tool.ToolUtils;
-import com.tincery.gaea.datawarehouse.cer.config.property.CerProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author liuming
+ */
 public class CerGmComplianceModuleUtils {
 
     public final static int bUnauthIssuer = 0;//未授权颁发者

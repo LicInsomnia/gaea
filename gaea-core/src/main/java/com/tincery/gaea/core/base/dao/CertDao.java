@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author gxz gongxuanzhang@foxmail.com
- **/
+ * @author liuming
+ */
 @Repository
 public class CertDao extends SimpleBaseDaoImpl<CertDo> {
 

@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+/**
+ * @author liuming
+ */
 @Component
 public class MessageListener {
 

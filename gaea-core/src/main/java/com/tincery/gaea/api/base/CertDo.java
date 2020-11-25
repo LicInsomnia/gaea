@@ -1,14 +1,12 @@
 package com.tincery.gaea.api.base;
 
-
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
+
 
 /**
- * @author gxz
+ * @author liuming
  */
 @Data
 public class CertDo extends SimpleBaseDO {

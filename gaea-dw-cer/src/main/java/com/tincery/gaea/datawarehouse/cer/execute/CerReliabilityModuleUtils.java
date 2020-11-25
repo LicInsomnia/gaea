@@ -39,6 +39,7 @@ public class CerReliabilityModuleUtils {
     private Boolean inFAS = false;
     private ArrayList<String> detailList = new ArrayList<>();
 
+
     public CerReliabilityModuleUtils(CerData cer) {
         this.cer = cer;
         for (int i = 0; i < typeNum; i++) {

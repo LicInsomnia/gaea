@@ -3,6 +3,9 @@ package com.tincery.gaea.core.base.tool.moduleframe;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author liuming
+ */
 public class ModuleTopology {
     private Map<String, String> inputTagClassMap = new HashMap<>();
     private Map<String, String> outputTagClassMap = new HashMap<>();

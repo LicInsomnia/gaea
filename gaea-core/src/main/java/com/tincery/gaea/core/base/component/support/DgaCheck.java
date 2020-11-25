@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 
+/**
+ * @author liuming
+ */
 @Component
 @Slf4j
 public class DgaCheck implements InitializationRequired, Serializable {

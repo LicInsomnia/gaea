@@ -3,6 +3,9 @@ package com.tincery.gaea.core.base.tool.moduleframe;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author liuming
+ */
 public class ModuleConnection {
     private String className;
     private List<DataQueue> inputQueues = new ArrayList<>();

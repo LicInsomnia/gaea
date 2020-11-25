@@ -12,6 +12,9 @@ import java.security.cert.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author liuming
+ */
 public class CerCheckSigModule extends BaseModule implements BaseModuleInterface {
     PKIXParameters params;
 

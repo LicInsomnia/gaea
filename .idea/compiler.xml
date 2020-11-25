@@ -9,6 +9,7 @@
         <module name="gaea-controller" />
         <module name="gaea-core" />
         <module name="gaea-dm-alarmcombine" />
+        <module name="gaea-dm-alarmstatistic" />
         <module name="gaea-dm-asset" />
         <module name="gaea-dm-sessionadjust" />
         <module name="gaea-dm-sessionjournal" />
@@ -42,6 +43,7 @@
       <module name="gaea-controller" target="1.8" />
       <module name="gaea-core" target="1.8" />
       <module name="gaea-dm-alarmcombine" target="1.8" />
+      <module name="gaea-dm-alarmstatistic" target="1.8" />
       <module name="gaea-dm-asset" target="1.8" />
       <module name="gaea-dm-sessionadjust" target="1.8" />
       <module name="gaea-dm-sessionjournal" target="1.8" />
@@ -78,6 +80,7 @@
       <module name="gaea-controller" options="-parameters" />
       <module name="gaea-core" options="-parameters" />
       <module name="gaea-dm-alarmcombine" options="-parameters" />
+      <module name="gaea-dm-alarmstatistic" options="-parameters" />
       <module name="gaea-dm-asset" options="-parameters" />
       <module name="gaea-dm-sessionadjust" options="-parameters" />
       <module name="gaea-dm-sessionjournal" options="-parameters" />

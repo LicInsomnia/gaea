@@ -7,6 +7,9 @@ import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
+/**
+ * @author liuming
+ */
 public class WebTrain {
     String configPath;
     private boolean isInitiated = false;

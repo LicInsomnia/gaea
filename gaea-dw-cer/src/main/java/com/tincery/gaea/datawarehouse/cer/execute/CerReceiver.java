@@ -22,9 +22,11 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.util.List;
 import java.util.Map;
-
 import static com.tincery.gaea.core.base.mgt.HeadConst.GORGEOUS_DIVIDING_LINE;
 
+/**
+ * @author liuming
+ */
 @Slf4j
 @Setter
 @Getter

@@ -13,10 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 加载sys.app_rule表中应用信息进行应用检测
- * 注意事项：
- * "exact" : true,表示可以对四级以上域名匹配，如果为false，默认只匹配到三级域名，例如mail.sina.com.cn
- *
  * @author liuming
  */
 

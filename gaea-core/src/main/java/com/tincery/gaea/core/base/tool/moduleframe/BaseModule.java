@@ -1,7 +1,10 @@
 package com.tincery.gaea.core.base.tool.moduleframe;
 
-import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * @author liuming
+ */
 
 abstract public class BaseModule implements BaseModuleInterface {
     private static final long serialVersionUID = 1L;

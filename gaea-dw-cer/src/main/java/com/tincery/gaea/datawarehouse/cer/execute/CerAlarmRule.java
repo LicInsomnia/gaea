@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
+/**
+ * @author liuming
+ */
 public class CerAlarmRule extends AlarmRule {
 
     @Override
@@ -170,6 +173,7 @@ public class CerAlarmRule extends AlarmRule {
             }
             boolean flag;
             AlarmMaterialData alarmMaterialData = new AlarmMaterialData(data, this.source, null, Config.ipSelector);
+            //alarmMaterialData.setPattern(Config.alarmDictionary.valueOf("pattern", "CERT"));
             switch (this.mode) {
                 case 0:
                     flag =  matchValue.equals(this.ruleValue.toLowerCase());
@@ -186,8 +190,52 @@ public class CerAlarmRule extends AlarmRule {
                 case 4:
                     int selfsigned = data.getSelfSigned();
                     flag = (selfsigned == 1 && matchValue.contains(ruleValue));
-                    alarmMaterialData.setPattern(Config.alarmDictionary.valueOf("pattern", "CERT"));
                     alarmMaterialData.setSha1(data.getId());
+                    alarmMaterialData.setCreateUser("system");
+                    alarmMaterialData.setIsSystem(true);
+                    alarmMaterialData.setType(Config.alarmDictionary.valueOf("type", "cert_analysis"));
+                    alarmMaterialData.setCheckMode(5);
+                    //alarmMaterialData.setPattern(Config.alarmDictionary.valueOf("pattern", "CERT"));
+                    break;
+                case 5:
+                    int compliance = data.getCompliance();
+                    int compliancetype = Integer.parseInt(matchValue);
+                    int loc = Integer.parseInt(ruleValue);
+                    int weakPubAlgo = (1 << CerComplianceModuleUtils.bWeakPubAlgo);
+                    int weakSignAlgo = (1 << CerComplianceModuleUtils.bWeakSignAlgo);
+                    int shortKey = (1 << CerComplianceModuleUtils.bShortPubKey);
+                    if (compliance == 1 && (compliancetype & loc) == loc) {
+                        alarmMaterialData.setCreateUser("system");
+                        //alarmMaterialData.setPattern(Config.alarmDictionary.valueOf("pattern", "CERT"));
+                        alarmMaterialData.setIsSystem(true);
+                        alarmMaterialData.setCheckMode(6);
+                        if (loc == weakPubAlgo || loc == weakSignAlgo) {
+                            alarmMaterialData.setType(Config.alarmDictionary.valueOf("type", "leak"));
+                        } else if (loc == shortKey) {
+                            alarmMaterialData.setType(Config.alarmDictionary.valueOf("type", "leak"));
+                        } else {
+                            alarmMaterialData.setType(Config.alarmDictionary.valueOf("type", "cert_analysis"));
+                        }
+                        flag = true;
+                    } else {
+                        flag = false;
+                    }
+                    break;
+                case 6:
+                    double reliability = Double.parseDouble(matchValue);
+                    String[] valueArray = ruleValue.split(",");
+                    double min = "".equals(valueArray[0]) ? Double.NEGATIVE_INFINITY : Double.parseDouble(valueArray[0]);
+                    double max = "".equals(valueArray[1]) ? Double.POSITIVE_INFINITY : Double.parseDouble(valueArray[1]);
+                    if (reliability <= max && reliability >= min) {
+                        alarmMaterialData.setCreateUser("system");
+                        //alarmMaterialData.setPattern(Config.alarmDictionary.valueOf("pattern", "CERT"));
+                        alarmMaterialData.setIsSystem(true);
+                        alarmMaterialData.setType(Config.alarmDictionary.valueOf("type", "cert_analysis"));
+                        alarmMaterialData.setCheckMode(7);
+                        flag = true;
+                    } else {
+                        flag = false;
+                    }
                     break;
                 default:
                     flag = false;

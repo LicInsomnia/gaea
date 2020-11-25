@@ -7,6 +7,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author liuming
+ */
 public class DataQueue {
     private String tag;
     private Integer copyNum = 0;

@@ -10,6 +10,10 @@ import com.tincery.gaea.core.base.tool.moduleframe.BaseModuleInterface;
 import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
 import java.util.List;
 
+/**
+ * @author liuming
+ */
+
 public class AlertModule extends BaseModule implements BaseModuleInterface {
 
     public AlertModule() {
@@ -30,6 +34,9 @@ public class AlertModule extends BaseModule implements BaseModuleInterface {
         RuleRegistry.getInstance().putRule(rule);
     }
 
+    /**
+     * 初始化规则
+     */
     private void init() {
         CerAlarmRule cerAlarmRule = new CerAlarmRule();
         cerAlarmRule.init();

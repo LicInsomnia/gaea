@@ -10,6 +10,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author liuming
+ */
 public class ModuleManager {
     private Map<String, ModuleConnection> topology;
     private Map<String, BaseModule> formedModuleMap = null;
