@@ -81,11 +81,11 @@ public class AssetDetector implements InitializationRequired {
 
     public AssetConfigDO getAsset(long ipN) {
         if (this.uniqueAssetMap.containsKey(ipN)) {
-            return this.uniqueAssetMap.get(ipN);
+            return this.uniqueAssetMap.get(ipN).setRange(false);
         }
         for (Pair<Long, Long> pair : this.rangeAssetMap.keySet()) {
             if (pair.getKey() <= ipN && ipN <= pair.getValue()) {
-                return this.rangeAssetMap.get(pair);
+                return this.rangeAssetMap.get(pair).setRange(true);
             }
         }
         return null;

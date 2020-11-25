@@ -137,8 +137,8 @@ public class IsakmpExtension implements Serializable {
             if (jsonObject.containsKey("Life-Duration")) {
                 this.initiatorLifeDuration = jsonObject.getInteger("Life-Duration");
             }
-            if (jsonObject.containsKey("Key-Exchange")) {
-                this.initiatorKeyExchange = jsonObject.getString("Key-Exchange");
+            if (jsonObject.containsKey("Key-exchange")) {
+                this.initiatorKeyExchange = jsonObject.getString("Key-exchange");
             }
             if (jsonObject.containsKey("Authentication-Method")) {
                 this.initiatorAuthenticationMethod = jsonObject.getString("Authentication-Method");
@@ -170,8 +170,8 @@ public class IsakmpExtension implements Serializable {
             if (jsonObject.containsKey("Life-Duration")) {
                 this.responderLifeDuration = jsonObject.getInteger("Life-Duration");
             }
-            if (jsonObject.containsKey("Key-Exchange")) {
-                this.responderKeyExchange = jsonObject.getString("Key-Exchange");
+            if (jsonObject.containsKey("Key-exchange")) {
+                this.responderKeyExchange = jsonObject.getString("Key-exchange");
             }
             if (jsonObject.containsKey("Authentication-Method")) {
                 this.responderAuthenticationMethod = jsonObject.getString("Authentication-Method");

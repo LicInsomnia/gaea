@@ -60,8 +60,11 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
                 ftpandtelnetData.setProName("TELNET");
             }
             fixFtpAndTelnet(elements,ftpAndTelnetExtension);
-            String content = split[2];
-            ftpAndTelnetExtension.setContent(content.replaceAll("\r\n","<br/>"));
+            if (split.length>2){
+                //说明有content
+                String content = split[2];
+                ftpAndTelnetExtension.setContent(content.replaceAll("\r\n","<br/>"));
+            }
         }
         ftpandtelnetData.setFtpAndTelnetExtension(ftpAndTelnetExtension);
         return ftpandtelnetData;

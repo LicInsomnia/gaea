@@ -75,6 +75,11 @@ public class ActiveMqConfig {
         return new ActiveMQQueue(QueueNames.SRC_WECHAT);
     }
 
+    @Bean(name = QueueNames.SRC_ALARM)
+    public Queue getAlarm() {
+        return new ActiveMQQueue(QueueNames.SRC_ALARM);
+    }
+
     @Bean(name = QueueNames.SRC_FTPANDTELNET)
     public Queue getFtpAndTelnet() {
         return new ActiveMQQueue(QueueNames.SRC_FTPANDTELNET);

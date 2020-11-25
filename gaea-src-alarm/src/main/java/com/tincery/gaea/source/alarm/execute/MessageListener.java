@@ -15,7 +15,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    @JmsListener(destination = QueueNames.SRC_ISAKMP)
+    @JmsListener(destination = QueueNames.SRC_ALARM)
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println("接收到了内容");
         receiver.receive(textMessage);
