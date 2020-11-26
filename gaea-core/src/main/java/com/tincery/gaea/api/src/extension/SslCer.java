@@ -5,6 +5,7 @@ import com.tincery.gaea.core.base.component.support.CerSelector;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -12,10 +13,14 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class SslCer {
+public class SslCer implements Serializable {
 
-    private final String sha1;
+    private String sha1;
     private JSONObject cer;
+
+    public SslCer() {
+
+    }
 
     public SslCer(String sha1) {
         this.sha1 = sha1;
