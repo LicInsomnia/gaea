@@ -22,9 +22,9 @@ public class SupportQuartzConfig {
     private ControllerConfigProperties controllerConfigProperties;
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX, name = "mongoStash")
+    @ConditionalOnProperty(prefix = PREFIX, name = "mongo-stash")
     public JobDetail mongoStashJob() {
-        log.info("控制器此次分发flow任务");
+        log.info("控制器此次分发mongoStash任务");
         return JobBuilder.newJob(MongoStashJob.class)
                 .withIdentity("mongoStashJob")
                 .storeDurably()
@@ -32,7 +32,7 @@ public class SupportQuartzConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = PREFIX, name = "mongoStash")
+    @ConditionalOnProperty(prefix = PREFIX, name = "mongo-stash")
     public Trigger mongoStashJobTrigger() {
         String cron = controllerConfigProperties.getSupport().getMongoStash();
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
