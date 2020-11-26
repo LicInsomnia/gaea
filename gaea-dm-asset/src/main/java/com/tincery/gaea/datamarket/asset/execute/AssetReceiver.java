@@ -340,6 +340,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         sslIds = new HashMap<>(16);
         isakmpInitiatorIds = new HashMap<>(16);
         isakmpResponderIds = new HashMap<>(16);
+        portStrings = new HashSet<>(16);
         List<AssetExtension> all = assetExtensionDao.findAll();
         all.forEach(assetExtension -> {
             List<Object> onList = new ArrayList<>();
