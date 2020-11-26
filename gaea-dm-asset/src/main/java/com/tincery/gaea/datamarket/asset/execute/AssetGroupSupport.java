@@ -1,7 +1,10 @@
-package com.tincery.gaea.api.dm;
+package com.tincery.gaea.datamarket.asset.execute;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.ProtocolType;
+import com.tincery.gaea.api.dm.AssetDataDTO;
+import com.tincery.gaea.api.dm.AssetExtension;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.NumberUtils;
@@ -19,9 +22,11 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,7 +47,8 @@ public class AssetGroupSupport {
         return mergeAllData(allGroup);
     }
 
-    public static List<AssetExtension> getSaveExtension(List<JSONObject> allData, Function<JSONObject, AssetExtension> map) {
+    public static List<AssetExtension> getSaveExtension(List<JSONObject> allData, Function<JSONObject,
+            AssetExtension> map) {
         Map<String, AssetExtension> result = new HashMap<>(16);
         allData.stream().map(map).filter(Objects::nonNull).forEach(assetExtension -> result.merge(assetExtension.getId(), assetExtension, (k, v) -> v.merge(assetExtension)));
         return new ArrayList<>(result.values());
@@ -75,8 +81,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(timeTag);
         assetDataDTO.setSessionCount(1L);
         assetDataDTO.setKey(assetDataDTO.getId());
-        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
-        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(), assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(), assetDataDTO.getUpByte()));
         return assetDataDTO;
     }
 
@@ -100,8 +106,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(timeTag);
         assetDataDTO.setSessionCount(1L);
         assetDataDTO.setName(name);
-        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
-        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(), assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(), assetDataDTO.getUpByte()));
         return assetDataDTO;
     }
 
@@ -133,11 +139,59 @@ public class AssetGroupSupport {
         assetDataDTO.setKey(key);
         assetDataDTO.setPort(serverPort);
         assetDataDTO.setClients(serverIpGetClient(jsonObject));
-        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
-        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(), assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(), assetDataDTO.getUpByte()));
+        List<String> onList = new ArrayList<>();
+        onList.add(assetDataDTO.getUnit());
+        onList.add(assetDataDTO.getName());
+        onList.add(jsonObject.getString(HeadConst.FIELD.PRONAME));
+        onList.add(assetDataDTO.getPort() + "");
+        String extensionKey = Joiner.on("$").join(onList);
+        if (!AssetReceiver.portStrings.contains(extensionKey)) {
+            assetDataDTO.setAlarm(assetDataDTO.getAlarm() | AssetDataDTO.NEW_PORT);
+            AssetReceiver.portStrings.add(extensionKey);
+        }
+
+        if (isSSL(jsonObject)) {
+            Set<String> sslIds = AssetReceiver.sslIds.computeIfAbsent(key, (k) -> new HashSet<>());
+            JSONObject sslExtension = jsonObject.getJSONObject("sslExtension");
+            JSONObject cipherSuite = sslExtension.getJSONObject("cipherSuite");
+            String sslid = cipherSuite.getString("id");
+            if (!sslIds.contains(sslid)) {
+                sslIds.add(sslid);
+                assetDataDTO.setAlarm(assetDataDTO.getAlarm() | AssetDataDTO.NEW_RITHMETIC);
+            }
+        } else if (isIsakmpInitiator(jsonObject)) {
+            Set<AssetReceiver.IsakmpInitiator> isakmpInitiators =
+                    AssetReceiver.isakmpInitiatorIds.computeIfAbsent(extensionKey, (k) -> new HashSet<>());
+            AssetReceiver.IsakmpInitiator isakmpInitiator = new AssetReceiver.IsakmpInitiator(jsonObject);
+            if(!isakmpInitiators.contains(isakmpInitiator)){
+                    isakmpInitiators.add(isakmpInitiator);
+                    jsonObject.merge("alarm",AssetDataDTO.NEW_RITHMETIC,(k,v)->(long)v | AssetDataDTO.NEW_RITHMETIC);
+            }
+        } else if (isIsakmpResponder(jsonObject)) {
+            Set<AssetReceiver.IsakmpResponder> isakmpInitiators =
+                    AssetReceiver.isakmpResponderIds.computeIfAbsent(extensionKey, (k) -> new HashSet<>());
+            AssetReceiver.IsakmpResponder isakmpInitiator = new AssetReceiver.IsakmpResponder(jsonObject);
+            if(!isakmpInitiators.contains(isakmpInitiator)){
+                isakmpInitiators.add(isakmpInitiator);
+                jsonObject.merge("alarm",AssetDataDTO.NEW_RITHMETIC,(k,v)->(long)v | AssetDataDTO.NEW_RITHMETIC);
+            }
+        }
         return assetDataDTO.setId(null);
     }
 
+    private static boolean isSSL(JSONObject assetJson) {
+        return Objects.equals(assetJson.getString(HeadConst.FIELD.PRONAME), "SSL");
+    }
+
+    private static boolean isIsakmpInitiator(JSONObject assetJson) {
+        return Objects.equals(assetJson.getString(HeadConst.FIELD.PRONAME), "SSL") && assetJson.getBoolean("isClient");
+    }
+
+    private static boolean isIsakmpResponder(JSONObject assetJson) {
+        return Objects.equals(assetJson.getString(HeadConst.FIELD.PRONAME), "SSL") && !assetJson.getBoolean("isClient");
+    }
 
     /**
      * **************************
@@ -203,8 +257,8 @@ public class AssetGroupSupport {
         assetDataDTO.setTimeTag(LocalDateTime.ofInstant(Instant.ofEpochMilli(capTime), ZoneOffset.systemDefault()));
         String key = StringUtils.fillString("{}_{}_{}_{}", assetDataDTO.getUnit(), assetDataDTO.getName(),
                 assetDataDTO.getProname(), capTime);
-        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(),assetDataDTO.getUpPkt()));
-        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(),assetDataDTO.getUpByte()));
+        assetDataDTO.setPkt(NumberUtils.sum(assetDataDTO.getDownPkt(), assetDataDTO.getUpPkt()));
+        assetDataDTO.setByteNum(NumberUtils.sum(assetDataDTO.getDownByte(), assetDataDTO.getUpByte()));
         return assetDataDTO.setKey(key).setId(null);
     }
 
@@ -220,7 +274,7 @@ public class AssetGroupSupport {
             client.setCountry("-").setForeign(false);
         } else {
             String country = location.getString("country");
-            client.setCountry(StringUtils.isEmpty(country)?"-":country);
+            client.setCountry(StringUtils.isEmpty(country) ? "-" : country);
             client.setForeign(!"China".equals(country));
         }
         client.setClientIp(clientIp).setValue(1L);

@@ -31,10 +31,7 @@ public class AssetConfigs {
         GET_PORT = jsonObject -> jsonObject.getIntValue(HeadConst.FIELD.SERVER_PORT);
     }
 
-    public static int NONE = 0;
-    public static int NEW_IP = 1;
-    public static int NEW_RITHMETIC = 1 << 1;
-    public static int NEW_PORT = 1 << 2;
+
 
 
     /***
@@ -54,7 +51,9 @@ public class AssetConfigs {
     public static List<AlarmMaterialData> detectorClient(JSONObject assetJson, AssetDetector assetDetector) {
         AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.CLIENT_IP_N));
         assetJson.put("isClient", true);
-        assetJson.put("newFlag",assetConfig.isRange()?NEW_IP:NONE);
+        if(assetConfig.isRange()){
+            assetJson.merge("alarm",AssetDataDTO.NEW_IP,(alarm,alarmLong)->(long)alarmLong | AssetDataDTO.NEW_IP);
+        }
         // 先判断黑名单 命中告警
         if (check(assetJson, assetConfig, ListType.BLACK, OutInput.OUT, Border.DOMESTIC)) {
             // 境内
@@ -81,7 +80,9 @@ public class AssetConfigs {
         if (null == assetConfig) {
             return null;
         }
-        assetJson.put("newFlag",assetConfig.isRange()?NEW_IP:NONE);
+        if(assetConfig.isRange()){
+            assetJson.merge("alarm",AssetDataDTO.NEW_IP,(alarm,alarmLong)->(long)alarmLong | AssetDataDTO.NEW_IP);
+        }
         // 客户端需要匹配密码
         assetConfig.strategyHit(assetJson);
         // 先判断黑名单 命中告警
@@ -154,6 +155,7 @@ public class AssetConfigs {
                         GET_PORT.apply(assetJson)));
 
     }
+
 
 
     /**

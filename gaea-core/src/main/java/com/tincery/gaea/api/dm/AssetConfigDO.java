@@ -81,7 +81,8 @@ public class AssetConfigDO extends SimpleBaseDO {
         for (AssetCondition.ConditionGroup conditionGroup : target.getConditionGroup()) {
             if (conditionGroup.hit(assetServerJson, assetCertStrategy)) {
                 assetServerJson.put("$description", conditionGroup.getDescription());
-                assetServerJson.put("alarm", true);
+                assetServerJson.merge("alarm", AssetDataDTO.ILLEGAL,
+                        (alarm, alarmInt) -> (long) alarm | AssetDataDTO.ILLEGAL);
                 return;
             }
         }

@@ -20,6 +20,14 @@ import java.util.stream.Collectors;
  **/
 @Data
 public class AssetDataDTO extends SimpleBaseDO implements MergeAble<AssetDataDTO> {
+    public static long NONE = 0;
+    public static long NEW_IP = 1;
+    public static long NEW_RITHMETIC = 1 << 1;
+    public static long NEW_PORT = 1 << 2;
+    public static long VISITED = 1<<3;
+    public static long ILLEGAL = 1<<4;
+    public static long ALARM  = 1<<5;
+
 
     @Id
     private String id;
@@ -31,7 +39,6 @@ public class AssetDataDTO extends SimpleBaseDO implements MergeAble<AssetDataDTO
     private Long byteNum;
     private Long downByte;
     private Long downPkt;
-    private Boolean alarm;
     private Integer heat;
     private String key;
     private Long pkt;
@@ -41,6 +48,7 @@ public class AssetDataDTO extends SimpleBaseDO implements MergeAble<AssetDataDTO
     private Long upPkt;
     private List<AssetClient> clients;
     private Map<String, Object> extensions;
+    private long alarm;
 
 
     @Setter
@@ -59,7 +67,7 @@ public class AssetDataDTO extends SimpleBaseDO implements MergeAble<AssetDataDTO
     @Override
     public AssetDataDTO merge(AssetDataDTO that) {
         this.byteNum = NumberUtils.sum(that.byteNum, this.byteNum);
-        this.alarm = (this.alarm != null && this.alarm) || (that.alarm != null && that.alarm);
+        this.alarm = this.alarm | that.alarm;
         this.downByte = NumberUtils.sum(that.downByte, this.downByte);
         this.downPkt = NumberUtils.sum(that.downPkt, this.downPkt);
         this.pkt = NumberUtils.sum(this.pkt, that.pkt);
@@ -98,5 +106,7 @@ public class AssetDataDTO extends SimpleBaseDO implements MergeAble<AssetDataDTO
         });
         return result;
     }
+
+
 
 }

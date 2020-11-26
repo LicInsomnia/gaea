@@ -1,23 +1,23 @@
-package com.tincery.gaea.api.base;
+package com.tincery.gaea.api.src;
 
-import com.tincery.starter.base.model.SimpleBaseDO;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-
+import lombok.Getter;
+import lombok.Setter;
+import java.util.Set;
 
 /**
  * @author liuming
  */
-@Data
-public class CertDo extends SimpleBaseDO {
-    @Id
+
+@Setter
+@Getter
+public class CerData extends AbstractSrcData  {
     private String id;
     private Integer alertCheck;
-    private Integer altnameDgaNum;
+    private Integer altNameDgaNum;
     private Integer altNameNum;
     private Integer altNameWhiteNum;
     private Long capTime;
-    private String[] caseTags;
+    private Set<String> caseTags;
     private Integer complete;
     private Integer compliance;
     private String[] complianceDetail;
@@ -80,7 +80,7 @@ public class CertDo extends SimpleBaseDO {
     private String subjectCommonName;
     private String subjectCountryName;
     private String subjectLocalityName;
-    private String subjectOorganizationName;
+    private String subjectOrganizationName;
     private String subjectOrganizationUnitName;
     private String subjectStateOrProvinceName;
     private String subjectEmail;
@@ -103,4 +103,5 @@ public class CertDo extends SimpleBaseDO {
     private Integer keyExchangeLeakDetectResult;
     private Integer maliciousWebsite;
     private Boolean signatureCheck;
+    private Set<String> cerChain;
 }

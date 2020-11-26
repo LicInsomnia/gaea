@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.tincery.gaea.api.dm.AssetConfigDO;
+import com.tincery.gaea.api.dm.AssetDataDTO;
 import com.tincery.gaea.api.src.extension.AlarmExtension;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.component.support.IpSelector;
@@ -14,7 +15,11 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 告警素材元数据类
@@ -215,7 +220,8 @@ public final class AlarmMaterialData {
     /**
      * 资产需要的一个新的告警
      */
-    public AlarmMaterialData(JSONObject jsonObject,AssetConfigDO assetConfigDO,Boolean isClient){
+    public AlarmMaterialData(JSONObject jsonObject, AssetConfigDO assetConfigDO, Boolean isClient) {
+        jsonObject.merge("alarm", AssetDataDTO.ALARM, (alarm, alarmInt) -> (long) alarmInt | AssetDataDTO.ALARM);
         this.source = jsonObject.getString("source");
         this.capTime = DateUtils.validateTime(jsonObject.getLong("capTime"));
         this.duration = jsonObject.getLong("duration");
@@ -224,9 +230,9 @@ public final class AlarmMaterialData {
         this.serverId = jsonObject.getString("serverId");
 
         this.clientIp = jsonObject.getString("clientIp");
-        this.clientLocation = JSON.parseObject(jsonObject.getString("clientLocation"),Location.class);
+        this.clientLocation = JSON.parseObject(jsonObject.getString("clientLocation"), Location.class);
         this.serverIp = jsonObject.getString("serverIp");
-        this.serverLocation = JSON.parseObject(jsonObject.getString("serverLocation"),Location.class);
+        this.serverLocation = JSON.parseObject(jsonObject.getString("serverLocation"), Location.class);
         this.clientPort = jsonObject.getInteger("clientPort");
         this.serverPort = jsonObject.getInteger("serverPort");
         this.protocol = jsonObject.getInteger("protocol");
@@ -244,23 +250,23 @@ public final class AlarmMaterialData {
         this.assetName = assetConfigDO.getName();
         this.assetUnit = assetConfigDO.getUnit();
         this.assetType = assetConfigDO.getType();
-        if (isClient){
+        if (isClient) {
             this.assetIp = this.clientIp;
-        }else{
+        } else {
             this.assetIp = this.serverIp;
         }
         /*填装eventData*/
-        if (Objects.nonNull(jsonObject.getString("alarmKey"))){
+        if (Objects.nonNull(jsonObject.getString("alarmKey"))) {
             this.eventData = jsonObject.getString("alarmKey");
-        }else {
+        } else {
             String md5 = ToolUtils.getMD5(jsonObject.toJSONString());
-            jsonObject.put("alarmKey",md5);
+            jsonObject.put("alarmKey", md5);
             this.eventData = md5;
         }
     }
 
     private void fixAssetIp(Integer assetFlag) {
-        switch (assetFlag){
+        switch (assetFlag) {
             case 1:
                 //CLIENT_ASSET
                 this.assetIp = this.clientIp;
@@ -320,21 +326,18 @@ public final class AlarmMaterialData {
         }
         this.publisher = alarmRule.getPublisher();
 
-        if((this.clientIp = metaData.getClientIp())!=null){
+        if ((this.clientIp = metaData.getClientIp()) != null) {
             this.clientLocation = ipSelector.getCommonInformation(this.clientIp);
         }
-        if((this.serverIp = metaData.getServerIp())!=null){
+        if ((this.serverIp = metaData.getServerIp()) != null) {
             this.serverLocation = ipSelector.getCommonInformation(this.serverIp);
         }
-        if((this.serverIpOuter = metaData.getServerIpOuter())!=null){
+        if ((this.serverIpOuter = metaData.getServerIpOuter()) != null) {
             this.serverLocationOuter = ipSelector.getCommonInformation(this.serverIpOuter);
         }
-        if((this.clientIpOuter = metaData.getClientIpOuter())!=null){
+        if ((this.clientIpOuter = metaData.getClientIpOuter()) != null) {
             this.clientLocationOuter = ipSelector.getCommonInformation(this.clientIpOuter);
         }
-
-
-
 
 
     }
@@ -360,7 +363,8 @@ public final class AlarmMaterialData {
     }
 
     public void setKey() {
-        Object[] join = {this.userId, this.serverId, this.createUser, this.categoryDesc, this.subCategoryDesc, this.title, this.capTime};
+        Object[] join = {this.userId, this.serverId, this.createUser, this.categoryDesc, this.subCategoryDesc,
+                this.title, this.capTime};
         String joinString = Joiner.on(";").useForNull("").join(join);
         this.key = ToolUtils.getMD5(joinString);
     }
