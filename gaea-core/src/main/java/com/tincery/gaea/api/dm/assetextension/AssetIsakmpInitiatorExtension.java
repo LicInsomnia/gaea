@@ -56,7 +56,7 @@ public class AssetIsakmpInitiatorExtension extends BaseAssetExtension {
     /**
      * 生存期时间
      */
-    private String initiatorLifeDuration;
+    private JSONObject initiatorLife;
     /**
      * 第二阶段密钥交换完整性
      */
@@ -64,7 +64,7 @@ public class AssetIsakmpInitiatorExtension extends BaseAssetExtension {
     /**
      * 密钥交换第一阶段证书
      */
-    private List<Object> initiatorIsakmpCer;
+    private List<Object> initiatorCert;
     private String protocolVersion;
     private String version;
 
@@ -84,9 +84,9 @@ public class AssetIsakmpInitiatorExtension extends BaseAssetExtension {
         this.initiatorHashAlgorithm = isakmpExtension.getString(HeadConst.FIELD.INITIATOR_HASH_ALGORITHM);
         this.initiatorAuthenticationMethod = isakmpExtension.getString(HeadConst.FIELD.INITIATOR_AUTHENTICATION_METHOD);
         this.initiatorKeyExchange = isakmpExtension.getString(HeadConst.FIELD.INITIATOR_KEY_EXCHANGE);
-        this.initiatorLifeDuration = isakmpExtension.getString(HeadConst.FIELD.INITIATOR_LIFE_DURATION);
+        this.initiatorLife = isakmpExtension.getJSONObject(HeadConst.FIELD.INITIATOR_LIFE);
         this.secondComplete = isakmpExtension.getString(HeadConst.FIELD.SECOND_COMPLETE);
-        this.initiatorIsakmpCer = isakmpExtension.getJSONArray(HeadConst.FIELD.INITIATOR_ISAKMP_CER);
+        this.initiatorCert = isakmpExtension.getJSONArray(HeadConst.FIELD.INITIATOR_CERT);
         this.protocolVersion = isakmpExtension.getString(HeadConst.FIELD.PROTOCOL_VERSION);
         this.version = isakmpExtension.getString(HeadConst.FIELD.ISAKMP_VERSION);
         setKey();
@@ -100,8 +100,8 @@ public class AssetIsakmpInitiatorExtension extends BaseAssetExtension {
                 this.encryptedMessageProtocol + "_" + this.initiatorFirstComplete + "_" +
                 this.initiatorEncryptionAlgorithm + "_" + this.initiatorKeyLength + "_" +
                 this.initiatorHashAlgorithm + "_" + this.initiatorAuthenticationMethod + "_" +
-                this.initiatorKeyExchange + "_" + this.initiatorLifeDuration + "_" +
-                this.secondComplete + "_" + this.initiatorIsakmpCer + "_" +
+                this.initiatorKeyExchange + "_" + this.initiatorLife + "_" +
+                this.secondComplete + "_" + this.initiatorCert + "_" +
                 this.protocolVersion + "_" + this.version);
     }
 

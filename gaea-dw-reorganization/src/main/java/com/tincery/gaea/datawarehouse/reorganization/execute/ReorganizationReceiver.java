@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.dw.AbstractDataWarehouseData;
 import com.tincery.gaea.api.dw.ReorganizationDataWareGroup;
+import com.tincery.gaea.api.src.extension.SslCer;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.CerChain;
 import com.tincery.gaea.core.base.plugin.csv.CsvReader;
@@ -216,10 +217,14 @@ public class ReorganizationReceiver extends AbstractDataWarehouseReceiver {
                             continue;
                         }
                         if (null != assetData.getSslExtension()) {
-                            List<String> cerChain = assetData.getSslExtension().getServerCerChain();
+                            List<SslCer> cerChain = assetData.getSslExtension().getServerCerChain();
                             // 只保存服务端证书链中证书大于1个的证书链
                             if (null != cerChain && cerChain.size() > 1) {
-                                assetCerChain.add(cerChain);
+                                List<String> cerChainString = new ArrayList<>();
+                                for (SslCer sslCer : cerChain) {
+                                    cerChainString.add(sslCer.getSha1());
+                                }
+                                assetCerChain.add(cerChainString);
                             }
                         }
                         /*********************************************************/

@@ -1,8 +1,11 @@
 package com.tincery.gaea.api.src.extension;
 
+import com.alibaba.fastjson.JSONObject;
+import com.tincery.gaea.core.base.component.support.CerSelector;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -10,14 +13,23 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class IsakmpCer {
+public class IsakmpCer implements Serializable {
 
-    private final String sha1;
-    private final String certEncoding;
+    private String sha1;
+    private String certEncoding;
+    private JSONObject cer;
+
+    public IsakmpCer() {
+
+    }
 
     public IsakmpCer(String sha1, String certEncoding) {
         this.sha1 = sha1;
         this.certEncoding = certEncoding;
+    }
+
+    public void adjust(CerSelector cerSelector) {
+        this.cer = cerSelector.selector(this.sha1);
     }
 
     @Override

@@ -133,10 +133,10 @@ public class AlarmRule extends BaseSimpleRule {
     }
 
 
-    private class AlarmRuleChecker extends AbstractRuleChecker {
+    protected class AlarmRuleChecker extends AbstractRuleChecker {
 
-        private final SrcRuleDO source;
-        private boolean activity = true;
+        protected final SrcRuleDO source;
+        protected boolean activity = true;
 
 
         /****

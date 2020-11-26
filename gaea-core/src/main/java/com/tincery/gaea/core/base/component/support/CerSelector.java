@@ -7,8 +7,8 @@ import com.tincery.starter.base.InitializationRequired;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 基础初始化类
@@ -19,7 +19,7 @@ import java.util.Map;
 @Component
 public class CerSelector implements InitializationRequired {
 
-    private final Map<String, JSONObject> cache = new HashMap<>();
+    private final Map<String, JSONObject> cache = new ConcurrentHashMap<>();
 
     @Autowired
     private CommonConfig commonConfig;
@@ -29,7 +29,7 @@ public class CerSelector implements InitializationRequired {
     private CertDao certDao;
     private String[] cerKeys;
 
-    public Map<String, Object> selector(String sha1) {
+    public JSONObject selector(String sha1) {
         if (cache.containsKey(sha1)) {
             return this.cache.get(sha1);
         } else {

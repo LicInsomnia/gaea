@@ -56,7 +56,7 @@ public class AssetIsakmpResponderExtension extends BaseAssetExtension {
     /**
      * 生存期时间
      */
-    private String responderLifeDuration;
+    private JSONObject responderLife;
     /**
      * 第二阶段密钥交换完整性
      */
@@ -64,7 +64,7 @@ public class AssetIsakmpResponderExtension extends BaseAssetExtension {
     /**
      * 密钥交换第一阶段证书
      */
-    private List<Object> responderIsakmpCer;
+    private List<Object> responderCert;
     private String protocolVersion;
     private String version;
 
@@ -84,9 +84,9 @@ public class AssetIsakmpResponderExtension extends BaseAssetExtension {
         this.responderHashAlgorithm = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_HASH_ALGORITHM);
         this.responderAuthenticationMethod = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_AUTHENTICATION_METHOD);
         this.responderKeyExchange = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_KEY_EXCHANGE);
-        this.responderLifeDuration = isakmpExtension.getString(HeadConst.FIELD.RESPONDER_LIFE_DURATION);
+        this.responderLife = isakmpExtension.getJSONObject(HeadConst.FIELD.RESPONDER_LIFE);
         this.secondComplete = isakmpExtension.getString(HeadConst.FIELD.SECOND_COMPLETE);
-        this.responderIsakmpCer = isakmpExtension.getJSONArray(HeadConst.FIELD.RESPONDER_ISAKMP_CER);
+        this.responderCert = isakmpExtension.getJSONArray(HeadConst.FIELD.RESPONDER_CERT);
         this.protocolVersion = isakmpExtension.getString(HeadConst.FIELD.PROTOCOL_VERSION);
         this.version = isakmpExtension.getString(HeadConst.FIELD.ISAKMP_VERSION);
         setKey();
@@ -100,8 +100,8 @@ public class AssetIsakmpResponderExtension extends BaseAssetExtension {
                 this.encryptedMessageProtocol + "_" + this.responderFirstComplete + "_" +
                 this.responderEncryptionAlgorithm + "_" + this.responderKeyLength + "_" +
                 this.responderHashAlgorithm + "_" + this.responderAuthenticationMethod + "_" +
-                this.responderKeyExchange + "_" + this.responderLifeDuration + "_" +
-                this.secondComplete + "_" + this.responderIsakmpCer + "_" +
+                this.responderKeyExchange + "_" + this.responderLife + "_" +
+                this.secondComplete + "_" + this.responderCert + "_" +
                 this.protocolVersion + "_" + this.version);
     }
 
