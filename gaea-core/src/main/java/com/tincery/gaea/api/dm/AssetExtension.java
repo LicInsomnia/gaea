@@ -3,6 +3,7 @@ package com.tincery.gaea.api.dm;
 import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.dm.assetextension.*;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.dw.MergeAble;
 import com.tincery.starter.base.model.SimpleBaseDO;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     @Id
     private String id;
     private String unit;
-    private Long ip;
+    private String ip;
     private String name;
     private String proName;
     private String proTag;
@@ -146,7 +147,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     private boolean appendCommonInformation(JSONObject jsonObject) {
         boolean isClient = jsonObject.getBoolean("isClient");
         this.proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
-        this.ip = jsonObject.getLong("ip");
+        this.ip = ToolUtils.long2IP(jsonObject.getLong("ip"));
         if (isClient && !HeadConst.PRONAME.ISAKMP.equals(this.proName)) {
             return false;
         }
