@@ -43,9 +43,11 @@ public class AssetSslExtension extends BaseAssetExtension {
     /**
      * 服务器证书
      */
+    private List<JSONObject> cerChain;
     private String cerChainKey;
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean create(JSONObject jsonObject) {
         JSONObject sslExtension = jsonObject.getJSONObject(HeadConst.FIELD.SSL_EXTENSION);
         if (null == sslExtension) {
@@ -63,11 +65,11 @@ public class AssetSslExtension extends BaseAssetExtension {
             this.encryptionAlgorithm = cipherSuite.getString(HeadConst.FIELD.ENCRYPTION_ALGORITHM);
             this.messageAuthenticationCodesAlgorithm = cipherSuite.getString(HeadConst.FIELD.MESSAGE_AUTHENTICATION_CODES_ALGORITHM);
         }
-        List<String> serverCerChain = (List<String>) sslExtension.get(HeadConst.FIELD.SERVER_CER_CHAIN);
-        if (null != serverCerChain) {
+        this.cerChain = (List<JSONObject>) sslExtension.get(HeadConst.FIELD.SERVER_CER_CHAIN);
+        if (null != cerChain) {
             StringBuilder stringBuilder = new StringBuilder();
-            for (String s : serverCerChain) {
-                stringBuilder.append(s.split("_")[0]).append(";");
+            for (JSONObject json : cerChain) {
+                stringBuilder.append(json.getString("sha1")).append(";");
             }
             stringBuilder.setLength(stringBuilder.length() - 1);
             this.cerChainKey = stringBuilder.toString();

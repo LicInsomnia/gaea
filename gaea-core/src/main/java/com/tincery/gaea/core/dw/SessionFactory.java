@@ -234,10 +234,14 @@ public class SessionFactory {
         data.setKeyWord(extension.getServerName());
         String sha1 = extension.getSha1();
         if (null != sha1) {
-            sha1 = sha1.split("_")[0];
             Map<String, Object> cer = this.cerSelector.selector(sha1);
             if (null == data.getKeyWord() && null != cer) {
                 data.setKeyWord(cer.get("subject_cn").toString());
+            }
+        }
+        if (null != extension.getServerCerChain()) {
+            for (SslCer sslCer : extension.getServerCerChain()) {
+                sslCer.adjust(this.cerSelector);
             }
         }
     }
@@ -257,6 +261,11 @@ public class SessionFactory {
             Map<String, Object> cer = this.cerSelector.selector(sha1);
             if (null == data.getKeyWord() && null != cer) {
                 data.setKeyWord(cer.get("subject_cn").toString());
+            }
+        }
+        if (null != extension.getServerCerChain()) {
+            for (SslCer sslCer : extension.getServerCerChain()) {
+                sslCer.adjust(this.cerSelector);
             }
         }
     }
@@ -309,6 +318,16 @@ public class SessionFactory {
         extension.setEncryptedMessageProtocol(encryptedMessageProtocol);
         data.setIsakmpExtension(extension);
         data.setExtensionFlag(data.getDataSource());
+        if (null != extension.getInitiatorCert()) {
+            for (IsakmpCer isakmpCer : extension.getInitiatorCert()) {
+                isakmpCer.adjust(this.cerSelector);
+            }
+        }
+        if (null != extension.getResponderCert()) {
+            for (IsakmpCer isakmpCer : extension.getResponderCert()) {
+                isakmpCer.adjust(this.cerSelector);
+            }
+        }
     }
 
 }

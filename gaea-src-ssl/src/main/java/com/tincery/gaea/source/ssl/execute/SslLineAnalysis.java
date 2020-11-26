@@ -3,6 +3,7 @@ package com.tincery.gaea.source.ssl.execute;
 
 import com.tincery.gaea.api.base.Handshake;
 import com.tincery.gaea.api.src.SslData;
+import com.tincery.gaea.api.src.extension.SslCer;
 import com.tincery.gaea.api.src.extension.SslExtension;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
@@ -243,7 +244,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
     }
 
     private void addCerChain(String cer, SslExtension sslExtension, boolean isServer) {
-        List<String> cerChain;
+        List<SslCer> cerChain;
         if (isServer) {
             cerChain = sslExtension.getServerCerChain();
             if (null == cerChain) {
@@ -257,7 +258,7 @@ public class SslLineAnalysis implements SrcLineAnalysis<SslData> {
                 sslExtension.setClientCerChain(cerChain);
             }
         }
-        cerChain.add(cer);
+        cerChain.add(new SslCer(cer.split("_", -1)[0]));
     }
 
 }

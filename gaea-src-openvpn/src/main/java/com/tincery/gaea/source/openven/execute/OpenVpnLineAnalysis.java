@@ -4,6 +4,7 @@ package com.tincery.gaea.source.openven.execute;
 import com.tincery.gaea.api.base.Handshake;
 import com.tincery.gaea.api.src.OpenVpnData;
 import com.tincery.gaea.api.src.extension.OpenVpnExtension;
+import com.tincery.gaea.api.src.extension.SslCer;
 import com.tincery.gaea.core.base.mgt.CommonConst;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
@@ -411,7 +412,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
 
 
     private void addCerChain(String cer, OpenVpnExtension openVpnExtension, boolean isD2SServer) {
-        List<String> cerChain;
+        List<SslCer> cerChain;
         if (isD2SServer) {
             cerChain = openVpnExtension.getServerCerChain();
             if (null == cerChain) {
@@ -425,7 +426,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
                 openVpnExtension.setClientCerChain(cerChain);
             }
         }
-        cerChain.add(cer);
+        cerChain.add(new SslCer(cer));
     }
 
 }

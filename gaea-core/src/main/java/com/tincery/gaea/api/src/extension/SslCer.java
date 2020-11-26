@@ -13,19 +13,17 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class IsakmpCer implements Serializable {
+public class SslCer implements Serializable {
 
     private String sha1;
-    private String certEncoding;
     private JSONObject cer;
 
-    public IsakmpCer() {
+    public SslCer() {
 
     }
 
-    public IsakmpCer(String sha1, String certEncoding) {
+    public SslCer(String sha1) {
         this.sha1 = sha1;
-        this.certEncoding = certEncoding;
     }
 
     public void adjust(CerSelector cerSelector) {
@@ -37,17 +35,16 @@ public class IsakmpCer implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof IsakmpCer)) {
+        if (!(o instanceof SslCer)) {
             return false;
         }
-        IsakmpCer isakmpCer = (IsakmpCer) o;
-        return sha1.equals(isakmpCer.sha1) &&
-                certEncoding.equals(isakmpCer.certEncoding);
+        SslCer sslCer = (SslCer) o;
+        return sha1.equals(sslCer.sha1);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sha1, certEncoding);
+        return Objects.hash(sha1);
     }
 
 }

@@ -266,16 +266,16 @@ public class HeadConst {
         public final static String RESPONDER_HASH_ALGORITHM = "responderHashAlgorithm";
         public final static String RESPONDER_AUTHENTICATION_METHOD = "responderAuthenticationMethod";
         public final static String RESPONDER_KEY_EXCHANGE = "responderKeyExchange";
-        public final static String RESPONDER_LIFE_DURATION = "responderLifeDuration";
-        public final static String RESPONDER_ISAKMP_CER = "responderIsakmpCer";
+        public final static String RESPONDER_LIFE = "responderLife";
+        public final static String RESPONDER_CERT = "responderCert";
         public final static String INITIATOR_FIRST_COMPLETE = "initiatorFirstComplete";
         public final static String INITIATOR_ENCRYPTION_ALGORITM = "initiatorEncryptionAlgorithm";
         public final static String INITIATOR_KEY_LENGTH = "initiatorKeyLength";
         public final static String INITIATOR_HASH_ALGORITHM = "initiatorHashAlgorithm";
         public final static String INITIATOR_AUTHENTICATION_METHOD = "initiatorAuthenticationMethod";
         public final static String INITIATOR_KEY_EXCHANGE = "initiatorKeyExchange";
-        public final static String INITIATOR_LIFE_DURATION = "initiatorLifeDuration";
-        public final static String INITIATOR_ISAKMP_CER = "initiatorIsakmpCer";
+        public final static String INITIATOR_LIFE = "initiatorLife";
+        public final static String INITIATOR_CERT = "initiatorCert";
         /* PPTPANDL2TP */
         public final static String PPTP_L2TP_EXTENSION = "pptpAndL2tpExtension";
         public final static String RESPONSE = "response";
