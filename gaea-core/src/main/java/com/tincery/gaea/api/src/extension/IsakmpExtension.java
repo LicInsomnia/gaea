@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -32,7 +33,7 @@ public class IsakmpExtension implements Serializable {
     /**
      * initiator属性
      */
-    private Set<IsakmpCer> initiatorIsakmpCer;
+    private Set<IsakmpCer> initiatorCert;
     private Integer initiatorLifeDuration;
     private String initiatorKeyExchange;
     private String initiatorAuthenticationMethod;
@@ -43,7 +44,7 @@ public class IsakmpExtension implements Serializable {
     /**
      * responder属性
      */
-    private Set<IsakmpCer> responderIsakmpCer;
+    private Set<IsakmpCer> responderCert;
     private Integer responderLifeDuration;
     private String responderKeyExchange;
     private String responderAuthenticationMethod;
@@ -130,11 +131,11 @@ public class IsakmpExtension implements Serializable {
         }
         for (JSONObject jsonObject : this.initiatorInformation) {
             if (jsonObject.containsKey("Cert") && jsonObject.containsKey("Cert Encoding")) {
-                IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("Cert"), convertCert(jsonObject.getString("Cert Encoding")));
-                if (null == this.initiatorIsakmpCer) {
-                    this.initiatorIsakmpCer = new HashSet<>();
+                IsakmpCer isakmpCer = new IsakmpCer(convertSha1(jsonObject.getString("Cert")), convertCert(jsonObject.getString("Cert Encoding")));
+                if (null == this.initiatorCert) {
+                    this.initiatorCert = new HashSet<>();
                 }
-                this.initiatorIsakmpCer.add(isakmpCer);
+                this.initiatorCert.add(isakmpCer);
             }
             if (jsonObject.containsKey("Life-Duration")) {
                 this.initiatorLifeDuration = jsonObject.getInteger("Life-Duration");
@@ -166,11 +167,11 @@ public class IsakmpExtension implements Serializable {
         }
         for (JSONObject jsonObject : this.responderInformation) {
             if (jsonObject.containsKey("Cert") && jsonObject.containsKey("Cert Encoding")) {
-                IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("Cert"), convertCert(jsonObject.getString("Cert Encoding")));
-                if (null == this.responderIsakmpCer) {
-                    this.responderIsakmpCer = new HashSet<>();
+                IsakmpCer isakmpCer = new IsakmpCer(convertSha1(jsonObject.getString("Cert")), convertCert(jsonObject.getString("Cert Encoding")));
+                if (null == this.responderCert) {
+                    this.responderCert = new HashSet<>();
                 }
-                this.responderIsakmpCer.add(isakmpCer);
+                this.responderCert.add(isakmpCer);
             }
             if (jsonObject.containsKey("Life-Duration")) {
                 this.responderLifeDuration = jsonObject.getInteger("Life-Duration");
@@ -360,4 +361,10 @@ public class IsakmpExtension implements Serializable {
         return value;
     }
 
+    public String convertSha1(String value){
+        if (StringUtils.isEmpty(value)){
+            return null;
+        }
+        return value.split("_")[0];
+    }
 }
