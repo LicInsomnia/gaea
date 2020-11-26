@@ -26,15 +26,13 @@ public class IsakmpExtension implements Serializable {
     private Set<JSONObject> responderInformation;
     private Set<JSONObject> initiatorVid;
     private Set<JSONObject> responderVid;
-    private Integer version;
+    private String version;
     private String encryptedMessageProtocol;
-    private String initiatorSPI;
-    private String responderSPI;
 
     /**
      * initiator属性
      */
-    private Set<IsakmpCer> initiatorIsakmpCer;
+    private Set<IsakmpCer> initiatorCert;
     private Life initiatorLife;
     private String initiatorKeyExchange;
     private String initiatorAuthenticationMethod;
@@ -45,13 +43,16 @@ public class IsakmpExtension implements Serializable {
     /**
      * responder属性
      */
-    private Set<IsakmpCer> responderIsakmpCer;
+    private Set<IsakmpCer> responderCert;
     private Life responderLife;
     private String responderKeyExchange;
     private String responderAuthenticationMethod;
     private String responderHashAlgorithm;
     private Integer responderKeyLength;
     private String responderEncryptionAlgorithm;
+    private String initiatorSPI;
+    private String responderSPI;
+    private String responderLifeType;
 
     public void setExtension() {
         setInitiator();
@@ -130,10 +131,10 @@ public class IsakmpExtension implements Serializable {
         for (JSONObject jsonObject : this.initiatorInformation) {
             if (jsonObject.containsKey("SHA1") && jsonObject.containsKey("Cert-Encoding")) {
                 IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("SHA1"), jsonObject.getString("Cert-Encoding"));
-                if (null == this.initiatorIsakmpCer) {
-                    this.initiatorIsakmpCer = new HashSet<>();
+                if (null == this.initiatorCert) {
+                    this.initiatorCert = new HashSet<>();
                 }
-                this.initiatorIsakmpCer.add(isakmpCer);
+                this.initiatorCert.add(isakmpCer);
             }
             if (jsonObject.containsKey("Life-Duration") && jsonObject.containsKey("Life-Type")) {
                 this.initiatorLife = new Life(jsonObject.getLong("Life-Duration"), jsonObject.getString("Life-Type"));
@@ -163,10 +164,10 @@ public class IsakmpExtension implements Serializable {
         for (JSONObject jsonObject : this.responderInformation) {
             if (jsonObject.containsKey("SHA1") && jsonObject.containsKey("Cert-Encoding")) {
                 IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("SHA1"), jsonObject.getString("Cert-Encoding"));
-                if (null == this.responderIsakmpCer) {
-                    this.responderIsakmpCer = new HashSet<>();
+                if (null == this.responderCert) {
+                    this.responderCert = new HashSet<>();
                 }
-                this.responderIsakmpCer.add(isakmpCer);
+                this.responderCert.add(isakmpCer);
             }
             if (jsonObject.containsKey("Life-Duration") && jsonObject.containsKey("Life-Type")) {
                 this.responderLife = new Life(jsonObject.getLong("Life-Duration"), jsonObject.getString("Life-Type"));
@@ -185,6 +186,9 @@ public class IsakmpExtension implements Serializable {
             }
             if (jsonObject.containsKey("Encryption-Algorithm")) {
                 this.responderEncryptionAlgorithm = jsonObject.getString("Encryption-Algorithm");
+            }
+            if (jsonObject.containsKey("Life-Type")){
+                this.responderLifeType = jsonObject.getString("Life-Type");
             }
         }
     }

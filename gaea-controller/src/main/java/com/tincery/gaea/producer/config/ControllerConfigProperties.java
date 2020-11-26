@@ -16,6 +16,7 @@ public class ControllerConfigProperties {
     private DataWarehouseConfig dataWarehouse;
     private OdsConfig ods;
     private DmConfig datamarket;
+    private SupportConfig support;
 
     @Setter
     @Getter
