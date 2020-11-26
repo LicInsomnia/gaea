@@ -318,13 +318,13 @@ public class SessionFactory {
         extension.setEncryptedMessageProtocol(encryptedMessageProtocol);
         data.setIsakmpExtension(extension);
         data.setExtensionFlag(data.getDataSource());
-        if (null != extension.getInitiatorIsakmpCer()) {
-            for (IsakmpCer isakmpCer : extension.getInitiatorIsakmpCer()) {
+        if (null != extension.getInitiatorCert()) {
+            for (IsakmpCer isakmpCer : extension.getInitiatorCert()) {
                 isakmpCer.adjust(this.cerSelector);
             }
         }
-        if (null != extension.getResponderIsakmpCer()) {
-            for (IsakmpCer isakmpCer : extension.getResponderIsakmpCer()) {
+        if (null != extension.getResponderCert()) {
+            for (IsakmpCer isakmpCer : extension.getResponderCert()) {
                 isakmpCer.adjust(this.cerSelector);
             }
         }
