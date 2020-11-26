@@ -27,7 +27,7 @@ public class IsakmpExtension implements Serializable {
     private Set<JSONObject> responderInformation;
     private Set<JSONObject> initiatorVid;
     private Set<JSONObject> responderVid;
-    private Integer version;
+    private String version;
     private String encryptedMessageProtocol;
 
     /**

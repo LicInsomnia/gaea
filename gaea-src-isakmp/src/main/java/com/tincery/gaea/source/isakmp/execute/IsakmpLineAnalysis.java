@@ -96,13 +96,13 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         /*根据s2dFlag 判断用什么装填方式*/
         fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
         IsakmpExtension isakmpExtension = new IsakmpExtension();
-        int version = Integer.parseInt(elements[33].split(":")[1].trim());
+        String version = elements[33].split(":")[1].trim();
         switch (version) {
-            case 1:
-                fixVersion(elements,isakmpExtension,1);
+            case "1":
+                fixVersion(elements,isakmpExtension,"1");
                 break;
-            case 2:
-                fixVersion(elements,isakmpExtension,2);
+            case "2":
+                fixVersion(elements,isakmpExtension,"2");
                 break;
             default:
                 throw new IllegalArgumentException("Version版本标记错误");
@@ -123,7 +123,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         isakmpData.setIsakmpExtension(new IsakmpExtension());
     }
 
-    private void fixVersion(String[] elements,IsakmpExtension isakmpExtension,Integer version){
+    private void fixVersion(String[] elements,IsakmpExtension isakmpExtension,String version){
         /*创建各种变量*/
         String sdFlag = elements[29];
         boolean s2dFlag = true;
@@ -170,7 +170,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             }
 
             /*version 1 独有的装载*/
-            if (key.equals("Exchange Type") && Objects.equals(1,version)) {
+            if (key.equals("Exchange Type") && Objects.equals("1",version)) {
                 if (s2dFlag) {
                     messageList.add("initiator:" + value);
                 } else {
@@ -183,7 +183,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             switch (key) {
                 /* version2独有的 */
                 case "Exchange Type":
-                    if (Objects.equals(2,version)){
+                    if (Objects.equals("2",version)){
                         if (s2dFlag) {
                             messageList.add("initiator:" + value);
                         } else {
@@ -227,39 +227,39 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
                 case "Vendor ID":
                     JSONObject json = new JSONObject();
                     if (s2dFlag) {
-                        if (Objects.equals(1,version)){
+                        if (Objects.equals("1",version)){
                             json.put("Vendor ID", getVid(value));
                             initiatorVid.add(json);
-                        }else if (Objects.equals(2,version)){
+                        }else if (Objects.equals("2",version)){
                             initiatorVid.add((JSONObject) ToolUtils.clone(vidJsonObject));
                         }
                     } else {
-                        if (Objects.equals(1,version)){
+                        if (Objects.equals("1",version)){
                             json.put("Vendor ID", getVid(value));
                             responderVid.add(json);
-                        }else if (Objects.equals(2,version)){
+                        }else if (Objects.equals("2",version)){
                             responderVid.add((JSONObject) ToolUtils.clone(vidJsonObject));
                         }
                     }
-                    if (Objects.equals(2,version)){
+                    if (Objects.equals("2",version)){
                         vidJsonObject = new JSONObject();
                         vidJsonObject.put(key, getVid(value));
                     }
                     break;
                 case "CheckPoint":
-                    if (Objects.equals(2,version)){
+                    if (Objects.equals("2",version)){
                         vidJsonObject.put(key, value);
                         break;
                     }
 
                 case "CheckPoint Product":
-                    if (Objects.equals(2,version)){
+                    if (Objects.equals("2",version)){
                         vidJsonObject.put(key, value);
                         break;
                     }
 
                 case "CheckPoint Version":
-                    if (Objects.equals(2,version)){
+                    if (Objects.equals("2",version)){
                         vidJsonObject.put(key, value);
                         break;
                     }
