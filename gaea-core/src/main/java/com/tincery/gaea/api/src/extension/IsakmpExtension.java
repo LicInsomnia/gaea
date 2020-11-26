@@ -129,8 +129,8 @@ public class IsakmpExtension implements Serializable {
             return;
         }
         for (JSONObject jsonObject : this.initiatorInformation) {
-            if (jsonObject.containsKey("SHA1") && jsonObject.containsKey("Cert-Encoding")) {
-                IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("SHA1"), jsonObject.getString("Cert-Encoding"));
+            if (jsonObject.containsKey("Cert") && jsonObject.containsKey("Cert Encoding")) {
+                IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("Cert"), convertCert(jsonObject.getString("Cert Encoding")));
                 if (null == this.initiatorIsakmpCer) {
                     this.initiatorIsakmpCer = new HashSet<>();
                 }
@@ -165,8 +165,8 @@ public class IsakmpExtension implements Serializable {
             return;
         }
         for (JSONObject jsonObject : this.responderInformation) {
-            if (jsonObject.containsKey("SHA1") && jsonObject.containsKey("Cert-Encoding")) {
-                IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("SHA1"), jsonObject.getString("Cert-Encoding"));
+            if (jsonObject.containsKey("Cert") && jsonObject.containsKey("Cert Encoding")) {
+                IsakmpCer isakmpCer = new IsakmpCer(jsonObject.getString("Cert"), convertCert(jsonObject.getString("Cert Encoding")));
                 if (null == this.responderIsakmpCer) {
                     this.responderIsakmpCer = new HashSet<>();
                 }
