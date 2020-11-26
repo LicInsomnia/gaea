@@ -1,4 +1,4 @@
-package com.tincery.gaea.api.dm;
+package com.tincery.gaea.api.dm.alarm;
 
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.Location;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Setter
 @ToString
 @NoArgsConstructor
-public class Alarm  extends SimpleBaseDO {
+public class Alarm extends SimpleBaseDO {
     /**
      * 探针标识 记录是哪个探针生成的txt
      */
