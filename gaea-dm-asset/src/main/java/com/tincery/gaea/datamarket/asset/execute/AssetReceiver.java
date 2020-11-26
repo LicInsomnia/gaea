@@ -2,16 +2,28 @@ package com.tincery.gaea.datamarket.asset.execute;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.tincery.gaea.api.base.AlarmMaterialData;
-import com.tincery.gaea.api.dm.*;
+import com.tincery.gaea.api.dm.AssetConfigDO;
+import com.tincery.gaea.api.dm.AssetConfigs;
+import com.tincery.gaea.api.dm.AssetDataDTO;
+import com.tincery.gaea.api.dm.AssetExtension;
+import com.tincery.gaea.api.dm.assetextension.AssetIsakmpInitiatorExtension;
+import com.tincery.gaea.api.dm.assetextension.AssetIsakmpResponderExtension;
+import com.tincery.gaea.api.dm.assetextension.AssetSslExtension;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
-import com.tincery.gaea.core.base.dao.*;
+import com.tincery.gaea.core.base.dao.AssetExtensionDao;
+import com.tincery.gaea.core.base.dao.AssetIpDao;
+import com.tincery.gaea.core.base.dao.AssetPortDao;
+import com.tincery.gaea.core.base.dao.AssetProtocolDao;
+import com.tincery.gaea.core.base.dao.AssetUnitDao;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,10 +35,20 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.LongAdder;
+import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
 
@@ -56,6 +78,14 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 new ThreadPoolExecutor.AbortPolicy());
     }
 
+    public static Map<String, Set<String>> sslIds;
+
+    public static Map<String, Set<IsakmpResponder>> isakmpResponderIds;
+
+    public static Map<String, Set<IsakmpInitiator>> isakmpInitiatorIds;
+
+    public static Set<String> portStrings;
+
 
     @Autowired
     private AssetDetector assetDetector;
@@ -74,8 +104,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
 
     @Autowired
     private AssetExtensionDao assetExtensionDao;
-
-    private static final LongAdder longAdder = new LongAdder();
 
     @Override
     protected void dmFileAnalysis(File file) {
@@ -197,11 +225,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
     }
 
 
-    @Override
-    public void init() {
-
-    }
-
     public enum AssetFlag {
 
         NOT_ASSET(0, (json, detector) -> null),
@@ -222,7 +245,6 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             Optional<AssetFlag> first = Arrays.stream(values()).filter(assetFlag -> assetFlag.flag == flag).findFirst();
             return first.orElse(null);
         }
-
 
 
         public static List<AlarmMaterialData> jsonRun(JSONObject assetJson, AssetDetector assetDetector) {
@@ -263,15 +285,13 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 default:
                     break;
             }
-            longAdder.increment();
-            System.out.println(longAdder.intValue());
         }
 
         private static void fillAsset(JSONObject assetJson, AssetConfigDO config, long targetIp) {
             assetJson.put("ip", targetIp);
             assetJson.put("unit", config.getUnit());
             assetJson.put("name", config.getName());
-            assetJson.put("alarm", false);
+            assetJson.put("alarm", AssetDataDTO.NONE);
         }
     }
 
@@ -314,5 +334,82 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             return new AssetResult(clientAssetList, serverAssetList);
         }
     }
+
+    @Override
+    public void init() {
+        sslIds = new HashMap<>(16);
+        isakmpInitiatorIds = new HashMap<>(16);
+        isakmpResponderIds = new HashMap<>(16);
+        List<AssetExtension> all = assetExtensionDao.findAll();
+        all.forEach(assetExtension -> {
+            List<Object> onList = new ArrayList<>();
+            onList.add(assetExtension.getUnit());
+            onList.add(assetExtension.getIp());
+            onList.add(assetExtension.getProName());
+            onList.add(assetExtension.getPort());
+            String key = Joiner.on("$").join(onList);
+            portStrings.add(key);
+            switch (assetExtension.getProName()) {
+                case "SSL":
+                    Set<String> sslIdSet = sslIds.computeIfAbsent(key, k -> new HashSet<>());
+                    List<AssetSslExtension> sslExtensions = assetExtension.getSslExtensions();
+                    sslExtensions.forEach(assetSslExtension -> sslIdSet.add(assetExtension.getId()));
+                    break;
+                case "ISAKMP":
+                    if (assetExtension.getProTag().endsWith("Initiator")) {
+                        Set<IsakmpInitiator> isakmpInitiators = isakmpInitiatorIds.computeIfAbsent(key,
+                                k -> new HashSet<>());
+                        assetExtension.getIsakmpInitiatorExtensions().stream().map(IsakmpInitiator::new).forEach(isakmpInitiators::add);
+                    } else {
+                        Set<IsakmpResponder> isakmpResponders = isakmpResponderIds.computeIfAbsent(key,
+                                k -> new HashSet<>());
+                        assetExtension.getIsakmpResponderExtensions().stream().map(IsakmpResponder::new).forEach(isakmpResponders::add);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+
+    @Data
+    public static class IsakmpInitiator {
+        private String initiatorAuthenticationMethod;
+        private String initiatorEncryptionAlgorithm;
+        private String initiatorHashAlgorithm;
+
+        IsakmpInitiator(JSONObject assetJson) {
+            JSONObject isakmpExtension = assetJson.getJSONObject("isakmpExtension");
+            this.initiatorAuthenticationMethod = isakmpExtension.getString("responderAuthenticationMethod");
+            this.initiatorEncryptionAlgorithm = isakmpExtension.getString("responderEncryptionAlgorithm");
+            this.initiatorHashAlgorithm = isakmpExtension.getString("responderHashAlgorithm");
+        }
+
+        IsakmpInitiator(AssetIsakmpInitiatorExtension assetIsakmpInitiatorExtension) {
+            this.initiatorAuthenticationMethod = assetIsakmpInitiatorExtension.getInitiatorAuthenticationMethod();
+            this.initiatorEncryptionAlgorithm = assetIsakmpInitiatorExtension.getInitiatorEncryptionAlgorithm();
+            this.initiatorHashAlgorithm = assetIsakmpInitiatorExtension.getInitiatorHashAlgorithm();
+        }
+
+    }
+
+    @Data
+    public static class IsakmpResponder {
+        private String responderAuthenticationMethod;
+        private String responderEncryptionAlgorithm;
+        private String responderHashAlgorithm;
+
+        IsakmpResponder(JSONObject assetJson) {
+
+        }
+
+        IsakmpResponder(AssetIsakmpResponderExtension assetIsakmpResponderExtension) {
+            this.responderAuthenticationMethod = assetIsakmpResponderExtension.getResponderAuthenticationMethod();
+            this.responderEncryptionAlgorithm = assetIsakmpResponderExtension.getResponderEncryptionAlgorithm();
+            this.responderHashAlgorithm = assetIsakmpResponderExtension.getResponderHashAlgorithm();
+        }
+    }
+
 
 }
