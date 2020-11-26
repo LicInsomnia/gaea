@@ -32,7 +32,6 @@
         <module>gaea-src-bitcoin</module>
         <!--DATAWAREHOUSE层模块-->
         <module>gaea-dw-reorganization</module>
-        <module>gaea-dw-cer</module>
         <module>gaea-dw-commonappdetect</module>
         <!--ODS层模块-->
         <module>gaea-ods-httpanalysis</module>
