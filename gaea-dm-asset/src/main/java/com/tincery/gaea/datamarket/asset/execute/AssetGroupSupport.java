@@ -5,36 +5,24 @@ import com.google.common.base.Joiner;
 import com.tincery.gaea.api.base.ProtocolType;
 import com.tincery.gaea.api.dm.AssetDataDTO;
 import com.tincery.gaea.api.dm.AssetExtension;
+import com.tincery.gaea.core.base.component.support.MergeSupport;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.NumberUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
-import com.tincery.gaea.core.dw.MergeAble;
-import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
-import com.tincery.starter.base.model.SimpleBaseDO;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * @author gxz gongxuanzhang@foxmail.com
  **/
-public class AssetGroupSupport {
-
+public class AssetGroupSupport extends MergeSupport {
 
     /****
      * 把jsonList 解析成最终直接插入数据的内容
@@ -282,24 +270,4 @@ public class AssetGroupSupport {
         return clients;
     }
 
-    /****
-     * 复查  如果数据库中有相同ID的信息 整合更新
-     * @param assetDao 相应的dao层实体
-     * @param list  已经计算好的数据
-     **/
-    public static <T extends SimpleBaseDO & MergeAble<T>> void rechecking(SimpleBaseDaoImpl<T> assetDao, List<T> list) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").in(list.stream().map(data -> data.getId()).collect(Collectors.toList())));
-        List<T> mongoData = assetDao.findListData(query);
-        if (!CollectionUtils.isEmpty(mongoData)) {
-            list.forEach(asset -> {
-                for (T mongoUnitData : mongoData) {
-                    if (mongoUnitData.getId().equals(asset.getId())) {
-                        asset.merge(mongoUnitData);
-                        break;
-                    }
-                }
-            });
-        }
-    }
 }
