@@ -104,18 +104,22 @@ public class CerReceiver implements Receiver {
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerComplianceModule");
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerReliabilityModule");
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerGmComplianceModule");
+        topology.addOutputTag("DataSourceModule", "DataSourceModule->CerEncryptionStrengthModule");
 
         topology.addInputTag("CerComplianceModule", "DataSourceModule->CerComplianceModule");
         topology.addInputTag("CerReliabilityModule", "DataSourceModule->CerReliabilityModule");
         topology.addInputTag("CerGmComplianceModule", "DataSourceModule->CerGmComplianceModule");
+        topology.addInputTag("CerEncryptionStrengthModule", "DataSourceModule->CerEncryptionStrengthModule");
 
         topology.addOutputTag("CerComplianceModule", "CerComplianceModule->DataMergeModule");
         topology.addOutputTag("CerReliabilityModule", "CerReliabilityModule->DataMergeModule");
         topology.addOutputTag("CerGmComplianceModule", "CerGmComplianceModule->DataMergeModule");
+        topology.addOutputTag("CerEncryptionStrengthModule", "CerEncryptionStrengthModule->DataMergeModule");
 
         topology.addInputTag("DataMergeModule", "CerComplianceModule->DataMergeModule");
         topology.addInputTag("DataMergeModule", "CerReliabilityModule->DataMergeModule");
         topology.addInputTag("DataMergeModule", "CerGmComplianceModule->DataMergeModule");
+        topology.addInputTag("DataMergeModule", "CerEncryptionStrengthModule->DataMergeModule");
 
         topology.addOutputTag("DataMergeModule", "DataMergeModule->AlertModule");
         topology.addOutputTag("DataMergeModule", "DataMergeModule->MarkModule");

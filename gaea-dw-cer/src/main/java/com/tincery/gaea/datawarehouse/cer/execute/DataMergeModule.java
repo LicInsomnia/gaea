@@ -19,7 +19,7 @@ public class DataMergeModule extends BaseModule implements BaseModuleInterface {
 
     @Override
     public boolean setInput(List<DataQueue> queues) {
-        return super.setInput(queues, 3);
+        return super.setInput(queues, 4);
     }
 
     @Override

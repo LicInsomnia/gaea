@@ -29,7 +29,7 @@ public class DataSourceModule extends BaseModule implements BaseModuleInterface 
 
     @Override
     public boolean setOutput(List<DataQueue> queues) {
-        return super.setOutput(queues, 3);
+        return super.setOutput(queues, 4);
     }
 
     @Override

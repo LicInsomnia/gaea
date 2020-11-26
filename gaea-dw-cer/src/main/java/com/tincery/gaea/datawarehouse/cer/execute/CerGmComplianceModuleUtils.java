@@ -12,13 +12,14 @@ import java.util.Map;
  */
 public class CerGmComplianceModuleUtils {
 
-    public final static int bUnauthIssuer = 0;//未授权颁发者
+    public final static int bUnauthIssuerWhite = 0;//未授权颁发者（不在白名单）
     public final static int bWeakAlgo = 1;//弱算法
     public final static int bShortKeyLength = 2;//密钥长度过短
     public final static int bValidExpire = 3;//证书过期
     public final static int bOldVersion = 4;//版本过旧
-    public final static int typeNum = 5;
-    public final static ArrayList<String> descriptionList = new ArrayList<>(Arrays.asList("未授权颁发者", "弱算法", "公钥长度过短", "证书过期", "证书版本过旧"));
+    public final static int bUnauthIssuerBlack = 5;//颁发者在黑名单内
+    public final static int typeNum = 6;
+    public final static ArrayList<String> descriptionList = new ArrayList<>(Arrays.asList("未授权颁发者（不在白名单）", "弱算法", "公钥长度过短", "证书过期", "证书版本过旧", "颁发者在黑名单内"));
     private List<String> detailList = new ArrayList<>();
     private CerData cer;
 
@@ -41,15 +42,16 @@ public class CerGmComplianceModuleUtils {
         String issuer = cer.getIssuerCommonName() == null ? "" : cer.getIssuerCommonName();
         if(issuerWhiteList != null && issuerWhiteList.size() > 0) {
             if(!issuerWhiteList.contains(issuer)) {
-                complianceType = complianceType | (1 << bUnauthIssuer);
-                detail = "未授权颁发者："  + issuer;
-                detailList.set(bUnauthIssuer, detailList.get(bUnauthIssuer) + detail);
+                complianceType = complianceType | (1 << bUnauthIssuerWhite);
+                detail = "未授权颁发者（不在白名单）："  + issuer;
+                detailList.set(bUnauthIssuerWhite, detailList.get(bUnauthIssuerWhite) + detail);
             }
-        } else if(issuerBlackList != null && issuerBlackList.size() > 0){
+        }
+        if(issuerBlackList != null && issuerBlackList.size() > 0){
             if(issuerBlackList.contains(issuer)) {
-                complianceType = complianceType | (1 << bUnauthIssuer);
-                detail = "未授权颁发者："  + issuer;
-                detailList.set(bUnauthIssuer, detailList.get(bUnauthIssuer) + detail);
+                complianceType = complianceType | (1 << bUnauthIssuerBlack);
+                detail = "颁发者在黑名单内："  + issuer;
+                detailList.set(bUnauthIssuerBlack, detailList.get(bUnauthIssuerBlack) + detail);
             }
         }
         return complianceType;
