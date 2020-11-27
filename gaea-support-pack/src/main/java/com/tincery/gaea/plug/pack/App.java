@@ -34,6 +34,7 @@ public class App {
             "gaea-dm-asset",
             "gaea-dm-alarmcombine",
             "gaea-dm-sessionadjust",
+            "gaea-dm-alarmstatistic",
             "gaea-support-mongostash"
     };
     private static String gaeaPath;
