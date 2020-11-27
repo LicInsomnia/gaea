@@ -20,7 +20,9 @@ import com.tincery.gaea.core.base.dao.AssetPortDao;
 import com.tincery.gaea.core.base.dao.AssetProtocolDao;
 import com.tincery.gaea.core.base.dao.AssetUnitDao;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
+import com.tincery.gaea.core.base.tool.util.NetUtil;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import lombok.Data;
@@ -288,7 +290,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         }
 
         private static void fillAsset(JSONObject assetJson, AssetConfigDO config, long targetIp) {
-            assetJson.put("ip", targetIp);
+            assetJson.put("ip", ToolUtils.long2IP(targetIp));
             assetJson.put("unit", config.getUnit());
             assetJson.put("name", config.getName());
             assetJson.put("alarm", AssetDataDTO.NONE);
