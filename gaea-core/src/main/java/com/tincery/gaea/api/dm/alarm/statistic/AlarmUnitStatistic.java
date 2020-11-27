@@ -8,8 +8,18 @@ import lombok.Data;
  */
 @Data
 public class AlarmUnitStatistic extends BaseStatistic implements MergeAble<AlarmUnitStatistic> {
+
+    private double value = 0.0;
+    private int level = 4;
+    private long alarmCount;
+
     @Override
     public AlarmUnitStatistic merge(AlarmUnitStatistic alarmUnitStatistic) {
         return this;
+    }
+
+    @Override
+    public void setId() {
+
     }
 }

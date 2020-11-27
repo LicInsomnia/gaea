@@ -8,8 +8,19 @@ import lombok.Data;
  */
 @Data
 public class AlarmSslStatistic extends BaseStatistic implements MergeAble<AlarmSslStatistic> {
+
+    private String subCategoryDescription;
+    private Long count;
+
     @Override
-    public AlarmSslStatistic merge(AlarmSslStatistic alarmSslStatistic) {
+    public AlarmSslStatistic merge(AlarmSslStatistic that) {
+        this.count += that.count;
         return this;
     }
+
+    @Override
+    public void setId() {
+        this.id = this.getClass().getSimpleName() + "." + this.subCategoryDescription;
+    }
+
 }

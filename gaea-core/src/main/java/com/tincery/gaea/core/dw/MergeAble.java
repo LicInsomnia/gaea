@@ -8,4 +8,5 @@ public interface MergeAble<T extends MergeAble> {
     T merge(T t);
 
     String getId();
+
 }

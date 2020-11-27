@@ -11,4 +11,6 @@ public abstract class BaseStatistic extends SimpleBaseDO {
 
     protected String id;
 
+    public abstract void setId();
+
 }

@@ -14,18 +14,18 @@ public class MergeSupport {
 
     /****
      * 复查  如果数据库中有相同ID的信息 整合更新
-     * @param assetDao 相应的dao层实体
+     * @param dao 相应的dao层实体
      * @param list  已经计算好的数据
      **/
-    public static <T extends SimpleBaseDO & MergeAble<T>> void rechecking(SimpleBaseDaoImpl<T> assetDao, List<T> list) {
+    public static <T extends SimpleBaseDO & MergeAble<T>> void rechecking(SimpleBaseDaoImpl<T> dao, List<T> list) {
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").in(list.stream().map(data -> data.getId()).collect(Collectors.toList())));
-        List<T> mongoData = assetDao.findListData(query);
+        List<T> mongoData = dao.findListData(query);
         if (!CollectionUtils.isEmpty(mongoData)) {
             list.forEach(asset -> {
-                for (T mongoUnitData : mongoData) {
-                    if (mongoUnitData.getId().equals(asset.getId())) {
-                        asset.merge(mongoUnitData);
+                for (T mergeData : mongoData) {
+                    if (mergeData.getId().equals(asset.getId())) {
+                        asset.merge(mergeData);
                         break;
                     }
                 }

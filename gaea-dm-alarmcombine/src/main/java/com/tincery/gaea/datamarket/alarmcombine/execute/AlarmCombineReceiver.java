@@ -534,7 +534,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
             return null;
         }
         //需要合并时 先记录后一条记录的endtime的值 合并到第一条记录
-        oldAlarm.setDurationEndTime(newAlarm.getDurationTime() + newAlarm.getCapTime());
+        oldAlarm.setDurationEndTime(newAlarm.getDuration() + newAlarm.getCapTime());
         //合并eventData
         List<String> eventData = oldAlarm.getEventData();
         eventData.addAll(newAlarm.getEventData());
@@ -566,7 +566,7 @@ public class AlarmCombineReceiver extends AbstractDataMarketReceiver {
      * @return 是否超时
      */
     private Boolean overTime(int time, Alarm newAlarm, Alarm oldAlarm){
-        long endTime = oldAlarm.getCapTime() + oldAlarm.getDurationTime();
+        long endTime = oldAlarm.getCapTime() + oldAlarm.getDuration();
         Long startTime = newAlarm.getCapTime();
         return Math.abs(endTime - startTime) > time;
     }

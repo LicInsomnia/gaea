@@ -1,25 +1,26 @@
 package com.tincery.gaea.datamarket.alarmstatistic.execute;
 
 import com.tincery.gaea.api.dm.alarm.Alarm;
-import com.tincery.gaea.api.dm.alarm.statistic.AlarmStatistic;
-import com.tincery.gaea.core.base.component.support.MergeSupport;
-import com.tincery.gaea.core.base.dao.alarm.*;
+import com.tincery.gaea.api.dm.alarm.statistic.*;
+import com.tincery.gaea.core.base.dao.alarm.AlarmDao;
+import com.tincery.gaea.core.base.dao.alarm.AlarmStatisticDao;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import com.tincery.gaea.core.dw.MergeAble;
+import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.jms.TextMessage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.tincery.gaea.core.base.component.support.AlarmStatisticSupport.*;
 
 /**
  * @author Sparrow
@@ -33,23 +34,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
     @Autowired
     private AlarmStatisticDao alarmStatisticDao;
     @Autowired
-    private AlarmCategoryStatisticDao alarmCategoryStatisticDao;
-    @Autowired
-    private AlarmCountryStatisticDao alarmCountryStatisticDao;
-    @Autowired
-    private AlarmCountStatisticDao alarmCountStatisticDao;
-    @Autowired
-    private AlarmLevelStatisticDao alarmLevelStatisticDao;
-    @Autowired
-    private AlarmSslStatisticDao alarmSslStatisticDao;
-    @Autowired
-    private AlarmUnitStatisticDao alarmUnitStatisticDao;
-    @Autowired
-    private AlarmUserStatisticDao alarmUserStatisticDao;
-    @Autowired
-    private ImpAlarmCategoryStatisticDao impAlarmCategoryStatisticDao;
-    @Autowired
-    private ImpAlarmTargetStatisticDao impAlarmTargetStatisticDao;
+    private ApplicationContext applicationContext;
 
     @Override
     @Autowired
@@ -71,20 +56,45 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
     }
 
     private void alarmStatistic(List<Alarm> alarms) {
-        Map<String, List<AlarmStatistic>> collection = alarms.stream()
+        Map<String, List<MergeAble>> collect = alarms.stream()
                 .map(this::createMergeableByAlarm)
                 .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(MergeAble::getId));
-        collection.forEach((id, list) -> {
-            MergeSupport.rechecking(alarmStatisticDao, list);
-        });
-        log.info("{}合并插入{}条数据", alarmStatisticDao.getDbName(), collection.size());
+        Map<String, MergeAble> mergedMap = new HashMap<>();
+        collect.forEach((id, list) -> list.forEach(mergeAble -> mergedMap.merge(id, mergeAble, (k, v) -> v.merge(mergeAble))));
+        final Map<String, List<MergeAble>> allStatistic = mergedMap.values().stream().collect(Collectors.groupingBy((x) -> x.getId().split("\\.")[0]));
+        for (Map.Entry<String, List<MergeAble>> entry : allStatistic.entrySet()) {
+            String clazz = entry.getKey();
+            List<MergeAble> mergeAbles = entry.getValue();
+            SimpleBaseDaoImpl dao = (SimpleBaseDaoImpl) this.applicationContext.getBean(clazz);
+//            MergeSupport.rechecking(dao, mergeAbles);
+        }
+        log.info("{}合并插入{}条数据", alarmStatisticDao.getDbName(), collect.size());
     }
 
-    public List<AlarmStatistic> createMergeableByAlarm(Alarm alarm) {
-        List<AlarmStatistic> statisticList = new ArrayList<>();
-        AlarmStatistic statistic = new AlarmStatistic(alarm);
-        statisticList.add(statistic);
+    public List<MergeAble<?>> createMergeableByAlarm(Alarm alarm) {
+        List<MergeAble<?>> statisticList = new ArrayList<>();
+        AlarmStatistic alarmStatistic = convertAlarm2AlarmStatistic(alarm);
+        statisticList.add(alarmStatistic);
+        AlarmCategoryStatistic alarmCategoryStatistic = convertAlarm2AlarmCategoryStatistic(alarm);
+        statisticList.add(alarmCategoryStatistic);
+        AlarmCountryStatistic alarmCountryStatistic = convertAlarm2AlarmCountryStatistic(alarm);
+        statisticList.add(alarmCountryStatistic);
+        AlarmCountStatistic alarmCountStatistic = convertAlarm2AlarmCountStatistic(alarm);
+        statisticList.add(alarmCountStatistic);
+        AlarmLevelStatistic alarmLevelStatistic = convertAlarm2AlarmLevelStatistic(alarm);
+        statisticList.add(alarmLevelStatistic);
+        AlarmSslStatistic alarmSslStatistic = convertAlarm2AlarmSslStatistic(alarm);
+        statisticList.add(alarmSslStatistic);
+        AlarmUserStatistic alarmUserStatistic = convertAlarm2AlarmUserStatistic(alarm);
+        statisticList.add(alarmUserStatistic);
+//        AlarmUnitStatistic alarmUnitStatistic = convertAlarm2AlarmUnitStatistic(alarm);
+//        statisticList.add(alarmUnitStatistic);
+        ImpAlarmCategoryStatistic impAlarmCategoryStatistic = convertAlarm2ImpAlarmCategoryStatistic(alarm);
+        statisticList.add(impAlarmCategoryStatistic);
+//        ImpAlarmTargetStatistic impAlarmTargetStatistic = convertAlarm2ImpAlarmTargetStatistic(alarm);
+//        statisticList.add(impAlarmTargetStatistic);
         return statisticList;
     }
 

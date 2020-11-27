@@ -1,9 +1,21 @@
 package com.tincery.gaea.api.dm.alarm.statistic;
 
-import com.tincery.starter.base.model.SimpleBaseDO;
+import com.tincery.gaea.core.dw.MergeAble;
+import lombok.Data;
 
-public class ImpAlarmTargetStatistic extends SimpleBaseDO {
+/**
+ * @author Insomnia
+ */
+@Data
+public class ImpAlarmTargetStatistic extends BaseStatistic implements MergeAble<ImpAlarmTargetStatistic> {
 
-    protected String id;
+    @Override
+    public void setId() {
 
+    }
+
+    @Override
+    public ImpAlarmTargetStatistic merge(ImpAlarmTargetStatistic impAlarmTargetStatistic) {
+        return this;
+    }
 }
