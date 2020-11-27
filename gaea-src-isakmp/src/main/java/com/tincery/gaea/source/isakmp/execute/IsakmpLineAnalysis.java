@@ -97,7 +97,11 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         fixCommonByS2DFlag(isakmpData,elements,s2dFlag);
         IsakmpExtension isakmpExtension = new IsakmpExtension();
         String version = elements[33].split(":")[1].trim();
-        switch (version) {
+        String subVersion = "";
+        if (StringUtils.isNotEmpty(version)){
+           subVersion = version.substring(0,1);
+        }
+        switch (subVersion) {
             case "1":
                 fixVersion(elements,isakmpExtension,"1");
                 break;
@@ -107,6 +111,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
             default:
                 throw new IllegalArgumentException("Version版本标记错误");
         }
+        isakmpExtension.setVersion(version);
         isakmpExtension.setExtension();
         isakmpData.setIsakmpExtension(isakmpExtension);
     }
