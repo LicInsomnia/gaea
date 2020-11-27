@@ -27,6 +27,7 @@ public class App {
             "gaea-src-isakmp",
             "gaea-src-espandah",
             "gaea-src-wechat",
+            "gaea-src-cer",
             "gaea-ods-httpanalysis",
 //            "gaea-src-qq",
             "gaea-dw-reorganization",
