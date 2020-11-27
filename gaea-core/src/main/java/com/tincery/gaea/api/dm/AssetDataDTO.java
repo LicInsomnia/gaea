@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +50,7 @@ public class AssetDataDTO extends SimpleBaseDO implements MergeAble<AssetDataDTO
     private List<AssetClient> clients;
     private Map<String, Object> extensions;
     private long alarm;
+    private String alarmDescription;
 
 
     @Setter

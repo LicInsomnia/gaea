@@ -14,6 +14,7 @@ import com.tincery.gaea.api.dm.assetextension.AssetIsakmpResponderExtension;
 import com.tincery.gaea.api.dm.assetextension.AssetSslExtension;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
+import com.tincery.gaea.core.base.dao.AssetAlarmDao;
 import com.tincery.gaea.core.base.dao.AssetExtensionDao;
 import com.tincery.gaea.core.base.dao.AssetIpDao;
 import com.tincery.gaea.core.base.dao.AssetPortDao;
@@ -25,9 +26,11 @@ import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.NetUtil;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
+import com.tincery.gaea.core.dw.MergeAble;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectUpdateSemanticsDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -52,6 +55,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -106,6 +111,9 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
 
     @Autowired
     private AssetExtensionDao assetExtensionDao;
+
+    @Autowired
+    private AssetAlarmDao assetAlarmDao;
 
     @Override
     protected void dmFileAnalysis(File file) {
@@ -170,6 +178,14 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 AssetGroupSupport::portDataFrom);
         assetPortDao.insert(portData);
         log.info("端口维度合并插入{}条数据", portData.size());
+
+        List<AssetDataDTO> assetAlarmData = new ArrayList<>();
+        serverAssetList.stream().filter(jsonObject -> jsonObject.containsKey("$description"))
+                .map(AssetGroupSupport::alarmDataFrom)
+                .collect(Collectors.groupingBy(AssetDataDTO::getId))
+                .forEach((id, list) -> assetAlarmData.add(MergeAble.merge(list)));
+        AssetGroupSupport.rechecking(assetAlarmDao, assetAlarmData);
+        assetAlarmData.forEach(assetAlarmDao::saveOrUpdate);
 
         List<AssetExtension> extensionList
                 = AssetGroupSupport.getSaveExtension(allAsset,

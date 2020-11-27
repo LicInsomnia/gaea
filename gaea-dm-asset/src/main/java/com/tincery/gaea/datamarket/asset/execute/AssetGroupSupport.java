@@ -181,6 +181,11 @@ public class AssetGroupSupport {
         return assetDataDTO.setId(null);
     }
 
+    public static AssetDataDTO alarmDataFrom(JSONObject jsonObject){
+        AssetDataDTO assetDataDTO = portDataFrom(jsonObject);
+        return assetDataDTO.setId(assetDataDTO.getKey()+"_"+jsonObject.getString("$description"));
+    }
+
     private static boolean isSSL(JSONObject assetJson) {
         return Objects.equals(assetJson.getString(HeadConst.FIELD.PRONAME), "SSL");
     }
@@ -223,10 +228,6 @@ public class AssetGroupSupport {
         return result;
     }
 
-    public static List<AssetDataDTO> mergeExtensionData(Map<String, List<AssetDataDTO>> groupMap) {
-        // todo 这里是合并的的地方    groupMap 这个参数 是一个map  key就是你的ID  value就是ID对应的所有实体
-        return null;
-    }
 
     /**
      * ******************************************
