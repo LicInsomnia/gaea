@@ -4,7 +4,6 @@ import com.tincery.gaea.api.src.CerData;
 import com.tincery.gaea.core.base.tool.moduleframe.BaseModule;
 import com.tincery.gaea.core.base.tool.moduleframe.BaseModuleInterface;
 import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
-
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,20 +26,26 @@ public class CerEncryptionStrengthModule extends BaseModule implements BaseModul
         System.out.println("CerEncryptionStrengthModule starts.");
         DataQueue queueInput = queuesInput.get(0);
         DataQueue queueOutput = queuesOutput.get(0);
-        while (true) {
-            CerData cer = (CerData) queueInput.poll(1, TimeUnit.SECONDS);
-            if (cer != null) {
-                CerEncryptionStrengthUtils cerUtils = new CerEncryptionStrengthUtils(cer);
-                try {
+        try {
+            System.load("C:\\Users\\Insomnia\\Documents\\Visual Studio 2010\\Projects\\helloTest\\x64\\Debug\\helloTest.dll");
+//            this.hello();
+            while (true) {
+                CerData cer = (CerData) queueInput.poll(1, TimeUnit.SECONDS);
+                if (cer != null) {
+                    CerEncryptionStrengthUtils cerUtils = new CerEncryptionStrengthUtils(cer);
+                    try {
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    queueOutput.put(cer);
                 }
-                queueOutput.put(cer);
+                if (queueInput.isEnd()) {
+                    break;
+                }
             }
-            if (queueInput.isEnd()) {
-                break;
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         queueOutput.detach();
         System.out.println("CerEncryptionStrengthModule ends");
