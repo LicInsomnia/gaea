@@ -28,7 +28,7 @@ public class CerEncryptionStrengthModule extends BaseModule implements BaseModul
         DataQueue queueInput = queuesInput.get(0);
         DataQueue queueOutput = queuesOutput.get(0);
         try {
-            String soPath = NodeInfo.getConfig() + "/rsacheck/libRsaCheck.so";
+            String soPath = NodeInfo.getConfig() + "/libRsaCheck.so";
             System.load(soPath);
 //            System.load("C:\\Users\\Insomnia\\Documents\\Visual Studio 2010\\Projects\\helloTest\\x64\\Debug\\helloTest.dll");
             while (true) {
