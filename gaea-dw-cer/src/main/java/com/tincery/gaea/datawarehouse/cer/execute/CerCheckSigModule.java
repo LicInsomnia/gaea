@@ -8,6 +8,7 @@ import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import java.io.File;
 import java.io.FileInputStream;
+import java.security.MessageDigest;
 import java.security.cert.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CerCheckSigModule extends BaseModule implements BaseModuleInterface {
     PKIXParameters params;
+    X509Certificate cert;
 
     @Override
     public boolean setInput(List<DataQueue> queues) {
@@ -39,7 +41,10 @@ public class CerCheckSigModule extends BaseModule implements BaseModuleInterface
             if(cer != null) {
                 try {
                     if(cer.getSignatureCheck() == null || !cer.getSignatureCheck()) {
-                        cer.setSignatureCheck(checkSig(cer));
+//                        cer.setSignatureCheck(checkSig(cer));
+                        checkSig(cer);
+                        cer.setDigest(getDigest(cert));
+                        cert = null;
                         queueOutput.put(cer);
                     }
                 } catch (Exception e) {
@@ -54,26 +59,66 @@ public class CerCheckSigModule extends BaseModule implements BaseModuleInterface
         System.out.println("CerCheckSigModule ends.");
     }
 
-    private boolean checkSig(CerData cer) {
-        Set<String> cerChainSet = cer.getCerChain();
-        for(String cerChain : cerChainSet) {
+    private String getDigest(X509Certificate certificate) {
+        String fullName = certificate.getSigAlgName();
+        String digestName;
+        try {
+            if(fullName.startsWith("SHA")) {
+                digestName = fullName.substring(0, 3) + "-" + fullName.substring(3, fullName.indexOf("with"));
+            } else if(fullName.startsWith("MD")) {
+                digestName = fullName.substring(0, 2) + "-" + fullName.substring(2, fullName.indexOf("with"));
+            } else {
+                digestName = "";
+            }
+            if(digestName.equals("")) {
+                return null;
+            }
+            byte[] digestByte = MessageDigest.getInstance(digestName).digest(certificate.getEncoded());
+            return bytesToHexString(digestByte);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static final String bytesToHexString(byte[] bArray) {
+        StringBuffer sb = new StringBuffer(bArray.length);
+        String sTemp;
+        for (int i = 0; i < bArray.length; i++) {
+            sTemp = Integer.toHexString(0xFF & bArray[i]);
+            if (sTemp.length() < 2)
+                sb.append(0);
+            sb.append(sTemp.toUpperCase());
+        }
+        return sb.toString();
+    }
+
+    private void checkSig(CerData cer) {
+        List<String> cerChainWhite = new ArrayList<>();
+        List<String> cerChainBlack = new ArrayList<>();
+        List<String> cerChainList = cer.getCerChain();
+        for(String cerChain : cerChainList) {
             List<File> cerFileList = new ArrayList<>();
             String[] cerChainArray = cerChain.split(";");
             for(String cerSha : cerChainArray) {
                 cerFileList.add(getCerFile(getRealSha(cerSha)));
             }
             if(checkCerFileChain(cerFileList)) {
-                return true;
+                cerChainWhite.add(cerChain);
+            } else {
+                cerChainBlack .add(cerChain);
             }
         }
-        return false;
+        cer.setCerChainWhite(cerChainWhite);
+        cer.setCerChainBlack(cerChainBlack);
     }
 
     private boolean checkCerFileChain(List<File> cerFileList) {
-        List<X509Certificate> myList = getChain(cerFileList);
+        List<X509Certificate> myList =  getChain(cerFileList);
         if(myList.size() == 0) {
             return false;
         }
+        cert = myList.get(0);
         List<X509Certificate> resortList = resortChain(myList);
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -133,6 +178,8 @@ public class CerCheckSigModule extends BaseModule implements BaseModuleInterface
                 }
                 FileInputStream fis = new FileInputStream(file);
                 X509Certificate cert = (X509Certificate)cf.generateCertificate(fis);
+//                cf.getProvider();
+//                cert.verify(cert.getPublicKey());
                 myList.add(cert);
             }
             return myList;
@@ -164,8 +211,8 @@ public class CerCheckSigModule extends BaseModule implements BaseModuleInterface
     }
 
     private File getCerFile(String sha) {
-//        String basePath = "D:\\data5\\datawarehouse\\json\\cerChain";
-        String basePath = "/opt/gaea/data/data/cer/";
+        String basePath = "D:\\data5\\datawarehouse\\json\\cerChain";
+//        String basePath = "/opt/gaea/data/data/cer/";
         String folder = sha.substring(0, 2);
         String path = basePath + "/" + folder + "/" + sha + ".cer";
         return new File(path);

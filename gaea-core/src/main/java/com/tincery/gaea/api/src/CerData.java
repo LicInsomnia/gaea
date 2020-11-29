@@ -2,6 +2,8 @@ package com.tincery.gaea.api.src;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -103,5 +105,8 @@ public class CerData extends AbstractSrcData  {
     private Integer keyExchangeLeakDetectResult;
     private Integer maliciousWebsite;
     private Boolean signatureCheck;
-    private Set<String> cerChain;
+    private List<String> cerChain;
+    private List<String> cerChainWhite;
+    private List<String> cerChainBlack;
+    private String digest;
 }

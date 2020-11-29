@@ -37,7 +37,9 @@ public class DataSourceCheckSigModule extends BaseModule implements BaseModuleIn
             CerData data = new CerData();
             BeanUtils.copyProperties(certDo, data);
             if(data.getSignatureCheck() == null || !data.getSignatureCheck()) {
-                data.setCerChain(toCheckMap.get(data.getId()));
+                List<String> cerChainList = new ArrayList<>();
+                cerChainList.addAll(toCheckMap.get(data.getId()));
+                data.setCerChain(cerChainList);
                 for (DataQueue queue : queuesOutput) {
                     queue.put(data);
                 }
@@ -104,7 +106,7 @@ public class DataSourceCheckSigModule extends BaseModule implements BaseModuleIn
         Map<String, Set<String>> waitMap = getSha1ChainMap(waitFile);
         for(File fp : newFileList) {
             mergeMap(waitMap, getSha1ChainMap(fp));
-            fp.delete();
+            //fp.delete();
         }
         for(String key : waitMap.keySet()) {
             if(!finishMap.keySet().contains(key)) {

@@ -24,7 +24,7 @@ public class DataMergeModule extends BaseModule implements BaseModuleInterface {
 
     @Override
     public boolean setOutput(List<DataQueue> queues) {
-        return super.setOutput(queues, 2);
+        return super.setOutput(queues, 3);
     }
 
     @Override
@@ -89,7 +89,15 @@ public class DataMergeModule extends BaseModule implements BaseModuleInterface {
                     reliabilityMap.remove(key);
                     gmcomplianceMap.remove(key);
                     for (DataQueue queueOutput : queuesOutput) {
-                        queueOutput.put(result);
+                        switch (queueOutput.getTag()) {
+                            case "DataMergeModule->CerCheckSigModule":
+                                if(result.getCerChain() != null) {
+                                    queueOutput.put(result);
+                                }
+                                break;
+                            default:
+                                queueOutput.put(result);
+                        }
                     }
                 }
                 if (complianceFlag && reliabilityFlag && gmcomplianceFlag) {
