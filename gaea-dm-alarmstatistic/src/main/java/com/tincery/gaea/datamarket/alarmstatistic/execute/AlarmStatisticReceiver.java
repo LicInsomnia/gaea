@@ -160,6 +160,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     for (MergeAble mergeAble : entry.getValue()) {
                         AlarmCountStatistic alarmCountStatistic = (AlarmCountStatistic) mergeAble;
                         alarmCountStatistics.add(alarmCountStatistic);
+                        count++;
                     }
                     MergeSupport.rechecking(this.alarmCountStatisticDao, alarmCountStatistics);
                     alarmCountStatistics.forEach(alarmCountStatisticDao::saveOrUpdate);
@@ -170,6 +171,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     for (MergeAble mergeAble : entry.getValue()) {
                         AlarmLevelStatistic alarmLevelStatistic = (AlarmLevelStatistic) mergeAble;
                         alarmLevelStatistics.add(alarmLevelStatistic);
+                        count++;
                     }
                     MergeSupport.rechecking(this.alarmLevelStatisticDao, alarmLevelStatistics);
                     alarmLevelStatistics.forEach(alarmLevelStatisticDao::saveOrUpdate);
@@ -180,17 +182,18 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     for (MergeAble mergeAble : entry.getValue()) {
                         AlarmSslStatistic alarmSslStatistic = (AlarmSslStatistic) mergeAble;
                         alarmSslStatistics.add(alarmSslStatistic);
+                        count++;
                     }
                     MergeSupport.rechecking(this.alarmSslStatisticDao, alarmSslStatistics);
                     alarmSslStatistics.forEach(alarmSslStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmSslStatisticDao.getDbName(), count);
-
                     break;
                 case "AlarmUnitStatistic":
                     List<AlarmUnitStatistic> alarmUnitStatistics = new ArrayList<>();
                     for (MergeAble mergeAble : entry.getValue()) {
                         AlarmUnitStatistic alarmUnitStatistic = (AlarmUnitStatistic) mergeAble;
                         alarmUnitStatistics.add(alarmUnitStatistic);
+                        count++;
                     }
                     MergeSupport.rechecking(this.alarmUnitStatisticDao, alarmUnitStatistics);
                     alarmUnitStatistics.forEach(alarmUnitStatisticDao::saveOrUpdate);
@@ -201,6 +204,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     for (MergeAble mergeAble : entry.getValue()) {
                         AlarmUserStatistic alarmUserStatistic = (AlarmUserStatistic) mergeAble;
                         alarmUserStatistics.add(alarmUserStatistic);
+                        count++;
                     }
                     MergeSupport.rechecking(this.alarmUserStatisticDao, alarmUserStatistics);
                     alarmUserStatistics.forEach(alarmUserStatisticDao::saveOrUpdate);
@@ -211,6 +215,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     for (MergeAble mergeAble : entry.getValue()) {
                         ImpAlarmCategoryStatistic impAlarmCategoryStatistic = (ImpAlarmCategoryStatistic) mergeAble;
                         impAlarmCategoryStatistics.add(impAlarmCategoryStatistic);
+                        count++;
                     }
                     MergeSupport.rechecking(this.impAlarmCategoryStatisticDao, impAlarmCategoryStatistics);
                     impAlarmCategoryStatistics.forEach(impAlarmCategoryStatisticDao::saveOrUpdate);
@@ -221,6 +226,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     for (MergeAble mergeAble : entry.getValue()) {
                         ImpAlarmTargetStatistic impAlarmTargetStatistic = (ImpAlarmTargetStatistic) mergeAble;
                         impAlarmTargettatistics.add(impAlarmTargetStatistic);
+                        count++;
                     }
                     MergeSupport.rechecking(this.impAlarmTargetStatisticDao, impAlarmTargettatistics);
                     impAlarmTargettatistics.forEach(impAlarmTargetStatisticDao::saveOrUpdate);
