@@ -159,26 +159,32 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
         List<JSONObject> allAsset = new ArrayList<>(clientAssetList);
         allAsset.addAll(serverAssetList);
         // 分组
+        long l = Instant.now().toEpochMilli();
         List<AssetDataDTO> unitList = AssetGroupSupport.getSaveDataByAll(allAsset, AssetGroupSupport::unitDataFrom);
         AssetGroupSupport.rechecking(assetUnitDao, unitList);
         unitList.forEach(assetUnitDao::saveOrUpdate);
-        log.info("单位维度合并插入{}条数据", unitList.size());
+        log.info("单位维度合并插入{}条数据,用时{}毫秒", unitList.size(),(Instant.now().toEpochMilli()-l));
+
+        l = Instant.now().toEpochMilli();
         List<AssetDataDTO> ipList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList
                 , AssetGroupSupport::clientIpDataFrom, serverAssetList, AssetGroupSupport::serverIpDataFrom);
         AssetGroupSupport.rechecking(assetIpDao, ipList);
         ipList.forEach(assetIpDao::saveOrUpdate);
-        log.info("IP维度合并插入{}条数据", ipList.size());
+        log.info("IP维度合并插入{}条数据,用时{}毫秒", ipList.size(),(Instant.now().toEpochMilli()-l));
 
+        l = Instant.now().toEpochMilli();
         List<AssetDataDTO> protocolList = AssetGroupSupport.getSaveDataByServerAndClient(clientAssetList,
                 AssetGroupSupport::clientProtocolDataFrom, serverAssetList, AssetGroupSupport::serverProtocolDataFrom);
         assetProtocolDao.insert(protocolList);
-        log.info("协议维度合并插入{}条数据", protocolList.size());
+        log.info("协议维度合并插入{}条数据,用时{}毫秒", protocolList.size(),(Instant.now().toEpochMilli()-l));
 
+        l = Instant.now().toEpochMilli();
         List<AssetDataDTO> portData = AssetGroupSupport.getSaveDataByAll(serverAssetList,
                 AssetGroupSupport::portDataFrom);
         assetPortDao.insert(portData);
-        log.info("端口维度合并插入{}条数据", portData.size());
+        log.info("端口维度合并插入{}条数据,用时{}毫秒", portData.size(),(Instant.now().toEpochMilli()-l));
 
+        l = Instant.now().toEpochMilli();
         List<AssetDataDTO> assetAlarmData = new ArrayList<>();
         serverAssetList.stream().filter(jsonObject -> jsonObject.containsKey("$description"))
                 .map(AssetGroupSupport::alarmDataFrom)
@@ -186,13 +192,15 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
                 .forEach((id, list) -> assetAlarmData.add(MergeAble.merge(list)));
         AssetGroupSupport.rechecking(assetAlarmDao, assetAlarmData);
         assetAlarmData.forEach(assetAlarmDao::saveOrUpdate);
+        log.info("资产告警统计插入{}条数据,用时{}毫秒", assetAlarmData.size(),(Instant.now().toEpochMilli()-l));
 
+        l = Instant.now().toEpochMilli();
         List<AssetExtension> extensionList
                 = AssetGroupSupport.getSaveExtension(allAsset,
                 AssetExtension::fromAssetJsonObject);
         AssetGroupSupport.rechecking(assetExtensionDao, extensionList);
         extensionList.forEach(assetExtensionDao::saveOrUpdate);
-        log.info("拓展信息合并插入{}条数据", extensionList.size());
+        log.info("拓展信息合并插入{}条数据,用时{}毫秒", extensionList.size(),(Instant.now().toEpochMilli()-l));
 
         writeAlarm();
         writeEventData();
