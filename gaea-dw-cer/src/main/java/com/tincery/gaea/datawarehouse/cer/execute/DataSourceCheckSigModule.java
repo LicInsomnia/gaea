@@ -106,7 +106,7 @@ public class DataSourceCheckSigModule extends BaseModule implements BaseModuleIn
         Map<String, Set<String>> waitMap = getSha1ChainMap(waitFile);
         for(File fp : newFileList) {
             mergeMap(waitMap, getSha1ChainMap(fp));
-            //fp.delete();
+            fp.delete();
         }
         for(String key : waitMap.keySet()) {
             if(!finishMap.keySet().contains(key)) {

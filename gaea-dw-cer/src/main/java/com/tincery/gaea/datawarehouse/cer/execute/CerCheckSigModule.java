@@ -211,8 +211,8 @@ public class CerCheckSigModule extends BaseModule implements BaseModuleInterface
     }
 
     private File getCerFile(String sha) {
-        String basePath = "D:\\data5\\datawarehouse\\json\\cerChain";
-//        String basePath = "/opt/gaea/data/data/cer/";
+//        String basePath = "D:\\data5\\datawarehouse\\json\\cerChain";
+        String basePath = "/opt/gaea/data/data/cer/";
         String folder = sha.substring(0, 2);
         String path = basePath + "/" + folder + "/" + sha + ".cer";
         return new File(path);
