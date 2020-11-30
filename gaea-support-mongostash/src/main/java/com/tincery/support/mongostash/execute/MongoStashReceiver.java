@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.TableConfigDao;
+import com.tincery.gaea.core.base.tool.util.DaoUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.starter.base.model.TableConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -116,9 +117,19 @@ public class MongoStashReceiver implements Receiver {
                     List<String> list = FileUtils.readLine(file);
                     List<JSONObject> insertData = list.stream().map(JSON::parseObject).collect(Collectors.toList());
                     if (tableConfig.getType().contains("production")) {
-                        proMongoTemplate.insert(insertData, name);
+                        insertData.forEach(data->{
+                            Update update = DaoUtils.beanToUpdateCovered(data);
+                            Query query = new Query(Criteria.where("_id").is(data.getString("_id")));
+                            proMongoTemplate.upsert(query,update,tableConfig.getName());
+                        });
+                       /* proMongoTemplate.beanToUpdateCovered(insertData, name);*/
                     } else {
-                        sysMongoTemplate.insert(insertData, name);
+                        insertData.forEach(data->{
+                            Update update = DaoUtils.beanToUpdateCovered(data);
+                            Query query = new Query(Criteria.where("_id").is(data.getString("_id")));
+                            sysMongoTemplate.upsert(query,update,tableConfig.getName());
+                        });
+                        /*sysMongoTemplate.insert(insertData, name);*/
                     }
                     insertCount.merge(tableConfig.getName(), 1, Integer::sum);
                 }
