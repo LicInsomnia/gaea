@@ -147,7 +147,7 @@ public class AssetExtension extends SimpleBaseDO implements MergeAble<AssetExten
     private boolean appendCommonInformation(JSONObject jsonObject) {
         boolean isClient = jsonObject.getBoolean("isClient");
         this.proName = jsonObject.getString(HeadConst.FIELD.PRONAME);
-        this.ip = ToolUtils.long2IP(jsonObject.getLong("ip"));
+        this.ip = jsonObject.getString("ip");
         if (isClient && !HeadConst.PRONAME.ISAKMP.equals(this.proName)) {
             return false;
         }
