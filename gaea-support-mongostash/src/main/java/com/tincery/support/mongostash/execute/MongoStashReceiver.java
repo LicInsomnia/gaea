@@ -47,7 +47,7 @@ public class MongoStashReceiver implements Receiver {
         long jmsTimestamp = textMessage.getJMSTimestamp();
         List<TableConfig> updateConfig = tableConfigDao.getUpdate();
         List<TableConfig> insertConfig = tableConfigDao.getInsert();
-        insertConfig.forEach(item->{
+        insertConfig.forEach(item -> {
             log.info(item.getName());
         });
         update(updateConfig);
@@ -107,7 +107,7 @@ public class MongoStashReceiver implements Receiver {
             String cacheByCategory = NodeInfo.getCacheByCategory(id);
             String name = tableConfig.getName();
             File categoryCacheFile = new File(cacheByCategory);
-            log.info("开始检索文件夹{}",categoryCacheFile.getName());
+            log.info("开始检索文件夹{}", categoryCacheFile.getName());
             if (!categoryCacheFile.exists()) {
                 continue;
             }
@@ -116,26 +116,18 @@ public class MongoStashReceiver implements Receiver {
                 for (File file : files) {
                     List<String> list = FileUtils.readLine(file);
                     List<JSONObject> insertData = list.stream().map(JSON::parseObject).collect(Collectors.toList());
-                    if (tableConfig.getType().contains("production")) {
-                        insertData.forEach(data->{
-                            Update update = DaoUtils.beanToUpdateCovered(data);
-                            Query query = new Query(Criteria.where("_id").is(data.getString("_id")));
-                            proMongoTemplate.upsert(query,update,tableConfig.getName());
-                        });
-                       /* proMongoTemplate.beanToUpdateCovered(insertData, name);*/
-                    } else {
-                        insertData.forEach(data->{
-                            Update update = DaoUtils.beanToUpdateCovered(data);
-                            Query query = new Query(Criteria.where("_id").is(data.getString("_id")));
-                            sysMongoTemplate.upsert(query,update,tableConfig.getName());
-                        });
-                        /*sysMongoTemplate.insert(insertData, name);*/
-                    }
+                    MongoTemplate mongoTemplate = tableConfig.getType().contains("production") ? proMongoTemplate : sysMongoTemplate;
+                    insertData.forEach(data -> {
+                        Update update = new Update();
+                        data.forEach(update::set);
+                        Query query = new Query(Criteria.where("_id").is(data.getString("_id")));
+                        mongoTemplate.upsert(query, update, tableConfig.getName());
+                    });
                     insertCount.merge(tableConfig.getName(), 1, Integer::sum);
                 }
             }
+            insertCount.forEach((collectionName, count) -> log.info("数据库{}添加了{}条", collectionName, count));
         }
-        insertCount.forEach((collectionName, count) -> log.info("数据库{}添加了{}条", collectionName, count));
     }
 
     @Override
