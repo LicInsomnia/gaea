@@ -143,10 +143,12 @@ public class AssetGroupSupport extends MergeSupport {
             Set<String> sslIds = AssetReceiver.sslIds.computeIfAbsent(key, (k) -> new HashSet<>());
             JSONObject sslExtension = jsonObject.getJSONObject("sslExtension");
             JSONObject cipherSuite = sslExtension.getJSONObject("cipherSuite");
-            String sslid = cipherSuite.getString("id");
-            if (!sslIds.contains(sslid)) {
-                sslIds.add(sslid);
-                assetDataDTO.setAlarm(assetDataDTO.getAlarm() | AssetDataDTO.NEW_RITHMETIC);
+            if (null != cipherSuite) {
+                String sslid = cipherSuite.getString("id");
+                if (!sslIds.contains(sslid)) {
+                    sslIds.add(sslid);
+                    assetDataDTO.setAlarm(assetDataDTO.getAlarm() | AssetDataDTO.NEW_RITHMETIC);
+                }
             }
         } else if (isIsakmpInitiator(jsonObject)) {
             Set<AssetReceiver.IsakmpInitiator> isakmpInitiators =
