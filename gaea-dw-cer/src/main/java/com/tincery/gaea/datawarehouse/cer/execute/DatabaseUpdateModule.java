@@ -19,7 +19,7 @@ public class DatabaseUpdateModule extends BaseModule implements BaseModuleInterf
 
     @Override
     public boolean setInput(List<DataQueue> queues) {
-        return super.setInput(queues, 2);
+        return super.setInput(queues, 1);
     }
 
     @Override
@@ -33,57 +33,31 @@ public class DatabaseUpdateModule extends BaseModule implements BaseModuleInterf
             System.out.println("DatabaseUpdateModule starts.");
             BulkWriteOptions options = new BulkWriteOptions();
             options.ordered(false);
-            boolean markFlag = false;
-            boolean sigFlag = false;
+            DataQueue queueInput = queuesInput.get(0);
             while (true) {
-                for (DataQueue queueInput : queuesInput) {
-                    if(queueInput.getTag().equals("MarkModule->DatabaseUpdateModule") && markFlag) {
-                        continue;
-                    }
-                    if(queueInput.getTag().equals("CerCheckSigModule->DatabaseUpdateModule") && sigFlag) {
-                        continue;
-                    }
-                    CerData cer = (CerData) queueInput.poll(1, TimeUnit.SECONDS);
-                    if (cer != null) {
-                        Document doc = new Document();
-                        switch (queueInput.getTag()) {
-                            case "MarkModule->DatabaseUpdateModule":
-                                doc.put("selfSigned", cer.getSelfSigned());
-                                doc.append("compliance", cer.getCompliance());
-                                doc.append("complianceType", cer.getComplianceType());
-                                doc.append("reliability", cer.getReliability());
-                                doc.append("reliabilityType", cer.getReliabilityType());
-                                doc.append("caseTags", cer.getCaseTags());
-                                doc.append("complianceTags", cer.getComplianceTags());
-                                doc.append("reliabilityTags", cer.getReliabilityTags());
-                                doc.append("complianceDetail", cer.getComplianceDetail());
-                                doc.append("reliabilityDetail", cer.getReliabilityDetail());
-                                doc.append("gmcomplianceType", cer.getGmcomplianceType());
-                                doc.append("gmcomplianceDetail", cer.getGmcomplianceDetail());
-                                doc.append("gmcomplianceTags", cer.getGmcomplianceTags());
-                                doc.append("altNameNum", cer.getAltNameNum());
-                                doc.append("altNameWhiteNum", cer.getAltNameWhiteNum());
-                                doc.append("altNameDgaNum", cer.getAltNameDgaNum());
-                                doc.append("maliciousWebsite", cer.getMaliciousWebsite());
-                                break;
-                            case "CerCheckSigModule->DatabaseUpdateModule":
-                                doc.append("signatureCheck", cer.getSignatureCheck());
-                                break;
-                        }
-                        Config.certDao.updateData(cer.getId(), doc);
-                    }
-                    if (queueInput.isEnd()) {
-                        switch (queueInput.getTag()) {
-                            case "MarkModule->DatabaseUpdateModule":
-                                markFlag = true;
-                                break;
-                            case "CerCheckSigModule->DatabaseUpdateModule":
-                                sigFlag = true;
-                                break;
-                        }
-                    }
+                CerData cer = (CerData) queueInput.poll(1, TimeUnit.SECONDS);
+                if (cer != null) {
+                    Document doc = new Document();
+                    doc.put("selfSigned", cer.getSelfSigned());
+                    doc.append("compliance", cer.getCompliance());
+                    doc.append("complianceType", cer.getComplianceType());
+                    doc.append("reliability", cer.getReliability());
+                    doc.append("reliabilityType", cer.getReliabilityType());
+                    doc.append("caseTags", cer.getCaseTags());
+                    doc.append("complianceTags", cer.getComplianceTags());
+                    doc.append("reliabilityTags", cer.getReliabilityTags());
+                    doc.append("complianceDetail", cer.getComplianceDetail());
+                    doc.append("reliabilityDetail", cer.getReliabilityDetail());
+                    doc.append("gmcomplianceType", cer.getGmcomplianceType());
+                    doc.append("gmcomplianceDetail", cer.getGmcomplianceDetail());
+                    doc.append("gmcomplianceTags", cer.getGmcomplianceTags());
+                    doc.append("altNameNum", cer.getAltNameNum());
+                    doc.append("altNameWhiteNum", cer.getAltNameWhiteNum());
+                    doc.append("altNameDgaNum", cer.getAltNameDgaNum());
+                    doc.append("maliciousWebsite", cer.getMaliciousWebsite());
+                    Config.certDao.updateData(cer.getId(), doc);
                 }
-                if (markFlag && sigFlag) {
+                if (queueInput.isEnd()) {
                     break;
                 }
             }

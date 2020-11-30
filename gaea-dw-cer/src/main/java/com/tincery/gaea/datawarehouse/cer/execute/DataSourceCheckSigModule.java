@@ -37,7 +37,9 @@ public class DataSourceCheckSigModule extends BaseModule implements BaseModuleIn
             CerData data = new CerData();
             BeanUtils.copyProperties(certDo, data);
             if(data.getSignatureCheck() == null || !data.getSignatureCheck()) {
-                data.setCerChain(toCheckMap.get(data.getId()));
+                List<String> cerChainList = new ArrayList<>();
+                cerChainList.addAll(toCheckMap.get(data.getId()));
+                data.setCerChain(cerChainList);
                 for (DataQueue queue : queuesOutput) {
                     queue.put(data);
                 }

@@ -1,10 +1,12 @@
 package com.tincery.gaea.datawarehouse.cer.execute;
 
 import com.tincery.gaea.core.base.component.Receiver;
+import com.tincery.gaea.core.base.component.config.CommonConfig;
 import com.tincery.gaea.core.base.component.support.ApplicationCheck;
 import com.tincery.gaea.core.base.component.support.AssetDetector;
 import com.tincery.gaea.core.base.component.support.IpSelector;
 import com.tincery.gaea.core.base.component.support.WebCheck;
+import com.tincery.gaea.core.base.dao.CerChainDao;
 import com.tincery.gaea.core.base.dao.CertDao;
 import com.tincery.gaea.core.base.dao.SrcRuleDao;
 import com.tincery.gaea.core.base.mgt.AlarmDictionary;
@@ -39,6 +41,9 @@ public class CerReceiver implements Receiver {
     private CertDao certDao;
 
     @Autowired
+    private CerChainDao cerChainDao;
+
+    @Autowired
     private CerProperties cerProperties;
 
     @Autowired
@@ -62,6 +67,9 @@ public class CerReceiver implements Receiver {
     @Autowired
     WebCheck webCheck;
 
+    @Autowired
+    CommonConfig commonConfig;
+
     @Override
     public void receive(TextMessage textMessage) throws JMSException {
         System.out.println(textMessage.getText());
@@ -73,7 +81,7 @@ public class CerReceiver implements Receiver {
     public void init() {
         System.out.println("spring加载完了");
 //        train();
-        Config.init(certDao, cerProperties, srcRuleDao, alarmDictionary, ipSelector, assetDetector, appCheck, webCheck);
+        Config.init(certDao, cerProperties, srcRuleDao, alarmDictionary, ipSelector, assetDetector, appCheck, webCheck, commonConfig, cerChainDao);
         defaultAlarmList = cerProperties.getDefaultAlarm();
         gmConfigMap = cerProperties.getGmConfig();
         defaultConfig = cerProperties.getDefaultConfig();
@@ -95,11 +103,11 @@ public class CerReceiver implements Receiver {
 
     private Map<String, ModuleConnection> getTopolgy() {
         ModuleTopology topology = new ModuleTopology();
-        topology.addOutputTag("DataSourceCheckSigModule", "DataSourceCheckSigModule->CerCheckSigModule");
-        topology.addInputTag("CerCheckSigModule", "DataSourceCheckSigModule->CerCheckSigModule");
+        topology.addOutputTag("DataSourceCheckSigModule", "DataSourceCheckSigModule->DataSourceModule");
+        topology.addInputTag("DataSourceModule", "DataSourceCheckSigModule->DataSourceModule");
 
-        topology.addOutputTag("CerCheckSigModule", "CerCheckSigModule->DatabaseUpdateModule");
-        topology.addInputTag("DatabaseUpdateModule", "CerCheckSigModule->DatabaseUpdateModule");
+        //topology.addOutputTag("CerCheckSigModule", "CerCheckSigModule->DatabaseUpdateModule");
+        //topology.addInputTag("DatabaseUpdateModule", "CerCheckSigModule->DatabaseUpdateModule");
 
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerComplianceModule");
         topology.addOutputTag("DataSourceModule", "DataSourceModule->CerReliabilityModule");
@@ -123,9 +131,15 @@ public class CerReceiver implements Receiver {
 
         topology.addOutputTag("DataMergeModule", "DataMergeModule->AlertModule");
         topology.addOutputTag("DataMergeModule", "DataMergeModule->MarkModule");
+        topology.addOutputTag("DataMergeModule", "DataMergeModule->CerCheckSigModule");
 
         topology.addInputTag("AlertModule", "DataMergeModule->AlertModule");
         topology.addInputTag("MarkModule", "DataMergeModule->MarkModule");
+        topology.addInputTag("CerCheckSigModule", "DataMergeModule->CerCheckSigModule");
+
+        topology.addOutputTag("CerCheckSigModule", "CerCheckSigModule->DatabaseUpdateCerChainModule");
+
+        topology.addInputTag("DatabaseUpdateCerChainModule", "CerCheckSigModule->DatabaseUpdateCerChainModule");
 
         topology.addOutputTag("MarkModule", "MarkModule->DatabaseUpdateModule");
 

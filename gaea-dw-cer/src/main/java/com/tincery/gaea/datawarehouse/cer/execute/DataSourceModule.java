@@ -9,7 +9,11 @@ import com.tincery.gaea.core.base.tool.moduleframe.BaseModuleInterface;
 import com.tincery.gaea.core.base.tool.moduleframe.DataQueue;
 import org.bson.Document;
 import org.springframework.beans.BeanUtils;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author liuming
@@ -24,7 +28,7 @@ public class DataSourceModule extends BaseModule implements BaseModuleInterface 
 
     @Override
     public boolean setInput(List<DataQueue> queues) {
-        return super.setInput(queues, 0);
+        return super.setInput(queues, 1);
     }
 
     @Override
@@ -35,10 +39,31 @@ public class DataSourceModule extends BaseModule implements BaseModuleInterface 
     @Override
     public void run() {
         System.out.println("DataSourceModule starts.");
+        DataQueue queueInput = queuesInput.get(0);
+        Set<String> shaSet = new HashSet<>();
+        while (true) {
+            CerData cer = (CerData)queueInput.poll(1, TimeUnit.SECONDS);
+            if(cer != null) {
+                try {
+                    shaSet.add(cer.getId());
+                    for (DataQueue queue : queuesOutput) {
+                        queue.put(cer);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (queueInput.isEnd()) {
+                break;
+            }
+        }
         List<CertDo> dataList = Config.certDao.getDataList(readMongoLimit);
         for(CertDo certDo : dataList) {
             CerData data = new CerData();
             BeanUtils.copyProperties(certDo, data);
+            if(shaSet.contains(data.getId())) {
+                continue;
+            }
             for (DataQueue queue : queuesOutput) {
                 queue.put(data);
             }
