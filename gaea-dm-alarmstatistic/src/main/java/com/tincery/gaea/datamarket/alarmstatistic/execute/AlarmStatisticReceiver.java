@@ -7,13 +7,14 @@ import com.tincery.gaea.core.base.dao.alarm.*;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import com.tincery.gaea.core.dw.MergeAble;
+import com.tincery.gaea.datamarket.alarmstatistic.property.AlarmStatisticProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.jms.TextMessage;
 import java.io.File;
@@ -34,8 +35,6 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
     @Autowired
     private AlarmStatisticDao alarmStatisticDao;
     @Autowired
-    private ApplicationContext applicationContext;
-    @Autowired
     private AlarmCategoryStatisticDao alarmCategoryStatisticDao;
     @Autowired
     private AlarmCountryStatisticDao alarmCountryStatisticDao;
@@ -54,12 +53,12 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
     @Autowired
     private ImpAlarmTargetStatisticDao impAlarmTargetStatisticDao;
 
-
     @Override
     @Autowired
     protected void setDmProperties(DmProperties dmProperties) {
         this.dmProperties = dmProperties;
     }
+
 
     /**
      * @param textMessage 接收到的消息  存放要扫描的目录名
@@ -67,13 +66,19 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
     @Override
     public void receive(TextMessage textMessage) {
         log.info("alarmStatistic接收到了消息开始处理");
-        Query query = new Query(Criteria.where("handle").is(false));
+        AlarmStatisticProperties properties = (AlarmStatisticProperties) this.dmProperties;
+        Query query = new Query(Criteria.where("handle").is(false)).limit(properties.getLimit());
         List<Alarm> alarms = alarmDao.findListData(query);
+        if (CollectionUtils.isEmpty(alarms)) {
+            log.info("未检测到任何新增告警，本次处理结束");
+            return;
+        }
         log.info("检测到最新告警{}条", alarms.size());
         Map<String, List<MergeAble>> statisticMap = alarmStatistic(alarms);
         updateStatistic(statisticMap);
+        Query updateQuery = new Query(Criteria.where("_id").lte(alarms.get(alarms.size() - 1).getId()));
         Update update = new Update().set("handle", true);
-        this.alarmDao.update(query, update);
+        this.alarmDao.update(updateQuery, update);
     }
 
     private Map<String, List<MergeAble>> alarmStatistic(List<Alarm> alarms) {
@@ -125,6 +130,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         count++;
                     }
                     MergeSupport.rechecking(this.alarmStatisticDao, alarmStatistics);
+                    alarmStatistics.forEach(alarmStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmStatisticDao.getDbName(), count);
                     break;
                 case "AlarmCategoryStatistic":
@@ -135,6 +141,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         count++;
                     }
                     MergeSupport.rechecking(this.alarmCategoryStatisticDao, alarmCategoryStatistics);
+                    alarmCategoryStatistics.forEach(alarmCategoryStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmCategoryStatisticDao.getDbName(), count);
                     break;
                 case "AlarmCountryStatistic":
@@ -145,6 +152,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         count++;
                     }
                     MergeSupport.rechecking(this.alarmCountryStatisticDao, alarmCountryStatistics);
+                    alarmCountryStatistics.forEach(alarmCountryStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmCountryStatisticDao.getDbName(), count);
                     break;
                 case "AlarmCountStatistic":
@@ -154,6 +162,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         alarmCountStatistics.add(alarmCountStatistic);
                     }
                     MergeSupport.rechecking(this.alarmCountStatisticDao, alarmCountStatistics);
+                    alarmCountStatistics.forEach(alarmCountStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmCountStatisticDao.getDbName(), count);
                     break;
                 case "AlarmLevelStatistic":
@@ -163,6 +172,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         alarmLevelStatistics.add(alarmLevelStatistic);
                     }
                     MergeSupport.rechecking(this.alarmLevelStatisticDao, alarmLevelStatistics);
+                    alarmLevelStatistics.forEach(alarmLevelStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmLevelStatisticDao.getDbName(), count);
                     break;
                 case "AlarmSslStatistic":
@@ -172,6 +182,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         alarmSslStatistics.add(alarmSslStatistic);
                     }
                     MergeSupport.rechecking(this.alarmSslStatisticDao, alarmSslStatistics);
+                    alarmSslStatistics.forEach(alarmSslStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmSslStatisticDao.getDbName(), count);
 
                     break;
@@ -182,6 +193,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         alarmUnitStatistics.add(alarmUnitStatistic);
                     }
                     MergeSupport.rechecking(this.alarmUnitStatisticDao, alarmUnitStatistics);
+                    alarmUnitStatistics.forEach(alarmUnitStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmUnitStatisticDao.getDbName(), count);
                     break;
                 case "AlarmUserStatistic":
@@ -191,6 +203,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         alarmUserStatistics.add(alarmUserStatistic);
                     }
                     MergeSupport.rechecking(this.alarmUserStatisticDao, alarmUserStatistics);
+                    alarmUserStatistics.forEach(alarmUserStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmUserStatisticDao.getDbName(), count);
                     break;
                 case "ImpAlarmCategoryStatistic":
@@ -200,6 +213,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         impAlarmCategoryStatistics.add(impAlarmCategoryStatistic);
                     }
                     MergeSupport.rechecking(this.impAlarmCategoryStatisticDao, impAlarmCategoryStatistics);
+                    impAlarmCategoryStatistics.forEach(impAlarmCategoryStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", impAlarmCategoryStatisticDao.getDbName(), count);
                     break;
                 case "ImpAlarmTargetStatistic":
@@ -209,6 +223,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         impAlarmTargettatistics.add(impAlarmTargetStatistic);
                     }
                     MergeSupport.rechecking(this.impAlarmTargetStatisticDao, impAlarmTargettatistics);
+                    impAlarmTargettatistics.forEach(impAlarmTargetStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", impAlarmTargetStatisticDao.getDbName(), count);
                     break;
                 default:

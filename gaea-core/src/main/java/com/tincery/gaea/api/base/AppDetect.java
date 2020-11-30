@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Data
 @Document(collection = "app_detect")
 public class AppDetect extends SimpleBaseDO {
+
     @Id
     private String id;
 
