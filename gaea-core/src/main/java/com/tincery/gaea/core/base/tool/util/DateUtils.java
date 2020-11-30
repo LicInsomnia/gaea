@@ -130,4 +130,24 @@ public class DateUtils {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
+    public static LocalDateTime getDayTime(long timeStamp) {
+        return DateUtils.Long2LocalDateTime(timeStamp / DateUtils.DAY * DateUtils.DAY);
+    }
+
+    public static LocalDateTime getHourTime(long timeStamp) {
+        return DateUtils.Long2LocalDateTime(timeStamp / DateUtils.HOUR * DateUtils.HOUR);
+    }
+
+    public static LocalDateTime getMinuteTime(long timeStamp) {
+        return DateUtils.Long2LocalDateTime(timeStamp / DateUtils.MINUTE * DateUtils.MINUTE);
+    }
+
+    public static LocalDateTime min(LocalDateTime date1, LocalDateTime date2) {
+        return Long2LocalDateTime(Math.min(LocalDateTime2Long(date1), LocalDateTime2Long(date2)));
+    }
+
+    public static LocalDateTime max(LocalDateTime date1, LocalDateTime date2) {
+        return Long2LocalDateTime(Math.max(LocalDateTime2Long(date1), LocalDateTime2Long(date2)));
+    }
+
 }

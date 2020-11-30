@@ -14,7 +14,6 @@ class AlarmStatisticTest {
 
     @Autowired
     private Receiver receiver;
-
     @Test
     public void bbb() throws JMSException {
         TextMessage activeMQMessage = new ActiveMQTextMessage();

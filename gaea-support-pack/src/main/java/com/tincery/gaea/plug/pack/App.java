@@ -27,13 +27,14 @@ public class App {
             "gaea-src-isakmp",
             "gaea-src-espandah",
             "gaea-src-wechat",
-            "gaea-src-cer",
+            "gaea-dw-cer",
             "gaea-ods-httpanalysis",
 //            "gaea-src-qq",
             "gaea-dw-reorganization",
             "gaea-dm-asset",
             "gaea-dm-alarmcombine",
             "gaea-dm-sessionadjust",
+            "gaea-dm-alarmstatistic",
             "gaea-support-mongostash"
     };
     private static String gaeaPath;

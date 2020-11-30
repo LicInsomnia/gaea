@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -31,18 +32,18 @@ public class AssetCondition extends SimpleBaseDO {
     @Getter
     public static class ConditionGroup {
         List<FieldCondition> conditions;
-        CerLink certLinks;
+        List<CerLink> certLinks;
         String description;
 
         public boolean hit(JSONObject assetJson, AssetCondition cerCondition) {
             if (!conditions.stream().allMatch(fieldCondition -> fieldCondition.hit(assetJson))) {
                 return false;
             }
-            if (certLinks == null) {
+            if (CollectionUtils.isEmpty(certLinks)) {
                 return true;
             }
             JSONArray certChain = assetJson.getJSONArray(HeadConst.FIELD.SERVER_CER_CHAIN);
-            return certLinks.certHit(certChain, cerCondition);
+            return certLinks.stream().allMatch(cerLink -> cerLink.certHit(certChain,cerCondition));
         }
 
     }

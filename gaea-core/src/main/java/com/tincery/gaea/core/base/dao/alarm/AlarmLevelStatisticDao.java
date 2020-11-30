@@ -1,6 +1,6 @@
-package com.tincery.gaea.core.base.dao;
+package com.tincery.gaea.core.base.dao.alarm;
 
-import com.tincery.gaea.api.dm.Alarm;
+import com.tincery.gaea.api.dm.alarm.statistic.AlarmLevelStatistic;
 import com.tincery.starter.base.dao.SimpleBaseDaoImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Resource;
 
 @Repository
-public class AlarmDao extends SimpleBaseDaoImpl<Alarm> {
+public class AlarmLevelStatisticDao extends SimpleBaseDaoImpl<AlarmLevelStatistic> {
 
     @Override
-    protected Class<Alarm> getClazz() {
-        return Alarm.class;
+    protected Class<AlarmLevelStatistic> getClazz() {
+        return AlarmLevelStatistic.class;
     }
 
     @Override
-    @Value("alarm")
+    @Value("alarm_level_statistic")
     public void setDbName(String dbName) {
         this.dbName = dbName;
     }

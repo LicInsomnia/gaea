@@ -82,7 +82,7 @@ public class AssetSslExtension extends BaseAssetExtension {
 
     private void setHandshakeDescription() {
         if (null == this.handshake) {
-            this.handshakeDescription = "未见握手过程";
+            this.handshakeDescription = "-";
             return;
         }
         boolean clientHello = this.handshake.getInteger("clientHello") >= 0;
@@ -99,9 +99,9 @@ public class AssetSslExtension extends BaseAssetExtension {
         boolean clientChangeCipherSpec = this.handshake.getInteger("clientChangeCipherSpec") >= 0;
         boolean serverChangeCipherSpec = this.handshake.getInteger("serverChangeCipherSpec") >= 0;
         if (clientHello && serverHello && clientFinished && serverFinished) {
-            this.handshakeDescription = "握手过程完整";
+            this.handshakeDescription = "完整（✔）";
         } else {
-            this.handshakeDescription = "握手过程不完整";
+            this.handshakeDescription = "不完整（✖）";
         }
         this.handshakeKey = ToolUtils.getMD5(clientHello + "_" + serverHello + "_" + serverCertificate + "_" + serverKeyExchange + "_" +
                 serverCertificateRequest + "_" + serverHelloDone + "_" + clientCertificate + "_" + clientKeyExchange + "_" + clientCertificateVerify + "_" +

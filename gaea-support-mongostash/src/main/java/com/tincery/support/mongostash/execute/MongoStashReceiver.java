@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.core.base.component.Receiver;
 import com.tincery.gaea.core.base.component.config.NodeInfo;
 import com.tincery.gaea.core.base.dao.TableConfigDao;
+import com.tincery.gaea.core.base.tool.util.DaoUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.starter.base.model.TableConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class MongoStashReceiver implements Receiver {
         long jmsTimestamp = textMessage.getJMSTimestamp();
         List<TableConfig> updateConfig = tableConfigDao.getUpdate();
         List<TableConfig> insertConfig = tableConfigDao.getInsert();
-        insertConfig.forEach(item->{
+        insertConfig.forEach(item -> {
             log.info(item.getName());
         });
         update(updateConfig);
@@ -106,7 +107,7 @@ public class MongoStashReceiver implements Receiver {
             String cacheByCategory = NodeInfo.getCacheByCategory(id);
             String name = tableConfig.getName();
             File categoryCacheFile = new File(cacheByCategory);
-            log.info("开始检索文件夹{}",categoryCacheFile.getName());
+            log.info("开始检索文件夹{}", categoryCacheFile.getName());
             if (!categoryCacheFile.exists()) {
                 continue;
             }
@@ -115,16 +116,18 @@ public class MongoStashReceiver implements Receiver {
                 for (File file : files) {
                     List<String> list = FileUtils.readLine(file);
                     List<JSONObject> insertData = list.stream().map(JSON::parseObject).collect(Collectors.toList());
-                    if (tableConfig.getType().contains("production")) {
-                        proMongoTemplate.insert(insertData, name);
-                    } else {
-                        sysMongoTemplate.insert(insertData, name);
-                    }
+                    MongoTemplate mongoTemplate = tableConfig.getType().contains("production") ? proMongoTemplate : sysMongoTemplate;
+                    insertData.forEach(data -> {
+                        Update update = new Update();
+                        data.forEach(update::set);
+                        Query query = new Query(Criteria.where("_id").is(data.getString("_id")));
+                        mongoTemplate.upsert(query, update, tableConfig.getName());
+                    });
                     insertCount.merge(tableConfig.getName(), 1, Integer::sum);
                 }
             }
+            insertCount.forEach((collectionName, count) -> log.info("数据库{}添加了{}条", collectionName, count));
         }
-        insertCount.forEach((collectionName, count) -> log.info("数据库{}添加了{}条", collectionName, count));
     }
 
     @Override

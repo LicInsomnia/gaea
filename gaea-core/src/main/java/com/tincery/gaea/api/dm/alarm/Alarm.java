@@ -1,4 +1,4 @@
-package com.tincery.gaea.api.dm;
+package com.tincery.gaea.api.dm.alarm;
 
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.Location;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Setter
 @ToString
 @NoArgsConstructor
-public class Alarm  extends SimpleBaseDO {
+public class Alarm extends SimpleBaseDO {
     /**
      * 探针标识 记录是哪个探针生成的txt
      */
@@ -104,7 +104,7 @@ public class Alarm  extends SimpleBaseDO {
     /**
      * 会话持续时间（默认为0，仅在TCP时有可能会大于0）
      */
-    protected long durationTime;
+    protected long duration;
     /**
      * 这次会话的结束时间（对比与第一条数据的结束时间）。告警合并用
      */
@@ -231,7 +231,7 @@ public class Alarm  extends SimpleBaseDO {
         this.upByte = alarmMaterialData.getUpByte();
         this.downPkt = alarmMaterialData.getDownPkt();
         this.downByte = alarmMaterialData.getDownByte();
-        this.durationTime = alarmMaterialData.getDuration();
+        this.duration = alarmMaterialData.getDuration();
         this.durationEndTime = alarmMaterialData.getDurationEndTime();
         this.caseTags = alarmMaterialData.getCaseTags();
         this.macOuter = alarmMaterialData.getMacOuter();
