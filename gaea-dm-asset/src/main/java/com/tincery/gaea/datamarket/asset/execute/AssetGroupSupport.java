@@ -139,7 +139,6 @@ public class AssetGroupSupport extends MergeSupport {
             assetDataDTO.setAlarm(assetDataDTO.getAlarm() | AssetDataDTO.NEW_PORT);
             AssetReceiver.portStrings.add(extensionKey);
         }
-
         if (isSSL(jsonObject)) {
             Set<String> sslIds = AssetReceiver.sslIds.computeIfAbsent(key, (k) -> new HashSet<>());
             JSONObject sslExtension = jsonObject.getJSONObject("sslExtension");
