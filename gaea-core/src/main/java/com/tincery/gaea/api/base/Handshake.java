@@ -3,11 +3,12 @@ package com.tincery.gaea.api.base;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
 @Setter
-public class Handshake {
+public class Handshake implements Serializable {
 
     private int clientHello;
     private int serverHello;

@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Insomnia
@@ -234,9 +237,9 @@ public class SessionFactory {
         data.setKeyWord(extension.getServerName());
         String sha1 = extension.getSha1();
         if (null != sha1) {
-            Map<String, Object> cer = this.cerSelector.selector(sha1);
+            JSONObject cer = this.cerSelector.selector(sha1);
             if (null == data.getKeyWord() && null != cer) {
-                data.setKeyWord(cer.get("subject_cn").toString());
+                data.setKeyWord(cer.getString("subject_cn"));
             }
         }
         if (null != extension.getServerCerChain()) {
@@ -258,9 +261,9 @@ public class SessionFactory {
         String sha1 = extension.getSha1();
         if (null != sha1) {
             sha1 = sha1.split("_")[0];
-            Map<String, Object> cer = this.cerSelector.selector(sha1);
+            JSONObject cer = this.cerSelector.selector(sha1);
             if (null == data.getKeyWord() && null != cer) {
-                data.setKeyWord(cer.get("subject_cn").toString());
+                data.setKeyWord(cer.getString("subject_cn"));
             }
         }
         if (null != extension.getServerCerChain()) {
