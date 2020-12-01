@@ -15,7 +15,6 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    //TODO 修改队列头
     @JmsListener(destination = QueueNames.SRC_SNMP)
     public void receive(TextMessage textMessage) throws JMSException {
         receiver.receive(textMessage);
