@@ -89,7 +89,7 @@ public class SshLineAnalysis implements SrcLineAnalysis<SshData> {
             sshData.setForeign(this.srcLineSupport.isForeign(sshData.getServerIp()));
         }catch (RuntimeException e){
             sshData.setForeign(false);
-            log.error("无法解析内外网ipv6，数据为{}", Arrays.asList(elements));
+            log.warn("无法解析内外网ipv6，数据为{}", Arrays.asList(elements));
         }
 
         srcLineSupport.set5TupleOuter(elements[21], elements[22], elements[23], elements[24], elements[25], sshData);

@@ -5,6 +5,7 @@ import com.tincery.gaea.api.base.Location;
 import com.tincery.gaea.api.dm.alarm.Alarm;
 import com.tincery.gaea.api.dm.alarm.statistic.*;
 import com.tincery.gaea.core.base.mgt.HeadConst;
+import com.tincery.gaea.core.base.tool.ToolUtils;
 import com.tincery.gaea.core.base.tool.util.DateUtils;
 
 import java.time.LocalDateTime;
@@ -92,7 +93,26 @@ public class AlarmStatisticSupport {
     }
 
     public static AlarmUnitStatistic convertAlarm2AlarmUnitStatistic(Alarm alarm) {
-        return new AlarmUnitStatistic();
+        AlarmUnitStatistic alarmUnitStatistic = new AlarmUnitStatistic();
+        if (null == alarm.getAssetIp()) {
+            return null;
+        }
+        String assetIp = alarm.getAssetIp();
+        String country;
+        if (assetIp.equals(alarm.getClientIp())) {
+            country = alarm.getClientLocation().getCountry();
+        } else {
+            country = alarm.getServerLocation().getCountry();
+        }
+        OppositeIp oppositeIp = new OppositeIp(assetIp, country, alarm.getLevel(), 1L);
+        List<OppositeIp> oppositeIps = new ArrayList<>();
+        oppositeIps.add(oppositeIp);
+        alarmUnitStatistic.setUnit(alarm.getAssetUnit())
+                .setLevel(alarm.getLevel())
+                .setCount(1L)
+                .setOppositeIps(oppositeIps)
+                .setId();
+        return alarmUnitStatistic;
     }
 
     public static AlarmUserStatistic convertAlarm2AlarmUserStatistic(Alarm alarm) {
@@ -135,7 +155,58 @@ public class AlarmStatisticSupport {
     }
 
     public static ImpAlarmTargetStatistic convertAlarm2ImpAlarmTargetStatistic(Alarm alarm) {
-        return new ImpAlarmTargetStatistic();
+        ImpAlarmTargetStatistic impAlarmTargetStatistic = new ImpAlarmTargetStatistic();
+        String categoryDescription = alarm.getCategoryDesc();
+        String subCategoryDescription = alarm.getSubCategoryDesc();
+        String title = alarm.getIsSystem() ? "*" : alarm.getTitle();
+        if (null == categoryDescription || null == subCategoryDescription || null == title) {
+            return null;
+        }
+        String userId = alarm.getUserId();
+        if (null == userId) {
+            return null;
+        }
+        OppositeIp oppositeIp;
+        if (null != alarm.getTargetName()) {
+            impAlarmTargetStatistic.setKey(alarm.getTargetName());
+            impAlarmTargetStatistic.setTargetType("targetName");
+            oppositeIp = new OppositeIp(alarm.getServerIp(), alarm.getServerLocation().getCountry(),
+                    DateUtils.Long2LocalDateTime(alarm.getCapTime()));
+        } else if (null != alarm.getAssetIp()) {
+            impAlarmTargetStatistic.setKey(alarm.getAssetIp());
+            impAlarmTargetStatistic.setTargetType("asset");
+            if (impAlarmTargetStatistic.getKey().equals(alarm.getClientIp())) {
+                oppositeIp = new OppositeIp(alarm.getServerIp(), alarm.getServerLocation().getCountry(),
+                        DateUtils.Long2LocalDateTime(alarm.getCapTime()));
+            } else {
+                oppositeIp = new OppositeIp(alarm.getClientIp(), alarm.getClientLocation().getCountry(),
+                        DateUtils.Long2LocalDateTime(alarm.getCapTime()));
+            }
+        } else {
+            impAlarmTargetStatistic.setKey(userId);
+            if (ToolUtils.isIpv4(userId)) {
+                impAlarmTargetStatistic.setTargetType("clientIp");
+            } else {
+                impAlarmTargetStatistic.setTargetType("userId");
+            }
+            oppositeIp = new OppositeIp(alarm.getServerIp(), alarm.getServerLocation().getCountry(),
+                    DateUtils.Long2LocalDateTime(alarm.getCapTime()));
+        }
+        Set<String> userIds = new HashSet<>();
+        userIds.add(userId);
+        long capTime = alarm.getCapTime();
+        TargetAlarm targetAlarm = new TargetAlarm(categoryDescription, subCategoryDescription, title,
+                alarm.getLevel(), 1L, alarm.getIsSystem(), oppositeIp);
+        List<TargetAlarm> alarmList = new ArrayList<>();
+        alarmList.add(targetAlarm);
+        impAlarmTargetStatistic.setInsertTime(DateUtils.Long2LocalDateTime(capTime))
+                .setUpdateTime(DateUtils.Long2LocalDateTime(capTime))
+                .setLevel(alarm.getLevel())
+                .setCount(1L)
+                .setUserIds(userIds)
+                .setAlarmList(alarmList);
+        impAlarmTargetStatistic.setId();
+        return impAlarmTargetStatistic;
     }
 
     public static <T> List<KV<T, Long>> mergekv(List<KV<T, Long>> kv1, List<KV<T, Long>> kv2) {

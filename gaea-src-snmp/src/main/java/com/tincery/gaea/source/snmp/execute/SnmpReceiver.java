@@ -37,8 +37,6 @@ public class SnmpReceiver extends AbstractSrcReceiver<SnmpData> {
     @Autowired
     private AlarmRule alarmRule;
 
-    private final CopyOnWriteArrayList<SnmpData> qqList = new CopyOnWriteArrayList<>();
-
 
     @Autowired
     public void setAnalysis(SnmpAnalysis analysis) {
@@ -61,43 +59,6 @@ public class SnmpReceiver extends AbstractSrcReceiver<SnmpData> {
         super.free();
     }
 
-    private void outPutJson(Set<QQData> qqDataSet){
-        String dataWarehouseJsonFile = ApplicationInfo.getDataWarehouseJsonPathByCategory() + "/" + ApplicationInfo.getCategory() + "_" +
-                System.currentTimeMillis() + ".json";
-        FileWriter dataWarehouseJsonFileWriter = new FileWriter(dataWarehouseJsonFile);
-        for (QQData qqData : qqDataSet) {
-            putJson(qqData.toJsonObjects(), dataWarehouseJsonFileWriter);
-        }
-        dataWarehouseJsonFileWriter.close();
-        qqDataSet.clear();
-    }
-
-    private void putJson(JSONObject jsonObjects, FileWriter fileWriter) {
-            fileWriter.write(JSONObject.toJSONString(jsonObjects));
-    }
-
-    /****
-     * 解析一行记录 填充到相应的容器中
-     * @author gxz
-     * @param lines 多条记录
-     **/
-    @Override
-    protected void analysisLine(List<String> lines) {
-        for (String line : lines) {
-            if (StringUtils.isEmpty(line)) {
-                continue;
-            }
-            SnmpData snmpData;
-            try {
-                snmpData = this.analysis.pack(line);
-                snmpData.adjust();
-                this.qqList.add(snmpData);
-            } catch (Exception e) {
-                log.error("错误SRC：{}", line);
-            }
-
-        }
-    }
 
     @Override
     public void init() {

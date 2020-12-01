@@ -12,6 +12,7 @@ public class HeadConst {
     public static final String GORGEOUS_DIVIDING_LINE = "|------------------------------------------------------------------------------|";
 
 
+
     /* 通用csv文件头 */
     private final static String BASE_COMMON_HEADER = FIELD.GROUP_NAME + CSV_SEPARATOR +
             FIELD.TARGET_NAME + CSV_SEPARATOR +
@@ -154,6 +155,12 @@ public class HeadConst {
             FIELD.VERSION + CSV_SEPARATOR +
             FIELD.COMMUNITY + CSV_SEPARATOR +
             FIELD.PDUTYPE;
+    public static final String BITCOIN = BASE_COMMON_HEADER +
+            FIELD.MALFORMED_UP_PAYLOAD + CSV_SEPARATOR +
+            FIELD.MALFORMED_DOWN_PAYLOAD + CSV_SEPARATOR +
+            FIELD.VERSION + CSV_SEPARATOR +
+            FIELD.NUMBER_OF_PAYLOAD + CSV_SEPARATOR +
+            FIELD.EXTENSION;
 
     private HeadConst() {
         throw new RuntimeException();
@@ -339,6 +346,8 @@ public class HeadConst {
         public static final String SENDER = "sender";
         public static final String RCPT_TO = "rcptTo";
         public static final String IF_IMAP_PART = "ifImapPart";
+        /* BITCOIN */
+        public static final String NUMBER_OF_PAYLOAD = "numberOfPayload";
     }
 
     public static class PRONAME {

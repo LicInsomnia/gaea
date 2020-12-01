@@ -211,9 +211,7 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
             return;
         }
         bakFile(file);
-        if (file.delete()) {
-            log.info("删除文件{}", file.getName());
-        }
+        log.info("删除文件{},{}",file.getName(),file.delete()?"成功":"失败");
     }
 
     /****
@@ -331,6 +329,15 @@ public abstract class AbstractSrcReceiver<M extends AbstractSrcData> implements 
 
     public boolean isMultiThreadExecutor() {
         return this.properties.getExecutor() != 0;
+    }
+
+    public static void main(String[] args) {
+        File file = new File("bbb.txt");
+        List<String> list = FileUtils.readLine(file);
+        FileUtils.checkPath("aaa.txt");
+        System.out.println(list.size());
+        FileUtils.fileMove("bbb.txt","aaa.txt");
+        System.out.println(file.delete());
     }
 
 }

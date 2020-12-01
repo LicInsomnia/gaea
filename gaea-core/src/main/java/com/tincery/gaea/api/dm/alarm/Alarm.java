@@ -3,20 +3,24 @@ package com.tincery.gaea.api.dm.alarm;
 import com.tincery.gaea.api.base.AlarmMaterialData;
 import com.tincery.gaea.api.base.Location;
 import com.tincery.starter.base.model.SimpleBaseDO;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @ToString
 @NoArgsConstructor
+@Document(collection = "alarm")
 public class Alarm extends SimpleBaseDO {
+
+    @Id
+    String id;
     /**
      * 探针标识 记录是哪个探针生成的txt
      */

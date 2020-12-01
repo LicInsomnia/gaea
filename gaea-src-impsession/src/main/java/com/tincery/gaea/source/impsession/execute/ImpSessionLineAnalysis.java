@@ -57,7 +57,7 @@ public class ImpSessionLineAnalysis implements SrcLineAnalysis<ImpSessionData> {
             impSessionData.setForeign(this.srcLineSupport.isForeign(impSessionData.getServerIp()));
         }catch (RuntimeException e){
             impSessionData.setForeign(false);
-            log.error("无法判断ipv6内外网，默认设置为false，数据为{}",line);
+            log.warn("无法判断ipv6内外网，默认设置为false，数据为{}",line);
         }
 
         return impSessionData;

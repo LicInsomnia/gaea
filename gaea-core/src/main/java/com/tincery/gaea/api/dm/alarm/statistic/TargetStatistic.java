@@ -15,13 +15,16 @@ import java.util.Set;
 @Data
 public class TargetStatistic implements Serializable {
 
-    private final String id;
-    private final String targetType;
-    private final LocalDateTime insertTime;
-    private final LocalDateTime updateTime;
-    private final Long count;
-    private final Set<String> msisdn = new HashSet<>();
-    private final Set<String> imei = new HashSet<>();
+    private String id;
+    private String targetType;
+    private LocalDateTime insertTime;
+    private LocalDateTime updateTime;
+    private Long count;
+    private Set<String> msisdn = new HashSet<>();
+    private Set<String> imei = new HashSet<>();
+
+    public TargetStatistic() {
+    }
 
     public TargetStatistic(Alarm alarm) {
         if (null != alarm.getTargetName()) {

@@ -9,6 +9,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.*;
@@ -58,7 +59,8 @@ public class FileUtils {
      * @param delayTime 目标文件最后修改时间距离当前需要超过多少秒
      * @return 子文件集合
      **/
-    public static List<File> searchFiles(String filePath, String prefix, String contains, String extension, long delayTime) {
+    public static List<File> searchFiles(String filePath, String prefix, String contains, String extension,
+                                         long delayTime) {
         List<File> result = new ArrayList<>();
         File root = new File(filePath);
         if (!root.exists()) {
@@ -102,12 +104,16 @@ public class FileUtils {
         if (!from.exists() || to.exists()) {
             return;
         }
-        try {
-            Files.move(from, to);
+        try (FileInputStream fis = new FileInputStream(from);
+             FileOutputStream fos = new FileOutputStream(to);
+             FileChannel fisChannel = fis.getChannel();
+             FileChannel fosChannel = fos.getChannel()) {
+            fisChannel.transferTo(0, fisChannel.size(), fosChannel);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * @param f:源文件路径
@@ -138,8 +144,14 @@ public class FileUtils {
         if (null == file || (!file.exists()) || file.isDirectory()) {
             return new ArrayList<>();
         }
-        try {
-            return Files.readLines(file, Charset.forName(CommonConst.DEFAULT_CHARSET));
+        try (FileReader fileReader = new FileReader(file);
+             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            List<String> list = new ArrayList<>();
+            String a;
+            while ((a = bufferedReader.readLine()) != null) {
+                list.add(a);
+            }
+            return list;
         } catch (IOException e) {
             log.error("解析文件 {}是时出错", file.getName());
             e.printStackTrace();
@@ -153,6 +165,7 @@ public class FileUtils {
 
     /**
      * 字节读取文件的方法
+     *
      * @param file 文件
      * @return 文件数据  行。 key为前面的（new String(byte[])）字节数组 数据对应common等需要装载的属性
      * value 为content 是比较大的byte[] 内容
@@ -190,7 +203,8 @@ public class FileUtils {
                 byte[] bufferValue = new byte[targetLength];
                 System.arraycopy(records, i, bufferValue, 0, targetLength);
                 i += targetLength;
-                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index, bufferValue));
+                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index,
+                        bufferValue));
                 index++;
             }
             return mapContent.isEmpty() ? null : mapContent;
@@ -203,12 +217,14 @@ public class FileUtils {
 
     /**
      * 字节读取文件的方法 （重载）
-     * @param file 文件
-     * @param commonLength common属性的长度  ex：512
+     *
+     * @param file          文件
+     * @param commonLength  common属性的长度  ex：512
      * @param contentLength 几个字节代表content的长度，一版在文件开头 ex：4
      * @return 文件数据
      */
-    public static Map<String, Pair<Integer, byte[]>> readByteArray(File file,Integer commonLength,Integer contentLength) {
+    public static Map<String, Pair<Integer, byte[]>> readByteArray(File file, Integer commonLength,
+                                                                   Integer contentLength) {
         Map<String, Pair<Integer, byte[]>> mapContent = new LinkedHashMap<>();
         if (null == file || (!file.exists()) || file.isDirectory()) {
             return new HashMap<>();
@@ -241,7 +257,8 @@ public class FileUtils {
                 byte[] bufferValue = new byte[targetLength];
                 System.arraycopy(records, i, bufferValue, 0, targetLength);
                 i += targetLength;
-                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index, bufferValue));
+                mapContent.put(new String(bufferKey, Charset.forName(CommonConst.DEFAULT_CHARSET)), new Pair(index,
+                        bufferValue));
                 index++;
             }
             return mapContent.isEmpty() ? null : mapContent;
@@ -344,16 +361,17 @@ public class FileUtils {
 
         }
     }
+
     public static void compress(File sourceFile, ZipOutputStream zos, String name,
-                                 boolean KeepDirStructure) throws Exception{
+                                boolean KeepDirStructure) throws Exception {
         byte[] buf = new byte[1024];
-        if(sourceFile.isFile()){
+        if (sourceFile.isFile()) {
             // 向zip输出流中添加一个zip实体，构造器中name为zip实体的文件的名字
             zos.putNextEntry(new ZipEntry(name));
             // copy文件到zip输出流中
             int len;
             FileInputStream in = new FileInputStream(sourceFile);
-            while ((len = in.read(buf)) != -1){
+            while ((len = in.read(buf)) != -1) {
                 zos.write(buf, 0, len);
             }
             // Complete the entry
@@ -361,24 +379,24 @@ public class FileUtils {
             in.close();
         } else {
             File[] listFiles = sourceFile.listFiles();
-            if(listFiles == null || listFiles.length == 0){
+            if (listFiles == null || listFiles.length == 0) {
                 // 需要保留原来的文件结构时,需要对空文件夹进行处理
-                if(KeepDirStructure){
+                if (KeepDirStructure) {
                     // 空文件夹的处理
                     zos.putNextEntry(new ZipEntry(name + "/"));
                     // 没有文件，不需要文件的copy
                     zos.closeEntry();
                 }
 
-            }else {
+            } else {
                 for (File file : listFiles) {
                     // 判断是否需要保留原来的文件结构
                     if (KeepDirStructure) {
                         // 注意：file.getName()前面需要带上父文件夹的名字加一斜杠,
                         // 不然最后压缩包中就不能保留原来的文件结构,即：所有文件都跑到压缩包根目录下了
-                        compress(file, zos, name + "/" + file.getName(),KeepDirStructure);
+                        compress(file, zos, name + "/" + file.getName(), KeepDirStructure);
                     } else {
-                        compress(file, zos, file.getName(),KeepDirStructure);
+                        compress(file, zos, file.getName(), KeepDirStructure);
                     }
 
                 }

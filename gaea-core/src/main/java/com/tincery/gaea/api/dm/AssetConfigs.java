@@ -50,6 +50,9 @@ public class AssetConfigs {
      **/
     public static List<AlarmMaterialData> detectorClient(JSONObject assetJson, AssetDetector assetDetector) {
         AssetConfigDO assetConfig = assetDetector.getAsset(assetJson.getLong(HeadConst.FIELD.CLIENT_IP_N));
+        if(assetConfig==null){
+            return null;
+        }
         assetJson.put("isClient", true);
         if(assetConfig.isRange()){
             assetJson.merge("alarm",AssetDataDTO.NEW_IP,(alarm,alarmLong)->(long)alarmLong | AssetDataDTO.NEW_IP);

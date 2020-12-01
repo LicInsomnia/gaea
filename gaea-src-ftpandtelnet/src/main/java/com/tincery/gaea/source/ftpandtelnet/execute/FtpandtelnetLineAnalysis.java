@@ -127,7 +127,7 @@ public class FtpandtelnetLineAnalysis implements SrcLineAnalysis<FtpandtelnetDat
         try {
             ftpandtelnetData.setForeign(srcLineSupport.isForeign(ftpandtelnetData.getServerIp()));
         }catch (RuntimeException e){
-            log.error("无法判断ipv6内外网，默认设置为false");
+            log.warn("无法判断ipv6内外网，默认设置为false");
         }
 
     }

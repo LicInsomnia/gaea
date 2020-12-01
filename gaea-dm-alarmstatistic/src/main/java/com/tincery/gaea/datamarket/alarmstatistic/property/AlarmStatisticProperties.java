@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class AlarmStatisticProperties extends DmProperties {
 
+    private int limit;
     /**
      * Prefix of {@link AlarmStatisticProperties}.
      */
