@@ -73,7 +73,7 @@ public class Pptpandl2tpLineAnalysis implements SrcLineAnalysis<Pptpandl2tpData>
             pptpandl2tpData.setForeign(pptpAndL2TPLineSupport.isForeign(pptpandl2tpData.getServerIp()));
         }catch (RuntimeException e){
             pptpandl2tpData.setForeign(false);
-            log.error("无法判断ipv6内外网，默认设置为false，数据为{}",line);
+            log.warn("无法判断ipv6内外网，默认设置为false，数据为{}",line);
         }
 
         pptpandl2tpData.setPptpAndL2tpExtension(pptpAndL2tpExtension);

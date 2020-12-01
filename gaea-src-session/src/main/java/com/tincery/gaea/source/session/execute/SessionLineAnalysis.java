@@ -108,7 +108,7 @@ public class SessionLineAnalysis implements SrcLineAnalysis<SessionData> {
             sessionData.setForeign(this.srcLineSupport.isForeign(sessionData.getServerIp()));
         }catch (RuntimeException e){
             sessionData.setForeign(false);
-            log.error("无法解析内外网ipv6地址，数据为{}", Arrays.asList(element));
+            log.warn("无法解析内外网ipv6地址，数据为{}", Arrays.asList(element));
         }
 
         this.srcLineSupport.setFlow(element[4], element[5], element[6], element[7], sessionData);

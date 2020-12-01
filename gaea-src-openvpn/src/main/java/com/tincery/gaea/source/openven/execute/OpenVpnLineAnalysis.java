@@ -57,7 +57,7 @@ public class OpenVpnLineAnalysis implements SrcLineAnalysis<OpenVpnData> {
             openVpnData.setForeign(this.openVpnLineSupport.isForeign(openVpnData.getServerIp()));
         }catch (RuntimeException e){
             openVpnData.setForeign(false);
-            log.error("无法判断ipv6内外网，默认设置为false，数据为{}",line);
+            log.warn("无法判断ipv6内外网，默认设置为false，数据为{}",line);
         }
 
         openVpnData.setOpenVpnExtension(openVpnExtension);

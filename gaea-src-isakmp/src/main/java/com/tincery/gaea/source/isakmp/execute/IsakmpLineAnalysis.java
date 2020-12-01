@@ -336,7 +336,7 @@ public class IsakmpLineAnalysis implements SrcLineAnalysis<IsakmpData> {
         try {
             isakmpData.setForeign(this.isakmpLineSupport.isForeign(isakmpData.getServerIp()));
         }catch (RuntimeException e){
-            log.error("无法解析ipv6内外网地址，数据为{}", Arrays.asList(elements));
+            log.warn("无法解析ipv6内外网地址，数据为{}", Arrays.asList(elements));
         }
 
 
