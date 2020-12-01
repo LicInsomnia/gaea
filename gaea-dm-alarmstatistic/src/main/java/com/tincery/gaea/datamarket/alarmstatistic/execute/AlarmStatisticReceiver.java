@@ -108,12 +108,12 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
         statisticList.add(alarmSslStatistic);
         AlarmUserStatistic alarmUserStatistic = convertAlarm2AlarmUserStatistic(alarm);
         statisticList.add(alarmUserStatistic);
-//        AlarmUnitStatistic alarmUnitStatistic = convertAlarm2AlarmUnitStatistic(alarm);
-//        statisticList.add(alarmUnitStatistic);
+        AlarmUnitStatistic alarmUnitStatistic = convertAlarm2AlarmUnitStatistic(alarm);
+        statisticList.add(alarmUnitStatistic);
         ImpAlarmCategoryStatistic impAlarmCategoryStatistic = convertAlarm2ImpAlarmCategoryStatistic(alarm);
         statisticList.add(impAlarmCategoryStatistic);
-//        ImpAlarmTargetStatistic impAlarmTargetStatistic = convertAlarm2ImpAlarmTargetStatistic(alarm);
-//        statisticList.add(impAlarmTargetStatistic);
+        ImpAlarmTargetStatistic impAlarmTargetStatistic = convertAlarm2ImpAlarmTargetStatistic(alarm);
+        statisticList.add(impAlarmTargetStatistic);
         return statisticList;
     }
 
@@ -222,14 +222,14 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     log.info("{}合并插入{}条数据", impAlarmCategoryStatisticDao.getDbName(), count);
                     break;
                 case "ImpAlarmTargetStatistic":
-                    List<ImpAlarmTargetStatistic> impAlarmTargettatistics = new ArrayList<>();
+                    List<ImpAlarmTargetStatistic> impAlarmTargetStatistics = new ArrayList<>();
                     for (MergeAble mergeAble : entry.getValue()) {
                         ImpAlarmTargetStatistic impAlarmTargetStatistic = (ImpAlarmTargetStatistic) mergeAble;
-                        impAlarmTargettatistics.add(impAlarmTargetStatistic);
+                        impAlarmTargetStatistics.add(impAlarmTargetStatistic);
                         count++;
                     }
-                    MergeSupport.rechecking(this.impAlarmTargetStatisticDao, impAlarmTargettatistics);
-                    impAlarmTargettatistics.forEach(impAlarmTargetStatisticDao::saveOrUpdate);
+                    MergeSupport.rechecking(this.impAlarmTargetStatisticDao, impAlarmTargetStatistics);
+                    impAlarmTargetStatistics.forEach(impAlarmTargetStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", impAlarmTargetStatisticDao.getDbName(), count);
                     break;
                 default:

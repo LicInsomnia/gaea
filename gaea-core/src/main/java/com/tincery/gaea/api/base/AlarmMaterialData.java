@@ -15,11 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 告警素材元数据类
@@ -265,23 +261,6 @@ public final class AlarmMaterialData {
         }
     }
 
-    private void fixAssetIp(Integer assetFlag) {
-        switch (assetFlag) {
-            case 1:
-                //CLIENT_ASSET
-                this.assetIp = this.clientIp;
-                break;
-            case 2:
-                //SERVER_ASSET
-                this.assetIp = this.serverIp;
-                break;
-            case 3:
-                //CLIENT_ASSET & SERVER_ASSET
-                this.assetIp = this.clientIp + ";" + this.serverIp;
-                break;
-        }
-    }
-
     public AlarmMaterialData(AbstractMetaData metaData, SrcRuleDO alarmRule, String context, IpSelector ipSelector) {
         this.targetName = metaData.getTargetName();
         this.groupName = metaData.getGroupName();
@@ -400,7 +379,10 @@ public final class AlarmMaterialData {
             return;
         }
         this.assetIp = singleAssetIp;
-        //   this.assetInfo = new Document((JSONObject) JSONObject.toJSON(asset.getInfo()));
+        this.assetUnit = asset.getUnit();
+        this.assetLevel = asset.getLevel();
+        this.assetName = asset.getName();
+        this.assetType = asset.getType();
     }
 
 }
