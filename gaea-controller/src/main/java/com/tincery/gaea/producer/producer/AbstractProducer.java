@@ -1,5 +1,6 @@
 package com.tincery.gaea.producer.producer;
 
+import com.tincery.gaea.core.base.tool.util.DateUtils;
 import com.tincery.gaea.core.base.tool.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsMessagingTemplate;
@@ -7,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.jms.Queue;
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -49,10 +51,10 @@ public abstract class AbstractProducer implements Producer {
             for (String file : files) {
                 this.jmsMessagingTemplate.convertAndSend(queue, file);
             }
-            log.info("本次处理从[{}]目录中共获取{}[{}]个 忽略[{}]个 入队[{}]个", path, category, allFiles.size(),
-                    (allFiles.size() - files.size()), files.size());
+            log.info("本次处理从[{}]目录中共获取{}[{}]个 忽略[{}]个 入队[{}]个,忽略{}时间之后的", path, category, allFiles.size(),
+                    (allFiles.size() - files.size()), files.size(),DateUtils.Long2LocalDateTime(lastTime));
         } else {
-            log.info("本次处理从[{}]目录中 获取到[{}]个文件 全部忽略了", path, allFiles.size());
+            log.info("本次处理从[{}]目录中 获取到[{}]个文件 全部忽略了,忽略{}时间之后的", path, allFiles.size(),DateUtils.Long2LocalDateTime(lastTime));
         }
     }
 

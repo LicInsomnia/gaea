@@ -53,7 +53,7 @@ public class EspAndAhLineAnalysis implements SrcLineAnalysis<EspAndAhData> {
             data.setForeign(this.espAndAhLineSupport.isForeign(data.getServerIp()));
         }catch (RuntimeException e){
             data.setForeign(false);
-            log.error("无法进行ipv6内外网判断，默认为false");
+            log.warn("无法进行ipv6内外网判断，默认为false");
         }
 
     }
