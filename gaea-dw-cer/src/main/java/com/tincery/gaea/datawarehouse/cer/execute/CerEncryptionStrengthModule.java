@@ -30,7 +30,7 @@ public class CerEncryptionStrengthModule extends BaseModule implements BaseModul
         DataQueue queueInput = queuesInput.get(0);
         DataQueue queueOutput = queuesOutput.get(0);
         try {
-            String soPath = NodeInfo.getConfig() + "/libRsaCheck.so";
+            String soPath = NodeInfo.getConfig() + "/pubkeyCheck/libRsaCheck.so";
             System.load(soPath);
 //            System.load("C:\\Users\\Insomnia\\Documents\\Visual Studio 2010\\Projects\\helloTest\\x64\\Debug\\helloTest.dll");
             while (true) {
@@ -51,6 +51,9 @@ public class CerEncryptionStrengthModule extends BaseModule implements BaseModul
                             resultList.add(cer.getRsaFixedPointNumberDetectResult());
                             cer.setLowIndexAttackDetectResult(lowIndexAttackDetect(nStr, eStr) ? 1 : 0);
                             resultList.add(cer.getLowIndexAttackDetectResult());
+                            String datPath = NodeInfo.getConfig() + "/pubkeyCheck/";
+                            cer.setKeyExchangeLeakDetectResult(keyExchangeLeakDetect(nStr, eStr, datPath) ? 1 : 0);
+
                             boolean negFlag = false;
                             boolean zeroFlag = false;
                             for(Integer result : resultList) {
@@ -90,4 +93,5 @@ public class CerEncryptionStrengthModule extends BaseModule implements BaseModul
     public native boolean randomPrimeFactorDetect(String nStr, String eStr);
     public native boolean rsaFixedPointNumberDetect(String nStr, String eStr);
     public native boolean lowIndexAttackDetect(String nStr, String eStr);
+    public native boolean keyExchangeLeakDetect(String xStr, String yStr, String datPath);
 }
