@@ -138,8 +138,14 @@ public class FileUtils {
         if (null == file || (!file.exists()) || file.isDirectory()) {
             return new ArrayList<>();
         }
-        try {
-            return Files.readLines(file, Charset.forName(CommonConst.DEFAULT_CHARSET));
+        try(FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader)){
+            List<String> list = new ArrayList<>();
+            String a;
+            while ((a = bufferedReader.readLine()) != null) {
+                list.add(a);
+            }
+            return list;
         } catch (IOException e) {
             log.error("解析文件 {}是时出错", file.getName());
             e.printStackTrace();
