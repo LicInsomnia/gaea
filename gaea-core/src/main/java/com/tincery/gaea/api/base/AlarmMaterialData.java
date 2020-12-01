@@ -28,7 +28,6 @@ import java.util.*;
 @Setter
 @Getter
 @ToString
-@Slf4j
 public final class AlarmMaterialData {
     /**
      * 探针标识 记录是哪个探针生成的txt
@@ -219,7 +218,6 @@ public final class AlarmMaterialData {
      * 资产需要的一个新的告警
      */
     public AlarmMaterialData(JSONObject jsonObject, AssetConfigDO assetConfigDO, Boolean isClient) {
-        log.info(jsonObject.toJSONString());
         jsonObject.merge("alarm", AssetDataDTO.ALARM, (alarm, alarmInt) -> (long) alarmInt | AssetDataDTO.ALARM);
         this.source = jsonObject.getString("source");
         this.capTime = DateUtils.validateTime(jsonObject.getLong("capTime"));
