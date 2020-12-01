@@ -1,4 +1,4 @@
-package com.tincery.gaea.source.bitcoin.execute;
+package com.tincery.gaea.source.bitcoin.config.property.execute;
 
 import com.tincery.gaea.api.base.QueueNames;
 import com.tincery.gaea.core.base.component.Receiver;
@@ -15,8 +15,7 @@ public class MessageListener {
     @Autowired
     private Receiver receiver;
 
-    //TODO 换队列名
-    @JmsListener(destination = QueueNames.SRC_QQ)
+    @JmsListener(destination = QueueNames.SRC_BITCOIN)
     public void receive(TextMessage textMessage) throws JMSException {
         receiver.receive(textMessage);
     }

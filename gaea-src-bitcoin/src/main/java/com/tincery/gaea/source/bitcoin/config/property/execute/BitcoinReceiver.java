@@ -1,5 +1,6 @@
-package com.tincery.gaea.source.bitcoin.execute;
+package com.tincery.gaea.source.bitcoin.config.property.execute;
 
+import com.tincery.gaea.api.src.BitCoinData;
 import com.tincery.gaea.api.src.QQData;
 import com.tincery.gaea.core.base.mgt.HeadConst;
 import com.tincery.gaea.core.base.rule.AlarmRule;
@@ -23,14 +24,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Setter
 @Getter
 @Service
-public class BitcoinReceiver extends AbstractSrcReceiver<QQData> {
+public class BitcoinReceiver extends AbstractSrcReceiver<BitCoinData> {
 
     @Autowired
     private PassRule passrule;
     @Autowired
     private AlarmRule alarmRule;
 
-    private final CopyOnWriteArrayList<QQData> qqList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<BitCoinData> bitCoinList = new CopyOnWriteArrayList<>();
 
 
     @Autowired
@@ -44,10 +45,9 @@ public class BitcoinReceiver extends AbstractSrcReceiver<QQData> {
         this.properties = properties;
     }
 
-    //TODO  换头
     @Override
     public String getHead() {
-        return HeadConst.WECHAT_HEADER;
+        return HeadConst.BITCOIN;
     }
 
 
@@ -60,5 +60,7 @@ public class BitcoinReceiver extends AbstractSrcReceiver<QQData> {
     public void registryRules(Rule rule) {
         RuleRegistry.getInstance().putRule(rule);
     }
+
+
 
 }
