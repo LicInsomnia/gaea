@@ -19,12 +19,13 @@ public class QueueNames {
     public static final String SRC_WECHAT = "src_wechat";
     public static final String SRC_QQ = "src_qq";
     public static final String SRC_SNMP = "src_snmp";
+    public static final String SRC_BITCOIN = "src_bitcoin";
 
     public final static String DW_REORGANIZATION = "dw_reorganization";
     public final static String DW_CER = "dw_cer";
     public final static String DM_ASSET = "dm_asset";
     public final static String DM_SESSION_ADJUST = "dm_sessionadjust";
-    
+
     public static final String DM_ALARMCOMBINE = "dm_alarmcombine";
 
     public static final String ODS_HTTPANALYSIS = "ods_httpanalysis";

@@ -30,6 +30,7 @@
         <module>gaea-src-ftpandtelnet</module>
         <module>gaea-src-espandah</module>
         <module>gaea-src-bitcoin</module>
+        <module>gaea-src-snmp</module>
         <!--DATAWAREHOUSE层模块-->
         <module>gaea-dw-reorganization</module>
         <module>gaea-dw-cer</module>

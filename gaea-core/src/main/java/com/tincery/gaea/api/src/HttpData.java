@@ -152,7 +152,6 @@ public class HttpData extends AbstractSrcData {
         }
         ArrayList<String> result = new ArrayList<>();
         metaList.forEach(meta -> result.add(JSONObject.toJSON(meta).toString()));
-
         return result;
     }
 
