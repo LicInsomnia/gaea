@@ -1,8 +1,6 @@
 package com.tincery.gaea.source.email.execute;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.tincery.gaea.api.base.ImpTargetSetupDO;
 import com.tincery.gaea.api.src.EmailData;
 import com.tincery.gaea.core.base.component.support.ApplicationProtocol;
@@ -10,18 +8,18 @@ import com.tincery.gaea.core.base.component.support.GroupGetter;
 import com.tincery.gaea.core.base.component.support.IpChecker;
 import com.tincery.gaea.core.base.component.support.PayloadDetector;
 import com.tincery.gaea.core.base.dao.ImpTargetSetupDao;
-import com.tincery.gaea.core.base.tool.util.FileUtils;
 import com.tincery.gaea.core.base.tool.util.StringUtils;
 import com.tincery.gaea.core.src.SrcLineAnalysis;
 import com.tincery.gaea.core.src.SrcLineSupport;
 import com.tincery.starter.base.InitializationRequired;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author gxz
@@ -151,7 +149,7 @@ public class EmailLineAnalysis implements SrcLineAnalysis<EmailData>, Initializa
         activityData.stream()
                 .filter(impTargetSetupDO -> StringUtils.notAllowNull(impTargetSetupDO.getTargetname(), impTargetSetupDO.getGroupname()))
                 .forEach((impTargetSetupDO) -> this.target2Group.put(impTargetSetupDO.getTargetname(), impTargetSetupDO.getGroupname()));
-        log.info("加载了{}组  目标配置", this.target2Group.size());
+        log.info("加载了{}组目标配置", this.target2Group.size());
     }
 
 }

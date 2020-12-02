@@ -1,6 +1,7 @@
 package com.tincery.gaea.producer.config;
 
 import com.tincery.gaea.producer.job.datamarket.AlarmCombineJob;
+import com.tincery.gaea.producer.job.datamarket.AlarmStatisticJob;
 import com.tincery.gaea.producer.job.datamarket.AssetJob;
 import com.tincery.gaea.producer.job.datamarket.SessionAdjustJob;
 import lombok.extern.slf4j.Slf4j;
@@ -95,7 +96,7 @@ public class DmQuartzConfig {
     @ConditionalOnProperty(prefix = PREFIX, name = "alarmstatistic")
     public JobDetail alarmStatisticJob() {
         log.info("控制器此次分发alarmStatistic任务");
-        return JobBuilder.newJob(SessionAdjustJob.class)
+        return JobBuilder.newJob(AlarmStatisticJob.class)
                 .withIdentity("alarmStatisticJob")
                 .storeDurably()
                 .build();

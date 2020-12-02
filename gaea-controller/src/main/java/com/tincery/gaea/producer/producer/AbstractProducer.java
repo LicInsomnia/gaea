@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.util.CollectionUtils;
 
-import javax.jms.JMSException;
 import javax.jms.Queue;
 import java.io.File;
 import java.util.Comparator;
@@ -25,15 +24,6 @@ public abstract class AbstractProducer implements Producer {
     protected Queue queue;
     protected JmsMessagingTemplate jmsMessagingTemplate;
     private final Map<String, Long> categoryLong = new HashMap<>();
-
-    public void producer(Queue queue) {
-        jmsMessagingTemplate.convertAndSend(queue, "dm任务");
-        try {
-            log.info("提交了一条dm.{}任务", queue.getQueueName());
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void producer(Queue queue, String category, String extension) {

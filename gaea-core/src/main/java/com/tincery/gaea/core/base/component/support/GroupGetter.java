@@ -35,7 +35,7 @@ public class GroupGetter implements InitializationRequired {
         activityData.stream()
                 .filter(impTargetSetupDO -> StringUtils.notAllowNull(impTargetSetupDO.getTargetname(), impTargetSetupDO.getGroupname()))
                 .forEach((impTargetSetupDO) -> this.target2Group.put(impTargetSetupDO.getTargetname(), impTargetSetupDO.getGroupname()));
-        log.info("加载了{}组  目标配置", this.target2Group.size());
+        log.info("加载了{}组目标配置", this.target2Group.size());
     }
 
 }
