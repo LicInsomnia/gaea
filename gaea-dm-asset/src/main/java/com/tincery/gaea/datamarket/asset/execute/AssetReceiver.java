@@ -317,7 +317,7 @@ public class AssetReceiver extends AbstractDataMarketReceiver {
             assetJson.put("ip", ToolUtils.long2IP(targetIp));
             assetJson.put("unit", config.getUnit());
             assetJson.put("name", config.getName());
-            assetJson.put("alarm", AssetDataDTO.NONE);
+            assetJson.computeIfAbsent("alarm", (k)->AssetDataDTO.NONE);
         }
     }
 
