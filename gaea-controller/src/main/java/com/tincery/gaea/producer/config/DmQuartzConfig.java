@@ -68,7 +68,6 @@ public class DmQuartzConfig {
                 .build();
     }
 
-
     @Bean
     @ConditionalOnProperty(prefix = PREFIX, name = "sessionadjust")
     public JobDetail sessionAdjustJob() {
@@ -88,6 +87,28 @@ public class DmQuartzConfig {
         return TriggerBuilder.newTrigger()
                 .forJob(sessionAdjustJob())
                 .withIdentity("sessionAdjustJob")
+                .withSchedule(cronScheduleBuilder)
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "alarmstatistic")
+    public JobDetail alarmStatisticJob() {
+        log.info("控制器此次分发alarmStatistic任务");
+        return JobBuilder.newJob(SessionAdjustJob.class)
+                .withIdentity("alarmStatisticJob")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = PREFIX, name = "alarmstatistic")
+    public Trigger alarmStatisticJobTrigger() {
+        String cron = controllerConfigProperties.getDatamarket().getAlarmStatistic();
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        return TriggerBuilder.newTrigger()
+                .forJob(alarmStatisticJob())
+                .withIdentity("alarmStatisticJob")
                 .withSchedule(cronScheduleBuilder)
                 .build();
     }

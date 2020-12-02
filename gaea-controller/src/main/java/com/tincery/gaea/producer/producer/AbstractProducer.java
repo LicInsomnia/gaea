@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.util.CollectionUtils;
 
+import javax.jms.JMSException;
 import javax.jms.Queue;
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +26,15 @@ public abstract class AbstractProducer implements Producer {
     protected JmsMessagingTemplate jmsMessagingTemplate;
     private final Map<String, Long> categoryLong = new HashMap<>();
 
+    public void producer(Queue queue) {
+        jmsMessagingTemplate.convertAndSend(queue, "dm任务");
+        try {
+            log.info("提交了一条dm.{}任务", queue.getQueueName());
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void producer(Queue queue, String category, String extension) {
         File path = getRootFile(category, extension);
@@ -41,7 +50,7 @@ public abstract class AbstractProducer implements Producer {
             log.info("本次处理从[{}]目录中没有获取到文件", path);
             return;
         }
-        long lastTime = categoryLong.getOrDefault(category, 0L);
+        long lastTime = this.categoryLong.getOrDefault(category, 0L);
         List<String> files = allFiles.stream()
                 .sorted(Comparator.comparingLong(File::lastModified)).filter(file -> file.lastModified() >= lastTime).map(File::getAbsolutePath)
                 .collect(Collectors.toList());

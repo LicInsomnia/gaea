@@ -16,7 +16,6 @@ import java.io.File;
 @Slf4j
 public class DwProducer extends AbstractProducer {
 
-
     @Override
     public void producer(Queue queue, String category, String extension) {
         jmsMessagingTemplate.convertAndSend(queue, "dw任务");

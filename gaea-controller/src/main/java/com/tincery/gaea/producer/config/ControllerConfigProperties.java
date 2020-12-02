@@ -56,6 +56,7 @@ public class ControllerConfigProperties {
         private String alarmCombine;
         private String asset;
         private String sessionAdjust;
+        private String alarmStatistic;
     }
 
     @Setter

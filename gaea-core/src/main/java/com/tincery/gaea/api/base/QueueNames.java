@@ -25,6 +25,7 @@ public class QueueNames {
     public final static String DW_CER = "dw_cer";
     public final static String DM_ASSET = "dm_asset";
     public final static String DM_SESSION_ADJUST = "dm_sessionadjust";
+    public final static String DM_ALARM_STATISTIC = "dm_alarmstatistic";
 
     public static final String DM_ALARMCOMBINE = "dm_alarmcombine";
 
