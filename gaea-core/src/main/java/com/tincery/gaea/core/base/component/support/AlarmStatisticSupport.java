@@ -174,6 +174,7 @@ public class AlarmStatisticSupport {
                     DateUtils.Long2LocalDateTime(alarm.getCapTime()));
         } else if (null != alarm.getAssetIp()) {
             impAlarmTargetStatistic.setKey(alarm.getAssetIp());
+            impAlarmTargetStatistic.setUnit(alarm.getAssetUnit());
             impAlarmTargetStatistic.setTargetType("asset");
             if (impAlarmTargetStatistic.getKey().equals(alarm.getClientIp())) {
                 oppositeIp = new OppositeIp(alarm.getServerIp(), alarm.getServerLocation().getCountry(),
@@ -205,6 +206,7 @@ public class AlarmStatisticSupport {
                 .setCount(1L)
                 .setUserIds(userIds)
                 .setAlarmList(alarmList);
+        impAlarmTargetStatistic.adjustValue();
         impAlarmTargetStatistic.setId();
         return impAlarmTargetStatistic;
     }

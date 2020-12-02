@@ -30,6 +30,10 @@ public class AlarmUnitStatistic extends BaseStatistic implements MergeAble<Alarm
         return this;
     }
 
+    public void setValue(Map<String, Double> unitValueMap) {
+        this.value = unitValueMap.getOrDefault(this.unit, 0.0);
+    }
+
     @Override
     public void setId() {
         this.id = this.getClass().getSimpleName() + "." + this.unit;

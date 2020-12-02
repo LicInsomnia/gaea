@@ -34,6 +34,20 @@ public class OppositeIp implements Serializable, MergeAble<OppositeIp> {
         this.ip = ip;
         this.country = country;
         this.level = level;
+        switch (this.level) {
+            case "紧急":
+                this.color = "#860000";
+                break;
+            case "严重":
+                this.color = "#FF0000";
+                break;
+            case "一般":
+                this.color = "#FF8040";
+                break;
+            default:
+                this.color = "#FFD700";
+                break;
+        }
         this.count = count;
     }
 

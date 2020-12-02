@@ -4,6 +4,7 @@ import com.tincery.gaea.api.dm.alarm.Alarm;
 import com.tincery.gaea.api.dm.alarm.statistic.*;
 import com.tincery.gaea.core.base.component.support.MergeSupport;
 import com.tincery.gaea.core.base.dao.alarm.*;
+import com.tincery.gaea.core.base.tool.MathUtils;
 import com.tincery.gaea.core.dm.AbstractDataMarketReceiver;
 import com.tincery.gaea.core.dm.DmProperties;
 import com.tincery.gaea.core.dw.MergeAble;
@@ -118,6 +119,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
     }
 
     private void updateStatistic(Map<String, List<MergeAble>> statisticMap) {
+        Map<String, Double> unitValueMap = new HashMap<>();
         for (Map.Entry<String, List<MergeAble>> entry : statisticMap.entrySet()) {
             String key = entry.getKey();
             int count = 0;
@@ -188,17 +190,6 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     alarmSslStatistics.forEach(alarmSslStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", alarmSslStatisticDao.getDbName(), count);
                     break;
-                case "AlarmUnitStatistic":
-                    List<AlarmUnitStatistic> alarmUnitStatistics = new ArrayList<>();
-                    for (MergeAble mergeAble : entry.getValue()) {
-                        AlarmUnitStatistic alarmUnitStatistic = (AlarmUnitStatistic) mergeAble;
-                        alarmUnitStatistics.add(alarmUnitStatistic);
-                        count++;
-                    }
-                    MergeSupport.rechecking(this.alarmUnitStatisticDao, alarmUnitStatistics);
-                    alarmUnitStatistics.forEach(alarmUnitStatisticDao::saveOrUpdate);
-                    log.info("{}合并插入{}条数据", alarmUnitStatisticDao.getDbName(), count);
-                    break;
                 case "AlarmUserStatistic":
                     List<AlarmUserStatistic> alarmUserStatistics = new ArrayList<>();
                     for (MergeAble mergeAble : entry.getValue()) {
@@ -229,6 +220,7 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                         count++;
                     }
                     MergeSupport.rechecking(this.impAlarmTargetStatisticDao, impAlarmTargetStatistics);
+                    unitValueMap = getUnitValueMap(impAlarmTargetStatistics);
                     impAlarmTargetStatistics.forEach(impAlarmTargetStatisticDao::saveOrUpdate);
                     log.info("{}合并插入{}条数据", impAlarmTargetStatisticDao.getDbName(), count);
                     break;
@@ -236,6 +228,47 @@ public class AlarmStatisticReceiver extends AbstractDataMarketReceiver {
                     break;
             }
         }
+        List<MergeAble> list = statisticMap.get("AlarmUnitStatistic");
+        List<AlarmUnitStatistic> alarmUnitStatistics = new ArrayList<>();
+        int count = 0;
+        for (MergeAble mergeAble : list) {
+            AlarmUnitStatistic alarmUnitStatistic = (AlarmUnitStatistic) mergeAble;
+            alarmUnitStatistics.add(alarmUnitStatistic);
+            alarmUnitStatistic.setValue(unitValueMap);
+            count++;
+        }
+        MergeSupport.rechecking(this.alarmUnitStatisticDao, alarmUnitStatistics);
+        alarmUnitStatistics.forEach(alarmUnitStatisticDao::saveOrUpdate);
+        log.info("{}合并插入{}条数据", alarmUnitStatisticDao.getDbName(), count);
+    }
+
+    private Map<String, Double> getUnitValueMap(List<ImpAlarmTargetStatistic> impAlarmTargetStatistics) {
+        Map<String, List<Double>> unitValues = new HashMap<>();
+        for (ImpAlarmTargetStatistic impAlarmTargetStatistic : impAlarmTargetStatistics) {
+            double value = impAlarmTargetStatistic.getValue();
+            String unit = impAlarmTargetStatistic.getUnit();
+            if (null == unit) {
+                continue;
+            }
+            if (unitValues.containsKey(unit)) {
+                List<Double> vs = unitValues.get(unit);
+                vs.add(value);
+                unitValues.replace(unit, vs);
+            } else {
+                List<Double> vs = new ArrayList<>();
+                vs.add(value);
+                unitValues.put(unit, vs);
+            }
+        }
+        Map<String, Double> unit2Value = new LinkedHashMap<>();
+        for (Map.Entry<String, List<Double>> entry : unitValues.entrySet()) {
+            int len = entry.getValue().size();
+            Double[] valuesArray = new Double[len];
+            entry.getValue().toArray(valuesArray);
+            double valueAverage = MathUtils.getAverage(valuesArray);
+            unit2Value.put(entry.getKey(), valueAverage);
+        }
+        return unit2Value;
     }
 
     @Override
